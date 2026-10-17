@@ -266,8 +266,12 @@ function Wd(win, text, nth = 0) {
 const aw = (win, x, k) => Wd(win, x, k).os, ew = (win, x, k) => Wd(win, x, k).oe;
 const S0 = TL.story_out0, SEND = TL.story_end, TOTAL = TL.total, HOOK_END = S0;
 const CW = {}; TL.cold_words.forEach(w => CW[norm(w.text)] = w);
-const C = { mot: CW['motorizarile'].os, pr: CW['probleme'].os, prE: CW['probleme'].oe };
-const A = {
+// ===================== PER-REEL: anchors (cold-open words C, story words A) =====================
+// If an anchor is missing (template used on a new video) scenes are disabled and only captions + end card render.
+let C = {}, A = {}, SCENES_OK = true;
+try {
+C = { mot: CW['motorizarile'].os, pr: CW['probleme'].os, prE: CW['probleme'].oe };
+A = {
   volvo0: aw(0, 'Volvo'), stai: aw(0, 'stai'), pentru0: aw(0, 'pentru'), tineE: ew(0, 'tine.'),
   ce1: aw(1, 'Ce'), foarte: aw(1, 'foarte'), volvo1: aw(1, 'Volvo'), jur: aw(1, 'jur'), k200: aw(1, '200,'), ceva: aw(1, 'ceva'), kmE: ew(1, 'kilometri.'),
   masina: aw(2, 'Mașina'), multiple: aw(2, 'multiple'), turbo2: aw(2, 'turbosuflantă'), dpf2: aw(2, 'DPF.'), dpf2E: ew(2, 'DPF.'),
@@ -281,6 +285,7 @@ const A = {
   aceste9: aw(9, 'Aceste'), econ: aw(9, 'economice,'), consum: aw(9, 'consum'), doua: aw(9, 'două'), destul9: aw(9, 'destul'), fortate: aw(9, 'forțate.'), fortateE: ew(9, 'forțate.'),
   si10: aw(10, 'Și'), intre: aw(10, 'întreținere'), interv10: aw(10, 'intervenții'), bani: aw(10, 'bani'),
 };
+} catch (e) { SCENES_OK = false; console.warn('scenes disabled: ' + e.message); }
 
 // ---------- art ----------
 const mini = (html, w, h) => html.replace(/width="\d+" height="\d+"/, `width="${w}" height="${h}"`);
@@ -385,7 +390,7 @@ function renderCaptions(t) {
 }
 
 // ---------- chapters (engine footage only) ----------
-const CHAPS = [
+const CHAPS = !SCENES_OK ? [] : [
   [A.ce1 - .3, A.ce5 - .1, 'LUCRAREA', 'hammer_and_wrench'],
   [A.ce5 - .1, A.aceste9 - .3, 'DE ȘTIUT', 'brain'],
 ];
@@ -400,7 +405,7 @@ function renderChapter(t) {
 
 // ---------- background ----------
 const STORY = TL.segments.filter(s => s.kind === 'story');
-const PUNCH = [{ t: C.pr, a: .09, sh: 16 }, { t: A.dpf2, a: .05, sh: 8 }, { t: A.recond, a: .04, sh: 0 }, { t: A.curatat, a: .04, sh: 0 }, { t: A.pret, a: .06, sh: 10 },
+const PUNCH = !SCENES_OK ? [] : [{ t: C.pr, a: .09, sh: 16 }, { t: A.dpf2, a: .05, sh: 8 }, { t: A.recond, a: .04, sh: 0 }, { t: A.curatat, a: .04, sh: 0 }, { t: A.pret, a: .06, sh: 10 },
   { t: A.motorul6, a: .07, sh: 12 }, { t: A.e10k, a: .06, sh: 10 }, { t: A.fortate, a: .05, sh: 8 }, { t: A.bani, a: .04, sh: 0 }];
 const BGX = { z: 1, dx: 0, dy: 0 };
 function renderBg(t) {
@@ -442,6 +447,9 @@ function renderSparks(t) {
 window.SFX = [];
 const sfx = (t, kind, gain = 1) => window.SFX.push({ t: +t.toFixed(3), kind, gain });
 function setupCues() {
+  sfx(SEND - .08, 'whoosh', .8); sfx(SEND + .3, 'ding', .55); sfx(SEND + .9, 'pop', .45);
+  [0, 1, 2, 3].forEach(i => sfx(SEND + 1.9 + i * .26, 'pop', .45)); sfx(SEND + 3.1, 'ding', .45);
+  if (!SCENES_OK) return;
   sfx(0, 'impact', .85); sfx(0.05, 'alarm', .45); sfx(C.pr - .03, 'impact', .8); sfx(C.pr - .03, 'stamp', .7);
   [0, 1, 2].forEach(i => sfx(C.pr + .3 + i * .2, 'pop', .5)); sfx(HOOK_END - .16, 'whoosh', .9);
   sfx(A.volvo0 - .1, 'pop', .45); sfx(A.stai - .05, 'tick2', .5); sfx(A.pentru0 - .05, 'pop', .4);
@@ -456,12 +464,10 @@ function setupCues() {
   sfx(A.pentru8 - .15, 'whoosh', .55); sfx(A.e10k, 'crack', .5); sfx(A.ci, 'ding', .55);
   sfx(A.aceste9 - .15, 'whoosh', .5); sfx(A.econ, 'pop', .45); sfx(A.consum, 'pop', .45); sfx(A.doua, 'pop', .45); sfx(A.fortate, 'alarm', .4);
   sfx(A.si10 - .15, 'whoosh', .5); sfx(A.intre, 'tick2', .55); sfx(A.interv10, 'tick2', .55); sfx(A.bani, 'ding', .6); sfx(A.bani + .05, 'shimmer', .5);
-  sfx(SEND - .08, 'whoosh', .8); sfx(SEND + .3, 'ding', .55); sfx(SEND + .9, 'pop', .45);
-  [0, 1, 2, 3].forEach(i => sfx(SEND + 1.9 + i * .26, 'pop', .45)); sfx(SEND + 3.1, 'ding', .45);
   burst(A.recond + .05, 540, 470, 5, 300, .8); burst(A.curatat + .1, 540, 460, 6, 300, .8); burst(A.ci + .05, 720, 520, 5, 170, .7); burst(A.bani + .05, 540, 400, 6, 330, .8);
 }
 
-// ---------- scenes ----------
+// ===================== PER-REEL: scenes (rewrite for every video; base helpers above are reusable) =====================
 function rHook(t) {
   const out = HOOK_END - .1;
   let L = life(t, 0, out, .28, .18);
@@ -591,7 +597,8 @@ function rRing(t, n) {
 }
 function render(t, n) {
   renderBg(t);
-  rHook(t); rChips(t); rKm(t); rArr(t); rDone(t); rAdm(t); rSteps(t); rWeak(t); rChain(t); rMoney(t); rPros(t); rTip(t); rRing(t, n); rEnd(t);
+  if (SCENES_OK) { rHook(t); rChips(t); rKm(t); rArr(t); rDone(t); rAdm(t); rSteps(t); rWeak(t); rChain(t); rMoney(t); rPros(t); rTip(t); rRing(t, n); }
+  rEnd(t);
   renderSparks(t); renderChapter(t); renderCaptions(t);
 }
 const bg = $('bg');

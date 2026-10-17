@@ -12,12 +12,12 @@ segs = json.load(open(f"{ROOT}/out/transcript.json"))
 WP = f"{ROOT}/out/wins.json"
 if os.path.exists(WP):
     wins = [tuple(w) for w in json.load(open(WP))]
-else:  # merge pass-1 VAD segments into sentence-sized windows (<= 25 s, split at pauses >= 0.6 s once >= 6 s long)
+else:  # merge pass-1 VAD segments into sentence-sized windows (<= 16 s, split at pauses >= 0.35 s once >= 5 s long)
     wins = []; a = b = None
     for sg in segs:
         if a is None: a, b = sg["start"], sg["end"]; continue
         gap = sg["start"] - b
-        if sg["end"] - a > 25 or (gap >= 0.6 and b - a >= 6): wins.append((round(max(0, a - 0.25), 2), round(b + 0.25, 2))); a, b = sg["start"], sg["end"]
+        if sg["end"] - a > 16 or (gap >= 0.35 and b - a >= 5): wins.append((round(max(0, a - 0.25), 2), round(b + 0.25, 2))); a, b = sg["start"], sg["end"]
         else: b = sg["end"]
     if a is not None: wins.append((round(max(0, a - 0.25), 2), round(b + 0.25, 2)))
     json.dump(wins, open(WP, "w"))
