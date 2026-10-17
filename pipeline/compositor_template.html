@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><title>Turbo Doctor Reel 7 Compositor</title>
+<style>
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat_600SemiBold.ttf);font-weight:600}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat_700Bold.ttf);font-weight:700}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat_800ExtraBold.ttf);font-weight:800}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat_900Black.ttf);font-weight:900}
+@font-face{font-family:Anton;src:url(assets/fonts/Anton_400Regular.ttf)}
+:root{--ink:#0F1216;--muted:#6B7480;--red:#FF3B3B;--red2:#E11D2E;--green:#22C55E;--green2:#15803D;--yellow:#FFD21F;--cyan:#62D8FF;--fire:#FF6B1A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+#stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden;font-family:Mont}
+#bg{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:540px 960px;filter:contrast(1.07) saturate(1.12) brightness(1.04)}
+#tint{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,40,40,.06),rgba(150,0,0,.62));opacity:0}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse 80% 62% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.4) 100%),linear-gradient(to bottom,rgba(0,0,0,.38) 0,rgba(0,0,0,0) 13%,rgba(0,0,0,0) 80%,rgba(0,0,0,.32) 100%)}
+#flash{position:absolute;inset:0;background:#fff;opacity:0}
+.abs{position:absolute;left:0;top:0;display:none;will-change:transform,opacity}
+.emo{filter:drop-shadow(0 10px 14px rgba(0,0,0,.45))}
+.card{background:#fff;border-radius:30px;box-shadow:0 18px 44px rgba(0,0,0,.5);color:var(--ink)}
+.cTitle{display:flex;align-items:center;justify-content:center;gap:12px;font-weight:900;font-size:28px;letter-spacing:.5px;line-height:1.1;white-space:nowrap}
+.cTitle img{width:46px;height:46px}
+.status{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:30px;height:44px;margin-top:8px;white-space:nowrap}
+.status img{width:42px;height:42px}
+.chip{display:none;align-items:center;gap:12px;padding:10px 28px 10px 14px;border-radius:999px;background:var(--ink);color:#fff;font-weight:900;font-size:34px;letter-spacing:.5px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.5);border:3px solid #fff}
+.chip img{width:52px;height:52px}
+.chip.red{background:var(--red2)}.chip.green{background:#16A34A}.chip.yellow{background:var(--yellow);color:var(--ink)}
+#cap{position:absolute;left:80px;width:860px;top:1290px;height:240px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;text-align:center;font-weight:900;font-size:80px;line-height:1.08;text-transform:uppercase;letter-spacing:-.5px}
+#cap span{display:inline-block;margin:0 18px;color:#fff;-webkit-text-stroke:14px #000;paint-order:stroke fill;text-shadow:0 7px 0 rgba(0,0,0,.6),0 12px 28px rgba(0,0,0,.55);transform-origin:50% 60%}
+#cap span.r{color:#FF4B4B}#cap span.g{color:#4ADE80}#cap span.c{color:var(--cyan)}#cap span.y{color:var(--yellow)}
+#cap span.on{color:var(--yellow)}#cap span.on.r{color:#FF6B6B}#cap span.on.g{color:#86EFAC}#cap span.on.c{color:#A5E9FF}#cap span.on.y{color:#FFE88A}
+#chap{display:none;align-items:center;gap:10px;padding:9px 24px 9px 12px;border-radius:999px;background:rgba(10,12,16,.78);border:3px solid rgba(255,255,255,.2);color:#fff;font-weight:800;font-size:25px;letter-spacing:3px;white-space:nowrap;transform-origin:0 50%}
+#chap img{width:42px;height:42px}
+/* hook */
+#hookPill{display:none;align-items:center;gap:12px;background:var(--red2);color:#fff;font-weight:900;font-size:30px;letter-spacing:2px;padding:8px 28px 8px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.5);border:3px solid #fff}
+#hookPill img{width:50px;height:50px}
+.hookTxt{font-family:Anton;line-height:1;white-space:nowrap;-webkit-text-stroke:12px #000;paint-order:stroke fill;text-shadow:0 8px 0 #000,0 14px 30px rgba(0,0,0,.6);letter-spacing:1px}
+#hookL1{font-size:106px;color:#fff}
+#hookL1 .y{color:var(--yellow)}
+#hookL2{font-size:172px;color:#FF3B30}
+#hookChips{display:none;gap:16px}
+.hChip{display:flex;align-items:center;gap:8px;padding:8px 22px 8px 10px;border-radius:999px;background:#fff;color:var(--red2);font-weight:900;font-size:36px;border:4px solid var(--red2);box-shadow:0 10px 24px rgba(0,0,0,.5);opacity:0}
+.hChip img{width:46px;height:46px}
+/* cards */
+.wide{width:640px;padding:22px 26px 20px}
+.mid{width:600px;padding:22px 26px 20px}
+.odo{display:flex;align-items:flex-end;justify-content:center;gap:12px;margin:16px auto 6px;background:#11151A;border-radius:20px;padding:14px 28px 10px;width:max-content;box-shadow:inset 0 4px 10px rgba(0,0,0,.6)}
+.odo .dg{font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:3px}
+.odo .pl{font-family:Anton;font-size:104px;line-height:1;color:var(--yellow);width:56px}
+.odo .un{font-family:Anton;font-size:46px;line-height:1.2;color:#9AA3AD;margin-bottom:8px}
+.sub{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:26px;color:var(--muted);letter-spacing:2px;margin-top:6px;white-space:nowrap}
+.sub img{width:38px;height:38px}
+.pRow{display:flex;align-items:center;gap:18px;padding:10px 6px;border-bottom:3px solid #EEF0F3;font-weight:900;font-size:34px;white-space:nowrap;opacity:0}
+.pRow:last-child{border-bottom:none}
+.pRow .art{width:110px;height:76px;display:flex;align-items:center;justify-content:center;flex:none}
+.pRow .art svg{width:110px;height:76px}
+.pRow .art img{width:66px;height:66px}
+.pRow .nm{flex:1}
+.pRow .ic{width:54px;height:54px}
+.ckRow{display:flex;align-items:center;gap:18px;padding:13px 0;border-bottom:3px solid #EEF0F3;font-weight:900;font-size:31px;color:#9AA3AD;white-space:nowrap}
+.ckRow:last-of-type{border-bottom:none}
+.box{width:52px;height:52px;border-radius:14px;border:5px solid #CBD2D9;flex:none;position:relative;overflow:hidden}
+.box .fill{position:absolute;inset:0;background:var(--green);border-radius:9px}
+.box svg{position:absolute;left:-1px;top:-1px}
+#admArt{position:relative;height:214px;margin-top:6px}
+#admArt>div{position:absolute;left:50%;top:0;transform:translateX(-50%) scale(.72);transform-origin:50% 0}
+#steps{display:flex;align-items:flex-start;justify-content:space-between;margin-top:14px;padding:0 6px}
+.step{width:170px;display:flex;flex-direction:column;align-items:center;gap:10px;font-weight:900;font-size:23px;text-align:center;line-height:1.1;color:#9AA3AD}
+.step .cir{width:104px;height:104px;border-radius:50%;background:#EEF0F3;border:6px solid #CBD2D9;display:flex;align-items:center;justify-content:center}
+.step .cir img{width:64px;height:64px;filter:grayscale(1) opacity(.5)}
+.step.on{color:var(--ink)}.step.on .cir{background:#DCFCE7;border-color:#16A34A}.step.on .cir img{filter:none}
+.arw{width:60px;height:104px;display:flex;align-items:center;justify-content:center}
+.arw svg path{stroke:#CBD2D9}
+.arw.on svg path{stroke:#16A34A}
+#chain{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px}
+.cbox{width:236px;height:150px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:26px;text-align:center;line-height:1.1;border:5px solid}
+.cbox img{width:56px;height:56px}
+#cb1{background:#FFF4E5;border-color:#F59E0B;color:#B45309}
+#cb2{background:#FEE2E2;border-color:#E11D2E;color:#B91C1C}
+#chainArr{width:84px;height:60px}
+#mCols{display:flex;gap:14px;margin-top:14px}
+.mCol{flex:1;border-radius:22px;padding:14px 10px 16px;text-align:center;border:5px solid;opacity:0}
+.mCol .h{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:24px;letter-spacing:2px}
+.mCol .h img{width:40px;height:40px}
+.mCol .v{font-family:Anton;font-size:76px;line-height:1.05;margin-top:6px}
+.mCol .v2{font-weight:900;font-size:30px;line-height:1.12;margin-top:10px}
+#mc1{background:#FEE2E2;border-color:#E11D2E;color:#B91C1C}
+#mc2{background:#DCFCE7;border-color:#16A34A;color:#15803D}
+#pGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.pc{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:18px;background:#F1F5F9;font-weight:900;font-size:27px;white-space:nowrap;opacity:0}
+.pc img{width:48px;height:48px}
+.pc.ok{background:#DCFCE7;color:#15803D}
+.pc.bad{background:#FEE2E2;color:#B91C1C}
+#tipMoney{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:10px;padding:12px 10px;border-radius:20px;background:#16A34A;color:#fff;font-weight:900;font-size:33px;white-space:nowrap;opacity:0}
+#tipMoney img{width:58px;height:58px}
+/* end card */
+#endCard{width:1080px;height:1920px}
+#endCard .eWord{position:absolute;left:0;right:0;top:196px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
+#endCard .eWord .y{color:var(--yellow)}
+#eShare{position:absolute;left:90px;width:900px;top:330px;height:236px;border-radius:40px;background:#fff;box-shadow:0 20px 50px rgba(0,0,0,.6);display:flex;align-items:center;gap:26px;padding:0 34px;color:var(--ink)}
+#eShare .sIco{width:150px;height:150px;flex:none}
+#eShare .sT1{font-weight:900;font-size:50px;line-height:1.02}
+#eShare .sT2{display:flex;align-items:center;gap:10px;font-weight:800;font-size:33px;color:#4B5563;margin-top:10px}
+#eShare .sT2 img{width:48px;height:48px}
+#eMap{position:absolute;left:220px;top:612px;width:640px;height:447px}
+#eMapTitle{position:absolute;left:0;right:0;top:1066px;text-align:center;font-weight:800;font-size:26px;letter-spacing:4px;color:#CBD5E1}
+#eFree{position:absolute;left:230px;width:620px;top:1112px;height:88px;border-radius:999px;background:#16A34A;border:5px solid #fff;color:#fff;font-weight:900;font-size:42px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 14px 34px rgba(0,0,0,.55);white-space:nowrap}
+#eFree img{width:54px;height:54px}
+#ePhone{position:absolute;left:190px;width:700px;top:1220px;height:112px;border-radius:999px;background:var(--yellow);color:var(--ink);font-weight:900;font-size:62px;display:flex;align-items:center;justify-content:center;gap:16px;box-shadow:0 16px 38px rgba(0,0,0,.55);letter-spacing:1px;white-space:nowrap}
+#ePhone img{width:70px;height:70px}
+#eUrl{position:absolute;left:0;right:0;top:1352px;text-align:center;font-weight:900;font-size:44px;color:#fff;letter-spacing:1px}
+.cityLbl{font-family:Mont;font-weight:900;font-size:34px;fill:#fff;paint-order:stroke;stroke:#0B0F14;stroke-width:9px;stroke-linejoin:round;letter-spacing:1px}
+.spark{width:90px;height:90px}
+</style>
+<script src="data.js"></script>
+<script src="art.js"></script>
+</head>
+<body>
+<div id="stage">
+ <img id="bg" alt="">
+ <div id="tint"></div>
+ <div id="vig"></div>
+ <div id="chap" class="abs"><img id="chapIco" alt=""><span id="chapTxt"></span></div>
+
+ <!-- HOOK -->
+ <div id="hookPill" class="abs"><img src="assets/emoji/police_light.png" alt="">ATENȚIE, PROPRIETARI DE VOLVO</div>
+ <div id="hookL1" class="abs hookTxt">VOLVO <span class="y">2.0</span> BITURBO</div>
+ <div id="hookL2" class="abs hookTxt">PROBLEME!</div>
+ <div id="hookChips" class="abs">
+  <div class="hChip" id="hc1"><img src="assets/emoji/cross_mark.png" alt="">TURBO</div>
+  <div class="hChip" id="hc2"><img src="assets/emoji/cross_mark.png" alt="">DPF</div>
+  <div class="hChip" id="hc3"><img src="assets/emoji/cross_mark.png" alt="">ADMISIE</div>
+ </div>
+ <img id="hookSiren" class="abs emo" src="assets/emoji/police_light.png" alt="" style="width:120px;height:120px">
+ <img id="hookWarn" class="abs emo" src="assets/emoji/warning.png" alt="" style="width:130px;height:130px">
+
+ <!-- generic chip (switching text) -->
+ <div id="chipA" class="chip abs"><img alt=""><span></span></div>
+ <img id="stkA" class="abs emo" alt="" style="width:130px;height:130px">
+
+ <!-- W1: km -->
+ <div id="kmCard" class="abs card wide">
+  <div class="cTitle"><img src="assets/emoji/hammer_and_wrench.png" alt="">LUCRARE FOARTE DES NECESARĂ</div>
+  <div class="odo"><span class="dg" id="kmDg">000.000</span><span class="pl" id="kmPl"></span><span class="un">KM</span></div>
+  <div class="sub" id="kmSub"><img src="assets/emoji/automobile.png" alt="">LA ORICE VOLVO 2.0 BITURBO</div>
+ </div>
+
+ <!-- W2: arrived with problems -->
+ <div id="arrCard" class="abs card wide">
+  <div class="cTitle"><img src="assets/emoji/warning.png" alt="">A AJUNS CU MULTIPLE PROBLEME</div>
+  <div class="pRow" id="ar1"><div class="art" id="ar1Art"></div><span class="nm">TURBOSUFLANTĂ</span><img class="ic" src="assets/emoji/cross_mark.png" alt=""></div>
+  <div class="pRow" id="ar2"><div class="art" id="ar2Art"></div><span class="nm">DPF</span><img class="ic" src="assets/emoji/cross_mark.png" alt=""></div>
+ </div>
+
+ <!-- W3: what we did -->
+ <div id="doneCard" class="abs card wide">
+  <div class="cTitle" style="margin-bottom:4px"><img src="assets/emoji/hammer_and_wrench.png" alt="">CE AM FĂCUT</div>
+  <div class="ckRow" id="dk1"></div>
+  <div class="ckRow" id="dk2"></div>
+  <div class="ckRow" id="dk3"></div>
+ </div>
+
+ <!-- W4a: intake + EGR -->
+ <div id="admCard" class="abs card wide">
+  <div class="cTitle"><img src="assets/emoji/broom.png" alt="">ADMISIE + RECIRCULARE GAZE</div>
+  <div id="admArt"><div id="admClean"></div><div id="admDirty"></div></div>
+  <div id="admStatus" class="status"></div>
+ </div>
+ <img id="admBroom" class="abs emo" src="assets/emoji/broom.png" alt="" style="width:120px;height:120px">
+
+ <!-- W4b: next steps -->
+ <div id="stepCard" class="abs card" style="width:700px;padding:22px 22px 22px">
+  <div class="cTitle"><img src="assets/emoji/rocket.png" alt="">CE URMEAZĂ</div>
+  <div id="steps">
+   <div class="step" id="st1"><div class="cir"><img src="assets/emoji/wrench.png" alt=""></div>MOTORUL<br>ÎNAPOI</div>
+   <div class="arw" id="sa1"><svg width="60" height="40" viewBox="0 0 60 40"><path d="M 6 20 L 50 20 M 36 8 L 52 20 L 36 32" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+   <div class="step" id="st2"><div class="cir"><img src="assets/emoji/key.png" alt=""></div>PRIMA<br>CHEIE</div>
+   <div class="arw" id="sa2"><svg width="60" height="40" viewBox="0 0 60 40"><path d="M 6 20 L 50 20 M 36 8 L 52 20 L 36 32" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+   <div class="step" id="st3"><div class="cir"><img src="assets/emoji/automobile.png" alt=""></div>LA<br>PROPRIETAR</div>
+  </div>
+ </div>
+
+ <!-- W5: weak points -->
+ <div id="weakCard" class="abs card wide">
+  <div class="cTitle"><img src="assets/emoji/magnifying_glass_tilted_left.png" alt="">PROBLEME CARE APAR</div>
+  <div class="pRow" id="wk1"><div class="art" id="wk1Art"></div><span class="nm">TURBOSUFLANTE</span><img class="ic" src="assets/emoji/warning.png" alt=""></div>
+  <div class="pRow" id="wk2"><div class="art" id="wk2Art"></div><span class="nm">DPF</span><img class="ic" src="assets/emoji/warning.png" alt=""></div>
+  <div class="pRow" id="wk3"><div class="art" id="wk3Art"></div><span class="nm">ADMISIE</span><img class="ic" src="assets/emoji/warning.png" alt=""></div>
+ </div>
+
+ <!-- W6: chain reaction -->
+ <div id="chainCard" class="abs card" style="width:660px;padding:22px 24px 18px">
+  <div class="cTitle"><img src="assets/emoji/stopwatch.png" alt="">DACĂ NU INTERVENIȚI LA TIMP</div>
+  <div id="chain">
+   <div class="cbox" id="cb1"><img src="assets/emoji/warning.png" alt="">TURBO · DPF<br>ADMISIE</div>
+   <svg id="chainArr" viewBox="0 0 84 60"><path id="chainPath" d="M 6 30 L 66 30 M 48 12 L 70 30 L 48 48" fill="none" stroke="#E11D2E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
+   <div class="cbox" id="cb2"><img src="assets/emoji/collision.png" alt="">ȘI<br>MOTORUL</div>
+  </div>
+  <div id="chainStatus" class="status"></div>
+ </div>
+
+ <!-- W8: cost -->
+ <div id="moneyCard" class="abs card" style="width:680px;padding:22px 22px 22px">
+  <div class="cTitle"><img src="assets/emoji/money_with_wings.png" alt="">COSTUL REPARAȚIEI</div>
+  <div id="mCols">
+   <div class="mCol" id="mc1"><div class="h"><img src="assets/emoji/cross_mark.png" alt="">AMÂNAT</div><div class="v">10.000 €</div></div>
+   <div class="mCol" id="mc2"><div class="h"><img src="assets/emoji/check_mark_button.png" alt="">LA TIMP</div><div class="v2">câteva zeci<br>de mii de lei</div></div>
+  </div>
+ </div>
+ <img id="moneyFly" class="abs emo" src="assets/emoji/money_with_wings.png" alt="" style="width:120px;height:120px">
+
+ <!-- W9: pros / cons (presenter) -->
+ <div id="prosCard" class="abs card" style="width:760px;padding:18px 20px 18px">
+  <div class="cTitle"><img src="assets/emoji/automobile.png" alt="">MOTORIZAREA 2.0 BITURBO</div>
+  <div id="pGrid">
+   <div class="pc ok" id="pc1"><img src="assets/emoji/fuel_pump.png" alt="">ECONOMICĂ</div>
+   <div class="pc ok" id="pc2"><img src="assets/emoji/leaf.png" alt="">CONSUM MIC</div>
+   <div class="pc ok" id="pc3"><img src="assets/emoji/racing_car.png" alt="">MUTĂ ~2 TONE</div>
+   <div class="pc bad" id="pc4"><img src="assets/emoji/flexed_biceps.png" alt="">DESTUL DE FORȚATĂ</div>
+  </div>
+ </div>
+
+ <!-- W10: advice (presenter) -->
+ <div id="tipCard" class="abs card" style="width:720px;padding:18px 24px 18px">
+  <div class="cTitle" style="margin-bottom:2px"><img src="assets/emoji/shield.png" alt="">CE AU NEVOIE</div>
+  <div class="ckRow" id="tk1"></div>
+  <div class="ckRow" id="tk2"></div>
+  <div id="tipMoney"><img src="assets/emoji/money_bag.png" alt="">MAI MULȚI BANI ÎN BUZUNAR</div>
+ </div>
+
+ <svg id="ringSvg" class="abs" viewBox="0 0 1080 1920" width="1080" height="1920" style="display:none">
+  <circle id="ringA" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="20"/><circle id="ringB" fill="none" stroke="#62D8FF" stroke-width="10"/>
+  <path id="ringLn" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+ </svg>
+ <div id="ringChip" class="chip abs"><img src="assets/emoji/gear.png" alt=""><span>ANSAMBLUL BITURBO</span></div>
+ <div id="sparks"></div>
+ <div id="cap"></div>
+
+ <!-- END CARD -->
+ <div id="endCard" class="abs">
+  <div class="eWord">TURBO <span class="y">DOCTOR</span></div>
+  <div id="eShare"><div class="sIco" id="sIco"></div><div><div class="sT1">DISTRIBUIE ACEST VIDEO</div><div class="sT2">unui prieten care ar avea nevoie!<img src="assets/emoji/folded_hands.png" alt=""></div></div></div>
+  <div id="eMap"></div>
+  <div id="eMapTitle">UNITĂȚILE NOASTRE</div>
+  <div id="eFree"><img src="assets/emoji/stethoscope.png" alt="">DIAGNOZĂ GRATUITĂ</div>
+  <div id="ePhone"><img src="assets/emoji/phone.png" alt="">0739 065 065</div>
+  <div id="eUrl">turbodoctor.ro</div>
+ </div>
+ <div id="flash"></div>
+</div>
+
+<script>
+const FPS = TL.fps;
+const $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, p) => a + (b - a) * p;
+const eOut = p => 1 - Math.pow(1 - p, 3);
+const eIn = p => p * p * p;
+const eInOut = p => p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+const eBack = (p, s = 1.9) => { const c = s + 1; return 1 + c * Math.pow(p - 1, 3) + s * Math.pow(p - 1, 2); };
+const norm = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const WORDS = TL.words;
+function Wd(win, text, nth = 0) {
+  const n = norm(text); const c = WORDS.filter(w => w.win === win && norm(w.text) === n);
+  if (!c[nth]) throw new Error('anchor not found: ' + win + ' ' + text + ' #' + nth); return c[nth];
+}
+const aw = (win, x, k) => Wd(win, x, k).os, ew = (win, x, k) => Wd(win, x, k).oe;
+const S0 = TL.story_out0, SEND = TL.story_end, TOTAL = TL.total, HOOK_END = S0;
+const CW = {}; TL.cold_words.forEach(w => CW[norm(w.text)] = w);
+const C = { mot: CW['motorizarile'].os, pr: CW['probleme'].os, prE: CW['probleme'].oe };
+const A = {
+  volvo0: aw(0, 'Volvo'), stai: aw(0, 'stai'), pentru0: aw(0, 'pentru'), tineE: ew(0, 'tine.'),
+  ce1: aw(1, 'Ce'), foarte: aw(1, 'foarte'), volvo1: aw(1, 'Volvo'), jur: aw(1, 'jur'), k200: aw(1, '200,'), ceva: aw(1, 'ceva'), kmE: ew(1, 'kilometri.'),
+  masina: aw(2, 'Mașina'), multiple: aw(2, 'multiple'), turbo2: aw(2, 'turbosuflantă'), dpf2: aw(2, 'DPF.'), dpf2E: ew(2, 'DPF.'),
+  la3: aw(3, 'La'), demontat: aw(3, 'demontat'), verificat: aw(3, 'verificat'), bit3: aw(3, 'biturbo'), recond: aw(3, 'recondiționat.'), recondE: ew(3, 'recondiționat.'),
+  tot: aw(4, 'Tot'), adm4: aw(4, 'admisie'), recirc: aw(4, 'recirculare'), curatat: aw(4, 'curățat'), completE: ew(4, 'complet,'),
+  si4: aw(4, 'și', 1), primeasca: aw(4, 'primească'), punem: aw(4, 'punem'), prima: aw(4, 'prima'), pleca: aw(4, 'pleca'), eiE: ew(4, 'ei.'),
+  ce5: aw(5, 'Ce'), pret: aw(5, 'pretențioase.'), problemele: aw(5, 'Problemele'), turbo5: aw(5, 'turbosuflante'), dpf5: aw(5, 'DPF,'), adm5: aw(5, 'admisie'), aparE: ew(5, 'apar.'),
+  dar6: aw(6, 'Dar'), interv6: aw(6, 'interveniți'), motorul6: aw(6, 'motorul'), reparat6: aw(6, 'reparat.'), reparat6E: ew(6, 'reparat.'),
+  mot7: aw(7, 'Motorizările'), am7: aw(7, 'Am'), interv7: aw(7, 'Interveniți'), timp7E: ew(7, 'timp,'),
+  pentru8: aw(8, 'pentru'), e10k: aw(8, '10.000'), ci: aw(8, 'ci'), leiE: ew(8, 'lei.'),
+  aceste9: aw(9, 'Aceste'), econ: aw(9, 'economice,'), consum: aw(9, 'consum'), doua: aw(9, 'două'), destul9: aw(9, 'destul'), fortate: aw(9, 'forțate.'), fortateE: ew(9, 'forțate.'),
+  si10: aw(10, 'Și'), intre: aw(10, 'întreținere'), interv10: aw(10, 'intervenții'), bani: aw(10, 'bani'),
+};
+
+// ---------- art ----------
+const mini = (html, w, h) => html.replace(/width="\d+" height="\d+"/, `width="${w}" height="${h}"`);
+$('ar1Art').innerHTML = mini(ART.turbo('ta'), 110, 76); $('ar2Art').innerHTML = mini(ART.dpf('da'), 110, 76);
+$('wk1Art').innerHTML = mini(ART.turbo('tb'), 110, 76); $('wk2Art').innerHTML = mini(ART.dpf('db'), 110, 76); $('wk3Art').innerHTML = mini(ART.intake('ib'), 110, 76);
+$('admClean').innerHTML = ART.intake('ic'); $('admDirty').innerHTML = ART.intakeDirty('idd');
+const ck = txt => `<div class="box"><div class="fill"></div><svg width="52" height="52" viewBox="0 0 54 54"><path d="M 11 28 L 23 40 L 44 15" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></div><span>${txt}</span>`;
+$('dk1').innerHTML = ck('MOTOR DEMONTAT'); $('dk2').innerHTML = ck('MAI MULTE VERIFICĂRI'); $('dk3').innerHTML = ck('BITURBO RECONDIȚIONAT');
+$('tk1').innerHTML = ck('ÎNTREȚINERE CORESPUNZĂTOARE'); $('tk2').innerHTML = ck('INTERVENȚII LA TIMP');
+$('sIco').innerHTML = `<svg viewBox="-80 -80 160 160" width="150" height="150"><circle id="sRing" r="74" fill="none" stroke="#E11D2E" stroke-width="5" opacity=".4"/><circle r="64" fill="#E11D2E"/>
+ <g id="sArrow"><path d="M -34 26 C -34 -6 -8 -22 20 -22 L 20 -42 L 52 -8 L 20 26 L 20 6 C -2 6 -20 12 -34 26 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></g></svg>`;
+{ // map
+  const M = TL.map; const pin = (x, y, id) => `<g id="${id}" transform="translate(${x} ${y})"><g class="pinG"><path d="M 0 0 C -7 -16 -26 -28 -26 -46 A 26 26 0 1 1 26 -46 C 26 -28 7 -16 0 0 Z" fill="#E11D2E" stroke="#fff" stroke-width="5"/><circle cx="0" cy="-46" r="9" fill="#fff"/></g></g>`;
+  const lblPos = { 'GALAȚI': [34, -40, 'start'], 'BUCUREȘTI': [0, 50, 'middle'], 'IAȘI': [34, -46, 'start'], 'PIATRA NEAMȚ': [-34, -46, 'end'] };
+  let pins = '', lbls = '', halos = '';
+  M.cities.forEach((c, i) => { const [dx, dy, an] = lblPos[c.name];
+    halos += `<circle id="halo${i}" cx="${c.x}" cy="${c.y}" r="10" fill="none" stroke="#FFD21F" stroke-width="5"/>`;
+    pins += pin(c.x, c.y, 'pin' + i); lbls += `<text id="lbl${i}" class="cityLbl" x="${c.x + dx}" y="${c.y + dy}" text-anchor="${an}">${c.name}</text>`; });
+  $('eMap').innerHTML = `<svg viewBox="-10 -10 ${M.w + 20} ${M.h + 20}" width="640" height="447" style="overflow:visible"><path d="${M.path}" fill="rgba(255,255,255,.10)" stroke="#E5E7EB" stroke-width="5" stroke-linejoin="round"/>${halos}${pins}${lbls}</svg>`;
+}
+const SPARK_N = 10; const sparks = [];
+for (let i = 0; i < SPARK_N; i++) { const im = document.createElement('img'); im.src = 'assets/emoji/sparkles.png'; im.className = 'abs spark emo'; $('sparks').appendChild(im); sparks.push(im); }
+
+function setT(el, x, y, s = 1, r = 0, o = 1) {
+  if (o <= 0.003 || s <= 0.003) { if (el.style.display !== 'none') el.style.display = 'none'; return; }
+  const disp = el.dataset.disp || 'block'; if (el.style.display !== disp) el.style.display = disp;
+  el.style.opacity = o.toFixed(3);
+  el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%) scale(${s.toFixed(4)}) rotate(${r.toFixed(2)}deg)`;
+}
+['chap', 'hookPill', 'hookChips', 'chipA', 'ringChip'].forEach(id => $(id).dataset.disp = 'flex');
+const hide = el => { if (el.style.display !== 'none') el.style.display = 'none'; };
+function life(t, t0, t1, inD = .36, outD = .22, back = 1.9) {
+  if (t < t0 || t > t1 + outD) return null;
+  let s = 1, o = 1; const k = t - t0;
+  if (k < inD) { const p = k / inD; s = eBack(p, back); o = clamp(p * 4); }
+  if (t > t1) { const p = (t - t1) / outD; s *= 1 - .3 * eIn(p); o *= 1 - p; }
+  return { s, o, k };
+}
+const bob = (k, seed = 0, a = 6) => Math.sin(k * 2.3 + seed) * a;
+function status(el, html, color) { if (el.dataset.h !== html) { el.innerHTML = html; el.dataset.h = html; } el.style.color = color; }
+function rowIn(el, t, ts) { const p = clamp((t - ts) / .3); el.style.opacity = eOut(p).toFixed(3); el.style.transform = `translateX(${((1 - eOut(p)) * -30).toFixed(1)}px)`; return p; }
+function popIn(el, t, ts, s = 2.2) { const p = clamp((t - ts) / .3); el.style.opacity = eOut(p).toFixed(3); el.style.transform = `scale(${p > 0 ? eBack(p, s).toFixed(4) : 0})`; return p; }
+function checkRow(row, t, ts) { const p = clamp((t - ts) / .3);
+  row.querySelector('.fill').style.transform = `scale(${p > 0 ? eBack(p, 2) : 0})`;
+  row.querySelector('path').setAttribute('stroke-dashoffset', (1 - eOut(clamp((t - ts - .1) / .25))).toFixed(3));
+  row.querySelector('.box').style.borderColor = p > 0 ? '#16A34A' : '#CBD2D9'; row.style.color = p > 0 ? '#0F1216' : '#9AA3AD'; return p; }
+function cardIn(id, t, t0, t1, x, y) { const L = life(t, t0, t1, .38, .22, 1.6); if (!L) { hide($(id)); return null; } setT($(id), x, y + bob(L.k, 0, 4), L.s, 0, L.o); return L; }
+
+// chip with switching content: phases = [[t, ico, text, cls], ...]
+function chip(el, t, t0, t1, x, y, phases) {
+  const L = life(t, t0, t1, .3, .2, 2.2); if (!L) { hide(el); return; }
+  let ph = phases[0]; for (const p of phases) if (t >= p[0]) ph = p;
+  const key = ph[1] + ph[2] + ph[3];
+  if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('img').src = `assets/emoji/${ph[1]}.png`; el.querySelector('span').textContent = ph[2]; el.className = 'chip abs ' + (ph[3] || ''); el.style.display = 'flex'; }
+  const sw = ph === phases[0] ? 1 : lerp(.75, 1, eBack(clamp((t - ph[0]) / .25), 2.4));
+  setT(el, x, y, L.s * sw, -2, L.o);
+}
+function sticker(el, ico, t, t0, t1, x, y, rot = 0) {
+  const L = life(t, t0, t1, .3, .2, 2.6); if (!L) { hide(el); return; }
+  const src = `assets/emoji/${ico}.png`; if (el.dataset.src !== src) { el.src = src; el.dataset.src = src; }
+  setT(el, x, y + bob(L.k, 1, 7), L.s, rot + Math.sin(L.k * 3) * 6, L.o);
+}
+
+// ---------- captions ----------
+const TAGS = {
+  0: { volvo: 'c', 20: 'y', biturbo: 'c', final: 'y' },
+  1: { foarte: 'y', des: 'y', volvo: 'c', 20: 'y', biturbo: 'c', 200: 'y', ceva: 'y', mii: 'y', kilometri: 'y' },
+  2: { multiple: 'r', probleme: 'r', turbosuflanta: 'c', dpf: 'c' },
+  3: { demontat: 'g', verificat: 'g', ansamblul: 'c', biturbo: 'c', reconditionat: 'g' },
+  4: { admisie: 'c', recirculare: 'c', gazelor: 'c', curatat: 'g', complet: 'g', motorul: 'c', prima: 'y', cheie: 'y', proprietarul: 'g' },
+  5: { 20: 'y', biturbo: 'c', pretentioase: 'r', problemele: 'r', turbosuflante: 'c', dpf: 'c', admisie: 'c', apar: 'r' },
+  6: { interveniti: 'y', timp: 'y', motorul: 'r', reparat: 'r' },
+  7: { probleme: 'r', reparat: 'g', motoare: 'c', 20: 'y', biturbo: 'c', interveniti: 'y', timp: 'y' },
+  8: { 10000: 'r', euro: 'r', zeci: 'g', mii: 'g', lei: 'g' },
+  9: { economice: 'g', consum: 'g', mic: 'g', doua: 'y', tone: 'y', fortate: 'r' },
+  10: { intretinere: 'g', corespunzatoare: 'g', interventii: 'g', timp: 'y', bani: 'g', buzunar: 'g' },
+};
+const HIDE_CAP = [[0, S0 + 0.05], [SEND, 1e9]];
+let CHUNKS = [];
+function buildChunks() {
+  const cv = document.createElement('canvas').getContext('2d'); cv.font = '900 80px Mont';
+  const width = s => cv.measureText(s.toUpperCase()).width + 36; const MAXW = 840; let cur = null;
+  WORDS.forEach((w, i) => {
+    const prev = WORDS[i - 1];
+    const brk = !cur || cur.words.length >= 3 || (prev && /[.,?!]$/.test(prev.text)) || (prev && w.os - prev.oe > 0.38) || cur.w + width(w.text) > MAXW;
+    if (brk) { cur = { words: [], w: 0, win: w.win }; CHUNKS.push(cur); }
+    cur.words.push(w); cur.w += width(w.text);
+  });
+  CHUNKS.forEach((c, i) => { c.t0 = c.words[0].os - 0.05; const nx = CHUNKS[i + 1]; c.t1 = Math.min(nx ? nx.words[0].os - 0.05 : 1e9, c.words[c.words.length - 1].oe + 0.32); });
+}
+let capCur = -1;
+function renderCaptions(t) {
+  const cap = $('cap'); const hidden = HIDE_CAP.some(([a, b]) => t >= a && t < b);
+  const idx = hidden ? -1 : CHUNKS.findIndex(c => t >= c.t0 && t < c.t1);
+  if (idx !== capCur) { capCur = idx; if (idx < 0) { cap.innerHTML = ''; return; }
+    cap.innerHTML = CHUNKS[idx].words.map(w => `<span class="${(TAGS[w.win] || {})[norm(w.text)] || ''}">${w.text.replace(/[.,]$/, '')}</span>`).join(''); }
+  if (idx < 0) return;
+  const c = CHUNKS[idx]; const p = clamp((t - c.t0) / 0.14);
+  cap.style.transform = `translateY(${(1 - eOut(p)) * 24}px) scale(${lerp(.86, 1, eBack(p, 2.2))})`; cap.style.opacity = clamp(p * 3);
+  c.words.forEach((w, j) => { const sp = cap.children[j]; const on = t >= w.os - 0.03 && t < Math.max(w.oe, w.os + 0.18); sp.classList.toggle('on', on);
+    const d = t - w.os; const pp = (d >= -0.03 && d < 0.28) ? Math.sin(clamp((d + .03) / .31) * Math.PI) : 0; sp.style.transform = `scale(${(1 + .13 * pp * Math.min(1, 7 / Math.max(1, w.text.length))).toFixed(3)})`; });
+}
+
+// ---------- chapters (engine footage only) ----------
+const CHAPS = [
+  [A.ce1 - .3, A.ce5 - .1, 'LUCRAREA', 'hammer_and_wrench'],
+  [A.ce5 - .1, A.aceste9 - .3, 'DE ȘTIUT', 'brain'],
+];
+let chapCur = -1;
+function renderChapter(t) {
+  const el = $('chap'); const i = CHAPS.findIndex(c => t >= c[0] && t < c[1]);
+  if (i < 0) { hide(el); chapCur = -1; return; }
+  if (i !== chapCur) { chapCur = i; $('chapTxt').textContent = CHAPS[i][2]; $('chapIco').src = `assets/emoji/${CHAPS[i][3]}.png`; }
+  const p = clamp((t - CHAPS[i][0]) / .35), q = clamp((CHAPS[i][1] - t) / .2); el.style.display = 'flex'; el.style.opacity = clamp(p * 3) * q;
+  el.style.transform = `translate(56px, 196px) scale(${lerp(.6, 1, eBack(p, 2.4))})`;
+}
+
+// ---------- background ----------
+const STORY = TL.segments.filter(s => s.kind === 'story');
+const PUNCH = [{ t: C.pr, a: .09, sh: 16 }, { t: A.dpf2, a: .05, sh: 8 }, { t: A.recond, a: .04, sh: 0 }, { t: A.curatat, a: .04, sh: 0 }, { t: A.pret, a: .06, sh: 10 },
+  { t: A.motorul6, a: .07, sh: 12 }, { t: A.e10k, a: .06, sh: 10 }, { t: A.fortate, a: .05, sh: 8 }, { t: A.bani, a: .04, sh: 0 }];
+const BGX = { z: 1, dx: 0, dy: 0 };
+function renderBg(t) {
+  let z = 1, dx = 0, dy = 0;
+  if (t < HOOK_END) z = 1.18 - .1 * eOut(t / HOOK_END);
+  else if (t < SEND) { const k = STORY.findIndex(s => t >= s.out_a && t < s.out_a + (s.src_b - s.src_a) + 1e-6); const s = STORY[Math.max(0, k)];
+    z = (k % 2 === 0 ? 1.02 : 1.08) + .025 * clamp((t - s.out_a) / (s.src_b - s.src_a)); }
+  else z = 1.04 + .03 * clamp((t - SEND) / (TOTAL - SEND));
+  for (const P of PUNCH) { const d = t - P.t; if (d >= -0.02 && d < .7) { z += P.a * Math.exp(-Math.max(0, d) * 6.5) * (d < .05 ? clamp((d + .02) / .07) : 1);
+    dx += P.sh * Math.exp(-d * 9) * Math.sin(d * 75); dy += P.sh * Math.exp(-d * 9) * Math.cos(d * 61); } }
+  if (t < C.pr + .2) { const s = 3 * (1 - clamp(t / 0.5)); dx += s * Math.sin(t * 90); dy += s * Math.cos(t * 70); }
+  BGX.z = z; BGX.dx = dx; BGX.dy = dy;
+  $('bg').style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(${z.toFixed(4)})`;
+  // red alarm pulse in the hook and on the "engine must be repaired" beat
+  let tint = 0;
+  if (t < HOOK_END) tint = (.34 + .22 * Math.max(0, Math.sin(t * 9))) * (1 - clamp((t - (HOOK_END - .3)) / .3));
+  const r0 = A.motorul6 - .1, r1 = A.reparat6E + .2; if (t >= r0 && t <= r1 + .4) tint = Math.max(tint, (.16 + .12 * Math.max(0, Math.sin(t * 9))) * clamp((t - r0) / .3) * (1 - clamp((t - r1) / .4)));
+  $('tint').style.opacity = tint.toFixed(3);
+  let fl = 0; const dh = t - (HOOK_END - .12); if (dh >= 0 && dh < .3) fl = .6 * Math.sin(clamp(dh / .3) * Math.PI);
+  const dp = t - (C.pr - .02); if (dp >= 0 && dp < .22) fl = Math.max(fl, .35 * Math.sin(clamp(dp / .22) * Math.PI));
+  const de = t - (SEND - .08); if (de >= 0 && de < .3) fl = Math.max(fl, .6 * Math.sin(clamp(de / .3) * Math.PI));
+  $('flash').style.opacity = fl.toFixed(3); $('vig').style.opacity = t >= SEND ? 0 : 1;
+}
+
+// ---------- sparkles ----------
+const BURSTS = [];
+function burst(t0, cx, cy, n, rad, size = 1) { BURSTS.push({ t0, cx, cy, n, rad, size }); }
+function renderSparks(t) {
+  let used = 0;
+  for (const b of BURSTS) { const k = t - b.t0; if (k < 0 || k > 1.4) continue;
+    for (let i = 0; i < b.n && used < SPARK_N; i++, used++) { const kk = k - i * .07; const el = sparks[used];
+      if (kk < 0 || kk > 1) { hide(el); continue; }
+      const ang = (i * 137.5) * Math.PI / 180, rr = b.rad * (.55 + .45 * ((i * 53) % 10) / 10), p = kk;
+      setT(el, b.cx + Math.cos(ang) * rr, b.cy + Math.sin(ang) * rr - p * 26, Math.sin(p * Math.PI) * b.size, p * 40, 1); } }
+  for (let i = used; i < SPARK_N; i++) hide(sparks[i]);
+}
+
+// ---------- SFX ----------
+window.SFX = [];
+const sfx = (t, kind, gain = 1) => window.SFX.push({ t: +t.toFixed(3), kind, gain });
+function setupCues() {
+  sfx(0, 'impact', .85); sfx(0.05, 'alarm', .45); sfx(C.pr - .03, 'impact', .8); sfx(C.pr - .03, 'stamp', .7);
+  [0, 1, 2].forEach(i => sfx(C.pr + .3 + i * .2, 'pop', .5)); sfx(HOOK_END - .16, 'whoosh', .9);
+  sfx(A.volvo0 - .1, 'pop', .45); sfx(A.stai - .05, 'tick2', .5); sfx(A.pentru0 - .05, 'pop', .4);
+  sfx(A.foarte - .25, 'whoosh', .55); sfx(A.k200, 'tick', .5); sfx(A.k200 + .3, 'tick', .45); sfx(A.ceva, 'ding', .5);
+  sfx(A.masina - .2, 'whoosh', .55); sfx(A.turbo2, 'alarm', .4); sfx(A.dpf2, 'stamp', .55);
+  sfx(A.la3 - .15, 'whoosh', .5); sfx(A.demontat, 'tick2', .55); sfx(A.verificat, 'tick2', .55); sfx(A.recond, 'tick2', .6); sfx(A.recond + .1, 'shimmer', .55); sfx(900 / FPS, 'pop', .5);
+  sfx(A.tot - .2, 'whoosh', .55); sfx(A.curatat, 'shimmer', .6);
+  sfx(A.si4 - .1, 'whoosh', .5); sfx(A.punem, 'pop', .45); sfx(A.prima, 'pop', .5); sfx(A.pleca, 'ding', .5);
+  sfx(A.ce5 - .15, 'pop', .45); sfx(A.pret, 'stamp', .6); sfx(A.problemele - .15, 'whoosh', .55); sfx(A.turbo5, 'pop', .45); sfx(A.dpf5, 'pop', .45); sfx(A.adm5, 'pop', .45);
+  sfx(A.dar6 - .15, 'whoosh', .5); sfx(A.interv6, 'tick', .5); sfx(A.motorul6, 'impact', .55); sfx(A.motorul6, 'alarm', .45);
+  sfx(A.mot7 - .1, 'pop', .45); sfx(A.am7, 'pop', .4); sfx(A.interv7, 'tick2', .5);
+  sfx(A.pentru8 - .15, 'whoosh', .55); sfx(A.e10k, 'crack', .5); sfx(A.ci, 'ding', .55);
+  sfx(A.aceste9 - .15, 'whoosh', .5); sfx(A.econ, 'pop', .45); sfx(A.consum, 'pop', .45); sfx(A.doua, 'pop', .45); sfx(A.fortate, 'alarm', .4);
+  sfx(A.si10 - .15, 'whoosh', .5); sfx(A.intre, 'tick2', .55); sfx(A.interv10, 'tick2', .55); sfx(A.bani, 'ding', .6); sfx(A.bani + .05, 'shimmer', .5);
+  sfx(SEND - .08, 'whoosh', .8); sfx(SEND + .3, 'ding', .55); sfx(SEND + .9, 'pop', .45);
+  [0, 1, 2, 3].forEach(i => sfx(SEND + 1.9 + i * .26, 'pop', .45)); sfx(SEND + 3.1, 'ding', .45);
+  burst(A.recond + .05, 540, 470, 5, 300, .8); burst(A.curatat + .1, 540, 460, 6, 300, .8); burst(A.ci + .05, 720, 520, 5, 170, .7); burst(A.bani + .05, 540, 400, 6, 330, .8);
+}
+
+// ---------- scenes ----------
+function rHook(t) {
+  const out = HOOK_END - .1;
+  let L = life(t, 0, out, .28, .18);
+  if (L) setT($('hookPill'), 540, lerp(140, 215, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hookPill'));
+  L = life(t, 0.02, out, .3, .18, 1.6); if (L) setT($('hookL1'), 540, 370, L.s, -2, L.o); else hide($('hookL1'));
+  L = life(t, C.pr - .05, out, .2, .18, 1.2);
+  if (L) { const st = lerp(1.9, 1, eOut(clamp(L.k / .16))); setT($('hookL2'), 540, 545, st * (1 + .025 * Math.sin(t * 18)), -4, L.o); } else hide($('hookL2'));
+  L = life(t, C.pr + .2, out, .2, .18); if (L) { setT($('hookChips'), 540, 730, 1, 0, L.o); [1, 2, 3].forEach(i => popIn($('hc' + i), t, C.pr + .3 + (i - 1) * .2)); } else hide($('hookChips'));
+  L = life(t, 0.1, out, .3, .18, 2.6); if (L) setT($('hookSiren'), 960, 196 + bob(L.k, 0, 4), L.s * (1 + .08 * Math.max(0, Math.sin(t * 14))), Math.sin(t * 20) * 8, L.o); else hide($('hookSiren'));
+  L = life(t, C.pr + .05, out, .3, .18, 2.6); if (L) setT($('hookWarn'), 120, 196 + bob(L.k, 2, 4), L.s * .8, -10 + Math.sin(t * 9) * 6, L.o); else hide($('hookWarn'));
+}
+
+function rChips(t) {
+  const el = $('chipA');
+  const segs = [
+    [A.volvo0 - .1, A.tineE + .1, 540, 300, [[A.volvo0 - .1, 'automobile', 'AI UN VOLVO 2.0 BITURBO?', ''], [A.stai - .05, 'hourglass', 'STAI PÂNĂ LA FINAL', 'yellow'], [A.pentru0 - .05, 'backhand_index_pointing_down', 'E PENTRU TINE!', 'red']]],
+    [A.ce5 - .1, A.problemele - .25, 540, 330, [[A.ce5 - .1, 'brain', 'CE TREBUIE SĂ ȘTIȚI', ''], [A.pret - .05, 'warning', 'MOTORIZĂRI PRETENȚIOASE', 'red']]],
+    [A.mot7 - .1, A.timp7E + .15, 540, 330, [[A.mot7 - .1, 'warning', 'AU NIȘTE PROBLEME', 'red'], [A.am7 - .05, 'wrench', 'MULTE REPARATE ANUL ACESTA', ''], [A.interv7 - .05, 'stopwatch', 'INTERVENIȚI LA TIMP!', 'yellow']]],
+  ];
+  const s = segs.find(g => t >= g[0] && t <= g[1] + .25);
+  if (!s) { hide(el); return; }
+  chip(el, t, s[0], s[1], s[2], s[3], s[4]);
+}
+
+function rKm(t) {
+  const L = cardIn('kmCard', t, A.foarte - .25, A.kmE + .45, 540, 450); if (!L) return;
+  const p = eOut(clamp((t - A.k200) / .7)); const v = Math.round(200000 * p / 1000) * 1000;
+  const s = String(v).padStart(6, '0'); $('kmDg').textContent = s.slice(0, 3) + '.' + s.slice(3);
+  $('kmPl').textContent = t >= A.ceva - .05 ? '+' : '';
+  $('kmSub').style.opacity = clamp((t - A.volvo1 + .1) / .3);
+}
+
+function rArr(t) {
+  const L = cardIn('arrCard', t, A.masina - .15, A.dpf2E + .5, 540, 440); if (!L) return;
+  rowIn($('ar1'), t, A.turbo2 - .1); rowIn($('ar2'), t, A.dpf2 - .1);
+  [['ar1', A.turbo2], ['ar2', A.dpf2]].forEach(([id, ts]) => { const ic = $(id).querySelector('.ic'); const p = clamp((t - ts - .15) / .3); ic.style.transform = `scale(${p > 0 ? eBack(p, 2.6) : 0})`; });
+}
+
+function rDone(t) {
+  const L = cardIn('doneCard', t, A.la3 - .15, A.recondE + .5, 540, 440); if (!L) return;
+  checkRow($('dk1'), t, A.demontat); checkRow($('dk2'), t, A.verificat); checkRow($('dk3'), t, A.recond);
+}
+
+function rAdm(t) {
+  const L = cardIn('admCard', t, A.tot - .15, Math.min(A.completE + .4, A.si4 - .35), 540, 440);
+  const bL = life(t, A.curatat - .25, A.completE + .2, .25, .2, 2.4);
+  const wp = eInOut(clamp((t - A.curatat + .1) / .8));
+  if (bL) setT($('admBroom'), lerp(330, 760, wp), 400 + Math.sin(t * 16) * 10, bL.s, -20 + Math.sin(t * 16) * 14, bL.o); else hide($('admBroom'));
+  if (!L) return;
+  $('admDirty').style.clipPath = `inset(0 0 0 ${(wp * 100).toFixed(1)}%)`;
+  status($('admStatus'), t >= A.curatat - .05 ? '<img src="assets/emoji/check_mark_button.png">CURĂȚATE COMPLET' : '', '#15803D');
+}
+
+function rSteps(t) {
+  const L = cardIn('stepCard', t, A.si4 - .1, A.eiE + .4, 540, 440); if (!L) return;
+  const on = [[A.primeasca - .1, 'st1', null], [A.prima - .1, 'st2', 'sa1'], [A.pleca - .1, 'st3', 'sa2']];
+  on.forEach(([ts, id, ar]) => { const el = $(id); const p = clamp((t - ts) / .3); el.classList.toggle('on', p > 0);
+    el.querySelector('.cir').style.transform = `scale(${p > 0 ? eBack(p, 2.4) : 1})`; if (ar) $(ar).classList.toggle('on', p > 0); });
+  const key = $('st2').querySelector('img'); const kp = clamp((t - A.prima) / .5); key.style.transform = `rotate(${(-40 + 40 * eBack(kp, 2.2)).toFixed(1)}deg)`;
+  const car = $('st3').querySelector('img'); car.style.transform = t >= A.pleca - .1 ? `translateX(${(Math.sin((t - A.pleca) * 10) * 3).toFixed(1)}px)` : 'none';
+}
+
+function rWeak(t) {
+  const L = cardIn('weakCard', t, A.problemele - .2, A.aparE + .5, 540, 460); if (!L) return;
+  [['wk1', A.turbo5], ['wk2', A.dpf5], ['wk3', A.adm5]].forEach(([id, ts]) => { rowIn($(id), t, ts - .1);
+    const ic = $(id).querySelector('.ic'); const p = clamp((t - ts - .1) / .3); ic.style.transform = `scale(${p > 0 ? eBack(p, 2.6) * (1 + .06 * Math.sin(t * 10)) : 0})`; });
+}
+
+function rChain(t) {
+  const L = cardIn('chainCard', t, A.dar6 - .15, A.reparat6E + .5, 540, 450); if (!L) return;
+  popIn($('cb1'), t, A.dar6 + .05, 1.8);
+  $('chainPath').setAttribute('stroke-dashoffset', (1 - eOut(clamp((t - A.motorul6 + .35) / .3))).toFixed(3));
+  const p = popIn($('cb2'), t, A.motorul6 - .05, 2.6); if (p >= 1) $('cb2').style.transform = `scale(${(1 + .04 * Math.sin(t * 12)).toFixed(3)})`;
+  status($('chainStatus'), t >= A.reparat6 - .05 ? '<img src="assets/emoji/warning.png">VA TREBUI REPARAT' : '', '#E11D2E');
+}
+
+function rMoney(t) {
+  const L = cardIn('moneyCard', t, A.pentru8 - .15, Math.min(A.leiE + .45, A.aceste9 - .32), 540, 450);
+  const fL = life(t, A.e10k - .05, A.ci, .3, .2, 2.4); if (fL) setT($('moneyFly'), 830 + fL.k * 50, 290 - fL.k * 40, fL.s, -12 + Math.sin(t * 8) * 10, fL.o); else hide($('moneyFly'));
+  if (!L) return;
+  popIn($('mc1'), t, A.e10k - .1, 2.2); popIn($('mc2'), t, A.ci - .05, 2.2);
+  $('mc1').style.filter = t >= A.ci ? 'grayscale(.55) opacity(.75)' : 'none';
+}
+
+function rPros(t) {
+  const L = cardIn('prosCard', t, A.aceste9 - .1, A.fortateE + .55, 540, 300); if (!L) return;
+  popIn($('pc1'), t, A.econ - .05); popIn($('pc2'), t, A.consum - .05); popIn($('pc3'), t, A.doua - .05);
+  const p = popIn($('pc4'), t, A.destul9 - .05, 2.6); if (p >= 1) $('pc4').style.transform = `scale(${(1 + .035 * Math.sin(t * 11)).toFixed(3)})`;
+}
+
+function rTip(t) {
+  const L = cardIn('tipCard', t, A.si10 - .1, SEND - .12, 540, 320); if (!L) return;
+  checkRow($('tk1'), t, A.intre); checkRow($('tk2'), t, A.interv10);
+  const p = popIn($('tipMoney'), t, A.bani - .1, 2.2); if (p >= 1) $('tipMoney').style.transform = `scale(${(1 + .03 * Math.sin(t * 9)).toFixed(3)})`;
+}
+
+function rEnd(t) {
+  const el = $('endCard'); if (t < SEND) { hide(el); return; }
+  const k = t - SEND; el.style.display = 'block'; el.style.opacity = clamp(k / .3); el.style.transform = 'none';
+  const seq = [['.eWord', .05], ['#eShare', .25], ['#eMap', 1.3], ['#eMapTitle', 1.45], ['#eFree', 2.9], ['#ePhone', 3.1], ['#eUrl', 3.3]];
+  seq.forEach(([sel, d]) => { const c = el.querySelector(sel); const p = clamp((k - d) / .4);
+    let tr = `translateY(${(1 - eOut(p)) * 40}px)`;
+    if (sel === '#eShare') tr += ` scale(${p > 0 ? eBack(p, 2.0) * (1 + .025 * Math.sin((k - d) * 5)) : 0})`;
+    if (sel === '#eFree' || sel === '#ePhone') tr += ` scale(${p > 0 ? eBack(p, 2.0) : 0})`;
+    c.style.opacity = eOut(p); c.style.transform = tr; c.style.transformOrigin = '50% 50%'; });
+  const ka = k - .6; const nud = ka > 0 ? Math.max(0, Math.sin(ka * 4.2)) : 0;
+  $('sArrow').setAttribute('transform', `translate(${(nud * 10).toFixed(1)} ${(-nud * 6).toFixed(1)}) rotate(${(-nud * 10).toFixed(1)})`);
+  const rk = (k % 1.2) / 1.2; $('sRing').setAttribute('r', (64 + rk * 16).toFixed(1)); $('sRing').setAttribute('opacity', (0.7 * (1 - rk)).toFixed(2));
+  TL.map.cities.forEach((c, i) => { const d = 1.85 + i * .26, p = clamp((k - d) / .35);
+    document.getElementById('pin' + i).querySelector('.pinG').setAttribute('transform', `translate(0 ${(-(1 - eOut(p)) * 60).toFixed(1)}) scale(${p > 0 ? eBack(p, 2.2) : 0})`);
+    document.getElementById('lbl' + i).setAttribute('opacity', clamp((k - d - .15) / .3));
+    const h = document.getElementById('halo' + i); const hk = ((k - d - .2) % 1.6 + 1.6) % 1.6; h.setAttribute('r', 10 + hk * 34); h.setAttribute('opacity', p >= 1 ? Math.max(0, .9 - hk / 1.6) : 0); });
+}
+
+const mapBg = (x, y) => [540 + (x - 540) * BGX.z + BGX.dx, 960 + (y - 960) * BGX.z + BGX.dy];
+function rRing(t, n) {
+  const TR = TL.track_turbo, f0 = 900, f1 = 926; const svg = $('ringSvg'), ch = $('ringChip');
+  if (!TR || n < f0 || n > f1 + 5) { hide(svg); hide(ch); return; }
+  const tr = TR[String(Math.min(f1, n))]; const [x, y] = mapBg(tr[0], tr[1]);
+  const a0 = f0 / FPS, a1 = f1 / FPS; const o = clamp((t - a0) / .12) * (1 - clamp((t - a1) / .16));
+  const r = (165 + 6 * Math.sin(t * 9)) * BGX.z * eBack(clamp((t - a0) / .3), 2);
+  $('ringA').setAttribute('cx', x); $('ringA').setAttribute('cy', y); $('ringA').setAttribute('r', Math.max(1, r));
+  $('ringB').setAttribute('cx', x); $('ringB').setAttribute('cy', y); $('ringB').setAttribute('r', Math.max(1, r));
+  const lx = Math.max(250, x - r - 220), ly = y; $('ringLn').setAttribute('d', `M ${lx + 180} ${ly} L ${x - r - 6} ${y}`);
+  svg.style.display = 'block'; svg.style.opacity = o.toFixed(3); svg.style.transform = 'none';
+  setT(ch, lx, ly, eBack(clamp((t - a0 - .08) / .3), 2.2), -3, o);
+}
+function render(t, n) {
+  renderBg(t);
+  rHook(t); rChips(t); rKm(t); rArr(t); rDone(t); rAdm(t); rSteps(t); rWeak(t); rChain(t); rMoney(t); rPros(t); rTip(t); rRing(t, n); rEnd(t);
+  renderSparks(t); renderChapter(t); renderCaptions(t);
+}
+const bg = $('bg');
+window.renderFrame = async (n) => {
+  const t = n / FPS; const src = t >= SEND ? 'assets/end_bg.jpg' : `frames_base/${String(n).padStart(5, '0')}.jpg`;
+  if (bg.dataset.src !== src) { bg.src = src; bg.dataset.src = src; try { await bg.decode(); } catch (e) { } }
+  render(t, n); return true;
+};
+window.READY = false;
+(async () => {
+  for (const f of ['900 80px Mont', '800 40px Mont', '700 30px Mont', '600 30px Mont', '100px Anton']) await document.fonts.load(f);
+  await document.fonts.ready; await Promise.all([...document.images].map(im => im.decode().catch(() => { })));
+  buildChunks(); setupCues();
+  window.CHUNKS_DEBUG = CHUNKS.map(c => ({ t0: +c.t0.toFixed(2), t1: +c.t1.toFixed(2), txt: c.words.map(w => w.text).join(' ') }));
+  window.READY = true;
+})();
+</script>
+</body></html>
