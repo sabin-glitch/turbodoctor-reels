@@ -19,7 +19,7 @@ Regulile lui Sabin și preferințele lui de editare sunt ținute în skill-ul `t
 - **Schemă animată** pentru mecanismul defectului (`schem.js`), plus scanări și săgeți care urmăresc piesa reală (`track_point.py`).
 - **Final:** „Rețeta Turbo Doctor” (3 sfaturi de inginer) pe un cadru încetinit, apoi cardul de final neschimbat.
 - **Culoare doar ca accent scurt** pe momente-cheie (roșu = problemă, „radiografie”, alb-negru, verde = rezolvare), niciodată filtru pe tot videoclipul.
-- **Ritm:** implicit pauze tăiate + 1,1×. Pentru „fără tăieturi”: `out/v2.json` → `{"cuts": false, "speed": 1.0}`.
+- **Ritm natural (cerut de Sabin, 18.10.2026):** implicit nu se taie pauzele și nu se accelerează (`{"cuts": false, "speed": 1.0}`); tăierea tuturor pauzelor face videoclipul prea rapid și obositor. **Doar hook-ul (cold open) e montat**, din cea mai interesantă parte a clipului.
 - Muzică procedurală discretă, cu ducking sub voce; loudnorm −14 LUFS.
 
 ## Pașii pentru un reel
@@ -31,7 +31,7 @@ cd /home/claude/reels/<slug>
 python3 wm_remove.py --probe && python3 wm_remove.py <SWITCH>   # doar dacă are watermark TikTok
 python3 transcribe.py && python3 transcribe2.py               # -> out/wins.json, out/tr2.log
 # scrii out/curated.json (un string pe fereastră, fidel) și out/cold.json (cold open)
-# opțional out/v2.json: {"speed": 1.1, "tip": {"dur": 3.4, "src": <s>, "speed": 0.7}, "cuts": true, "music": true}
+# opțional out/v2.json: {"tip": {"dur": 3.4, "src": <s>, "speed": 0.7}, "music": true}  (implicit cuts false, speed 1.0 = ritm natural)
 python3 build_timeline.py && python3 retime.py && python3 extract_frames.py
 # scrii reel.js (pornește de la pipeline/examples/), opțional out/broll.json și out/track_*.json
 python3 render.py --prep --test 0.4,1.5,6,12        # previzualizări în preview/
