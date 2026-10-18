@@ -50,8 +50,8 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `pipeline/stab.sh` | dezactivat: imaginea rămâne cum a fost filmată |
 | `pipeline/transcribe.py`, `transcribe2.py` | transcriere offline: VAD + Parakeet (timpi pe cuvânt) + Whisper (text) |
 | `pipeline/wsn.py` | Whisper + Parakeet pe ferestre înguste, pentru cifre și nume nesigure |
-| `pipeline/build_timeline.py` | aliniază `out/curated.json`, taie pauzele (sau nu, cu `"cuts": false`), cold open → `out/timeline.json` |
-| `pipeline/retime.py` | ritmul (`speed`, implicit 1,1×) și segmentul pentru „Rețeta Turbo Doctor” (`tip`) |
+| `pipeline/build_timeline.py` | aliniază `out/curated.json`, păstrează pauzele (implicit; `"cuts": true` le taie), cold open → `out/timeline.json` |
+| `pipeline/retime.py` | ritmul (`speed`, implicit 1,0 = natural) și segmentul pentru „Rețeta Turbo Doctor” (`tip`) |
 | `pipeline/extract_frames.py` | cadrele în ordinea finală, upscale fără stabilizare, B-roll doar din același clip (`out/broll.json`) |
 | `pipeline/compositor_template.html` | compozitorul v2 (Chromium): hook, bara de etape, toate cardurile și efectele |
 | `pipeline/schem.js` | schemele animate ale defectelor |
