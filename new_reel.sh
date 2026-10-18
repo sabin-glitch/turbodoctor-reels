@@ -6,6 +6,7 @@ NAME=$1; SRC=$2; [ -n "$NAME" ] && [ -f "$SRC" ] || { echo "usage: $0 <name> <vi
 HERE=$(cd "$(dirname "$0")" && pwd); R=/home/claude/reels/$NAME
 mkdir -p "$R"/{src,frames,frames_base,audio,out,preview,assets}
 cp "$HERE"/pipeline/*.py "$HERE"/pipeline/*.sh "$HERE"/pipeline/art.js "$R"/
+[ -f "$R/reel.js" ] || cp "$HERE/pipeline/reel_example.js" "$R/reel.js"
 [ -f "$R/compositor.html" ] || cp "$HERE/pipeline/compositor_template.html" "$R/compositor.html"
 cp "$HERE/pipeline/map.json" "$R/out/map.json"; cp -r "$HERE"/assets/* "$R/assets/"
 ffmpeg -hide_banner -loglevel error -y -i "$SRC" -vf fps=30 -c:v libx264 -preset veryfast -crf 10 -pix_fmt yuv420p -c:a aac -b:a 256k "$R/src/cfr.mp4"

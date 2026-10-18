@@ -10,8 +10,9 @@ os.chdir(ROOT)
 def write_data():
     tl = json.load(open("out/timeline.json"))
     tl["map"] = json.load(open("out/map.json"))
-    for k in ["track_turbo"]:
-        if os.path.exists(f"out/{k}.json"): tl[k] = json.load(open(f"out/{k}.json"))
+    import glob
+    for f in glob.glob("out/track_*.json"): tl[os.path.basename(f)[:-5]] = json.load(open(f))
+    if os.path.exists("out/broll_resolved.json"): tl["broll"] = json.load(open("out/broll_resolved.json"))
     open("data.js", "w").write("window.TL = " + json.dumps(tl, ensure_ascii=False) + ";\n")
 
 
@@ -78,6 +79,8 @@ def main():
         if args.prep:
             b = pw.chromium.launch(); pg = b.new_page(); prep(pg); b.close(); print("prep done")
         b, pg, errs = open_compositor(pw)
+        ce = pg.evaluate("window.CFG_ERR || ''")
+        if ce: print("CFG_ERR:", ce)
         json.dump(pg.evaluate("window.SFX"), open("out/sfx.json", "w"), indent=0)
         json.dump(pg.evaluate("window.CHUNKS_DEBUG"), open("out/chunks.json", "w"), ensure_ascii=False, indent=0)
         cdp = pg.context.new_cdp_session(pg)
@@ -93,8 +96,8 @@ def main():
             n_total = json.load(open("out/frames_meta.json"))["n_out"]
             end = n_total if args.end < 0 else args.end
             enc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", "30",
-                                    "-c:v", "mjpeg", "-i", "-", "-c:v", "libx264", "-preset", "fast", "-crf", "17",
-                                    "-maxrate", "18M", "-bufsize", "36M", "-profile:v", "high", "-pix_fmt", "yuv420p",
+                                    "-c:v", "mjpeg", "-i", "-", "-c:v", "libx264", "-preset", "fast", "-crf", "19",
+                                    "-maxrate", "11M", "-bufsize", "22M", "-profile:v", "high", "-pix_fmt", "yuv420p",
                                     "-r", "30", "out/video_noaudio.mp4"], stdin=subprocess.PIPE)
             t0 = time.time()
             for n in range(args.start, end):

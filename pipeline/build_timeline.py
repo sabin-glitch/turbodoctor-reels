@@ -116,21 +116,55 @@ for i, w in enumerate(words):
     w["s"] = round(w["s"], 3)
 
 # ---------------- EDL ----------------
-# story: tighten pauses between VAD segments
-keep = []
-cur_a = max(0.0, VAD[0][0] - 0.2)
+# story: tighten pauses between VAD segments AND inside them (energy-based silences, never across a word start)
+import numpy as np
+from scipy.signal import butter, sosfilt
+x16, _sr = sf.read(f"{ROOT}/audio/voice16k.wav", dtype="float32")
+if x16.ndim > 1: x16 = x16.mean(1)
+xb = sosfilt(butter(4, [150, 3800], btype="band", fs=16000, output="sos"), x16)
+HOP = 160; WIN = 320
+nfr = max(1, (len(xb) - WIN) // HOP)
+rms = np.array([np.sqrt(np.mean(xb[i * HOP:i * HOP + WIN] ** 2) + 1e-12) for i in range(nfr)])
+db = 20 * np.log10(rms)
+from scipy.ndimage import median_filter
+db = median_filter(db, 5)
+floor, peak = np.percentile(db, 12), np.percentile(db, 95)
+thr = floor + 0.33 * (peak - floor)
+sil = db < thr
+starts_w = sorted(w["s"] for w in words)
+gaps = []
+i = 0
+while i < nfr:
+    if sil[i]:
+        j = i
+        while j < nfr and sil[j]: j += 1
+        a, b = i * HOP / 16000, j * HOP / 16000
+        inside = [ws for ws in starts_w if a + 0.06 < ws < b - 0.04]
+        if inside: b = inside[0] - 0.08
+        if b - a >= 0.32: gaps.append((a, b))
+        i = j
+    else: i += 1
+# merge with VAD gaps
 for (a0, b0), (a1, b1) in zip(VAD[:-1], VAD[1:]):
-    g = a1 - b0
-    if g <= 0.45:
-        continue
-    if g > 2.5:
-        tail, head = 0.9, 0.7      # long silent visual stretch -> keep a short visual beat
-    elif g > 1.0:
-        tail, head = 0.27, 0.15
-    else:
-        tail, head = 0.20, 0.12
-    keep.append((cur_a, b0 + tail)); cur_a = a1 - head
-keep.append((cur_a, min(SRC_DUR, VAD[-1][1] + 0.45)))
+    if a1 - b0 > 0.45: gaps.append((b0, a1))
+gaps.sort(); mg = []
+for a, b in gaps:
+    if mg and a <= mg[-1][1]: mg[-1] = (mg[-1][0], max(mg[-1][1], b))
+    else: mg.append((a, b))
+st0 = max(0.0, VAD[0][0] - 0.2); en0 = min(SRC_DUR, VAD[-1][1] + 0.45)
+keep = []; cur_a = st0; removed_before = []
+for a, b in mg:
+    if b <= st0 or a >= en0: continue
+    L = b - a
+    tail, head = (0.9, 0.7) if L > 2.5 else ((0.16, 0.10) if L > 0.6 else (0.11, 0.07))
+    ca, cb = a + tail, b - head
+    if cb - ca < 0.14: continue
+    keep.append((cur_a, ca)); removed_before.append(cb - ca); cur_a = cb
+keep.append((cur_a, en0))
+keep = [(a, b) for a, b in keep if b - a > 0.05]
+ZG = [0]
+for k in range(1, len(keep)):
+    ZG.append(ZG[-1] + (1 if removed_before[k - 1] >= 0.55 else 0))
 
 import os
 COLD = json.load(open(f"{ROOT}/out/cold.json")) if os.path.exists(f"{ROOT}/out/cold.json") else {"audio": [], "video_src": 0.0, "extra": 0.0}
@@ -144,8 +178,8 @@ if COLD_AUDIO:
     segments.append(dict(kind="video_override", src_a=COLD["video_src"], src_b=COLD["video_src"] + cold_len + COLD["extra"], out_a=0.0))
     t += COLD["extra"]
 story_out0 = t
-for a, b in keep:
-    segments.append(dict(kind="story", src_a=round(a, 3), src_b=round(b, 3), out_a=round(t, 3))); t += b - a
+for k, (a, b) in enumerate(keep):
+    segments.append(dict(kind="story", src_a=round(a, 3), src_b=round(b, 3), out_a=round(t, 3), zg=ZG[k] if k < len(ZG) else 0)); t += b - a
 story_end = t
 END_CARD = 7.5
 total = t + END_CARD
@@ -177,6 +211,7 @@ tl = dict(fps=30, width=1080, height=1920, total=round(total, 3), story_out0=rou
           story_end=round(story_end, 3), end_card=END_CARD, segments=segments, words=words,
           cold_words=cold_words)
 json.dump(tl, open(f"{ROOT}/out/timeline.json", "w"), ensure_ascii=False, indent=1)
-print(f"total {total:.2f}s  story starts {story_out0:.2f}  story ends {story_end:.2f}  cuts {len(keep)}")
-for w in words:
+print(f"total {total:.2f}s  story starts {story_out0:.2f}  story ends {story_end:.2f}  cuts {len(keep)}  src story {sum(b-a for a,b in keep):.1f}s of {SRC_DUR:.1f}s")
+import sys
+for w in (words if "-v" in sys.argv else []):
     print(f"{w['os']:7.2f}-{w['oe']:6.2f}  src {w['s']:6.2f}  {w['text']}")

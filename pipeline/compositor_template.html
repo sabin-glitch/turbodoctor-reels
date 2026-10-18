@@ -1,18 +1,21 @@
 <!doctype html>
-<html lang="ro"><head><meta charset="utf-8"><title>Turbo Doctor Reel 7 Compositor</title>
+<html lang="ro"><head><meta charset="utf-8"><title>Turbo Doctor Reel Compositor (medical)</title>
 <style>
 @font-face{font-family:Mont;src:url(assets/fonts/Montserrat_600SemiBold.ttf);font-weight:600}
 @font-face{font-family:Mont;src:url(assets/fonts/Montserrat_700Bold.ttf);font-weight:700}
 @font-face{font-family:Mont;src:url(assets/fonts/Montserrat_800ExtraBold.ttf);font-weight:800}
 @font-face{font-family:Mont;src:url(assets/fonts/Montserrat_900Black.ttf);font-weight:900}
 @font-face{font-family:Anton;src:url(assets/fonts/Anton_400Regular.ttf)}
-:root{--ink:#0F1216;--muted:#6B7480;--red:#FF3B3B;--red2:#E11D2E;--green:#22C55E;--green2:#15803D;--yellow:#FFD21F;--cyan:#62D8FF;--fire:#FF6B1A}
+:root{--ink:#0F1216;--muted:#6B7480;--red:#FF3B3B;--red2:#E11D2E;--green:#22C55E;--green2:#15803D;--yellow:#FFD21F;--cyan:#62D8FF;--fire:#FF6B1A;--paper:#FFFDF6}
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 #stage{position:absolute;left:0;top:0;width:1080px;height:1920px;overflow:hidden;font-family:Mont}
-#bg{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:540px 960px;filter:contrast(1.07) saturate(1.12) brightness(1.04)}
-#tint{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,40,40,.06),rgba(150,0,0,.62));opacity:0}
-#vig{position:absolute;inset:0;background:radial-gradient(ellipse 80% 62% at 50% 50%,rgba(0,0,0,0) 60%,rgba(0,0,0,.4) 100%),linear-gradient(to bottom,rgba(0,0,0,.38) 0,rgba(0,0,0,0) 13%,rgba(0,0,0,0) 80%,rgba(0,0,0,.32) 100%)}
+/* NO permanent colour filter on the footage: colour effects only on highlighted moments (fx list) */
+#bg{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:540px 960px}
+#tintR{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,40,40,.06),rgba(150,0,0,.62));opacity:0}
+#tintG{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(60,255,140,.04),rgba(0,110,50,.55));opacity:0}
+#scan{position:absolute;left:0;top:0;width:1080px;height:70px;background:linear-gradient(to bottom,rgba(98,216,255,0),rgba(98,216,255,.55) 70%,#E6FAFF 86%,rgba(98,216,255,0));display:none}
+#vig{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.30) 0,rgba(0,0,0,0) 12%,rgba(0,0,0,0) 82%,rgba(0,0,0,.26) 100%)}
 #flash{position:absolute;inset:0;background:#fff;opacity:0}
 .abs{position:absolute;left:0;top:0;display:none;will-change:transform,opacity}
 .emo{filter:drop-shadow(0 10px 14px rgba(0,0,0,.45))}
@@ -23,7 +26,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .status img{width:42px;height:42px}
 .chip{display:none;align-items:center;gap:12px;padding:10px 28px 10px 14px;border-radius:999px;background:var(--ink);color:#fff;font-weight:900;font-size:34px;letter-spacing:.5px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.5);border:3px solid #fff}
 .chip img{width:52px;height:52px}
-.chip.red{background:var(--red2)}.chip.green{background:#16A34A}.chip.yellow{background:var(--yellow);color:var(--ink)}
+.chip.red{background:var(--red2)}.chip.green{background:#16A34A}.chip.yellow{background:var(--yellow);color:var(--ink)}.chip.blue{background:#0369A1}
 #cap{position:absolute;left:80px;width:860px;top:1290px;height:240px;display:flex;flex-wrap:wrap;align-content:center;justify-content:center;text-align:center;font-weight:900;font-size:80px;line-height:1.08;text-transform:uppercase;letter-spacing:-.5px}
 #cap span{display:inline-block;margin:0 18px;color:#fff;-webkit-text-stroke:14px #000;paint-order:stroke fill;text-shadow:0 7px 0 rgba(0,0,0,.6),0 12px 28px rgba(0,0,0,.55);transform-origin:50% 60%}
 #cap span.r{color:#FF4B4B}#cap span.g{color:#4ADE80}#cap span.c{color:var(--cyan)}#cap span.y{color:var(--yellow)}
@@ -33,66 +36,63 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* hook */
 #hookPill{display:none;align-items:center;gap:12px;background:var(--red2);color:#fff;font-weight:900;font-size:30px;letter-spacing:2px;padding:8px 28px 8px 12px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.5);border:3px solid #fff}
 #hookPill img{width:50px;height:50px}
-.hookTxt{font-family:Anton;line-height:1;white-space:nowrap;-webkit-text-stroke:12px #000;paint-order:stroke fill;text-shadow:0 8px 0 #000,0 14px 30px rgba(0,0,0,.6);letter-spacing:1px}
+.hookTxt{font-family:Anton;line-height:1;white-space:nowrap;-webkit-text-stroke:12px #000;paint-order:stroke fill;text-shadow:0 8px 0 #000,0 14px 30px rgba(0,0,0,.6);letter-spacing:1px;text-align:center}
 #hookL1{font-size:106px;color:#fff}
-#hookL1 .y{color:var(--yellow)}
-#hookL2{font-size:172px;color:#FF3B30}
+.hookTxt .y{color:var(--yellow)}.hookTxt .r{color:#FF3B30}.hookTxt .g{color:#4ADE80}.hookTxt .c{color:var(--cyan)}.hookTxt .w{color:#fff}
+#hookL2{font-size:160px;color:#FF3B30}
 #hookChips{display:none;gap:16px}
-.hChip{display:flex;align-items:center;gap:8px;padding:8px 22px 8px 10px;border-radius:999px;background:#fff;color:var(--red2);font-weight:900;font-size:36px;border:4px solid var(--red2);box-shadow:0 10px 24px rgba(0,0,0,.5);opacity:0}
+.hChip{display:flex;align-items:center;gap:8px;padding:8px 22px 8px 10px;border-radius:999px;background:#fff;color:var(--red2);font-weight:900;font-size:36px;border:4px solid var(--red2);box-shadow:0 10px 24px rgba(0,0,0,.5);opacity:0;white-space:nowrap}
 .hChip img{width:46px;height:46px}
-/* cards */
-.wide{width:640px;padding:22px 26px 20px}
-.mid{width:600px;padding:22px 26px 20px}
-.odo{display:flex;align-items:flex-end;justify-content:center;gap:12px;margin:16px auto 6px;background:#11151A;border-radius:20px;padding:14px 28px 10px;width:max-content;box-shadow:inset 0 4px 10px rgba(0,0,0,.6)}
-.odo .dg{font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:3px}
-.odo .pl{font-family:Anton;font-size:104px;line-height:1;color:var(--yellow);width:56px}
-.odo .un{font-family:Anton;font-size:46px;line-height:1.2;color:#9AA3AD;margin-bottom:8px}
-.sub{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:26px;color:var(--muted);letter-spacing:2px;margin-top:6px;white-space:nowrap}
-.sub img{width:38px;height:38px}
-.pRow{display:flex;align-items:center;gap:18px;padding:10px 6px;border-bottom:3px solid #EEF0F3;font-weight:900;font-size:34px;white-space:nowrap;opacity:0}
-.pRow:last-child{border-bottom:none}
-.pRow .art{width:110px;height:76px;display:flex;align-items:center;justify-content:center;flex:none}
-.pRow .art svg{width:110px;height:76px}
-.pRow .art img{width:66px;height:66px}
-.pRow .nm{flex:1}
-.pRow .ic{width:54px;height:54px}
-.ckRow{display:flex;align-items:center;gap:18px;padding:13px 0;border-bottom:3px solid #EEF0F3;font-weight:900;font-size:31px;color:#9AA3AD;white-space:nowrap}
+/* patient file */
+.fisa{width:680px;background:var(--paper);border-radius:26px;box-shadow:0 18px 44px rgba(0,0,0,.55);color:var(--ink);padding:0 0 14px;overflow:visible}
+.fClip{position:absolute;left:50%;top:-22px;width:150px;height:44px;margin-left:-75px;border-radius:12px;background:linear-gradient(#9AA3AD,#5B6470);border:4px solid #2C323A;box-shadow:0 6px 10px rgba(0,0,0,.35)}
+.fClip:after{content:'';position:absolute;left:50%;top:9px;width:36px;height:14px;margin-left:-18px;border-radius:8px;background:#1F242B}
+.fHead{display:flex;align-items:center;gap:12px;background:var(--red2);color:#fff;border-radius:26px 26px 0 0;padding:26px 24px 14px;font-weight:900;font-size:30px;letter-spacing:1.5px;white-space:nowrap}
+.fHead img{width:46px;height:46px}
+.fHead .fNo{margin-left:auto;font-weight:800;font-size:22px;letter-spacing:2px;opacity:.85}
+.fRow{display:none;align-items:center;gap:14px;margin:0 22px;padding:11px 2px;border-bottom:3px dashed #E5E1D5;opacity:0}
+.fRow:last-of-type{border-bottom:none}
+.fL{width:182px;flex:none;font-weight:800;font-size:21px;letter-spacing:2.5px;color:#8A8F98}
+.fV{flex:1;font-weight:900;font-size:33px;line-height:1.08;color:var(--ink)}
+.fV.r{color:#C81E2C}.fV.g{color:#15803D}.fV.c{color:#0E6E8C}.fV.y{color:#B45309}
+.fV img{width:40px;height:40px;vertical-align:-8px;margin-right:6px}
+.fStamp{position:absolute;right:20px;bottom:-96px;font-family:Anton;font-size:52px;letter-spacing:3px;padding:2px 18px 0;border:6px solid;border-radius:12px;opacity:0;transform-origin:50% 50%;background:rgba(255,255,255,.75)}
+/* checklist / treatment */
+.ckRow{display:flex;align-items:center;gap:18px;padding:12px 0;border-bottom:3px solid #EEF0F3;font-weight:900;font-size:31px;color:#9AA3AD;white-space:nowrap}
 .ckRow:last-of-type{border-bottom:none}
 .box{width:52px;height:52px;border-radius:14px;border:5px solid #CBD2D9;flex:none;position:relative;overflow:hidden}
-.box .fill{position:absolute;inset:0;background:var(--green);border-radius:9px}
+.box .fill{position:absolute;inset:0;background:var(--green);border-radius:9px;transform:scale(0)}
+.box.bad .fill{background:var(--red2)}
 .box svg{position:absolute;left:-1px;top:-1px}
-#admArt{position:relative;height:214px;margin-top:6px}
-#admArt>div{position:absolute;left:50%;top:0;transform:translateX(-50%) scale(.72);transform-origin:50% 0}
-#steps{display:flex;align-items:flex-start;justify-content:space-between;margin-top:14px;padding:0 6px}
-.step{width:170px;display:flex;flex-direction:column;align-items:center;gap:10px;font-weight:900;font-size:23px;text-align:center;line-height:1.1;color:#9AA3AD}
-.step .cir{width:104px;height:104px;border-radius:50%;background:#EEF0F3;border:6px solid #CBD2D9;display:flex;align-items:center;justify-content:center}
-.step .cir img{width:64px;height:64px;filter:grayscale(1) opacity(.5)}
-.step.on{color:var(--ink)}.step.on .cir{background:#DCFCE7;border-color:#16A34A}.step.on .cir img{filter:none}
-.arw{width:60px;height:104px;display:flex;align-items:center;justify-content:center}
-.arw svg path{stroke:#CBD2D9}
-.arw.on svg path{stroke:#16A34A}
-#chain{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px}
-.cbox{width:236px;height:150px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:26px;text-align:center;line-height:1.1;border:5px solid}
-.cbox img{width:56px;height:56px}
-#cb1{background:#FFF4E5;border-color:#F59E0B;color:#B45309}
-#cb2{background:#FEE2E2;border-color:#E11D2E;color:#B91C1C}
-#chainArr{width:84px;height:60px}
-#mCols{display:flex;gap:14px;margin-top:14px}
+/* ecg monitor */
+.ecgBox{width:640px;background:#0B1015;border-radius:26px;border:4px solid #2B3540;box-shadow:0 18px 44px rgba(0,0,0,.6);padding:14px 18px 12px;color:#fff}
+.eTop{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:26px;letter-spacing:2px;white-space:nowrap}
+.eTop img{width:40px;height:40px;vertical-align:-10px;margin-right:8px}
+.eVal{padding:4px 16px;border-radius:999px;font-size:24px}
+.ecgSvg{display:block;margin-top:8px;border-radius:14px;background-image:linear-gradient(rgba(74,222,128,.10) 2px,transparent 2px),linear-gradient(90deg,rgba(74,222,128,.10) 2px,transparent 2px);background-size:40px 40px;background-color:#05080B}
+/* stat / odometer */
+.odo{display:flex;align-items:flex-end;justify-content:center;gap:12px;margin:16px auto 6px;background:#11151A;border-radius:20px;padding:14px 28px 10px;width:max-content;box-shadow:inset 0 4px 10px rgba(0,0,0,.6)}
+.odo .dg{font-family:Anton;font-size:100px;line-height:1;color:#fff;letter-spacing:3px}
+.odo .un{font-family:Anton;font-size:46px;line-height:1.2;color:#9AA3AD;margin-bottom:8px}
+.sub{display:flex;align-items:center;justify-content:center;gap:10px;font-weight:900;font-size:26px;color:var(--muted);letter-spacing:1.5px;margin-top:6px;white-space:nowrap}
+.sub img{width:38px;height:38px}
+/* compare */
+.mCols{display:flex;gap:14px;margin-top:14px}
 .mCol{flex:1;border-radius:22px;padding:14px 10px 16px;text-align:center;border:5px solid;opacity:0}
 .mCol .h{display:flex;align-items:center;justify-content:center;gap:8px;font-weight:900;font-size:24px;letter-spacing:2px}
 .mCol .h img{width:40px;height:40px}
-.mCol .v{font-family:Anton;font-size:76px;line-height:1.05;margin-top:6px}
-.mCol .v2{font-weight:900;font-size:30px;line-height:1.12;margin-top:10px}
-#mc1{background:#FEE2E2;border-color:#E11D2E;color:#B91C1C}
-#mc2{background:#DCFCE7;border-color:#16A34A;color:#15803D}
-#pGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
-.pc{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:18px;background:#F1F5F9;font-weight:900;font-size:27px;white-space:nowrap;opacity:0}
-.pc img{width:48px;height:48px}
-.pc.ok{background:#DCFCE7;color:#15803D}
-.pc.bad{background:#FEE2E2;color:#B91C1C}
-#tipMoney{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:10px;padding:12px 10px;border-radius:20px;background:#16A34A;color:#fff;font-weight:900;font-size:33px;white-space:nowrap;opacity:0}
-#tipMoney img{width:58px;height:58px}
-/* end card */
+.mCol .v{font-weight:900;font-size:33px;line-height:1.1;margin-top:8px}
+.mCol .v.big{font-family:Anton;font-weight:400;font-size:76px;line-height:1.05}
+.mCol.bad{background:#FEE2E2;border-color:#E11D2E;color:#B91C1C}
+.mCol.ok{background:#DCFCE7;border-color:#16A34A;color:#15803D}
+/* illustration (B-roll art) */
+.artWrap{position:relative;height:230px;margin-top:6px;display:flex;justify-content:center}
+.artWrap svg{height:230px;width:auto}
+.artX{position:absolute;right:90px;top:20px;width:96px;height:96px;opacity:0}
+/* stamp */
+.stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
+.stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
+/* end card (unchanged) */
 #endCard{width:1080px;height:1920px}
 #endCard .eWord{position:absolute;left:0;right:0;top:196px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
 #endCard .eWord .y{color:var(--yellow)}
@@ -113,129 +113,35 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 </style>
 <script src="data.js"></script>
 <script src="art.js"></script>
+<script src="reel.js"></script>
 </head>
 <body>
 <div id="stage">
  <img id="bg" alt="">
- <div id="tint"></div>
+ <div id="tintR"></div>
+ <div id="tintG"></div>
+ <div id="scan"></div>
  <div id="vig"></div>
  <div id="chap" class="abs"><img id="chapIco" alt=""><span id="chapTxt"></span></div>
 
  <!-- HOOK -->
- <div id="hookPill" class="abs"><img src="assets/emoji/police_light.png" alt="">ATENȚIE, PROPRIETARI DE VOLVO</div>
- <div id="hookL1" class="abs hookTxt">VOLVO <span class="y">2.0</span> BITURBO</div>
- <div id="hookL2" class="abs hookTxt">PROBLEME!</div>
- <div id="hookChips" class="abs">
-  <div class="hChip" id="hc1"><img src="assets/emoji/cross_mark.png" alt="">TURBO</div>
-  <div class="hChip" id="hc2"><img src="assets/emoji/cross_mark.png" alt="">DPF</div>
-  <div class="hChip" id="hc3"><img src="assets/emoji/cross_mark.png" alt="">ADMISIE</div>
- </div>
- <img id="hookSiren" class="abs emo" src="assets/emoji/police_light.png" alt="" style="width:120px;height:120px">
- <img id="hookWarn" class="abs emo" src="assets/emoji/warning.png" alt="" style="width:130px;height:130px">
+ <div id="hookPill" class="abs"><img id="hookPillIco" alt=""><span id="hookPillTxt"></span></div>
+ <div id="hookL1" class="abs hookTxt"></div>
+ <div id="hookL2" class="abs hookTxt"></div>
+ <div id="hookChips" class="abs"></div>
+ <img id="hookStk1" class="abs emo" alt="" style="width:120px;height:120px">
+ <img id="hookStk2" class="abs emo" alt="" style="width:130px;height:130px">
 
- <!-- generic chip (switching text) -->
- <div id="chipA" class="chip abs"><img alt=""><span></span></div>
- <img id="stkA" class="abs emo" alt="" style="width:130px;height:130px">
-
- <!-- W1: km -->
- <div id="kmCard" class="abs card wide">
-  <div class="cTitle"><img src="assets/emoji/hammer_and_wrench.png" alt="">LUCRARE FOARTE DES NECESARĂ</div>
-  <div class="odo"><span class="dg" id="kmDg">000.000</span><span class="pl" id="kmPl"></span><span class="un">KM</span></div>
-  <div class="sub" id="kmSub"><img src="assets/emoji/automobile.png" alt="">LA ORICE VOLVO 2.0 BITURBO</div>
- </div>
-
- <!-- W2: arrived with problems -->
- <div id="arrCard" class="abs card wide">
-  <div class="cTitle"><img src="assets/emoji/warning.png" alt="">A AJUNS CU MULTIPLE PROBLEME</div>
-  <div class="pRow" id="ar1"><div class="art" id="ar1Art"></div><span class="nm">TURBOSUFLANTĂ</span><img class="ic" src="assets/emoji/cross_mark.png" alt=""></div>
-  <div class="pRow" id="ar2"><div class="art" id="ar2Art"></div><span class="nm">DPF</span><img class="ic" src="assets/emoji/cross_mark.png" alt=""></div>
- </div>
-
- <!-- W3: what we did -->
- <div id="doneCard" class="abs card wide">
-  <div class="cTitle" style="margin-bottom:4px"><img src="assets/emoji/hammer_and_wrench.png" alt="">CE AM FĂCUT</div>
-  <div class="ckRow" id="dk1"></div>
-  <div class="ckRow" id="dk2"></div>
-  <div class="ckRow" id="dk3"></div>
- </div>
-
- <!-- W4a: intake + EGR -->
- <div id="admCard" class="abs card wide">
-  <div class="cTitle"><img src="assets/emoji/broom.png" alt="">ADMISIE + RECIRCULARE GAZE</div>
-  <div id="admArt"><div id="admClean"></div><div id="admDirty"></div></div>
-  <div id="admStatus" class="status"></div>
- </div>
- <img id="admBroom" class="abs emo" src="assets/emoji/broom.png" alt="" style="width:120px;height:120px">
-
- <!-- W4b: next steps -->
- <div id="stepCard" class="abs card" style="width:700px;padding:22px 22px 22px">
-  <div class="cTitle"><img src="assets/emoji/rocket.png" alt="">CE URMEAZĂ</div>
-  <div id="steps">
-   <div class="step" id="st1"><div class="cir"><img src="assets/emoji/wrench.png" alt=""></div>MOTORUL<br>ÎNAPOI</div>
-   <div class="arw" id="sa1"><svg width="60" height="40" viewBox="0 0 60 40"><path d="M 6 20 L 50 20 M 36 8 L 52 20 L 36 32" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-   <div class="step" id="st2"><div class="cir"><img src="assets/emoji/key.png" alt=""></div>PRIMA<br>CHEIE</div>
-   <div class="arw" id="sa2"><svg width="60" height="40" viewBox="0 0 60 40"><path d="M 6 20 L 50 20 M 36 8 L 52 20 L 36 32" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-   <div class="step" id="st3"><div class="cir"><img src="assets/emoji/automobile.png" alt=""></div>LA<br>PROPRIETAR</div>
-  </div>
- </div>
-
- <!-- W5: weak points -->
- <div id="weakCard" class="abs card wide">
-  <div class="cTitle"><img src="assets/emoji/magnifying_glass_tilted_left.png" alt="">PROBLEME CARE APAR</div>
-  <div class="pRow" id="wk1"><div class="art" id="wk1Art"></div><span class="nm">TURBOSUFLANTE</span><img class="ic" src="assets/emoji/warning.png" alt=""></div>
-  <div class="pRow" id="wk2"><div class="art" id="wk2Art"></div><span class="nm">DPF</span><img class="ic" src="assets/emoji/warning.png" alt=""></div>
-  <div class="pRow" id="wk3"><div class="art" id="wk3Art"></div><span class="nm">ADMISIE</span><img class="ic" src="assets/emoji/warning.png" alt=""></div>
- </div>
-
- <!-- W6: chain reaction -->
- <div id="chainCard" class="abs card" style="width:660px;padding:22px 24px 18px">
-  <div class="cTitle"><img src="assets/emoji/stopwatch.png" alt="">DACĂ NU INTERVENIȚI LA TIMP</div>
-  <div id="chain">
-   <div class="cbox" id="cb1"><img src="assets/emoji/warning.png" alt="">TURBO · DPF<br>ADMISIE</div>
-   <svg id="chainArr" viewBox="0 0 84 60"><path id="chainPath" d="M 6 30 L 66 30 M 48 12 L 70 30 L 48 48" fill="none" stroke="#E11D2E" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>
-   <div class="cbox" id="cb2"><img src="assets/emoji/collision.png" alt="">ȘI<br>MOTORUL</div>
-  </div>
-  <div id="chainStatus" class="status"></div>
- </div>
-
- <!-- W8: cost -->
- <div id="moneyCard" class="abs card" style="width:680px;padding:22px 22px 22px">
-  <div class="cTitle"><img src="assets/emoji/money_with_wings.png" alt="">COSTUL REPARAȚIEI</div>
-  <div id="mCols">
-   <div class="mCol" id="mc1"><div class="h"><img src="assets/emoji/cross_mark.png" alt="">AMÂNAT</div><div class="v">10.000 €</div></div>
-   <div class="mCol" id="mc2"><div class="h"><img src="assets/emoji/check_mark_button.png" alt="">LA TIMP</div><div class="v2">câteva zeci<br>de mii de lei</div></div>
-  </div>
- </div>
- <img id="moneyFly" class="abs emo" src="assets/emoji/money_with_wings.png" alt="" style="width:120px;height:120px">
-
- <!-- W9: pros / cons (presenter) -->
- <div id="prosCard" class="abs card" style="width:760px;padding:18px 20px 18px">
-  <div class="cTitle"><img src="assets/emoji/automobile.png" alt="">MOTORIZAREA 2.0 BITURBO</div>
-  <div id="pGrid">
-   <div class="pc ok" id="pc1"><img src="assets/emoji/fuel_pump.png" alt="">ECONOMICĂ</div>
-   <div class="pc ok" id="pc2"><img src="assets/emoji/leaf.png" alt="">CONSUM MIC</div>
-   <div class="pc ok" id="pc3"><img src="assets/emoji/racing_car.png" alt="">MUTĂ ~2 TONE</div>
-   <div class="pc bad" id="pc4"><img src="assets/emoji/flexed_biceps.png" alt="">DESTUL DE FORȚATĂ</div>
-  </div>
- </div>
-
- <!-- W10: advice (presenter) -->
- <div id="tipCard" class="abs card" style="width:720px;padding:18px 24px 18px">
-  <div class="cTitle" style="margin-bottom:2px"><img src="assets/emoji/shield.png" alt="">CE AU NEVOIE</div>
-  <div class="ckRow" id="tk1"></div>
-  <div class="ckRow" id="tk2"></div>
-  <div id="tipMoney"><img src="assets/emoji/money_bag.png" alt="">MAI MULȚI BANI ÎN BUZUNAR</div>
- </div>
-
+ <div id="items"></div>
  <svg id="ringSvg" class="abs" viewBox="0 0 1080 1920" width="1080" height="1920" style="display:none">
   <circle id="ringA" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="20"/><circle id="ringB" fill="none" stroke="#62D8FF" stroke-width="10"/>
   <path id="ringLn" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
  </svg>
- <div id="ringChip" class="chip abs"><img src="assets/emoji/gear.png" alt=""><span>ANSAMBLUL BITURBO</span></div>
+ <div id="ringChip" class="chip abs"><img alt=""><span></span></div>
  <div id="sparks"></div>
  <div id="cap"></div>
 
- <!-- END CARD -->
+ <!-- END CARD (standard, unchanged) -->
  <div id="endCard" class="abs">
   <div class="eWord">TURBO <span class="y">DOCTOR</span></div>
   <div id="eShare"><div class="sIco" id="sIco"></div><div><div class="sT1">DISTRIBUIE ACEST VIDEO</div><div class="sT2">unui prieten care ar avea nevoie!<img src="assets/emoji/folded_hands.png" alt=""></div></div></div>
@@ -264,37 +170,18 @@ function Wd(win, text, nth = 0) {
   if (!c[nth]) throw new Error('anchor not found: ' + win + ' ' + text + ' #' + nth); return c[nth];
 }
 const aw = (win, x, k) => Wd(win, x, k).os, ew = (win, x, k) => Wd(win, x, k).oe;
-const S0 = TL.story_out0, SEND = TL.story_end, TOTAL = TL.total, HOOK_END = S0;
-const CW = {}; TL.cold_words.forEach(w => CW[norm(w.text)] = w);
-// ===================== PER-REEL: anchors (cold-open words C, story words A) =====================
-// If an anchor is missing (template used on a new video) scenes are disabled and only captions + end card render.
-let C = {}, A = {}, SCENES_OK = true;
-try {
-C = { mot: CW['motorizarile'].os, pr: CW['probleme'].os, prE: CW['probleme'].oe };
-A = {
-  volvo0: aw(0, 'Volvo'), stai: aw(0, 'stai'), pentru0: aw(0, 'pentru'), tineE: ew(0, 'tine.'),
-  ce1: aw(1, 'Ce'), foarte: aw(1, 'foarte'), volvo1: aw(1, 'Volvo'), jur: aw(1, 'jur'), k200: aw(1, '200,'), ceva: aw(1, 'ceva'), kmE: ew(1, 'kilometri.'),
-  masina: aw(2, 'Mașina'), multiple: aw(2, 'multiple'), turbo2: aw(2, 'turbosuflantă'), dpf2: aw(2, 'DPF.'), dpf2E: ew(2, 'DPF.'),
-  la3: aw(3, 'La'), demontat: aw(3, 'demontat'), verificat: aw(3, 'verificat'), bit3: aw(3, 'biturbo'), recond: aw(3, 'recondiționat.'), recondE: ew(3, 'recondiționat.'),
-  tot: aw(4, 'Tot'), adm4: aw(4, 'admisie'), recirc: aw(4, 'recirculare'), curatat: aw(4, 'curățat'), completE: ew(4, 'complet,'),
-  si4: aw(4, 'și', 1), primeasca: aw(4, 'primească'), punem: aw(4, 'punem'), prima: aw(4, 'prima'), pleca: aw(4, 'pleca'), eiE: ew(4, 'ei.'),
-  ce5: aw(5, 'Ce'), pret: aw(5, 'pretențioase.'), problemele: aw(5, 'Problemele'), turbo5: aw(5, 'turbosuflante'), dpf5: aw(5, 'DPF,'), adm5: aw(5, 'admisie'), aparE: ew(5, 'apar.'),
-  dar6: aw(6, 'Dar'), interv6: aw(6, 'interveniți'), motorul6: aw(6, 'motorul'), reparat6: aw(6, 'reparat.'), reparat6E: ew(6, 'reparat.'),
-  mot7: aw(7, 'Motorizările'), am7: aw(7, 'Am'), interv7: aw(7, 'Interveniți'), timp7E: ew(7, 'timp,'),
-  pentru8: aw(8, 'pentru'), e10k: aw(8, '10.000'), ci: aw(8, 'ci'), leiE: ew(8, 'lei.'),
-  aceste9: aw(9, 'Aceste'), econ: aw(9, 'economice,'), consum: aw(9, 'consum'), doua: aw(9, 'două'), destul9: aw(9, 'destul'), fortate: aw(9, 'forțate.'), fortateE: ew(9, 'forțate.'),
-  si10: aw(10, 'Și'), intre: aw(10, 'întreținere'), interv10: aw(10, 'intervenții'), bani: aw(10, 'bani'),
-};
-} catch (e) { SCENES_OK = false; console.warn('scenes disabled: ' + e.message); }
+function CWd(text, nth = 0) { const n = norm(text); const c = TL.cold_words.filter(w => norm(w.text) === n); if (!c[nth]) throw new Error('cold anchor not found: ' + text); return c[nth]; }
+const cw = (x, k) => CWd(x, k).os, cwe = (x, k) => CWd(x, k).oe;
+const S0 = TL.story_out0, SEND = TL.story_end, TOTAL = TL.total;
+const HAS_COLD = TL.cold_words.length > 0;
+const HOOK_END = HAS_COLD ? S0 : Math.min(3.0, SEND);
 
-// ---------- art ----------
-const mini = (html, w, h) => html.replace(/width="\d+" height="\d+"/, `width="${w}" height="${h}"`);
-$('ar1Art').innerHTML = mini(ART.turbo('ta'), 110, 76); $('ar2Art').innerHTML = mini(ART.dpf('da'), 110, 76);
-$('wk1Art').innerHTML = mini(ART.turbo('tb'), 110, 76); $('wk2Art').innerHTML = mini(ART.dpf('db'), 110, 76); $('wk3Art').innerHTML = mini(ART.intake('ib'), 110, 76);
-$('admClean').innerHTML = ART.intake('ic'); $('admDirty').innerHTML = ART.intakeDirty('idd');
-const ck = txt => `<div class="box"><div class="fill"></div><svg width="52" height="52" viewBox="0 0 54 54"><path d="M 11 28 L 23 40 L 44 15" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg></div><span>${txt}</span>`;
-$('dk1').innerHTML = ck('MOTOR DEMONTAT'); $('dk2').innerHTML = ck('MAI MULTE VERIFICĂRI'); $('dk3').innerHTML = ck('BITURBO RECONDIȚIONAT');
-$('tk1').innerHTML = ck('ÎNTREȚINERE CORESPUNZĂTOARE'); $('tk2').innerHTML = ck('INTERVENȚII LA TIMP');
+// ===================== PER-REEL config (reel.js) =====================
+let CFG = { hook: null, items: [], fx: [], chaps: [], tags: {}, sfx: [], bursts: [] }, SCENES_OK = true;
+try { CFG = Object.assign(CFG, window.REEL_CFG({ aw, ew, cw, cwe, S0, SEND, TOTAL, HOOK_END, WORDS })); }
+catch (e) { SCENES_OK = false; console.warn('scenes disabled: ' + e.message); window.CFG_ERR = String(e.message); }
+
+const ck = (txt, bad) => `<div class="box${bad ? ' bad' : ''}"><div class="fill"></div><svg width="52" height="52" viewBox="0 0 54 54"><path d="${bad ? 'M 15 15 L 39 39 M 39 15 L 15 39' : 'M 11 28 L 23 40 L 44 15'}" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" pathLength="${bad ? 2 : 1}" stroke-dasharray="${bad ? 2 : 1}" stroke-dashoffset="${bad ? 2 : 1}"/></svg></div><span>${txt}</span>`;
 $('sIco').innerHTML = `<svg viewBox="-80 -80 160 160" width="150" height="150"><circle id="sRing" r="74" fill="none" stroke="#E11D2E" stroke-width="5" opacity=".4"/><circle r="64" fill="#E11D2E"/>
  <g id="sArrow"><path d="M -34 26 C -34 -6 -8 -22 20 -22 L 20 -42 L 52 -8 L 20 26 L 20 6 C -2 6 -20 12 -34 26 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></g></svg>`;
 { // map
@@ -306,7 +193,7 @@ $('sIco').innerHTML = `<svg viewBox="-80 -80 160 160" width="150" height="150"><
     pins += pin(c.x, c.y, 'pin' + i); lbls += `<text id="lbl${i}" class="cityLbl" x="${c.x + dx}" y="${c.y + dy}" text-anchor="${an}">${c.name}</text>`; });
   $('eMap').innerHTML = `<svg viewBox="-10 -10 ${M.w + 20} ${M.h + 20}" width="640" height="447" style="overflow:visible"><path d="${M.path}" fill="rgba(255,255,255,.10)" stroke="#E5E7EB" stroke-width="5" stroke-linejoin="round"/>${halos}${pins}${lbls}</svg>`;
 }
-const SPARK_N = 10; const sparks = [];
+const SPARK_N = 12; const sparks = [];
 for (let i = 0; i < SPARK_N; i++) { const im = document.createElement('img'); im.src = 'assets/emoji/sparkles.png'; im.className = 'abs spark emo'; $('sparks').appendChild(im); sparks.push(im); }
 
 function setT(el, x, y, s = 1, r = 0, o = 1) {
@@ -315,7 +202,7 @@ function setT(el, x, y, s = 1, r = 0, o = 1) {
   el.style.opacity = o.toFixed(3);
   el.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) translate(-50%,-50%) scale(${s.toFixed(4)}) rotate(${r.toFixed(2)}deg)`;
 }
-['chap', 'hookPill', 'hookChips', 'chipA', 'ringChip'].forEach(id => $(id).dataset.disp = 'flex');
+['chap', 'hookPill', 'hookChips', 'ringChip'].forEach(id => $(id).dataset.disp = 'flex');
 const hide = el => { if (el.style.display !== 'none') el.style.display = 'none'; };
 function life(t, t0, t1, inD = .36, outD = .22, back = 1.9) {
   if (t < t0 || t > t1 + outD) return null;
@@ -328,44 +215,42 @@ const bob = (k, seed = 0, a = 6) => Math.sin(k * 2.3 + seed) * a;
 function status(el, html, color) { if (el.dataset.h !== html) { el.innerHTML = html; el.dataset.h = html; } el.style.color = color; }
 function rowIn(el, t, ts) { const p = clamp((t - ts) / .3); el.style.opacity = eOut(p).toFixed(3); el.style.transform = `translateX(${((1 - eOut(p)) * -30).toFixed(1)}px)`; return p; }
 function popIn(el, t, ts, s = 2.2) { const p = clamp((t - ts) / .3); el.style.opacity = eOut(p).toFixed(3); el.style.transform = `scale(${p > 0 ? eBack(p, s).toFixed(4) : 0})`; return p; }
-function checkRow(row, t, ts) { const p = clamp((t - ts) / .3);
+function checkRow(row, t, ts, bad) { const p = clamp((t - ts) / .3);
   row.querySelector('.fill').style.transform = `scale(${p > 0 ? eBack(p, 2) : 0})`;
-  row.querySelector('path').setAttribute('stroke-dashoffset', (1 - eOut(clamp((t - ts - .1) / .25))).toFixed(3));
-  row.querySelector('.box').style.borderColor = p > 0 ? '#16A34A' : '#CBD2D9'; row.style.color = p > 0 ? '#0F1216' : '#9AA3AD'; return p; }
-function cardIn(id, t, t0, t1, x, y) { const L = life(t, t0, t1, .38, .22, 1.6); if (!L) { hide($(id)); return null; } setT($(id), x, y + bob(L.k, 0, 4), L.s, 0, L.o); return L; }
+  row.querySelector('path').setAttribute('stroke-dashoffset', ((bad ? 2 : 1) * (1 - eOut(clamp((t - ts - .1) / .25)))).toFixed(3));
+  row.querySelector('.box').style.borderColor = p > 0 ? (bad ? '#E11D2E' : '#16A34A') : '#CBD2D9'; row.style.color = p > 0 ? (bad ? '#B91C1C' : '#0F1216') : '#9AA3AD'; return p; }
 
-// chip with switching content: phases = [[t, ico, text, cls], ...]
-function chip(el, t, t0, t1, x, y, phases) {
-  const L = life(t, t0, t1, .3, .2, 2.2); if (!L) { hide(el); return; }
-  let ph = phases[0]; for (const p of phases) if (t >= p[0]) ph = p;
-  const key = ph[1] + ph[2] + ph[3];
-  if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('img').src = `assets/emoji/${ph[1]}.png`; el.querySelector('span').textContent = ph[2]; el.className = 'chip abs ' + (ph[3] || ''); el.style.display = 'flex'; }
-  const sw = ph === phases[0] ? 1 : lerp(.75, 1, eBack(clamp((t - ph[0]) / .25), 2.4));
-  setT(el, x, y, L.s * sw, -2, L.o);
-}
-function sticker(el, ico, t, t0, t1, x, y, rot = 0) {
-  const L = life(t, t0, t1, .3, .2, 2.6); if (!L) { hide(el); return; }
-  const src = `assets/emoji/${ico}.png`; if (el.dataset.src !== src) { el.src = src; el.dataset.src = src; }
-  setT(el, x, y + bob(L.k, 1, 7), L.s, rot + Math.sin(L.k * 3) * 6, L.o);
+// ---------- SFX / bursts ----------
+window.SFX = [];
+const sfx = (t, kind, gain = 1) => { if (t >= 0) window.SFX.push({ t: +t.toFixed(3), kind, gain }); };
+const BURSTS = [];
+function burst(t0, cx, cy, n, rad, size = 1) { BURSTS.push({ t0, cx, cy, n, rad, size }); }
+function renderSparks(t) {
+  let used = 0;
+  for (const b of BURSTS) { const k = t - b.t0; if (k < 0 || k > 1.4) continue;
+    for (let i = 0; i < b.n && used < SPARK_N; i++, used++) { const kk = k - i * .07; const el = sparks[used];
+      if (kk < 0 || kk > 1) { hide(el); continue; }
+      const ang = (i * 137.5) * Math.PI / 180, rr = b.rad * (.55 + .45 * ((i * 53) % 10) / 10), p = kk;
+      setT(el, b.cx + Math.cos(ang) * rr, b.cy + Math.sin(ang) * rr - p * 26, Math.sin(p * Math.PI) * b.size, p * 40, 1); } }
+  for (let i = used; i < SPARK_N; i++) hide(sparks[i]);
 }
 
-// ---------- captions ----------
-const TAGS = {
-  0: { volvo: 'c', 20: 'y', biturbo: 'c', final: 'y' },
-  1: { foarte: 'y', des: 'y', volvo: 'c', 20: 'y', biturbo: 'c', 200: 'y', ceva: 'y', mii: 'y', kilometri: 'y' },
-  2: { multiple: 'r', probleme: 'r', turbosuflanta: 'c', dpf: 'c' },
-  3: { demontat: 'g', verificat: 'g', ansamblul: 'c', biturbo: 'c', reconditionat: 'g' },
-  4: { admisie: 'c', recirculare: 'c', gazelor: 'c', curatat: 'g', complet: 'g', motorul: 'c', prima: 'y', cheie: 'y', proprietarul: 'g' },
-  5: { 20: 'y', biturbo: 'c', pretentioase: 'r', problemele: 'r', turbosuflante: 'c', dpf: 'c', admisie: 'c', apar: 'r' },
-  6: { interveniti: 'y', timp: 'y', motorul: 'r', reparat: 'r' },
-  7: { probleme: 'r', reparat: 'g', motoare: 'c', 20: 'y', biturbo: 'c', interveniti: 'y', timp: 'y' },
-  8: { 10000: 'r', euro: 'r', zeci: 'g', mii: 'g', lei: 'g' },
-  9: { economice: 'g', consum: 'g', mic: 'g', doua: 'y', tone: 'y', fortate: 'r' },
-  10: { intretinere: 'g', corespunzatoare: 'g', interventii: 'g', timp: 'y', bani: 'g', buzunar: 'g' },
+// ---------- captions (auto semantic colours + per-reel overrides) ----------
+const AUTO = {
+  r: 'pierderi pierdere pierderile pierderilor defazata defazat sarit nemaipornind porneste pornit underboost overboost topit crapat problema probleme problemele defect defecta defecte defectiune uzat uzata uzate uzura fisurat fisura rupt rupta spart sparta fum fumul pierde pierdere pierderi joc jocul zgomot zgomote fluiera fluierat suiera avarie avariat infundat infundata colmatat colmatata blocat blocata blocate gripat gripata ars arsa topit topita crapat crapata ulei uleiul murdar murdara murdarie depuneri calamina cocs carbon frecat frecare lovit lovita lovituri ciupit ciupite indoit indoite deformat deformata cedat cedeaza scapa scurgeri scurgere avariata avariate distrus distrusa distruse grav periculos pericol eroare erori martor martorul check limp avaria praf'.split(' '),
+  g: 'reparat reparata reparate reconditionat reconditionata reconditionate reconditionare curatat curatata curatate curatare nou noua noi rezolvat rezolvata rezolvare gata perfect perfecta impecabil garantie functioneaza functionat echilibrat echilibrata echilibrare testat testata testare verificat verificata calibrat calibrata calibrare montat montata ok bine sanatos sanatoasa vindecat salvat salvata recuperat economie protejat'.split(' '),
+  c: 'antigel radiator radiatorul inverterului invertorului vasul vase expansiune garnitura chiulasa injectie injectiei injectii injectia lant lantul distributie distributia distributiei intinzator intinzatorul chiulasa chiuloasa cilindri cilindrul cilindrului piston pistonul pistoane bucsa clapeta clapeta wastegate banut banuti banutul turbo turbina turbinei turbine turbosuflanta turbosuflanta turbosuflante turbosuflantei turbosuflantelor injector injectoare injectorul injectoarele injectorului dpf filtru filtrul filtrului particule egr actuator actuatorul actuatorului geometrie geometria geometriei ax axul rotor rotorul carcasa carcasei cartus cartusul miez miezul cma chra compresor compresorului rulment rulmenti lagar lagare segment segmenti intercooler admisie admisia evacuare evacuarea motor motorul motorului pompa pompei rampa supapa supapei senzor senzorul vacuum vacumatic electronic electronica bobina etansare garnitura garnituri paleta palete paletele fulie diesel'.split(' '),
 };
-const HIDE_CAP = [[0, S0 + 0.05], [SEND, 1e9]];
+const AUTO_MAP = {}; Object.entries(AUTO).forEach(([c, ws]) => ws.forEach(w => AUTO_MAP[w] = c));
+function capClass(w) {
+  if (w._brand) return 'y';
+  const n = norm(w.text); const o = (CFG.tags[w.win] || {})[n]; if (o !== undefined) return o;
+  if (/[0-9]/.test(w.text)) return 'y'; return AUTO_MAP[n] || '';
+}
+const HIDE_CAP = [[0, HAS_COLD ? S0 + 0.05 : 0], [SEND, 1e9]].concat(CFG.hideCap || []);
 let CHUNKS = [];
 function buildChunks() {
+  WORDS.forEach((w, i) => { const nx = WORDS[i + 1]; if (nx && norm(w.text) === 'turbo' && norm(nx.text).startsWith('doctor')) { w._brand = nx._brand = true; } });
   const cv = document.createElement('canvas').getContext('2d'); cv.font = '900 80px Mont';
   const width = s => cv.measureText(s.toUpperCase()).width + 36; const MAXW = 840; let cur = null;
   WORDS.forEach((w, i) => {
@@ -381,7 +266,7 @@ function renderCaptions(t) {
   const cap = $('cap'); const hidden = HIDE_CAP.some(([a, b]) => t >= a && t < b);
   const idx = hidden ? -1 : CHUNKS.findIndex(c => t >= c.t0 && t < c.t1);
   if (idx !== capCur) { capCur = idx; if (idx < 0) { cap.innerHTML = ''; return; }
-    cap.innerHTML = CHUNKS[idx].words.map(w => `<span class="${(TAGS[w.win] || {})[norm(w.text)] || ''}">${w.text.replace(/[.,]$/, '')}</span>`).join(''); }
+    cap.innerHTML = CHUNKS[idx].words.map(w => `<span class="${capClass(w)}">${w.text.replace(/[.,?!]$/, '')}</span>`).join(''); }
   if (idx < 0) return;
   const c = CHUNKS[idx]; const p = clamp((t - c.t0) / 0.14);
   cap.style.transform = `translateY(${(1 - eOut(p)) * 24}px) scale(${lerp(.86, 1, eBack(p, 2.2))})`; cap.style.opacity = clamp(p * 3);
@@ -389,179 +274,205 @@ function renderCaptions(t) {
     const d = t - w.os; const pp = (d >= -0.03 && d < 0.28) ? Math.sin(clamp((d + .03) / .31) * Math.PI) : 0; sp.style.transform = `scale(${(1 + .13 * pp * Math.min(1, 7 / Math.max(1, w.text.length))).toFixed(3)})`; });
 }
 
-// ---------- chapters (engine footage only) ----------
-const CHAPS = !SCENES_OK ? [] : [
-  [A.ce1 - .3, A.ce5 - .1, 'LUCRAREA', 'hammer_and_wrench'],
-  [A.ce5 - .1, A.aceste9 - .3, 'DE ȘTIUT', 'brain'],
-];
+// ---------- chapters (medical stages) ----------
 let chapCur = -1;
 function renderChapter(t) {
-  const el = $('chap'); const i = CHAPS.findIndex(c => t >= c[0] && t < c[1]);
+  const el = $('chap'); const CH = CFG.chaps; const i = CH.findIndex(c => t >= c[0] && t < c[1]);
   if (i < 0) { hide(el); chapCur = -1; return; }
-  if (i !== chapCur) { chapCur = i; $('chapTxt').textContent = CHAPS[i][2]; $('chapIco').src = `assets/emoji/${CHAPS[i][3]}.png`; }
-  const p = clamp((t - CHAPS[i][0]) / .35), q = clamp((CHAPS[i][1] - t) / .2); el.style.display = 'flex'; el.style.opacity = clamp(p * 3) * q;
+  if (i !== chapCur) { chapCur = i; $('chapTxt').textContent = CH[i][2]; $('chapIco').src = `assets/emoji/${CH[i][3]}.png`; }
+  const p = clamp((t - CH[i][0]) / .35), q = clamp((CH[i][1] - t) / .2); el.style.display = 'flex'; el.style.opacity = clamp(p * 3) * q;
   el.style.transform = `translate(56px, 196px) scale(${lerp(.6, 1, eBack(p, 2.4))})`;
 }
 
-// ---------- background ----------
+// ---------- background + highlight-only colour effects ----------
 const STORY = TL.segments.filter(s => s.kind === 'story');
-const PUNCH = !SCENES_OK ? [] : [{ t: C.pr, a: .09, sh: 16 }, { t: A.dpf2, a: .05, sh: 8 }, { t: A.recond, a: .04, sh: 0 }, { t: A.curatat, a: .04, sh: 0 }, { t: A.pret, a: .06, sh: 10 },
-  { t: A.motorul6, a: .07, sh: 12 }, { t: A.e10k, a: .06, sh: 10 }, { t: A.fortate, a: .05, sh: 8 }, { t: A.bani, a: .04, sh: 0 }];
 const BGX = { z: 1, dx: 0, dy: 0 };
+const fxOf = k => CFG.fx.filter(f => f.k === k);
+function win01(t, a, b, fi = .25, fo = .35) { if (t < a - fi || t > b + fo) return 0; return clamp((t - a + fi) / fi) * (1 - clamp((t - b) / fo)); }
 function renderBg(t) {
   let z = 1, dx = 0, dy = 0;
-  if (t < HOOK_END) z = 1.18 - .1 * eOut(t / HOOK_END);
+  if (t < HOOK_END && HAS_COLD) z = 1.16 - .1 * eOut(t / HOOK_END);
   else if (t < SEND) { const k = STORY.findIndex(s => t >= s.out_a && t < s.out_a + (s.src_b - s.src_a) + 1e-6); const s = STORY[Math.max(0, k)];
-    z = (k % 2 === 0 ? 1.02 : 1.08) + .025 * clamp((t - s.out_a) / (s.src_b - s.src_a)); }
+    z = (k % 2 === 0 ? 1.02 : 1.07) + .025 * clamp((t - s.out_a) / Math.max(.1, s.src_b - s.src_a)); }
   else z = 1.04 + .03 * clamp((t - SEND) / (TOTAL - SEND));
-  for (const P of PUNCH) { const d = t - P.t; if (d >= -0.02 && d < .7) { z += P.a * Math.exp(-Math.max(0, d) * 6.5) * (d < .05 ? clamp((d + .02) / .07) : 1);
-    dx += P.sh * Math.exp(-d * 9) * Math.sin(d * 75); dy += P.sh * Math.exp(-d * 9) * Math.cos(d * 61); } }
-  if (t < C.pr + .2) { const s = 3 * (1 - clamp(t / 0.5)); dx += s * Math.sin(t * 90); dy += s * Math.cos(t * 70); }
+  for (const P of fxOf('punch')) { const d = t - P.t; if (d >= -0.02 && d < .7) { z += (P.a || .06) * Math.exp(-Math.max(0, d) * 6.5) * (d < .05 ? clamp((d + .02) / .07) : 1);
+    const sh = P.sh || 0; dx += sh * Math.exp(-d * 9) * Math.sin(d * 75); dy += sh * Math.exp(-d * 9) * Math.cos(d * 61); } }
+  if (HAS_COLD && t < .5) { const s = 3 * (1 - clamp(t / 0.5)); dx += s * Math.sin(t * 90); dy += s * Math.cos(t * 70); }
   BGX.z = z; BGX.dx = dx; BGX.dy = dy;
-  $('bg').style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(${z.toFixed(4)})`;
-  // red alarm pulse in the hook and on the "engine must be repaired" beat
-  let tint = 0;
-  if (t < HOOK_END) tint = (.34 + .22 * Math.max(0, Math.sin(t * 9))) * (1 - clamp((t - (HOOK_END - .3)) / .3));
-  const r0 = A.motorul6 - .1, r1 = A.reparat6E + .2; if (t >= r0 && t <= r1 + .4) tint = Math.max(tint, (.16 + .12 * Math.max(0, Math.sin(t * 9))) * clamp((t - r0) / .3) * (1 - clamp((t - r1) / .4)));
-  $('tint').style.opacity = tint.toFixed(3);
-  let fl = 0; const dh = t - (HOOK_END - .12); if (dh >= 0 && dh < .3) fl = .6 * Math.sin(clamp(dh / .3) * Math.PI);
-  const dp = t - (C.pr - .02); if (dp >= 0 && dp < .22) fl = Math.max(fl, .35 * Math.sin(clamp(dp / .22) * Math.PI));
+  const bg = $('bg'); bg.style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(${z.toFixed(4)})`;
+  // colour filters ONLY on highlighted moments
+  let filt = '';
+  let bw = 0; for (const f of fxOf('bw')) bw = Math.max(bw, win01(t, f.t0, f.t1, .12, .25));
+  let xr = 0; for (const f of fxOf('xray')) xr = Math.max(xr, win01(t, f.t0, f.t1, .08, .18));
+  if (xr > 0.01) filt = `grayscale(${xr.toFixed(2)}) invert(${(xr * .92).toFixed(2)}) sepia(${(xr * .6).toFixed(2)}) hue-rotate(${(xr * 165).toFixed(0)}deg) saturate(${(1 + xr * 1.6).toFixed(2)}) contrast(${(1 + xr * .25).toFixed(2)})`;
+  else if (bw > 0.01) filt = `grayscale(${bw.toFixed(2)}) contrast(${(1 + .18 * bw).toFixed(2)}) brightness(${(1 - .06 * bw).toFixed(2)})`;
+  if (bg.dataset.f !== filt) { bg.style.filter = filt; bg.dataset.f = filt; }
+  // scan line during x-ray
+  const sc = $('scan'); let scOn = false;
+  for (const f of fxOf('xray')) { if (t >= f.t0 && t <= f.t1) { const p = ((t - f.t0) / Math.max(.4, (f.t1 - f.t0))) % 1; sc.style.display = 'block'; sc.style.opacity = xr.toFixed(3); sc.style.transform = `translateY(${(lerp(-70, 1920, p)).toFixed(0)}px)`; scOn = true; } }
+  if (!scOn) hide(sc);
+  let tr = 0; for (const f of fxOf('red')) tr = Math.max(tr, (.16 + .12 * Math.max(0, Math.sin(t * 9))) * win01(t, f.t0, Math.min(f.t1, f.t0 + (f.max || 2.4)), .3, .4) * (f.a || 1)); // colour only as a short highlight
+  if (HAS_COLD && CFG.hook && CFG.hook.red !== false && t < HOOK_END) tr = Math.max(tr, (.30 + .2 * Math.max(0, Math.sin(t * 9))) * (1 - clamp((t - (HOOK_END - .3)) / .3)) * clamp((t - (CFG.hook.redAt || 0)) / .15));
+  $('tintR').style.opacity = tr.toFixed(3);
+  let tg = 0; for (const f of fxOf('green')) tg = Math.max(tg, .55 * win01(t, f.t0, f.t1, .25, .45) * (.8 + .2 * Math.sin(t * 5)));
+  $('tintG').style.opacity = tg.toFixed(3);
+  let fl = 0; if (HAS_COLD) { const dh = t - (HOOK_END - .12); if (dh >= 0 && dh < .3) fl = .6 * Math.sin(clamp(dh / .3) * Math.PI); }
+  for (const f of fxOf('flash')) { const d = t - f.t; if (d >= 0 && d < .22) fl = Math.max(fl, (f.a || .35) * Math.sin(clamp(d / .22) * Math.PI)); }
   const de = t - (SEND - .08); if (de >= 0 && de < .3) fl = Math.max(fl, .6 * Math.sin(clamp(de / .3) * Math.PI));
   $('flash').style.opacity = fl.toFixed(3); $('vig').style.opacity = t >= SEND ? 0 : 1;
 }
 
-// ---------- sparkles ----------
-const BURSTS = [];
-function burst(t0, cx, cy, n, rad, size = 1) { BURSTS.push({ t0, cx, cy, n, rad, size }); }
-function renderSparks(t) {
-  let used = 0;
-  for (const b of BURSTS) { const k = t - b.t0; if (k < 0 || k > 1.4) continue;
-    for (let i = 0; i < b.n && used < SPARK_N; i++, used++) { const kk = k - i * .07; const el = sparks[used];
-      if (kk < 0 || kk > 1) { hide(el); continue; }
-      const ang = (i * 137.5) * Math.PI / 180, rr = b.rad * (.55 + .45 * ((i * 53) % 10) / 10), p = kk;
-      setT(el, b.cx + Math.cos(ang) * rr, b.cy + Math.sin(ang) * rr - p * 26, Math.sin(p * Math.PI) * b.size, p * 40, 1); } }
-  for (let i = used; i < SPARK_N; i++) hide(sparks[i]);
+// ---------- HOOK ----------
+function fitText(el, maxW) { const fs = parseFloat(getComputedStyle(el).fontSize); el.style.display = 'block'; el.style.visibility = 'hidden';
+  const w = el.scrollWidth; if (w > maxW) el.style.fontSize = (fs * maxW / w).toFixed(1) + 'px'; el.style.display = 'none'; el.style.visibility = ''; }
+function setupHook() {
+  const H = CFG.hook; if (!H) return;
+  $('hookPillIco').src = `assets/emoji/${(H.pill || ['police_light'])[0]}.png`; $('hookPillTxt').textContent = (H.pill || [, 'TURBO DOCTOR'])[1];
+  $('hookL1').innerHTML = H.l1 || ''; $('hookL2').innerHTML = H.l2 || '';
+  $('hookChips').innerHTML = (H.chips || []).map((c, i) => `<div class="hChip" id="hc${i}"><img src="assets/emoji/${c[0]}.png" alt="">${c[1]}</div>`).join('');
+  if (H.stk1) $('hookStk1').src = `assets/emoji/${H.stk1}.png`; if (H.stk2) $('hookStk2').src = `assets/emoji/${H.stk2}.png`;
 }
-
-// ---------- SFX ----------
-window.SFX = [];
-const sfx = (t, kind, gain = 1) => window.SFX.push({ t: +t.toFixed(3), kind, gain });
-function setupCues() {
-  sfx(SEND - .08, 'whoosh', .8); sfx(SEND + .3, 'ding', .55); sfx(SEND + .9, 'pop', .45);
-  [0, 1, 2, 3].forEach(i => sfx(SEND + 1.9 + i * .26, 'pop', .45)); sfx(SEND + 3.1, 'ding', .45);
-  if (!SCENES_OK) return;
-  sfx(0, 'impact', .85); sfx(0.05, 'alarm', .45); sfx(C.pr - .03, 'impact', .8); sfx(C.pr - .03, 'stamp', .7);
-  [0, 1, 2].forEach(i => sfx(C.pr + .3 + i * .2, 'pop', .5)); sfx(HOOK_END - .16, 'whoosh', .9);
-  sfx(A.volvo0 - .1, 'pop', .45); sfx(A.stai - .05, 'tick2', .5); sfx(A.pentru0 - .05, 'pop', .4);
-  sfx(A.foarte - .25, 'whoosh', .55); sfx(A.k200, 'tick', .5); sfx(A.k200 + .3, 'tick', .45); sfx(A.ceva, 'ding', .5);
-  sfx(A.masina - .2, 'whoosh', .55); sfx(A.turbo2, 'alarm', .4); sfx(A.dpf2, 'stamp', .55);
-  sfx(A.la3 - .15, 'whoosh', .5); sfx(A.demontat, 'tick2', .55); sfx(A.verificat, 'tick2', .55); sfx(A.recond, 'tick2', .6); sfx(A.recond + .1, 'shimmer', .55); sfx(900 / FPS, 'pop', .5);
-  sfx(A.tot - .2, 'whoosh', .55); sfx(A.curatat, 'shimmer', .6);
-  sfx(A.si4 - .1, 'whoosh', .5); sfx(A.punem, 'pop', .45); sfx(A.prima, 'pop', .5); sfx(A.pleca, 'ding', .5);
-  sfx(A.ce5 - .15, 'pop', .45); sfx(A.pret, 'stamp', .6); sfx(A.problemele - .15, 'whoosh', .55); sfx(A.turbo5, 'pop', .45); sfx(A.dpf5, 'pop', .45); sfx(A.adm5, 'pop', .45);
-  sfx(A.dar6 - .15, 'whoosh', .5); sfx(A.interv6, 'tick', .5); sfx(A.motorul6, 'impact', .55); sfx(A.motorul6, 'alarm', .45);
-  sfx(A.mot7 - .1, 'pop', .45); sfx(A.am7, 'pop', .4); sfx(A.interv7, 'tick2', .5);
-  sfx(A.pentru8 - .15, 'whoosh', .55); sfx(A.e10k, 'crack', .5); sfx(A.ci, 'ding', .55);
-  sfx(A.aceste9 - .15, 'whoosh', .5); sfx(A.econ, 'pop', .45); sfx(A.consum, 'pop', .45); sfx(A.doua, 'pop', .45); sfx(A.fortate, 'alarm', .4);
-  sfx(A.si10 - .15, 'whoosh', .5); sfx(A.intre, 'tick2', .55); sfx(A.interv10, 'tick2', .55); sfx(A.bani, 'ding', .6); sfx(A.bani + .05, 'shimmer', .5);
-  burst(A.recond + .05, 540, 470, 5, 300, .8); burst(A.curatat + .1, 540, 460, 6, 300, .8); burst(A.ci + .05, 720, 520, 5, 170, .7); burst(A.bani + .05, 540, 400, 6, 330, .8);
+function fitHook() { if (!CFG.hook) return; fitText($('hookL1'), 980); fitText($('hookL2'), 990);
+  const hc = $('hookChips'); hc.style.display = 'flex'; hc.style.visibility = 'hidden'; const w = hc.scrollWidth; hc.dataset.sc = w > 1000 ? (1000 / w).toFixed(3) : '1'; hc.style.display = 'none'; hc.style.visibility = ''; }
+function hookCues() {
+  const H = CFG.hook; if (!H) return; const out = (H.end || HOOK_END) - .1;
+  sfx(0, 'impact', .85); if (H.alarm !== false) sfx(0.05, 'alarm', .45);
+  if (H.l2) { sfx((H.l2At || .9) - .03, 'impact', .8); sfx((H.l2At || .9) - .03, 'stamp', .7); }
+  (H.chips || []).forEach((c, i) => sfx((H.chipsAt || 1.4) + .1 + i * .2, 'pop', .5));
+  if (HAS_COLD) sfx(HOOK_END - .16, 'whoosh', .9);
 }
-
-// ===================== PER-REEL: scenes (rewrite for every video; base helpers above are reusable) =====================
 function rHook(t) {
-  const out = HOOK_END - .1;
+  const H = CFG.hook; if (!H) return; const out = (H.end || HOOK_END) - .1; const y0 = H.y || 0;
   let L = life(t, 0, out, .28, .18);
-  if (L) setT($('hookPill'), 540, lerp(140, 215, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hookPill'));
-  L = life(t, 0.02, out, .3, .18, 1.6); if (L) setT($('hookL1'), 540, 370, L.s, -2, L.o); else hide($('hookL1'));
-  L = life(t, C.pr - .05, out, .2, .18, 1.2);
-  if (L) { const st = lerp(1.9, 1, eOut(clamp(L.k / .16))); setT($('hookL2'), 540, 545, st * (1 + .025 * Math.sin(t * 18)), -4, L.o); } else hide($('hookL2'));
-  L = life(t, C.pr + .2, out, .2, .18); if (L) { setT($('hookChips'), 540, 730, 1, 0, L.o); [1, 2, 3].forEach(i => popIn($('hc' + i), t, C.pr + .3 + (i - 1) * .2)); } else hide($('hookChips'));
-  L = life(t, 0.1, out, .3, .18, 2.6); if (L) setT($('hookSiren'), 960, 196 + bob(L.k, 0, 4), L.s * (1 + .08 * Math.max(0, Math.sin(t * 14))), Math.sin(t * 20) * 8, L.o); else hide($('hookSiren'));
-  L = life(t, C.pr + .05, out, .3, .18, 2.6); if (L) setT($('hookWarn'), 120, 196 + bob(L.k, 2, 4), L.s * .8, -10 + Math.sin(t * 9) * 6, L.o); else hide($('hookWarn'));
+  if (L && H.pill) setT($('hookPill'), 540, y0 + lerp(140, 215, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hookPill'));
+  L = life(t, H.l1At || 0.02, out, .3, .18, 1.6); if (L && H.l1) setT($('hookL1'), 540, y0 + 370, L.s, -2, L.o); else hide($('hookL1'));
+  L = life(t, (H.l2At || .9) - .05, out, .2, .18, 1.2);
+  if (L && H.l2) { const st = lerp(1.9, 1, eOut(clamp(L.k / .16))); setT($('hookL2'), 540, y0 + 540, st * (1 + .025 * Math.sin(t * 18)), -4, L.o); } else hide($('hookL2'));
+  const ca = H.chipsAt || 1.4;
+  L = life(t, ca, out, .2, .18); if (L && (H.chips || []).length) { setT($('hookChips'), 540, y0 + 725, +$('hookChips').dataset.sc, 0, L.o); (H.chips || []).forEach((c, i) => popIn($('hc' + i), t, ca + .1 + i * .2)); } else hide($('hookChips'));
+  L = life(t, 0.1, out, .3, .18, 2.6); if (L && H.stk1) setT($('hookStk1'), 960, y0 + 196 + bob(L.k, 0, 4), L.s * (1 + .08 * Math.max(0, Math.sin(t * 14))), Math.sin(t * 20) * 8, L.o); else hide($('hookStk1'));
+  L = life(t, (H.l2At || .9) + .05, out, .3, .18, 2.6); if (L && H.stk2) setT($('hookStk2'), 120, y0 + 196 + bob(L.k, 2, 4), L.s * .8, -10 + Math.sin(t * 9) * 6, L.o); else hide($('hookStk2'));
 }
 
-function rChips(t) {
-  const el = $('chipA');
-  const segs = [
-    [A.volvo0 - .1, A.tineE + .1, 540, 300, [[A.volvo0 - .1, 'automobile', 'AI UN VOLVO 2.0 BITURBO?', ''], [A.stai - .05, 'hourglass', 'STAI PÂNĂ LA FINAL', 'yellow'], [A.pentru0 - .05, 'backhand_index_pointing_down', 'E PENTRU TINE!', 'red']]],
-    [A.ce5 - .1, A.problemele - .25, 540, 330, [[A.ce5 - .1, 'brain', 'CE TREBUIE SĂ ȘTIȚI', ''], [A.pret - .05, 'warning', 'MOTORIZĂRI PRETENȚIOASE', 'red']]],
-    [A.mot7 - .1, A.timp7E + .15, 540, 330, [[A.mot7 - .1, 'warning', 'AU NIȘTE PROBLEME', 'red'], [A.am7 - .05, 'wrench', 'MULTE REPARATE ANUL ACESTA', ''], [A.interv7 - .05, 'stopwatch', 'INTERVENIȚI LA TIMP!', 'yellow']]],
-  ];
-  const s = segs.find(g => t >= g[0] && t <= g[1] + .25);
-  if (!s) { hide(el); return; }
-  chip(el, t, s[0], s[1], s[2], s[3], s[4]);
+// ---------- ITEMS (config-driven scene components) ----------
+const SLOT = ['chip', 'file', 'list', 'ecg', 'stat', 'cmp', 'art'];
+const ITEMS = [];
+const mk = (cls, html) => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; $('items').appendChild(d); return d; };
+const img = n => `<img src="assets/emoji/${n}.png" alt="">`;
+function buildItems() {
+  const its = (CFG.items || []).map(o => Object.assign({}, o));
+  // one slot element at a time: previous ends before the next starts
+  const sl = its.filter(o => SLOT.includes(o.k)).sort((a, b) => a.t0 - b.t0);
+  sl.forEach((o, i) => { const nx = sl[i + 1]; if (nx) o.t1 = Math.min(o.t1, nx.t0 - .3); });
+  for (const o of its) {
+    if (o.k === 'chip') { o.el = mk('chip abs', '<img alt=""><span></span>'); o.el.dataset.disp = 'flex'; }
+    if (o.k === 'file') {
+      o.el = mk('abs fisa', `<div class="fClip"></div><div class="fHead">${img(o.ico || 'stethoscope')}<span>${o.title || 'FIȘA PACIENTULUI'}</span><span class="fNo">${o.no ? 'NR. ' + o.no : ''}</span></div>` +
+        o.rows.map(r => `<div class="fRow"><div class="fL">${r[1]}</div><div class="fV ${r[3] || ''}">${r[4] ? img(r[4]) : ''}${r[2]}</div></div>`).join('') +
+        (o.stamp ? `<div class="fStamp" style="color:${o.stamp[2] === 'green' ? '#15803D' : '#D3172A'};border-color:${o.stamp[2] === 'green' ? '#15803D' : '#D3172A'}">${o.stamp[1]}</div>` : ''));
+      o.el.style.position = 'absolute';
+    }
+    if (o.k === 'list') o.el = mk('abs card', `<div class="cTitle" style="margin-bottom:4px">${img(o.ico || 'hammer_and_wrench')}${o.title}</div>` + o.rows.map(r => `<div class="ckRow">${ck(r[1], r[2] === 'bad')}</div>`).join(''));
+    if (o.k === 'list') { o.el.style.width = 'max-content'; o.el.style.minWidth = (o.w || 600) + 'px'; o.el.style.maxWidth = '800px'; o.el.style.padding = '22px 30px 14px'; }
+    if (o.k === 'ecg') o.el = mk('abs ecgBox', `<div class="eTop"><span>${img(o.ico || 'stethoscope')}${o.label || 'PULS MOTOR'}</span><span class="eVal"></span></div><svg class="ecgSvg" width="600" height="130" viewBox="0 0 600 130"><path class="eGlow" fill="none" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity=".25"/><path class="eLn" fill="none" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><circle class="eDot" r="9" fill="#fff"/></svg>`);
+    if (o.k === 'stat') { o.el = mk('abs card', `<div class="cTitle">${img(o.ico || 'counter')}${o.title}</div><div class="odo"><span class="dg"></span><span class="un">${o.unit || ''}</span></div>${o.sub ? `<div class="sub">${o.subIco ? img(o.subIco) : ''}${o.sub}</div>` : ''}`); o.el.style.width = (o.w || 640) + 'px'; o.el.style.padding = '22px 26px 20px'; }
+    if (o.k === 'cmp') { o.el = mk('abs card', `<div class="cTitle">${img(o.ico || 'magnifying_glass_tilted_left')}${o.title}</div><div class="mCols"><div class="mCol ${o.aCls || 'bad'}"><div class="h">${img(o.a[1])}${o.a[2]}</div><div class="v${o.big ? ' big' : ''}">${o.a[3]}</div></div><div class="mCol ${o.bCls || 'ok'}"><div class="h">${img(o.b[1])}${o.b[2]}</div><div class="v${o.big ? ' big' : ''}">${o.b[3]}</div></div></div>`); o.el.style.width = (o.w || 680) + 'px'; o.el.style.padding = '22px 22px 22px'; }
+    if (o.k === 'art') { o.el = mk('abs card', `<div class="cTitle">${img(o.ico || 'gear')}${o.title}</div><div class="artWrap">${ART[o.art]('a' + ITEMS.length)}${o.cross ? `<img class="artX" src="assets/emoji/${o.cross[1] || 'cross_mark'}.png" alt="">` : ''}</div><div class="status"></div>`); o.el.style.width = (o.w || 620) + 'px'; o.el.style.padding = '22px 26px 16px'; }
+    if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt);
+    if (o.k === 'stk') { const im = document.createElement('img'); im.className = 'abs emo'; im.src = `assets/emoji/${o.ico}.png`; im.style.width = im.style.height = (o.size || 130) + 'px'; $('items').appendChild(im); o.el = im; }
+    ITEMS.push(o);
+  }
+}
+function itemCues() {
+  for (const o of ITEMS) {
+    const silent = o.silent;
+    if (o.k === 'chip') { sfx(o.t0, 'pop', .45); o.ph.slice(1).forEach(p => sfx(p[0], p[3] === 'red' ? 'stamp' : 'tick2', .5)); }
+    if (['file', 'list', 'ecg', 'stat', 'cmp', 'art'].includes(o.k) && !silent) sfx(o.t0 - .12, 'whoosh', .55);
+    if (o.k === 'file') { o.rows.forEach((r, i) => sfx(Math.max(o.t0 + .25 + i * .12, r[0]), r[3] === 'r' ? 'pop' : 'tick2', .5)); if (o.stamp) { sfx(o.stamp[0], 'stamp', .75); sfx(o.stamp[0], 'impact', .4); } }
+    if (o.k === 'list') o.rows.forEach(r => sfx(r[0], 'tick2', .55));
+    if (o.k === 'ecg') o.states.forEach(s => { if (s[1] === 'crit') { sfx(s[0], 'alarm', .4); } else { sfx(s[0], 'ding', .5); } });
+    if (o.k === 'stat') { sfx(o.at || o.t0 + .3, 'tick', .5); sfx((o.at || o.t0 + .3) + .35, 'tick', .45); sfx((o.at || o.t0 + .3) + (o.dur || .7), 'ding', .45); }
+    if (o.k === 'cmp') { sfx(o.a[0], 'pop', .5); sfx(o.b[0], 'ding', .5); }
+    if (o.k === 'art') { if (o.cross) sfx(o.cross[0], 'stamp', .55); (o.status || []).forEach(s => sfx(s[0], 'tick2', .5)); }
+    if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
+    if (o.k === 'stk') sfx(o.t0, 'pop', .4);
+  }
+  for (const f of CFG.fx) {
+    if (f.k === 'red' && !f.silent) sfx(f.t0, 'alarm', .35);
+    if (f.k === 'green' && !f.silent) sfx(f.t0, 'shimmer', .55);
+    if (f.k === 'xray') { sfx(f.t0, 'whoosh', .5); sfx(f.t0 + .05, 'beep', .5); sfx(f.t0 + .25, 'beep', .4); }
+    if (f.k === 'bw' && !f.silent) sfx(f.t0, 'tick2', .4);
+  }
+}
+const ecgShape = p => { // one heartbeat, p in [0,1)
+  const g = (c, w, a) => a * Math.exp(-Math.pow((p - c) / w, 2));
+  return g(.18, .035, .12) - g(.30, .012, .18) + g(.335, .014, 1) - g(.37, .014, .32) + g(.58, .05, .22); };
+function rItem(o, t) {
+  const el = o.el;
+  if (o.k === 'chip') {
+    const L = life(t, o.t0, o.t1, .3, .2, 2.2); if (!L) { hide(el); return; }
+    let ph = o.ph[0]; for (const p of o.ph) if (t >= p[0]) ph = p;
+    const key = ph[1] + ph[2] + ph[3];
+    if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('img').src = `assets/emoji/${ph[1]}.png`; el.querySelector('span').textContent = ph[2]; el.className = 'chip abs ' + (ph[3] || ''); el.style.display = 'flex'; }
+    const sw = ph === o.ph[0] ? 1 : lerp(.75, 1, eBack(clamp((t - ph[0]) / .25), 2.4));
+    setT(el, o.x || 540, o.y || 310, L.s * sw, -2, L.o); return;
+  }
+  if (o.k === 'stamp') {
+    const t1 = o.t1 || o.t + 1.4; if (t < o.t - .02 || t > t1 + .25) { hide(el); return; }
+    const k = t - o.t; const p = clamp(k / .16); const s = k < .16 ? lerp(2.4, 1, eIn(p)) : 1 + .04 * Math.exp(-(k - .16) * 10) * Math.sin((k - .16) * 40);
+    setT(el, o.x || 540, o.y || 640, s * (o.s || 1), o.rot ?? -9, clamp(p * 3) * (1 - clamp((t - t1) / .25)) * .96); return;
+  }
+  if (o.k === 'stk') { const L = life(t, o.t0, o.t1, .3, .2, 2.6); if (!L) { hide(el); return; } setT(el, o.x, o.y + bob(L.k, 1, 7), L.s, (o.rot || 0) + Math.sin(L.k * 3) * 6, L.o); return; }
+  const L = life(t, o.t0, o.t1, .38, .22, 1.6); if (!L) { hide(el); return; }
+  if (o.k === 'file') { // top-anchored: the patient file grows downward as rows get filled in
+    if (el.style.display !== 'block') el.style.display = 'block'; el.style.opacity = L.o.toFixed(3); el.style.transformOrigin = '50% 0';
+    el.style.transform = `translate(${(o.x || 540).toFixed(1)}px,${((o.y || 450) - 150 + bob(L.k, 0, 4)).toFixed(1)}px) translate(-50%,0) scale(${L.s.toFixed(4)})`;
+  } else setT(el, o.x || 540, (o.y || 450) + bob(L.k, 0, 4), L.s, 0, L.o);
+  if (o.k === 'file') {
+    const rows = el.querySelectorAll('.fRow'); o.rows.forEach((r, i) => { const ts = Math.max(o.t0 + .25 + i * .12, r[0]); const d = t >= ts - .01 ? 'flex' : 'none'; if (rows[i].style.display !== d) rows[i].style.display = d; rowIn(rows[i], t, ts); });
+    if (o.stamp) { const st = el.querySelector('.fStamp'); const k = t - o.stamp[0]; const p = clamp(k / .16);
+      st.style.opacity = k < 0 ? 0 : (clamp(p * 3) * .95).toFixed(3); st.style.transform = `rotate(-11deg) scale(${k < 0 ? 2.4 : (k < .16 ? lerp(2.4, 1, eIn(p)) : 1).toFixed(3)})`; }
+  }
+  if (o.k === 'list') { const rows = el.querySelectorAll('.ckRow'); o.rows.forEach((r, i) => checkRow(rows[i], t, r[0], r[2] === 'bad')); }
+  if (o.k === 'ecg') {
+    let st = o.states[0]; for (const s of o.states) if (t >= s[0]) st = s;
+    const crit = st[1] === 'crit', flat = st[1] === 'flat'; const col = crit || flat ? '#FF4B4B' : '#4ADE80';
+    const v = el.querySelector('.eVal'); if (v.dataset.k !== st[2]) { v.dataset.k = st[2]; v.textContent = st[2]; v.style.background = crit || flat ? '#E11D2E' : '#16A34A'; }
+    const sw = clamp((t - st[0]) / .25); v.style.transform = `scale(${st === o.states[0] ? 1 : lerp(.7, 1, eBack(sw, 2.4)).toFixed(3)})`;
+    const speed = crit ? 1.9 : 1.05, per = crit ? 3.4 : 2.4; const head = ((t - o.t0) * 0.55) % 1; let d = '';
+    for (let x = 0; x <= 600; x += 4) { const ph = (x / 600) * per - (t * speed); let p = ((ph % 1) + 1) % 1; let a = flat ? 0 : ecgShape(p) * (crit ? (1 + .35 * Math.sin(ph * 2.1)) : 1);
+      d += (x ? 'L' : 'M') + x + ' ' + (82 - a * 62).toFixed(1); }
+    el.querySelectorAll('path').forEach(p => { p.setAttribute('d', d); p.setAttribute('stroke', col); });
+    const lastY = 82 - (flat ? 0 : ecgShape((((per - t * speed) % 1) + 1) % 1)) * 62; const dot = el.querySelector('.eDot'); dot.setAttribute('cx', 600); dot.setAttribute('cy', lastY.toFixed(1)); dot.setAttribute('fill', col);
+  }
+  if (o.k === 'stat') {
+    const at = o.at || o.t0 + .3; const p = eOut(clamp((t - at) / (o.dur || .7))); const v = Math.round(lerp(o.from || 0, o.to, p) / (o.step || 1)) * (o.step || 1);
+    el.querySelector('.dg').textContent = o.fmt ? o.fmt(v) : v.toLocaleString('ro-RO');
+  }
+  if (o.k === 'cmp') { const cols = el.querySelectorAll('.mCol'); popIn(cols[0], t, o.a[0], 2.2); popIn(cols[1], t, o.b[0], 2.2); cols[0].style.filter = (o.dimA && t >= o.b[0]) ? 'grayscale(.55) opacity(.75)' : 'none'; }
+  if (o.k === 'art') {
+    if (o.cross) { const x = el.querySelector('.artX'); const p = clamp((t - o.cross[0]) / .3); x.style.opacity = p > 0 ? 1 : 0; x.style.transform = `scale(${p > 0 ? eBack(p, 2.6) : 0}) rotate(-8deg)`; }
+    const sv = el.querySelector('.artWrap svg'); sv.style.transform = o.spin ? `rotate(${(Math.sin(t * 2) * 3).toFixed(2)}deg)` : 'none';
+    let s = null; for (const q of (o.status || [])) if (t >= q[0]) s = q; status(el.querySelector('.status'), s ? s[1] : '', s ? s[2] : '#000');
+  }
 }
 
-function rKm(t) {
-  const L = cardIn('kmCard', t, A.foarte - .25, A.kmE + .45, 540, 450); if (!L) return;
-  const p = eOut(clamp((t - A.k200) / .7)); const v = Math.round(200000 * p / 1000) * 1000;
-  const s = String(v).padStart(6, '0'); $('kmDg').textContent = s.slice(0, 3) + '.' + s.slice(3);
-  $('kmPl').textContent = t >= A.ceva - .05 ? '+' : '';
-  $('kmSub').style.opacity = clamp((t - A.volvo1 + .1) / .3);
-}
-
-function rArr(t) {
-  const L = cardIn('arrCard', t, A.masina - .15, A.dpf2E + .5, 540, 440); if (!L) return;
-  rowIn($('ar1'), t, A.turbo2 - .1); rowIn($('ar2'), t, A.dpf2 - .1);
-  [['ar1', A.turbo2], ['ar2', A.dpf2]].forEach(([id, ts]) => { const ic = $(id).querySelector('.ic'); const p = clamp((t - ts - .15) / .3); ic.style.transform = `scale(${p > 0 ? eBack(p, 2.6) : 0})`; });
-}
-
-function rDone(t) {
-  const L = cardIn('doneCard', t, A.la3 - .15, A.recondE + .5, 540, 440); if (!L) return;
-  checkRow($('dk1'), t, A.demontat); checkRow($('dk2'), t, A.verificat); checkRow($('dk3'), t, A.recond);
-}
-
-function rAdm(t) {
-  const L = cardIn('admCard', t, A.tot - .15, Math.min(A.completE + .4, A.si4 - .35), 540, 440);
-  const bL = life(t, A.curatat - .25, A.completE + .2, .25, .2, 2.4);
-  const wp = eInOut(clamp((t - A.curatat + .1) / .8));
-  if (bL) setT($('admBroom'), lerp(330, 760, wp), 400 + Math.sin(t * 16) * 10, bL.s, -20 + Math.sin(t * 16) * 14, bL.o); else hide($('admBroom'));
-  if (!L) return;
-  $('admDirty').style.clipPath = `inset(0 0 0 ${(wp * 100).toFixed(1)}%)`;
-  status($('admStatus'), t >= A.curatat - .05 ? '<img src="assets/emoji/check_mark_button.png">CURĂȚATE COMPLET' : '', '#15803D');
-}
-
-function rSteps(t) {
-  const L = cardIn('stepCard', t, A.si4 - .1, A.eiE + .4, 540, 440); if (!L) return;
-  const on = [[A.primeasca - .1, 'st1', null], [A.prima - .1, 'st2', 'sa1'], [A.pleca - .1, 'st3', 'sa2']];
-  on.forEach(([ts, id, ar]) => { const el = $(id); const p = clamp((t - ts) / .3); el.classList.toggle('on', p > 0);
-    el.querySelector('.cir').style.transform = `scale(${p > 0 ? eBack(p, 2.4) : 1})`; if (ar) $(ar).classList.toggle('on', p > 0); });
-  const key = $('st2').querySelector('img'); const kp = clamp((t - A.prima) / .5); key.style.transform = `rotate(${(-40 + 40 * eBack(kp, 2.2)).toFixed(1)}deg)`;
-  const car = $('st3').querySelector('img'); car.style.transform = t >= A.pleca - .1 ? `translateX(${(Math.sin((t - A.pleca) * 10) * 3).toFixed(1)}px)` : 'none';
-}
-
-function rWeak(t) {
-  const L = cardIn('weakCard', t, A.problemele - .2, A.aparE + .5, 540, 460); if (!L) return;
-  [['wk1', A.turbo5], ['wk2', A.dpf5], ['wk3', A.adm5]].forEach(([id, ts]) => { rowIn($(id), t, ts - .1);
-    const ic = $(id).querySelector('.ic'); const p = clamp((t - ts - .1) / .3); ic.style.transform = `scale(${p > 0 ? eBack(p, 2.6) * (1 + .06 * Math.sin(t * 10)) : 0})`; });
-}
-
-function rChain(t) {
-  const L = cardIn('chainCard', t, A.dar6 - .15, A.reparat6E + .5, 540, 450); if (!L) return;
-  popIn($('cb1'), t, A.dar6 + .05, 1.8);
-  $('chainPath').setAttribute('stroke-dashoffset', (1 - eOut(clamp((t - A.motorul6 + .35) / .3))).toFixed(3));
-  const p = popIn($('cb2'), t, A.motorul6 - .05, 2.6); if (p >= 1) $('cb2').style.transform = `scale(${(1 + .04 * Math.sin(t * 12)).toFixed(3)})`;
-  status($('chainStatus'), t >= A.reparat6 - .05 ? '<img src="assets/emoji/warning.png">VA TREBUI REPARAT' : '', '#E11D2E');
-}
-
-function rMoney(t) {
-  const L = cardIn('moneyCard', t, A.pentru8 - .15, Math.min(A.leiE + .45, A.aceste9 - .32), 540, 450);
-  const fL = life(t, A.e10k - .05, A.ci, .3, .2, 2.4); if (fL) setT($('moneyFly'), 830 + fL.k * 50, 290 - fL.k * 40, fL.s, -12 + Math.sin(t * 8) * 10, fL.o); else hide($('moneyFly'));
-  if (!L) return;
-  popIn($('mc1'), t, A.e10k - .1, 2.2); popIn($('mc2'), t, A.ci - .05, 2.2);
-  $('mc1').style.filter = t >= A.ci ? 'grayscale(.55) opacity(.75)' : 'none';
-}
-
-function rPros(t) {
-  const L = cardIn('prosCard', t, A.aceste9 - .1, A.fortateE + .55, 540, 300); if (!L) return;
-  popIn($('pc1'), t, A.econ - .05); popIn($('pc2'), t, A.consum - .05); popIn($('pc3'), t, A.doua - .05);
-  const p = popIn($('pc4'), t, A.destul9 - .05, 2.6); if (p >= 1) $('pc4').style.transform = `scale(${(1 + .035 * Math.sin(t * 11)).toFixed(3)})`;
-}
-
-function rTip(t) {
-  const L = cardIn('tipCard', t, A.si10 - .1, SEND - .12, 540, 320); if (!L) return;
-  checkRow($('tk1'), t, A.intre); checkRow($('tk2'), t, A.interv10);
-  const p = popIn($('tipMoney'), t, A.bani - .1, 2.2); if (p >= 1) $('tipMoney').style.transform = `scale(${(1 + .03 * Math.sin(t * 9)).toFixed(3)})`;
+// ---------- tracked ring on a real part ----------
+const mapBg = (x, y) => [540 + (x - 540) * BGX.z + BGX.dx, 960 + (y - 960) * BGX.z + BGX.dy];
+function rRings(t, n) {
+  const svg = $('ringSvg'), ch = $('ringChip');
+  const R = (CFG.rings || []).find(r => n >= r.f0 && n <= r.f1 + 5 && TL[r.track]);
+  if (!R) { hide(svg); hide(ch); return; }
+  const TR = TL[R.track]; const tr = TR[String(Math.min(R.f1, Math.max(R.f0, n)))] || TR[Object.keys(TR)[0]]; const [x, y] = mapBg(tr[0], tr[1]);
+  const a0 = R.f0 / FPS, a1 = R.f1 / FPS; const o = clamp((t - a0) / .12) * (1 - clamp((t - a1) / .16));
+  const r = ((R.r || 160) + 6 * Math.sin(t * 9)) * BGX.z * eBack(clamp((t - a0) / .3), 2);
+  ['ringA', 'ringB'].forEach(id => { $(id).setAttribute('cx', x); $(id).setAttribute('cy', y); $(id).setAttribute('r', Math.max(1, r)); });
+  $('ringB').setAttribute('stroke', R.col || '#62D8FF');
+  const left = x > 540; const lx = left ? Math.max(250, x - r - 220) : Math.min(830, x + r + 220), ly = y;
+  $('ringLn').setAttribute('d', left ? `M ${lx + 180} ${ly} L ${x - r - 6} ${y}` : `M ${lx - 180} ${ly} L ${x + r + 6} ${y}`);
+  svg.style.display = 'block'; svg.style.opacity = o.toFixed(3); svg.style.transform = 'none';
+  if (ch.dataset.k !== R.label) { ch.dataset.k = R.label; ch.querySelector('img').src = `assets/emoji/${R.ico || 'gear'}.png`; ch.querySelector('span').textContent = R.label; ch.className = 'chip abs ' + (R.cls || ''); }
+  setT(ch, R.lx || lx, R.ly || ly, eBack(clamp((t - a0 - .08) / .3), 2.2), -3, o);
 }
 
 function rEnd(t) {
@@ -581,25 +492,13 @@ function rEnd(t) {
     document.getElementById('lbl' + i).setAttribute('opacity', clamp((k - d - .15) / .3));
     const h = document.getElementById('halo' + i); const hk = ((k - d - .2) % 1.6 + 1.6) % 1.6; h.setAttribute('r', 10 + hk * 34); h.setAttribute('opacity', p >= 1 ? Math.max(0, .9 - hk / 1.6) : 0); });
 }
+function endCues() { sfx(SEND - .08, 'whoosh', .8); sfx(SEND + .3, 'ding', .55); sfx(SEND + .9, 'pop', .45);
+  [0, 1, 2, 3].forEach(i => sfx(SEND + 1.9 + i * .26, 'pop', .45)); sfx(SEND + 3.1, 'ding', .45); }
 
-const mapBg = (x, y) => [540 + (x - 540) * BGX.z + BGX.dx, 960 + (y - 960) * BGX.z + BGX.dy];
-function rRing(t, n) {
-  const TR = TL.track_turbo, f0 = 900, f1 = 926; const svg = $('ringSvg'), ch = $('ringChip');
-  if (!TR || n < f0 || n > f1 + 5) { hide(svg); hide(ch); return; }
-  const tr = TR[String(Math.min(f1, n))]; const [x, y] = mapBg(tr[0], tr[1]);
-  const a0 = f0 / FPS, a1 = f1 / FPS; const o = clamp((t - a0) / .12) * (1 - clamp((t - a1) / .16));
-  const r = (165 + 6 * Math.sin(t * 9)) * BGX.z * eBack(clamp((t - a0) / .3), 2);
-  $('ringA').setAttribute('cx', x); $('ringA').setAttribute('cy', y); $('ringA').setAttribute('r', Math.max(1, r));
-  $('ringB').setAttribute('cx', x); $('ringB').setAttribute('cy', y); $('ringB').setAttribute('r', Math.max(1, r));
-  const lx = Math.max(250, x - r - 220), ly = y; $('ringLn').setAttribute('d', `M ${lx + 180} ${ly} L ${x - r - 6} ${y}`);
-  svg.style.display = 'block'; svg.style.opacity = o.toFixed(3); svg.style.transform = 'none';
-  setT(ch, lx, ly, eBack(clamp((t - a0 - .08) / .3), 2.2), -3, o);
-}
 function render(t, n) {
   renderBg(t);
-  if (SCENES_OK) { rHook(t); rChips(t); rKm(t); rArr(t); rDone(t); rAdm(t); rSteps(t); rWeak(t); rChain(t); rMoney(t); rPros(t); rTip(t); rRing(t, n); }
-  rEnd(t);
-  renderSparks(t); renderChapter(t); renderCaptions(t);
+  if (SCENES_OK) { rHook(t); for (const o of ITEMS) rItem(o, t); rRings(t, n); }
+  rEnd(t); renderSparks(t); renderChapter(t); renderCaptions(t);
 }
 const bg = $('bg');
 window.renderFrame = async (n) => {
@@ -610,8 +509,11 @@ window.renderFrame = async (n) => {
 window.READY = false;
 (async () => {
   for (const f of ['900 80px Mont', '800 40px Mont', '700 30px Mont', '600 30px Mont', '100px Anton']) await document.fonts.load(f);
-  await document.fonts.ready; await Promise.all([...document.images].map(im => im.decode().catch(() => { })));
-  buildChunks(); setupCues();
+  await document.fonts.ready;
+  if (SCENES_OK) { try { setupHook(); buildItems(); } catch (e) { SCENES_OK = false; window.CFG_ERR = String(e.message); console.error('build failed: ' + e.message); } }
+  await Promise.all([...document.images].map(im => im.decode().catch(() => { })));
+  if (SCENES_OK) { fitHook(); hookCues(); itemCues(); (CFG.sfx || []).forEach(s => sfx(s[0], s[1], s[2] ?? .5)); (CFG.bursts || []).forEach(b => burst(...b)); }
+  endCues(); buildChunks();
   window.CHUNKS_DEBUG = CHUNKS.map(c => ({ t0: +c.t0.toFixed(2), t1: +c.t1.toFixed(2), txt: c.words.map(w => w.text).join(' ') }));
   window.READY = true;
 })();
