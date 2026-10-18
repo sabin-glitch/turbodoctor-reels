@@ -126,7 +126,11 @@ while True:
     for T0, T1, X0, Y0, X1, Y1, mroi, feather in BANDS:
         if not (T0 <= t < T1): continue
         roi = out[Y0:Y1, X0:X1]
-        fixed = cv2.inpaint(roi, mroi, 7, cv2.INPAINT_TELEA).astype(np.float32)
+        if mroi.size > 60000:   # big text block: fill at half resolution (4-8x faster, the fill is smooth anyway), blend only on the mask
+            sm = cv2.resize(roi, None, fx=.5, fy=.5, interpolation=cv2.INTER_AREA); mk = cv2.resize(mroi, (sm.shape[1], sm.shape[0]), interpolation=cv2.INTER_NEAREST)
+            fixed = cv2.resize(cv2.inpaint(sm, mk, 4, cv2.INPAINT_TELEA), (roi.shape[1], roi.shape[0]), interpolation=cv2.INTER_CUBIC).astype(np.float32)
+        else:
+            fixed = cv2.inpaint(roi, mroi, 7, cv2.INPAINT_TELEA).astype(np.float32)
         out[Y0:Y1, X0:X1] = (fixed * feather + roi.astype(np.float32) * (1 - feather)).astype(np.uint8)
     for col, tol, y0, y1, t0, t1 in DYN:
         if not (t0 <= t < t1): continue

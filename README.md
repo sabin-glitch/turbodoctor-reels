@@ -46,7 +46,8 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO) |
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
 | `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **clipuri de pe TikTok, fără laptopul lui Sabin:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
-| `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars static (inpainting doar pe litere) și estompează numerele de înmatriculare (`--blur t0-t1:x0:y0:x1:y1`); fără crop, fără zoom, cadrele rămân în ordinea filmată |
+| `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars (fără crop, fără zoom, cadrele rămân în ordinea filmată): `--band y0-y1[@t0-t1]` text static; `--dynbox B,G,R,tol@y0-y1` subtitrări vechi pe căsuță colorată; `--txtbox y0-y1[@fill=B,G,R]` căsuțe pe un rând fix (înlocuite cu căsuța noastră închisă, pe care stau subtitrările noastre, `capTop`); `--dyntext y0-y1` subtitrări albe fără căsuță; `--rect` dreptunghi pe fundal uniform; `--blur t0-t1:x0:y0:x1:y1` numere de înmatriculare |
+| `pipeline/faces.py` | unde sunt fețele în clip (YuNet, `/home/claude/models/face/yunet.onnx`), ca grafica să nu le acopere |
 | `publish_media.sh <mp4> <aaaa-ll-zz_slug>` | urcă videoclipul aprobat pe branch-ul `media` și afișează linkul public pentru Metricool |
 | `pipeline/wm_remove.py` | scoate watermark-ul TikTok (`--probe` găsește momentul în care se mută logo-ul) |
 | `pipeline/stab.sh` | dezactivat: imaginea rămâne cum a fost filmată |
@@ -71,11 +72,14 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 
 Ancore pe cuvinte: `aw(fereastră, 'cuvânt', nth)` = începutul cuvântului, `ew(...)` = sfârșitul, `cw('cuvânt')` / `cwe(...)` în cold open. `S0` = începutul poveștii, `SEND` = sfârșitul ei, `TEND` = sfârșitul „Rețetei”.
 
-- `hook`: `tag`, `l1`, `l2` (+ `l1At`, `l2At`, `l2Col`), `car`, `chips`.
+- `hook`: `tag`, `l1`, `l2` (+ `l1At`, `l2At`, `l2Col`), `car`, `chips`; poziție: `y` (tot blocul), `tagY`, `x` + `w` + `l1Y` + `l2Y` (hook pe o coloană, lângă un card).
+- `note`: cardul nostru peste bula „Răspuns la comentariu” arsă de TikTok (`box` = dreptunghiul bulei, `hard: true`), cu textul comentariului; cu `ph` același card devine panoul „PE SCURT” sincronizat cu vorbirea.
+- `capTop` / `capLeft` / `capHold` / `capNoFade`: subtitrările mutate pe rândul subtitrărilor vechi șterse. `free: true` pe un card/chip care stă în altă zonă și nu închide cardul anterior; `sc` = scară card/chip.
+- **Zona de jos (y > ~1560) e acoperită de textul TikTok/Instagram**: nimic important acolo; subtitrările la 1290, cardurile sus sau între bărbie și subtitrări.
 - `stages`: `[[t, 'SIMPTOME'], [t, 'INVESTIGAȚIE'], [t, 'CAUZA'], [t, 'SOLUȚIA']]`.
 - `items[].k`: `scan`, `file` (fișa pacientului, `ecg`), `schem` (`type` din `schem.js`), `ring`, `call` (săgeată pe piesă, `track`), `pipe` (tratament), `list`, `chip`, `kin` (text cinetic), `stamp`, `cmp`, `stat`, `bars`, `gauge`, `chain`, `def` (dicționar tehnic), `art`, `ecg`, `eq`, `stk`, `tip` (Rețeta Turbo Doctor).
 - `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie.
-- Scheme (`schem.js`): `turboPlay`, `turboOil`, `injectorSpray`, `chainSkip`, `wastegate`, `pistonSeize`, `systemMap`, `oilPaths`, `railPressure`, `engineSwap`, `camTiming`, `coolingHybrid`, `oilFilter`, `camWear`, `route`.
+- Scheme (`schem.js`): `turboPlay`, `turboOil`, `injectorSpray`, `chainSkip`, `wastegate`, `pistonSeize`, `systemMap`, `oilPaths`, `railPressure`, `engineSwap`, `camTiming`, `coolingHybrid`, `oilFilter`, `camWear`, `route`, `dpfFlow` (DPF în secțiune; pasul 4 al fiecărui step = `load`, `regen`, `ash`, `clog`, `clean`, `flow`; `P.burn`, `P.labels`).
 
 Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar subtitrările și finalul (`CFG_ERR` în `render.py`).
 
