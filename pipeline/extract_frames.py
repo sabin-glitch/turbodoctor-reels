@@ -42,10 +42,13 @@ need = {}
 for n in range(n_out):
     need.setdefault(max(0, min(LAST, int(round(out_to_src(n / FPS) * FPS)))), []).append(n)
 shutil.rmtree(f"{ROOT}/frames_base", ignore_errors=True); os.makedirs(f"{ROOT}/frames_base", exist_ok=True)
-i = 0; written = 0; last = max(need)
+i = 0; written = 0; last = max(need); good = None
 while i <= last:
     ok, fr = cap.read()
     if not ok: break
+    # TikTok downloads often end on a black frame: near the end, reuse the last real frame (no black flash, end card bg not black)
+    if fr.mean() < 6 and i >= LAST - 8 and good is not None: fr = good
+    elif fr.mean() >= 6: good = fr
     if i in need:
         if fr.shape[1] != 1080 or fr.shape[0] != 1920:
             fr = cv2.resize(fr, (1080, 1920), interpolation=cv2.INTER_LANCZOS4)

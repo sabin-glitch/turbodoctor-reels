@@ -111,6 +111,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .mCol .v.big{font-family:Anton;font-weight:400;font-size:76px;line-height:1.05}
 .mCol.bad{background:#FEE2E2;border-color:#E11D2E;color:#B91C1C}
 .mCol.ok{background:#DCFCE7;border-color:#16A34A;color:#15803D}
+.mCol.nt{background:#E0F2FE;border-color:#0369A1;color:#075985}
 /* illustration */
 .artWrap{position:relative;height:230px;margin-top:6px;display:flex;justify-content:center}
 .artWrap svg{height:230px;width:auto}
@@ -186,6 +187,11 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* stamp */
 .stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
+/* comment card: our own card placed exactly over a burned-in TikTok reply bubble (same spot, same size, whole clip) */
+.note{background:#fff;border-radius:24px;box-shadow:0 12px 30px rgba(0,0,0,.45);color:var(--ink);padding:18px 26px 20px;flex-direction:column;justify-content:center}
+.note .nk{display:flex;align-items:center;gap:10px;font-family:JB;font-weight:800;font-size:20px;letter-spacing:2px;color:#D3172A;text-transform:uppercase;white-space:nowrap}
+.note .nk img{width:36px;height:36px}
+.note .nt{font-weight:800;font-size:36px;line-height:1.14;margin-top:8px}
 /* end card (standard, unchanged) */
 #endCard{width:1080px;height:1920px}
 #endCard .eWord{position:absolute;left:0;right:0;top:196px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
@@ -353,6 +359,7 @@ function capClass(w) {
   if (/[0-9]/.test(w.text)) return 'y'; return AUTO_MAP[n] || '';
 }
 const HIDE_CAP = [[0, HAS_COLD ? S0 + 0.05 : 0], [SEND, 1e9]].concat(CFG.hideCap || []);
+if (CFG.capTop) $('cap').style.top = CFG.capTop + 'px'; if (CFG.capLeft != null) $('cap').style.left = CFG.capLeft + 'px';   // captions moved (e.g. onto the line of old burned captions we removed)
 let CHUNKS = [];
 function buildChunks() {
   WORDS.forEach((w, i) => { const nx = WORDS[i + 1]; if (nx && norm(w.text) === 'turbo' && norm(nx.text).startsWith('doctor')) { w._brand = nx._brand = true; } });
@@ -364,7 +371,9 @@ function buildChunks() {
     if (brk) { cur = { words: [], w: 0, win: w.win }; CHUNKS.push(cur); }
     cur.words.push(w); cur.w += width(w.text);
   });
-  CHUNKS.forEach((c, i) => { c.t0 = c.words[0].os - 0.05; const nx = CHUNKS[i + 1]; c.t1 = Math.min(nx ? nx.words[0].os - 0.05 : 1e9, c.words[c.words.length - 1].oe + 0.3); });
+  CHUNKS.forEach((c, i) => { c.t0 = c.words[0].os - 0.05; const nx = CHUNKS[i + 1]; c.t1 = Math.min(nx ? nx.words[0].os - 0.05 : 1e9, c.words[c.words.length - 1].oe + 0.3);
+    // capHold: keep a chunk on screen until the next one when the pause is short (captions sitting on a box must never leave it empty)
+    if (CFG.capHold && nx && nx.words[0].os - c.words[c.words.length - 1].oe <= CFG.capHold) c.t1 = nx.words[0].os - 0.05; });
 }
 let capCur = -1;
 function renderCaptions(t) {
@@ -374,7 +383,7 @@ function renderCaptions(t) {
     cap.innerHTML = CHUNKS[idx].words.map(w => `<span class="${capClass(w)}">${w.text.replace(/[.,?!:]$/, '')}</span>`).join(''); }
   if (idx < 0) return;
   const c = CHUNKS[idx]; const p = clamp((t - c.t0) / 0.13);
-  cap.style.transform = `translateY(${(1 - eOut(p)) * 24}px) scale(${lerp(.86, 1, eBack(p, 2.2))})`; cap.style.opacity = clamp(p * 3);
+  cap.style.transform = `translateY(${(1 - eOut(p)) * 24}px) scale(${lerp(.86, 1, eBack(p, 2.2))})`; cap.style.opacity = CFG.capNoFade ? 1 : clamp(p * 3);
   c.words.forEach((w, j) => { const sp = cap.children[j]; const on = t >= w.os - 0.03 && t < Math.max(w.oe, w.os + 0.16); sp.classList.toggle('on', on);
     const d = t - w.os; const pp = (d >= -0.03 && d < 0.26) ? Math.sin(clamp((d + .03) / .29) * Math.PI) : 0; sp.style.transform = `scale(${(1 + .14 * pp * Math.min(1, 7 / Math.max(1, w.text.length))).toFixed(3)})`; });
 }
@@ -460,7 +469,7 @@ function setupHook() {
   $('hookChips').innerHTML = (H.chips || []).map((c, i) => `<div class="hChip" id="hc${i}"><img src="assets/emoji/${c[0]}.png" alt="">${c[1]}</div>`).join('');
   if (H.stk1) $('hookStk1').src = `assets/emoji/${H.stk1}.png`;
 }
-function fitHook() { if (!CFG.hook) return; fitText($('hL1'), 960); fitText($('hL2'), 940);
+function fitHook() { if (!CFG.hook) return; fitText($('hL1'), CFG.hook.w || 960); fitText($('hL2'), (CFG.hook.w || 960) - 20);
   const hc = $('hookChips'); hc.style.display = 'flex'; hc.style.visibility = 'hidden'; const w = hc.scrollWidth; hc.dataset.sc = w > 1000 ? (1000 / w).toFixed(3) : '1'; hc.style.display = 'none'; hc.style.visibility = ''; }
 function hookCues() {
   const H = CFG.hook; if (!H) return;
@@ -474,11 +483,12 @@ function hookCues() {
 function rHook(t) {
   const H = CFG.hook; if (!H) return; const out = (H.end || HOOK_END) - .1; const y0 = H.y || 0;
   let L = life(t, 0, out, .25, .16);
-  if (L) setT($('hTag'), 540, y0 + lerp(150, 214, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hTag'));
+  if (L) setT($('hTag'), 540, H.tagY != null ? H.tagY + lerp(-40, 0, eOut(clamp(L.k / .3))) : y0 + lerp(150, 214, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hTag')); // tagY: tag placed on its own (e.g. under l2 when the space above l1 is the face)
   if (L) $('hTag').querySelector('.dot').style.opacity = (Math.floor(t * 4) % 2 ? .25 : 1);
-  L = life(t, H.l1At || 0.05, out, .26, .16, 1.6); if (L && H.l1) setT($('hL1'), 540, y0 + 368, L.s, -2, L.o); else hide($('hL1'));
+  const HX = H.x || 540;   // x / w / l1Y / l2Y: hook lines placed beside something we must not cover (e.g. a comment card)
+  L = life(t, H.l1At || 0.05, out, .26, .16, 1.6); if (L && H.l1) setT($('hL1'), HX, H.l1Y ?? (y0 + 368), L.s, -2, L.o); else hide($('hL1'));
   L = life(t, (H.l2At || .9) - .04, out, .18, .16, 1.2);
-  if (L && H.l2) { const st = lerp(1.55, 1, eOut(clamp(L.k / .15))); setT($('hL2'), 540, y0 + 532, st * (1 + .022 * Math.sin(t * 18)), -4, L.o); } else hide($('hL2'));
+  if (L && H.l2) { const st = lerp(1.55, 1, eOut(clamp(L.k / .15))); setT($('hL2'), HX, H.l2Y ?? (y0 + 532), st * (1 + .022 * Math.sin(t * 18)), -4, L.o); } else hide($('hL2'));
   L = life(t, H.carAt || 1.3, out, .26, .16, 2.2); if (L && H.car) setT($('hCar'), 540, y0 + 676, L.s, 0, L.o); else hide($('hCar'));
   const ca = H.chipsAt || 1.6;
   L = life(t, ca, out, .2, .16); if (L && (H.chips || []).length) { setT($('hookChips'), 540, y0 + (H.chipsY || 776), +$('hookChips').dataset.sc, 0, L.o); (H.chips || []).forEach((c, i) => popIn($('hc' + i), t, c[2] ?? (ca + .1 + i * .18))); } else hide($('hookChips'));
@@ -493,7 +503,7 @@ const SVGNS = 'http://www.w3.org/2000/svg';
 const ARROW_DOWN = '<svg width="40" height="36" viewBox="0 0 40 36"><path class="ad" d="M 20 2 L 20 28 M 9 18 L 20 30 L 31 18" fill="none" stroke="#EAF6FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>';
 function buildItems() {
   const its = (CFG.items || []).map(o => Object.assign({}, o));
-  const sl = its.filter(o => SLOT.includes(o.k)).sort((a, b) => a.t0 - b.t0);
+  const sl = its.filter(o => SLOT.includes(o.k) && !o.free).sort((a, b) => a.t0 - b.t0);   // free: item lives in its own zone, it does not end the previous card
   sl.forEach((o, i) => { const nx = sl[i + 1]; if (nx) o.t1 = Math.min(o.t1, nx.t0 - .28); });
   for (const o of its) {
     if (o.k === 'chip') { o.el = mk('chip abs', '<img alt=""><span></span>'); o.el.dataset.disp = 'flex'; }
@@ -521,6 +531,10 @@ function buildItems() {
     if (o.k === 'bars') o.el = mk('abs dk barsC', `<div class="kTitle"><span>${img(o.ico || 'bar_chart')}${o.title}</span><span class="t2">${o.sub || ''}</span></div>` + o.bars.map(b => `<div class="bRow ${b[3] || ''}"><div class="bLab"><span>${b[1]}</span><span class="bv">${b[4] || ''}</span></div><div class="bTrack"><div class="bFill"></div></div></div>`).join(''));
     if (o.k === 'eq') o.el = mk('abs dk eqC', `<div class="kTitle"><span>${img(o.ico || 'counter')}${o.title}</span><span class="t2">${o.sub || ''}</span></div>` + o.lines.map(l => `<div class="eqL ${l[2] || 'w'}">${l[1]}</div>`).join(''));
     if (o.k === 'tip') o.el = mk('abs tip', `<div class="tipH">${img(o.ico || 'stethoscope')}<div><div class="a">${o.sub || 'SFAT DE INGINER'}</div><div class="b">${o.title || 'REȚETA TURBO DOCTOR'}</div></div><div class="rx">Rx</div></div>` + o.rows.map(r => `<div class="tRow">${img(r[1])}<span>${r[2]}</span></div>`).join(''));
+    if (o.k === 'note') { // ph: [[t, label, text, fs, ico], ...] -> the same card (still covering the bubble) turns into a summary panel
+      if (o.ph) { o.label = o.ph[0][1]; o.text = o.ph[0][2]; o.fs = o.ph[0][3] || o.fs; o.ico = o.ph[0][4] || o.ico; }
+      o.el = mk('abs note', `<div class="nk">${img(o.ico || 'speech_balloon')}<span>${o.label || 'COMENTARIU'}</span></div><div class="nt"${o.fs ? ` style="font-size:${o.fs}px"` : ''}>${o.text}</div>`); o.el.dataset.disp = 'flex';
+      o.el.style.width = (o.box[2] - o.box[0]) + 'px'; o.el.style.height = (o.box[3] - o.box[1]) + 'px'; }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'stk') { const im = document.createElement('img'); im.className = 'abs emo'; im.src = `assets/emoji/${o.ico}.png`; im.style.width = im.style.height = (o.size || 130) + 'px'; $('overlays').appendChild(im); o.el = im; }
@@ -555,6 +569,7 @@ function itemCues() {
     if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
     if (o.k === 'kin') { sfx(o.t - .02, 'impact', .7); sfx(o.t, 'glitch', .35); }
     if (o.k === 'stk') sfx(o.t0, 'pop', .4);
+    if (o.k === 'note' && o.ph) o.ph.slice(1).forEach(p => sfx(p[0], 'tick2', .5));
     if (o.k === 'call') { sfx(o.t0, 'lock', .45); sfx(o.t0 + .38, 'type', .4); }
     if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, 'alarm', .3); } }
   }
@@ -579,7 +594,7 @@ function rItem(o, t) {
     const key = ph[1] + ph[2] + ph[3];
     if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('img').src = `assets/emoji/${ph[1]}.png`; el.querySelector('span').textContent = ph[2]; el.className = 'chip abs ' + (ph[3] || ''); el.style.display = 'flex'; }
     const sw = ph === o.ph[0] ? 1 : lerp(.75, 1, eBack(clamp((t - ph[0]) / .25), 2.4));
-    setT(el, o.x || 540, o.y || 330, L.s * sw, -2, L.o); return;
+    setT(el, o.x || 540, o.y || 330, L.s * sw * (o.sc || 1), -2, L.o); return;
   }
   if (o.k === 'stamp') {
     const t1 = o.t1 || o.t + 1.4; if (t < o.t - .02 || t > t1 + .25) { hide(el); return; }
@@ -591,6 +606,16 @@ function rItem(o, t) {
     const k = t - o.t; const p = clamp(k / .13); const s = k < .13 ? lerp(2.3, 1, eIn(p)) : 1 + .05 * Math.exp(-(k - .13) * 9) * Math.sin((k - .13) * 38);
     const sh = 10 * Math.exp(-k * 8); setT(el, (o.x || 540) + sh * Math.sin(k * 90), (o.y || 900) + sh * Math.cos(k * 70), s, o.rot ?? -4, clamp(p * 3) * (1 - clamp((k - (d - .2)) / .2))); return;
   }
+  if (o.k === 'note') { // card glued to a burned-in bubble (box = its rect in the footage, follows zoom/shake); hard = no fade, so the bubble never shows
+    if (t < o.t0 || t >= o.t1 + (o.hard ? 0 : .25)) { hide(el); return; }
+    if (o.ph) { let cur = 0; o.ph.forEach((p, i) => { if (t >= p[0]) cur = i; }); const p = o.ph[cur];
+      if (el.dataset.ph !== String(cur)) { el.dataset.ph = String(cur); el.querySelector('.nk img').src = `assets/emoji/${p[4] || o.ico || 'speech_balloon'}.png`;
+        el.querySelector('.nk span').textContent = p[1]; const nt = el.querySelector('.nt'); nt.innerHTML = p[2]; nt.style.fontSize = (p[3] || o.fs || 36) + 'px';
+        el.querySelector('.nk').style.color = p[5] || (cur ? '#0369A1' : '#D3172A'); }
+      const k = clamp((t - p[0]) / .3); el.querySelector('.nt').style.opacity = cur ? eOut(k).toFixed(3) : 1; el.querySelector('.nt').style.transform = cur ? `translateY(${((1 - eOut(k)) * 12).toFixed(1)}px)` : 'none'; }
+    const op = o.hard ? 1 : clamp((t - o.t0) / .25) * (1 - clamp((t - o.t1) / .25)); const [x0, y0] = mapBg(o.box[0], o.box[1]);
+    if (el.style.display !== 'flex') el.style.display = 'flex'; el.style.opacity = op.toFixed(3); el.style.transformOrigin = '0 0';
+    el.style.transform = `translate(${x0.toFixed(1)}px,${y0.toFixed(1)}px) scale(${BGX.z.toFixed(4)})`; return; }
   if (o.k === 'stk') { const L = life(t, o.t0, o.t1, .3, .2, 2.6); if (!L) { hide(el); return; } setT(el, o.x, o.y + bob(L.k, 1, 7), L.s, (o.rot || 0) + Math.sin(L.k * 3) * 6, L.o); return; }
   if (o.k === 'ring') {
     if (t < o.t0 || t > o.t1 + .2) { o.g.style.display = 'none'; return; } o.g.style.display = 'block';
@@ -634,7 +659,7 @@ function rItem(o, t) {
   }
   // ---------- slot cards (top-anchored) ----------
   const L = life(t, o.t0, o.t1, .36, .22, 1.6); if (!L) { hide(el); return; }
-  setTop(el, o.x || 540, (o.top || CFG.cardTop || 292) + bob(L.k, 0, 3), L.s, L.o);
+  setTop(el, o.x || 540, (o.top || CFG.cardTop || 292) + bob(L.k, 0, 3), L.s * (o.sc || 1), L.o);   // sc: smaller card when the frame is busy
   if (o.k === 'file') {
     const rows = el.querySelectorAll('.fRow'); o.rows.forEach((r, i) => { const ts = Math.max(o.t0 + .25 + i * .12, r[0]); const d = t >= ts - .01 ? 'flex' : 'none'; if (rows[i].style.display !== d) rows[i].style.display = d; rowIn(rows[i], t, ts); });
     if (o.ecg) { let dd = ''; const crit = o.ecg === 'crit'; for (let x = 0; x <= 656; x += 4) { const ph = (x / 656) * 5 - t * 1.4; const p = ((ph % 1) + 1) % 1; dd += (x ? 'L' : 'M') + x + ' ' + (22 - ecgShape(p) * 18 * (crit ? 1 + .4 * Math.sin(ph * 2) : 1)).toFixed(1); }
