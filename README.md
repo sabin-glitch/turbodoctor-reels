@@ -20,7 +20,7 @@ Regulile lui Sabin și preferințele lui de editare sunt ținute în skill-ul `t
 - **Final:** „Rețeta Turbo Doctor” (3 sfaturi de inginer) pe un cadru încetinit, apoi cardul de final neschimbat.
 - **Culoare doar ca accent scurt** pe momente-cheie (roșu = problemă, „radiografie”, alb-negru, verde = rezolvare), niciodată filtru pe tot videoclipul.
 - **Ritm natural (cerut de Sabin, 18.10.2026):** implicit nu se taie pauzele și nu se accelerează (`{"cuts": false, "speed": 1.0}`); tăierea tuturor pauzelor face videoclipul prea rapid și obositor. **Doar hook-ul (cold open) e montat**, din cea mai interesantă parte a clipului.
-- Muzică procedurală discretă, cu ducking sub voce; loudnorm −14 LUFS.
+- Muzică procedurală discretă, cu ducking sub voce, la jumătate față de nivelul inițial (`music_gain` implicit 0,5, cerut de Sabin pe 18.10.2026); loudnorm −14 LUFS.
 
 ## Pașii pentru un reel
 

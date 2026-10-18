@@ -187,7 +187,7 @@ for c in json.load(open(f"{ROOT}/out/sfx.json")):
     if n > 0: fx[o:o + n] += s[:n]
 fx *= 0.5
 mus = music()
-mix = vp + fx + mus * float(cfg.get("music_gain", 1.0))
+mix = vp + fx + mus * float(cfg.get("music_gain", 0.5))  # 0.5 = muzica la jumătate (cerut de Sabin, 18.10.2026)
 sf.write(f"{ROOT}/audio/mix_pre.wav", mix, SR, subtype="FLOAT")
 subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", f"{ROOT}/audio/mix_pre.wav", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
                 "-ar", str(SR), "-c:a", "pcm_s16le", f"{ROOT}/audio/mix_final.wav"], check=True)
