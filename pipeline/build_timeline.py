@@ -162,6 +162,10 @@ for a, b in mg:
     keep.append((cur_a, ca)); removed_before.append(cb - ca); cur_a = cb
 keep.append((cur_a, en0))
 keep = [(a, b) for a, b in keep if b - a > 0.05]
+# out/v2.json {"cuts": false}: no cuts at all, the footage stays exactly as filmed (pauses included)
+_V2 = json.load(open(f"{ROOT}/out/v2.json")) if os.path.exists(f"{ROOT}/out/v2.json") else {}
+if _V2.get("cuts", True) is False:
+    keep = [(0.0, SRC_DUR)]; removed_before = []
 ZG = [0]
 for k in range(1, len(keep)):
     ZG.append(ZG[-1] + (1 if removed_before[k - 1] >= 0.55 else 0))

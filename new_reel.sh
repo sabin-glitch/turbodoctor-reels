@@ -5,7 +5,7 @@ set -e
 NAME=$1; SRC=$2; [ -n "$NAME" ] && [ -f "$SRC" ] || { echo "usage: $0 <name> <video>"; exit 1; }
 HERE=$(cd "$(dirname "$0")" && pwd); R=/home/claude/reels/$NAME
 mkdir -p "$R"/{src,frames,frames_base,audio,out,preview,assets}
-cp "$HERE"/pipeline/*.py "$HERE"/pipeline/*.sh "$HERE"/pipeline/art.js "$R"/
+cp "$HERE"/pipeline/*.py "$HERE"/pipeline/*.sh "$HERE"/pipeline/art.js "$HERE"/pipeline/schem.js "$R"/
 [ -f "$R/reel.js" ] || cp "$HERE/pipeline/reel_example.js" "$R/reel.js"
 [ -f "$R/compositor.html" ] || cp "$HERE/pipeline/compositor_template.html" "$R/compositor.html"
 cp "$HERE/pipeline/map.json" "$R/out/map.json"; cp -r "$HERE"/assets/* "$R/assets/"

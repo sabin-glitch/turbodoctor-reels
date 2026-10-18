@@ -45,7 +45,7 @@ def prep(page):
         png = page.locator("#s svg").screenshot(omit_background=True)
         cv2.imwrite(f"assets/stickers/{name}.png", outline(png))
     tl = json.load(open("out/timeline.json"))
-    n_last = int(tl["story_end"] * tl["fps"]) - 1
+    n_last = int(tl.get("tip_end", tl["story_end"]) * tl["fps"]) - 1
     fr = cv2.imread(f"frames_base/{n_last:05d}.jpg")
     fr = cv2.GaussianBlur(fr, (0, 0), 24)
     fr = (fr.astype(np.float32) * 0.40).astype(np.uint8)
