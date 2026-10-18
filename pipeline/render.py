@@ -95,9 +95,11 @@ def main():
         if args.full:
             n_total = json.load(open("out/frames_meta.json"))["n_out"]
             end = n_total if args.end < 0 else args.end
+            # cap the bitrate from the start so the final MP4 lands under ~88 MB (no second encode in finish.sh for long reels)
+            mr = int(min(11e6, 80e6 * 8 / max(1.0, n_total / 30) - 250e3))
             enc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "image2pipe", "-framerate", "30",
                                     "-c:v", "mjpeg", "-i", "-", "-c:v", "libx264", "-preset", "fast", "-crf", "19",
-                                    "-maxrate", "11M", "-bufsize", "22M", "-profile:v", "high", "-pix_fmt", "yuv420p",
+                                    "-maxrate", str(mr), "-bufsize", str(2 * mr), "-profile:v", "high", "-pix_fmt", "yuv420p",
                                     "-r", "30", "out/video_noaudio.mp4"], stdin=subprocess.PIPE)
             t0 = time.time()
             for n in range(args.start, end):
