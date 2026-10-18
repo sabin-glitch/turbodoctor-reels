@@ -1,0 +1,4 @@
+# Coada de descărcare: câte un URL TikTok pe linie. Orice push pe main care modifică fișierul pornește
+# workflow-ul fetch-sources, care urcă videoclipurile pe branch-ul `sources`. ID-urile deja descărcate se sar.
+# Test: cel mai vizionat clip DPF de pe @turbodoctoroficial
+https://www.tiktok.com/@turbodoctoroficial/video/7683223876435840258
