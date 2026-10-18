@@ -45,6 +45,9 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 |---|---|
 | `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO) |
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
+| `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **surse de pe TikTok, fără laptop:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
+| `pipeline/caption_clean.py` | curăță clipul descărcat înainte de edit: șterge textul vechi ars în imagine (inpainting doar pe litere) și, opțional, decupează intervale (ex. un PiP vechi) |
+| `pipeline/thumb.html`, `thumb.py` | thumbnail / copertă 1080×1920 cu text mare + `_grila.jpg` (decupajul 3:4 din grila de profil) |
 | `publish_media.sh <mp4> <aaaa-ll-zz_slug>` | urcă videoclipul aprobat pe branch-ul `media` și afișează linkul public pentru Metricool |
 | `pipeline/wm_remove.py` | scoate watermark-ul TikTok (`--probe` găsește momentul în care se mută logo-ul) |
 | `pipeline/stab.sh` | dezactivat: imaginea rămâne cum a fost filmată |
@@ -72,8 +75,9 @@ Ancore pe cuvinte: `aw(fereastră, 'cuvânt', nth)` = începutul cuvântului, `e
 - `hook`: `tag`, `l1`, `l2` (+ `l1At`, `l2At`, `l2Col`), `car`, `chips`.
 - `stages`: `[[t, 'SIMPTOME'], [t, 'INVESTIGAȚIE'], [t, 'CAUZA'], [t, 'SOLUȚIA']]`.
 - `items[].k`: `scan`, `file` (fișa pacientului, `ecg`), `schem` (`type` din `schem.js`), `ring`, `call` (săgeată pe piesă, `track`), `pipe` (tratament), `list`, `chip`, `kin` (text cinetic), `stamp`, `cmp`, `stat`, `bars`, `gauge`, `chain`, `def` (dicționar tehnic), `art`, `ecg`, `eq`, `stk`, `tip` (Rețeta Turbo Doctor).
-- `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie.
-- Scheme (`schem.js`): `turboPlay`, `turboOil`, `injectorSpray`, `chainSkip`, `wastegate`, `pistonSeize`, `systemMap`, `oilPaths`, `railPressure`, `engineSwap`, `camTiming`, `coolingHybrid`, `oilFilter`, `camWear`, `route`.
+- `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie; `focus` = cutaway (fundal estompat + întunecat) pentru cardurile mari pe clipuri cu prezentatorul în prim-plan; ascunde și numerele de înmatriculare.
+- Scheme (`schem.js`): `turboPlay`, `turboOil`, `injectorSpray`, `chainSkip`, `wastegate`, `pistonSeize`, `systemMap`, `oilPaths`, `railPressure`, `engineSwap`, `camTiming`, `coolingHybrid`, `oilFilter`, `camWear`, `route`, `dpfSoot` (DPF în secțiune; faze prin `steps[i][3]`: 0 filtrare, 1 încărcare cu funingine, 2 regenerare, 3 regenerare întreruptă, 4 cenușă din ulei, 5 colmatat, 6 curat, 7 gaze fierbinți, 8 funingine multă).
+- `window.REEL_BRAND` (în `reel.js`): varianta de brand a cardului de final, ex. DPF Doctor `{ word: 'DPF <span class="y">DOCTOR</span>', sub: 'UN SERVICIU TURBO DOCTOR', wordTop: 150 }`. Fără el, cardul rămâne TURBO DOCTOR.
 
 Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar subtitrările și finalul (`CFG_ERR` în `render.py`).
 
@@ -87,3 +91,11 @@ Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar
 - Subtitrări Montserrat Black, cuvântul activ cu galben; culori semantice: roșu = problemă, verde = soluție, cyan = componentă, galben = cifre.
 - Elementele grafice stau în treimea de sus și nu acoperă fața prezentatorului.
 - Cardul de final rămâne neschimbat: TURBO DOCTOR, „Distribuie acest video unui prieten care ar avea nevoie!”, harta cu Galați, București, Iași și Piatra Neamț, „Diagnoză gratuită”, 0739 065 065, turbodoctor.ro.
+
+## DPF Doctor (pagina nișată pentru DPF)
+
+- Clipurile DPF de pe @turbodoctoroficial se iau din Metricool (descrieri cu DPF/filtru de particule), se pun în `sources/queue.txt` și se descarcă automat pe branch-ul `sources`.
+- Înainte de edit: `caption_clean.py` scoate textul vechi ars și PiP-ul vechi, ca reel-ul nou să nu aibă urme din editarea Turbo Doctor.
+- `reel.js` setează `window.REEL_BRAND` (DPF DOCTOR · UN SERVICIU TURBO DOCTOR); restul cardului de final (harta, diagnoză gratuită, 0739 065 065, turbodoctor.ro) rămâne.
+- Fiecare reel primește un thumbnail cu `thumb.py` (cadru expresiv + 2–3 cuvinte mari + badge DPF DOCTOR), trimis la Metricool ca `videoThumbnailUrl`.
+- Exemplu complet: `pipeline/examples/reel_dpf001_omori_dpf.js`.

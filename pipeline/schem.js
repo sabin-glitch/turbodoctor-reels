@@ -485,5 +485,72 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route };
+  // 16) dpfSoot: wall-flow DPF in section. Phases (step[3]): 0 filtering, 1 soot loading (short trips / cold engine),
+  //     2 regeneration (soot burns ~600 °C), 3 regeneration interrupted, 4 oil ash (does not burn), 5 clogged (limp mode).
+  //     P: { l0, l1 (soot load 0..1), loadLab, regenLab, stopLab, ashLab, clogLab }
+  function dpfSoot(tl, ph, pt, P) {
+    let s = ''; const X0 = 200, X1 = 714, Y0 = 70, N = 6, CH = 40, GAP = 8; const Y1 = Y0 + N * CH + (N + 1) * GAP;
+    const l0 = P.l0 ?? .18, l1 = P.l1 ?? .86; const mid = (Y0 + Y1) / 2; const PI0 = 20, PI1 = 140, PO0 = 774, PO1 = 894, PL = 20;
+    let load = l0, heat = 0, ash = P.ash0 ?? 0, flow = 1;
+    if (ph === 1) load = lerp(l0, l1, eio(pt / 2.4));
+    if (ph === 2) { heat = cl(pt / .5) * (1 - cl((pt - 3.2) / .6)); load = lerp(l1, .06, eio((pt - .3) / 2.6)); }
+    if (ph === 3) { heat = cl(pt / .4) * (1 - cl((pt - .9) / .35)); load = lerp(l1, l1 - .12, eio(pt / .9)); }
+    if (ph === 4) { load = .08; ash = lerp(P.ash0 ?? 0, P.ash1 ?? .8, eio(pt / 2.2)); }
+    if (ph === 5) { load = lerp(l1, 1, eio(pt / 1.2)); flow = lerp(1, .15, eio(pt / 1.4)); }
+    if (ph === 6) { load = P.lClean ?? .05; }                                   // clean after regeneration
+    if (ph === 7) { load = l1; heat = .55 * cl(pt / 1.0) * (.85 + .15 * Math.sin(tl * 6)); }   // exhaust heating up, soot not burning yet
+    if (ph === 8) { load = l1; }                                                // hold: soot load stays high
+    const crit = load > .7 && ph !== 2;
+    // pipes + cones + canister
+    s += `<path d="M ${PI0} ${mid - 26} L ${PI1} ${mid - 26} L ${X0} ${Y0 + 6} L ${X0} ${Y1 - 6} L ${PI1} ${mid + 26} L ${PI0} ${mid + 26}" fill="${C.body}" stroke="${C.cy}" stroke-width="4" stroke-linejoin="round"/>`;
+    s += `<path d="M ${PO1} ${mid - 26} L ${PO0} ${mid - 26} L ${X1} ${Y0 + 6} L ${X1} ${Y1 - 6} L ${PO0} ${mid + 26} L ${PO1} ${mid + 26}" fill="${C.body}" stroke="${C.cy}" stroke-width="4" stroke-linejoin="round"/>`;
+    s += `<rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" rx="16" fill="${C.body}" stroke="${crit ? C.red : C.cy}" stroke-width="6"/>`;
+    if (heat > .01) { const fl = .75 + .25 * Math.sin(tl * 23) * Math.sin(tl * 7.3);
+      s += `<defs><radialGradient id="dpfHeat" cx="50%" cy="50%" r="65%"><stop offset="0" stop-color="#FFB13B" stop-opacity="${f(.5 * heat * fl)}"/><stop offset="1" stop-color="#FF3B1F" stop-opacity="${f(.16 * heat)}"/></radialGradient></defs>`;
+      s += `<rect x="${X0 + 4}" y="${Y0 + 4}" width="${X1 - X0 - 8}" height="${Y1 - Y0 - 8}" rx="12" fill="url(#dpfHeat)"/>`; }
+    const chY = i => Y0 + GAP + i * (CH + GAP);
+    for (let i = 0; i < N; i++) { const y = chY(i); const inlet = i % 2 === 0;
+      s += `<rect x="${X0 + 10}" y="${y}" width="${X1 - X0 - 20}" height="${CH}" fill="${inlet ? '#16385E' : '#0B2038'}"/>`;
+      s += `<rect x="${inlet ? X1 - 10 - PL : X0 + 10}" y="${y}" width="${PL}" height="${CH}" fill="${C.steelD}"/>`;
+      if (inlet) {
+        const th = 2 + 15 * load; const burn = heat > .05 && (ph === 2 || ph === 7);
+        const g = burn ? heat * (.72 + .28 * Math.sin(tl * 19 + i * 1.7)) : 0;
+        const sc = burn ? `rgb(${Math.round(lerp(25, 255, g))},${Math.round(lerp(18, 150, g * g))},${Math.round(lerp(14, 24, g))})` : '#050505';
+        const L = X1 - X0 - 30 - PL;
+        s += `<rect x="${X0 + 10}" y="${y}" width="${L}" height="${f(th)}" fill="${sc}" stroke="#6B7C90" stroke-width="1"/>`;
+        s += `<rect x="${X0 + 10}" y="${f(y + CH - th)}" width="${L}" height="${f(th)}" fill="${sc}" stroke="#6B7C90" stroke-width="1"/>`;
+        s += `<rect x="${f(X1 - 10 - PL - 6 - 70 * load)}" y="${y}" width="${f(6 + 70 * load)}" height="${CH}" fill="${sc}" opacity="${f(.35 + .65 * load)}"/>`;
+        if (ash > .01) s += `<rect x="${f(X1 - 10 - PL - 120 * ash)}" y="${y}" width="${f(120 * ash)}" height="${CH}" fill="#B9C2CC" stroke="#E5E7EB" stroke-width="1.5"/>`;
+      } }
+    for (let i = 1; i < N; i++) { const y = Y0 + i * (CH + GAP) + GAP / 2;
+      s += `<line x1="${X0 + 10}" y1="${y}" x2="${X1 - 10}" y2="${y}" stroke="${C.steel}" stroke-width="${GAP}" stroke-dasharray="10 5" opacity=".9"/>`; }
+    // particles: pipe -> cone -> inlet channel; gas crosses the porous wall to the outlet channel and leaves; soot stays
+    const speed = .38 * flow; const inPath = (k, y) => k < .22 ? [lerp(PI0, PI1, k / .22), mid] : k < .34 ? [lerp(PI1, X0 + 12, (k - .22) / .12), lerp(mid, y, (k - .22) / .12)] : [lerp(X0 + 12, X1 - 40, (k - .34) / .66), y];
+    for (let i = 0; i < 18; i++) { const ch = (i % 3) * 2; const y = chY(ch) + CH / 2; const k = (tl * speed + rnd(i)) % 1; const soot = i % 3 === 1;
+      if (soot) { if (ph === 2 && heat > .3) continue; const stopX = X1 - 40 - PL - 70 * load - rnd(i + 3) * 160; let [x, yy] = inPath(k * 1.0, y + (rnd(i + 7) - .5) * (CH - 22)); if (x > stopX && k > .34) x = stopX;
+        s += `<circle cx="${f(x)}" cy="${f(yy)}" r="6" fill="#050505" stroke="#8796A8" stroke-width="1.5"/>`; continue; }
+      const xw = X0 + 120 + rnd(i) * 260;
+      if (k < .6) { const kk = k / .6; let [x, yy] = inPath(kk, y); if (kk > .34 && x > xw) x = xw; s += `<circle cx="${f(x)}" cy="${f(yy)}" r="7" fill="${C.smoke}" opacity=".9"/>`; }
+      else { const q = (k - .6) / .4; const yo = chY(ch + 1) + CH / 2; let x, yy;
+        if (q < .2) { x = xw; yy = lerp(y, yo, q / .2); } else if (q < .8) { x = lerp(xw, X1 - 4, (q - .2) / .6); yy = yo; } else { x = lerp(X1 - 4, PO1, (q - .8) / .2); yy = lerp(yo, mid, (q - .8) / .2); }
+        s += `<circle cx="${f(x)}" cy="${f(yy)}" r="7" fill="${C.cy}" opacity="${f(flow > .3 ? .95 : .45)}"/>`; } }
+    if (ph === 2 && heat > .2) for (let i = 0; i < 8; i++) { const k = (tl * .6 + i / 8) % 1; const y = chY((i % 3) * 2 + 1) + CH / 2 + 6;
+      s += T(lerp(X0 + 140, PO1 - 20, k), y, 'CO₂', { s: 15, c: C.grn, a: 'middle', op: f(1 - k) }); }
+    s += tag(80, mid - 52, P.inLab || 'DE LA MOTOR', C.smoke, 'middle', 15) + tag(834, mid - 52, P.outLab || 'GAZE CURATE', C.cy, 'middle', 15);
+    const MY = Y1 + 26, MX0 = 236, MX1 = 690; const lc = load > .7 ? C.red : load > .45 ? C.yel : C.grn;
+    s += T(MX0 - 14, MY + 8, 'FUNINGINE', { s: 16, c: C.dim, a: 'end' });
+    s += `<rect x="${MX0}" y="${MY - 10}" width="${MX1 - MX0}" height="20" rx="10" fill="rgba(255,255,255,.12)"/><rect x="${MX0}" y="${MY - 10}" width="${f((MX1 - MX0) * cl(load))}" height="20" rx="10" fill="${lc}"/>`;
+    s += T(MX1 + 14, MY + 8, Math.round(load * 100) + '%', { s: 20, c: lc });
+    const badge = [P.okLab || 'FILTRUL REȚINE FUNINGINEA', P.loadLab || 'FUNINGINEA SE ADUNĂ', P.regenLab || 'REGENERARE · ~600 °C', P.stopLab || 'REGENERARE ÎNTRERUPTĂ', P.ashLab || 'CENUȘA DIN ULEI NU ARDE', P.clogLab || 'DPF COLMATAT · MOD AVARIE',
+      P.cleanLab || 'DPF CURAT', P.hotLab || 'GAZE FIERBINȚI', P.holdLab || 'FUNINGINE MULTĂ'][ph] || '';
+    const bc = [C.grn, crit ? C.red : C.org, heat > .2 ? C.org : C.grn, C.red, '#E5E7EB', C.red, C.grn, C.org, C.yel][ph] || C.cy;
+    s += tag(457, 36, badge, bc, 'middle', 20, ph === 5 ? (Math.floor(tl * 3) % 2 ? 1 : .55) : 1);
+    if (ph === 2 && heat > .2) s += emoji(X0 - 2, Y0 - 4, 54, 'fire') + emoji(X1 + 2, Y0 - 4, 54, 'fire');
+    if (ph === 1 || ph === 3 || ph === 8) s += emoji(X0 - 2, Y0 - 4, 50, P.loadIco || 'snowflake');
+    if (ph === 7) s += emoji(X0 - 2, Y0 - 4, 50, 'thermometer');
+    if (ph === 6) s += emoji(X0 - 2, Y0 - 4, 50, 'sparkles') + emoji(X1 + 2, Y0 - 4, 50, 'check_mark_button');
+    return s;
+  }
+
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, dpfSoot };
 })();

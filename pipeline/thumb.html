@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8"><title>DPF Doctor thumbnail</title>
+<style>
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat_900Black.ttf);font-weight:900}
+@font-face{font-family:Mont;src:url(assets/fonts/Montserrat_800ExtraBold.ttf);font-weight:800}
+@font-face{font-family:Anton;src:url(assets/fonts/Anton_400Regular.ttf)}
+@font-face{font-family:JB;font-weight:800;src:url(assets/fonts/jetbrains-mono-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:JB;font-weight:800;src:url(assets/fonts/jetbrains-mono-latin-ext-800-normal.woff2) format('woff2');unicode-range:U+0100-02AF}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
+#bgBlur{position:absolute;inset:-60px;width:1200px;height:2040px;object-fit:cover;filter:blur(34px) brightness(.5) saturate(.8)}
+#bg{position:absolute;inset:0;width:1080px;height:1920px;object-fit:cover;transform-origin:50% 40%;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 220px);mask-image:linear-gradient(to bottom,transparent 0,#000 220px)}
+/* legibility: dark top band behind the headline, light vignette, no colour filter on the footage */
+#shade{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.72) 0%,rgba(0,0,0,.55) 30%,rgba(0,0,0,.08) 52%,rgba(0,0,0,0) 70%,rgba(0,0,0,.45) 100%)}
+#safe{position:absolute;left:0;top:240px;width:1080px;height:1440px;outline:4px dashed rgba(255,0,255,.0)}
+#brand{position:absolute;left:50%;top:300px;transform:translateX(-50%);display:flex;align-items:center;gap:14px;padding:12px 34px 12px 16px;border-radius:999px;background:#fff;box-shadow:0 14px 34px rgba(0,0,0,.55);white-space:nowrap}
+#brand .cross{width:58px;height:58px;border-radius:50%;background:#E11D2E;position:relative}
+#brand .cross:before,#brand .cross:after{content:'';position:absolute;left:50%;top:50%;background:#fff;border-radius:3px;transform:translate(-50%,-50%)}
+#brand .cross:before{width:34px;height:11px}#brand .cross:after{width:11px;height:34px}
+#brand .ico{width:58px;height:58px}
+#brand .w{font-family:Anton;font-size:50px;line-height:1;letter-spacing:1.5px;color:#0F1216}
+#brand .w span{color:#E11D2E}
+#tag{position:absolute;left:50%;top:410px;transform:translateX(-50%);font-family:JB;font-weight:800;font-size:30px;letter-spacing:4px;color:#fff;background:rgba(6,10,18,.82);border:3px solid #FF4B4B;border-radius:999px;padding:10px 28px;white-space:nowrap}
+#tag i{display:inline-block;width:18px;height:18px;border-radius:50%;background:#FF3B30;box-shadow:0 0 14px #FF3B30;margin-right:14px;vertical-align:1px}
+.hl{position:absolute;left:0;right:0;text-align:center;font-family:Anton;line-height:.98;white-space:nowrap;-webkit-text-stroke:16px #000;paint-order:stroke fill;text-shadow:0 12px 0 #000,0 24px 46px rgba(0,0,0,.7);letter-spacing:2px}
+#l1{top:520px;font-size:150px;color:#fff;transform:rotate(-3deg)}
+#l2{top:690px;font-size:300px;color:#FFD21F;transform:rotate(-3deg)}
+#stamp{position:absolute;left:50%;top:1060px;transform:translateX(-50%) rotate(-7deg);font-family:Anton;font-size:84px;letter-spacing:4px;line-height:1;color:#D3172A;border:10px solid #D3172A;border-radius:18px;padding:10px 30px 4px;background:rgba(255,255,255,.9);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.5)}
+#stamp:empty{display:none}
+</style></head>
+<body>
+<img id="bgBlur" alt="">
+<img id="bg" alt="">
+<div id="shade"></div>
+<div id="safe"></div>
+<div id="brand"><img class="ico" src="assets/emoji/stethoscope.png" alt=""><div class="w">DPF <span>DOCTOR</span></div></div>
+<div id="tag"><i></i><span id="tagT"></span></div>
+<div id="l1" class="hl"></div>
+<div id="l2" class="hl"></div>
+<div id="stamp"></div>
+<script>
+// window.THUMB = { bg, zoom, ox, oy, tag, l1, l2, l2Col, stamp } is injected before load by thumb.py
+const T = window.THUMB || {};
+const bg = document.getElementById('bg'); bg.src = T.bg; document.getElementById('bgBlur').src = T.bg; bg.style.transform = `translate(${T.ox || 0}px,${T.oy || 0}px) scale(${T.zoom || 1})`;
+document.getElementById('tagT').textContent = T.tag || 'ANALIZĂ TEHNICĂ';
+document.getElementById('l1').innerHTML = T.l1 || ''; document.getElementById('l2').innerHTML = T.l2 || '';
+if (T.l2Col) document.getElementById('l2').style.color = T.l2Col;
+if (T.l2Size) document.getElementById('l2').style.fontSize = T.l2Size + 'px';
+document.getElementById('stamp').textContent = T.stamp || '';
+function fit(id, maxW) { const el = document.getElementById(id); const w = el.scrollWidth; const fs = parseFloat(getComputedStyle(el).fontSize); if (w > maxW) el.style.fontSize = (fs * maxW / w) + 'px'; }
+window.READY = false;
+(async () => { await document.fonts.ready; try { await bg.decode(); await document.getElementById('bgBlur').decode(); } catch (e) { } fit('l1', 1000); fit('l2', 1000); window.READY = true; })();
+</script>
+</body></html>
