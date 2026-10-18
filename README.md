@@ -47,6 +47,7 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
 | `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **clipuri de pe TikTok, fără laptopul lui Sabin:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
 | `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars (fără crop, fără zoom, cadrele rămân în ordinea filmată): `--band y0-y1[@t0-t1]` text static; `--dynbox B,G,R,tol@y0-y1` subtitrări vechi pe căsuță colorată; `--txtbox y0-y1[@fill=B,G,R]` căsuțe pe un rând fix (înlocuite cu căsuța noastră închisă, pe care stau subtitrările noastre, `capTop`); `--dyntext y0-y1` subtitrări albe fără căsuță; `--rect` dreptunghi pe fundal uniform; `--blur t0-t1:x0:y0:x1:y1` numere de înmatriculare |
+| `pipeline/anchors_check.py` | verifică ancorele `W('cuvânt', t)` din `reel.js` față de `out/timeline.json`, înainte de randare |
 | `pipeline/faces.py` | unde sunt fețele în clip (YuNet, `/home/claude/models/face/yunet.onnx`), ca grafica să nu le acopere |
 | `publish_media.sh <mp4> <aaaa-ll-zz_slug>` | urcă videoclipul aprobat pe branch-ul `media` și afișează linkul public pentru Metricool |
 | `pipeline/wm_remove.py` | scoate watermark-ul TikTok (`--probe` găsește momentul în care se mută logo-ul) |
