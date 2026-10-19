@@ -21,12 +21,16 @@ usage: python3 caption_clean.py <src.mp4> <out.mp4> [--band 1500-1700[@t0-t1] ..
   --rect x0:y0:x1:y1[@t0-t1]   fixed rectangle inpainted every frame (e.g. a TikTok reply bubble over a plain car ceiling or wall);
                  only for low-texture backgrounds - check the result on a contact sheet.
   --blur ...     soft blur box (feathered) on [t0, t1) seconds; repeat for each plate / time range.
+  --plates plates.json[@skip=3,7]   licence plates found by plates.py: each track is blurred frame by frame on the
+                 plate only (box interpolated between the detector samples, padded, held 0.3 s past both ends).
+                 Tracks with "skip": true or listed in @skip= are left alone (false positives seen on the plates.py sheet).
 Output: 30 fps CFR, libx264 crf 12, original audio (AAC 256k), same timing as the source. Check with a contact sheet."""
-import argparse, subprocess
+import argparse, json, subprocess
 import cv2, numpy as np
 
 ap = argparse.ArgumentParser(); ap.add_argument("src"); ap.add_argument("out")
 ap.add_argument("--band", action="append", default=[]); ap.add_argument("--blur", action="append", default=[]); ap.add_argument("--dynbox", action="append", default=[]); ap.add_argument("--dyntext", action="append", default=[]); ap.add_argument("--txtbox", action="append", default=[]); ap.add_argument("--rect", action="append", default=[])
+ap.add_argument("--plates", action="append", default=[])
 a = ap.parse_args()
 W, H, FPS = 1080, 1920, 30
 
@@ -113,6 +117,29 @@ for b in a.blur:
     rng, x0, y0, x1, y1 = b.split(":"); t0, t1 = map(float, rng.split("-")); x0, y0, x1, y1 = map(int, (x0, y0, x1, y1))
     al = np.zeros((H, W), np.float32); cv2.rectangle(al, (x0, y0), (x1, y1), 1.0, -1); al = cv2.GaussianBlur(al, (0, 0), 9)[..., None]
     BL.append((t0, t1, al, (max(0, x0 - 40), max(0, y0 - 40), min(W, x1 + 40), min(H, y1 + 40))))
+PL, PL_HOLD = [], 0.3   # plate tracks from plates.py: (sample times, boxes Nx4)
+for spec in a.plates:
+    path, _, opt = spec.partition("@"); skip = {int(v) for v in opt[5:].split(",") if v} if opt.startswith("skip=") else set()
+    for tr in json.load(open(path))["tracks"]:
+        if tr.get("skip") or tr["id"] in skip: continue
+        bx = np.array([r[:5] for r in tr["boxes"]], np.float32); PL.append((bx[:, 0], bx[:, 1:5]))
+    print(f"plates {path}: {len(PL)} tracks to blur (skipped {sorted(skip)})", flush=True)
+
+
+def blur_plate(out, ts, bs, t):
+    if t < ts[0] - PL_HOLD or t > ts[-1] + PL_HOLD: return
+    x0, y0, x1, y1 = (float(np.interp(t, ts, bs[:, j])) for j in range(4)); w, h = x1 - x0, y1 - y0
+    ex = min(60.0, 100.0 * max(0.0, float(np.min(np.abs(ts - t))) - 0.05))   # far from a detector sample: wider box
+    px, py = max(12.0, .15 * w) + ex, max(10.0, .3 * h) + ex
+    X0, Y0, X1, Y1 = int(max(0, x0 - px)), int(max(0, y0 - py)), int(min(W, x1 + px)), int(min(H, y1 + py))
+    if X1 - X0 < 4 or Y1 - Y0 < 4: return
+    RX0, RY0, RX1, RY1 = max(0, X0 - 24), max(0, Y0 - 24), min(W, X1 + 24), min(H, Y1 + 24)
+    reg = out[RY0:RY1, RX0:RX1].astype(np.float32); sig = max(10.0, 0.3 * (Y1 - Y0))
+    sm = cv2.resize(reg, None, fx=.25, fy=.25, interpolation=cv2.INTER_AREA)
+    bl = cv2.resize(cv2.GaussianBlur(sm, (0, 0), sig / 4), (reg.shape[1], reg.shape[0]), interpolation=cv2.INTER_LINEAR)
+    al = np.zeros(reg.shape[:2], np.float32); cv2.rectangle(al, (X0 - RX0, Y0 - RY0), (X1 - RX0, Y1 - RY0), 1.0, -1)
+    al = cv2.GaussianBlur(al, (0, 0), 5)[..., None]
+    out[RY0:RY1, RX0:RX1] = (bl * al + reg * (1 - al)).astype(np.uint8)
 
 dec = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", a.src, "-vf", f"fps={FPS},scale={W}:{H}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], stdout=subprocess.PIPE)
 enc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
@@ -177,6 +204,7 @@ while True:
         if t0 <= t < t1:
             reg = out[py0:py1, px0:px1].astype(np.float32); bl = cv2.GaussianBlur(reg, (0, 0), 14)
             aa = al[py0:py1, px0:px1]; out[py0:py1, px0:px1] = (bl * aa + reg * (1 - aa)).astype(np.uint8)
+    for ts, bs in PL: blur_plate(out, ts, bs, t)
     enc.stdin.write(out.tobytes()); n += 1
 enc.stdin.close(); enc.wait(); dec.wait()
 print("CAPTION_CLEAN_OK frames", n)
