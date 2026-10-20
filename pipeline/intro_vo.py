@@ -30,8 +30,8 @@ def norm(s):
 
 def synth(text, speed):
     a = tts.generate(text, sid=0, speed=speed); x = resample_poly(np.array(a.samples, np.float32), SR, a.sample_rate).astype(np.float32)
-    e = np.abs(x); idx = np.where(e > .02 * e.max())[0]
-    return x[max(0, idx[0] - int(.03 * SR)):min(len(x), idx[-1] + int(.06 * SR))]
+    e = np.abs(x); idx = np.where(e > .02 * e.max())[0]; i0 = np.where(e > .004 * e.max())[0][0]  # low threshold at the start keeps soft onsets (T, V)
+    return x[max(0, min(i0, idx[0]) - int(.04 * SR)):min(len(x), idx[-1] + int(.06 * SR))]
 
 
 def speech_rms(x):  # RMS over 20 ms frames that carry speech
@@ -83,7 +83,7 @@ def clip(p):  # a verified clip (path relative to out/), or a fresh TTS take
 
 def heard(x, spans):  # ASR on the sequence -> text heard inside each phrase span
     s = asr.create_stream(); s.accept_waveform(16000, resample_poly(x, 1, 3).astype(np.float32)); asr.decode_stream(s)
-    return ["".join(tok for tok, ts in zip(s.result.tokens, s.result.timestamps) if a - .08 <= ts < b + .02) for a, b in spans]
+    return ["".join(tok for tok, ts in zip(s.result.tokens, s.result.timestamps) if a <= ts < b) for a, b in spans]
 
 
 bed = sosfilt(butter(1, 1200, fs=SR, output="sos"), np.random.default_rng(5).standard_normal(SR * 30)).astype(np.float32)  # music-like noise
@@ -91,14 +91,17 @@ best = [(-1.0, None, "")] * len(P)
 for k in range(int(cfg.get("takes", 6))):  # per phrase, keep the take the ASR understands best in context, clean and 15 dB under a noise bed
     ys = [best[i][1] if p.get("wav") and k else clip(p) for i, p in enumerate(P)]
     seq, spans, t = [], [], 0.0
-    for i, y in enumerate(ys):
-        spans.append((t, t + len(y) / SR)); seq += [y, np.zeros(int(float(P[i].get("gap", .14)) * SR), np.float32)]; t += len(y) / SR + float(P[i].get("gap", .14))
+    for i, y in enumerate(ys):  # each phrase owns the audio up to the middle of the gaps around it (ASR stamps a word's start early)
+        g0 = float(P[i - 1].get("gap", .14)) / 2 if i else 0.0; g1 = float(P[i].get("gap", .14)) / 2
+        spans.append((t - g0, t + len(y) / SR + g1)); seq += [y, np.zeros(int(2 * g1 * SR), np.float32)]; t += len(y) / SR + 2 * g1
     x = np.concatenate(seq + [np.zeros(int(.4 * SR), np.float32)]); nz = bed[:len(x)] * (speech_rms(x) / speech_rms(bed[:len(x)]) * 10 ** (-15 / 20))
     for i, (hc, hn) in enumerate(zip(heard(x, spans), heard(x + nz, spans))):
         sc = min(difflib.SequenceMatcher(None, norm(P[i].get("say", P[i]["text"])), norm(h), autojunk=False).ratio() for h in (hc, hn))
         if sc > best[i][0]: best[i] = (sc, ys[i], f"{hc.strip()} / {hn.strip()}")
     if min(b[0] for b in best) > .98: break
 for i, b in enumerate(best): print(f"take p{i} {b[0]:.2f} | {P[i]['text']} | heard: {b[2]}")
+x = np.concatenate([np.concatenate([b[1], np.zeros(int(float(P[i].get("gap", .14)) * SR), np.float32)]) for i, b in enumerate(best)] + [np.zeros(int(.4 * SR), np.float32)])
+s = asr.create_stream(); s.accept_waveform(16000, resample_poly(x, 1, 3).astype(np.float32)); asr.decode_stream(s); print("whole intro heard:", s.result.text)
 parts, phrases, words, t = [], [], [], 0.0
 for i, p in enumerate(P):
     y = best[i][1]
