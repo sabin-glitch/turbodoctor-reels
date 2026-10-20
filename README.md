@@ -13,6 +13,7 @@ Regulile lui Sabin și preferințele lui de editare sunt ținute în skill-ul `t
 
 ## Stilul v2 (aprobat)
 
+- **Hook B (ales de Sabin pe 20.10.2026, pe toate reel-urile):** intro sintetic de ~8–10 s înaintea clipului: fundalul e primul cadru al aceluiași clip, estompat; 3 carduri cu problemele pe care le simte clientul se unesc într-o singură cauză, voce generată (Piper RO) cu subtitrări și „Ascultă mai departe pe Turbo Doctor!”, apoi clipul cu hook-ul lui vizual. Detalii în secțiunea „Hook B”.
 - **Hook tehnic:** tag „ANALIZĂ TEHNICĂ · CAZ #nnnn”, fraza cea mai tare din clip (cold open, fidel cu ce se spune), cuvântul-cheie colorat, scanare pe piesa defectă, chip cu mașina.
 - **Bara de etape** sus: SIMPTOME → INVESTIGAȚIE → CAUZA → SOLUȚIA.
 - **Temă medicală:** fișa pacientului (pacient, unitate, simptome, cu EKG), ștampile (GRAV, DEFECT, BETON!, TRANSPLANT, GATA DE PREDARE), tratament „în laboratorul Turbo Doctor”, listă „înainte de externare”.
@@ -39,6 +40,14 @@ bash finish.sh <slug> <Nume_Fisier>                  # randare completă + audio
 python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   # control rapid
 ```
 
+## Hook B: intro sintetic
+
+1. `out/intro_script.json`: `{"speed": 1.15, "tail": .5, "bg_src": <sursa primului cadru>, "takes": 8, "phrases": [{"text": "Pornește greu,", "gap": .08}, …, {"text": "Ascultă mai departe pe Turbo Doctor!", "wav": "cta_turbo_doctor.wav"}]}`. Trei fraze scurte cu problema clientului + o frază-răspuns; `say` = forma rostită când diferă de subtitrare (cifre).
+2. În `reel.js`: `intro: { type: 'board', tag, ctaPh, mergeAt, causeAt, causeTxt, cards: [[emoji, titlu, subtitlu, t0?, 'x'|'q'|'none']] }` și `tags: { '-1': { cuvânt: 'r'|'y'|'c'|'g' } }`.
+3. `python3 intro_vo.py` (cea mai bună din 8 variante pe frază, verificată cu ASR; linia `whole intro heard` trebuie să sune ca textul), apoi `build_timeline.py`, `retime.py`, `extract_frames.py`. Cheile din `out/track_*.json` se mută cu numărul de cadre ale intro-ului.
+4. Timpii din `reel.js` se scriu cu ancore sau `S0 + n`: clipul începe după intro.
+5. Vocea TTS pierde consoanele de la începutul frazei (T, C, V, „Și nu”, „Știi”): frazele încep cu vocală, „Iar”, „Însă”, „dar”.
+
 ## Structură
 
 | Fișier | Rol |
@@ -55,6 +64,8 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `pipeline/build_timeline.py` | aliniază `out/curated.json`, păstrează pauzele (implicit; `"cuts": true` le taie), cold open → `out/timeline.json` |
 | `pipeline/retime.py` | ritmul (`speed`, implicit 1,0 = natural) și segmentul pentru „Rețeta Turbo Doctor” (`tip`) |
 | `pipeline/extract_frames.py` | cadrele în ordinea finală, upscale fără stabilizare, B-roll doar din același clip (`out/broll.json`) |
+| `pipeline/intro.js`, `pipeline/intro_vo.py` | hook B: grafica intro-ului (carduri, eticheta-cauză, CTA) și vocea lui (Piper RO, cea mai bună variantă pe frază după ASR) |
+| `pipeline/vlog_vertical.py` | vlog orizontal 16:9 → 1080×1920: cadrul întreg pe lățime, fundal din același cadru estompat; etichetele arse se scot cu inpainting sau dintr-un cadru curat al aceleiași filmări (`t0-t1:x0,y0,x1,y1@tref`) |
 | `pipeline/compositor_template.html` | compozitorul v2 (Chromium): hook, bara de etape, toate cardurile și efectele |
 | `pipeline/schem.js` | schemele animate ale defectelor |
 | `pipeline/examples/*.js` | configurații reale de scene (`reel.js`) din reel-urile aprobate |
@@ -83,7 +94,7 @@ Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar
 
 - **Fără stabilizare.** Imaginea rămâne cum a fost filmată, chiar dacă e puțin mișcată.
 - **Fiecare clip devine un reel separat**, cu hook, B-roll și CTA proprii. B-roll-ul se ia doar din același clip.
-- **Hook-ul se extrage din fiecare clip** (cel mai tare moment al lui), nu se copiază de la alt reel.
+- **Hook-ul vine din fiecare clip:** textul intro-ului (hook B) descrie problemele din clipul respectiv, iar fundalul e primul lui cadru; nu se copiază de la alt reel.
 - **Numerele de înmatriculare nu apar:** se acoperă cu B-roll din același clip.
 - Dacă sunetul e prea slab pentru subtitrări sigure, reel-ul merge doar pe carduri, iar Sabin primește o notă.
 - Subtitrări Montserrat Black, cuvântul activ cu galben; culori semantice: roșu = problemă, verde = soluție, cyan = componentă, galben = cifre.
