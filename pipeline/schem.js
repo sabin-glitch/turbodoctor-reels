@@ -645,5 +645,33 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens };
+  // 21) live data on the diagnosis tool: sensor fault = physically impossible jumps; regulator fault = unstable (hunting) regulation
+  function liveData(tl, ph, pt, P) {
+    let s = ''; const x0 = 70, x1 = 880, y0 = 60, y1 = 330, span = 5;
+    s += `<rect x="${x0 - 14}" y="${y0 - 14}" width="${x1 - x0 + 28}" height="${y1 - y0 + 28}" rx="14" fill="rgba(0,0,0,.35)" stroke="${C.cyD}" stroke-width="3"/>`;
+    for (let i = 1; i < 6; i++) { const y = y0 + (y1 - y0) * i / 6; s += `<line x1="${x0}" y1="${f(y)}" x2="${x1}" y2="${f(y)}" stroke="rgba(98,216,255,.12)" stroke-width="2"/>`; }
+    for (let i = 1; i < 10; i++) { const x = x0 + (x1 - x0) * i / 10; s += `<line x1="${f(x)}" y1="${y0}" x2="${f(x)}" y2="${y1}" stroke="rgba(98,216,255,.08)" stroke-width="2"/>`; }
+    const req = u => .52 + .14 * Math.sin(u * .8) + .05 * Math.sin(u * 2.1);
+    const realF = (u, p) => { if (p === 1) { const q = Math.floor(u * 2.6); return req(u) + (rnd(q + 11) > .45 ? (rnd(q + 3) - .5) * .7 : 0); }
+      if (p === 2) return req(u) + .13 * Math.sin(u * 7.5) + .04 * Math.sin(u * 17); return req(u) + .012 * Math.sin(u * 9); };
+    const Y = v => y1 - cl(v, .02, .98) * (y1 - y0);
+    let dq = '', dr = ''; const N = 220; const spk = [];
+    for (let i = 0; i <= N; i++) { const k = i / N; const x = x0 + k * (x1 - x0); const age = (1 - k) * span; const u = tl - age;
+      const p = age < pt ? ph : (ph === 2 ? 0 : Math.max(0, ph - 1)); dq += (i ? 'L' : 'M') + f(x) + ' ' + f(Y(req(u)));
+      const v = realF(u, p); dr += (i ? 'L' : 'M') + f(x) + ' ' + f(Y(v)); if (ph === 1 && p === 1 && Math.abs(v - req(u)) > .2 && i % 6 === 0) spk.push([x, Y(v)]); }
+    s += `<path d="${dq}" fill="none" stroke="${C.yel}" stroke-width="4" stroke-dasharray="12 8"/>`;
+    const rc = ph === 1 ? C.red : ph === 2 ? C.org : C.cy;
+    s += `<path d="${dr}" fill="none" stroke="${rc}" stroke-width="6" stroke-linejoin="round"/>`;
+    spk.slice(-4).forEach(([x, y]) => { s += `<circle cx="${f(x)}" cy="${f(y)}" r="16" fill="none" stroke="${C.red}" stroke-width="4"/>`; });
+    s += `<circle cx="${x1}" cy="${f(Y(realF(tl, ph)))}" r="9" fill="#fff"/>`;
+    // legend
+    s += `<line x1="${x0 + 10}" y1="${y0 + 16}" x2="${x0 + 50}" y2="${y0 + 16}" stroke="${C.yel}" stroke-width="4" stroke-dasharray="10 6"/>` + T(x0 + 60, y0 + 22, 'PRESIUNE CERUTĂ', { s: 15, c: C.yel });
+    s += `<line x1="${x0 + 290}" y1="${y0 + 16}" x2="${x0 + 330}" y2="${y0 + 16}" stroke="${rc}" stroke-width="6"/>` + T(x0 + 340, y0 + 22, 'PRESIUNE CITITĂ', { s: 15, c: rc });
+    s += T(x1, y0 - 22, 'VALORI REALE · LIVE', { s: 15, c: C.dim, a: 'end' });
+    const H = [['VALORI NORMALE', C.grn], ['SARE BRUSC: FIZIC IMPOSIBIL → SENZOR', C.red], ['REGLARE INSTABILĂ → REGULATOR', C.org]][Math.min(ph, 2)];
+    s += tag(457, 392, H[0], H[1], 'middle', 20);
+    return s;
+  }
+
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData };
 })();
