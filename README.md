@@ -42,11 +42,12 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 
 ## Hook B: intro sintetic
 
-1. `out/intro_script.json`: `{"speed": 1.15, "tail": .5, "bg_src": <sursa primului cadru>, "takes": 8, "phrases": [{"text": "Pornește greu,", "gap": .08}, …, {"text": "Ascultă mai departe pe Turbo Doctor!", "wav": "cta_turbo_doctor.wav"}]}`. Trei fraze scurte cu problema clientului + o frază-răspuns; `say` = forma rostită când diferă de subtitrare (cifre).
+1. `out/intro_script.json`: `{"speed": 1.15, "tail": .5, "bg_src": <sursa primului cadru>, "takes": 8, "phrases": [{"text": "Pornește greu,", "gap": .08}, …, {"text": "Ascultă mai departe pe Turbo Doctor!", "wav": "cta_turbo_doctor.wav"}]}` (clipul verificat din `assets/`, copiat în `out/`). Trei fraze scurte cu problema clientului + o frază-răspuns; `say` = forma rostită când diferă de subtitrare (cifre).
 2. În `reel.js`: `intro: { type: 'board', tag, ctaPh, mergeAt, causeAt, causeTxt, cards: [[emoji, titlu, subtitlu, t0?, 'x'|'q'|'none']] }` și `tags: { '-1': { cuvânt: 'r'|'y'|'c'|'g' } }`.
 3. `python3 intro_vo.py` (cea mai bună din 8 variante pe frază, verificată cu ASR; linia `whole intro heard` trebuie să sune ca textul), apoi `build_timeline.py`, `retime.py`, `extract_frames.py`. Cheile din `out/track_*.json` se mută cu numărul de cadre ale intro-ului.
 4. Timpii din `reel.js` se scriu cu ancore sau `S0 + n`: clipul începe după intro.
-5. Vocea TTS pierde consoanele de la începutul frazei (T, C, V, „Și nu”, „Știi”): frazele încep cu vocală, „Iar”, „Însă”, „dar”.
+5. Pe reel-uri deja făcute: `tools/hook_b/` (scenariile în `hook_specs.py`, apoi `hook_all.sh <slug…>` și `render_all.sh <slug…>`, care randează și verifică vocea intro-ului cu ASR, LUFS și o foaie de cadre).
+6. Vocea TTS pierde consoanele de la începutul frazei (T, C, V, „Și nu”, „Știi”): frazele încep cu vocală, „Iar”, „Însă”, „dar”.
 
 ## Structură
 
