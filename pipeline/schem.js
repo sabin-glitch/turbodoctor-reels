@@ -587,5 +587,63 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow };
+  // 19) rail pressure regulator: hard acceleration -> ECU asks for high pressure -> faulty regulator can't raise it fast enough -> error + Limp Mode
+  function pressureLag(tl, ph, pt, P) {
+    let s = ''; const ox = 110, oy = 382, W = 740, H = 290;
+    s += `<line x1="${ox}" y1="${oy}" x2="${ox + W}" y2="${oy}" stroke="${C.dim}" stroke-width="3"/><line x1="${ox}" y1="${oy}" x2="${ox}" y2="${oy - H}" stroke="${C.dim}" stroke-width="3"/>`;
+    s += T(ox + W, oy + 32, 'TIMP', { s: 17, c: C.dim, a: 'end' }); s += T(ox - 10, oy - H - 16, 'PRESIUNE ÎN RAMPĂ', { s: 17, c: C.dim });
+    const xa = .22; const req = x => x < xa ? .3 : .9;
+    const good = x => x < xa ? .3 : .3 + .58 * (1 - Math.exp(-(x - xa) / .05));
+    const bad = x => x < xa ? .3 : .3 + .26 * (1 - Math.exp(-(x - xa) / .45));
+    const curve = (fn, upto, col, w = 7, dash = '') => { let d = ''; for (let i = 0; i <= 120; i++) { const x = i / 120; if (x > upto) break; d += (i ? 'L' : 'M') + f(ox + x * W) + ' ' + f(oy - fn(x) * H); }
+      return `<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`; };
+    // pedal mark at the hard acceleration
+    s += `<line x1="${f(ox + xa * W)}" y1="${oy}" x2="${f(ox + xa * W)}" y2="${oy - H}" stroke="${C.cyD}" stroke-width="3" stroke-dasharray="6 8"/>`;
+    s += tag(ox + xa * W, oy - H + 14, 'ACCELERARE BRUSCĂ', C.cy, 'middle', 16);
+    s += curve(req, ph === 0 ? eo(pt / .8) : 1, C.yel, 5, '14 10'); if (ph > 0 || pt > .6) s += T(ox + W - 6, oy - .9 * H - 24, 'PRESIUNE CERUTĂ DE CALCULATOR', { s: 16, c: C.yel, a: 'end' });
+    s += curve(good, ph === 0 ? eo((pt - .3) / 1.0) : 1, ph >= 1 ? 'rgba(74,222,128,.45)' : C.grn); if (ph === 0 && pt > 1.0 || ph >= 1) s += T(ox + .36 * W, oy - .86 * H + 34, 'REGULATOR BUN', { s: 16, c: ph >= 1 ? 'rgba(74,222,128,.7)' : C.grn });
+    if (ph >= 1) { s += curve(bad, ph === 1 ? eo(pt / 2.0) : 1, C.red, 8); if (ph > 1 || pt > 1.2) s += T(ox + W - 6, oy - bad(1) * H + 36, 'REGULATOR DEFECT', { s: 16, c: C.red, a: 'end' });
+      if (ph > 1 || pt > 1.6) { const xg = ox + .62 * W; s += DBL(xg, oy - .9 * H + 8, xg, oy - bad(.62) * H - 8, C.red, 4); s += tag(xg - 150, oy - .62 * H, 'PREA LENT', C.red, 'middle', 18); } }
+    if (ph >= 2) { const k = .55 + .45 * Math.sin(tl * 9); s += `<rect x="${ox + 8}" y="${oy - H - 2}" width="${W - 8}" height="${H}" fill="${C.red}" opacity="${f(.07 + .06 * k)}"/>`;
+      s += tag(ox + W / 2 + 40, oy - H * .17, '⚠ PRESIUNE PREA MICĂ → EROARE · LIMP MODE', C.red, 'middle', 19); }
+    return s;
+  }
+
+  // 20) winter + low tank: lots of humid air above the fuel -> condensation on the walls -> water at the bottom -> sucked into the injection system
+  function tankCondens(tl, ph, pt, P) {
+    let s = ''; const tx0 = 70, tx1 = 470, ty0 = 70, ty1 = 360;
+    const lvl = ph === 0 ? .82 : ph === 1 ? lerp(.82, .16, eo(pt / 1.2)) : .16; const ly = ty1 - (ty1 - ty0) * lvl;
+    // tank shell + fuel
+    s += `<rect x="${tx0}" y="${ty0}" width="${tx1 - tx0}" height="${ty1 - ty0}" rx="26" fill="${C.body}" stroke="${ph >= 1 ? C.red : C.cy}" stroke-width="6"/>`;
+    s += `<rect x="${tx0 + 6}" y="${f(ly)}" width="${tx1 - tx0 - 12}" height="${f(ty1 - ly - 6)}" rx="18" fill="${C.oil}" opacity=".55"/>`;
+    s += T((tx0 + tx1) / 2, ty1 + 34, 'REZERVOR · SECȚIUNE', { s: 16, c: C.dim, a: 'middle' });
+    // humid air above the fuel
+    const air = (ly - ty0 - 12); const nAir = Math.round(4 + 14 * (air / (ty1 - ty0)));
+    for (let i = 0; i < nAir; i++) { const x = tx0 + 30 + rnd(i) * (tx1 - tx0 - 60), y = ty0 + 16 + ((rnd(i + 9) * air + tl * 14 * (rnd(i + 3) + .4)) % Math.max(10, air)); s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#A5E9FF" opacity=".35"/>`; }
+    if (air > 70) s += T((tx0 + tx1) / 2, ty0 + 44, 'AER UMED', { s: 17, c: '#A5E9FF', a: 'middle', op: .9 });
+    // condensation on the walls, dripping into the fuel; water layer at the bottom
+    const wet = ph >= 2 ? eo(pt / 1.4) * (ph === 2 ? 1 : 1) : 0; const water = ph >= 2 ? (ph === 2 ? eo(pt / 2.5) : 1) : 0;
+    if (wet > 0 || ph >= 3) { for (let i = 0; i < 10; i++) { const side = i % 2 ? tx1 - 14 : tx0 + 14; const k = (tl * .5 + rnd(i)) % 1; const y = lerp(ty0 + 20, ly, k);
+        s += drop(side + (i % 2 ? -4 : 4), y, 7, '#A5E9FF', .9); } }
+    if (water > 0) { const wh = 30 * water; s += `<rect x="${tx0 + 6}" y="${f(ty1 - 6 - wh)}" width="${tx1 - tx0 - 12}" height="${f(wh)}" rx="12" fill="#3FA9F5" opacity=".85"/>`;
+      s += tag(tx0 + 120, ty1 - 6 - wh / 2, 'APĂ', '#62D8FF', 'middle', 17); }
+    // pickup line -> filter -> pump -> injectors
+    const lx = tx1, lyy = ty1 - 24; const path = [[tx1 - 70, ty1 - 18], [tx1 - 70, ty1 + 0], [560, ty1 + 0], [560, 200], [640, 200], [640, 120], [860, 120]];
+    const d = path.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ');
+    s += `<path d="${d}" fill="none" stroke="${C.cy}" stroke-width="20" stroke-linejoin="round" opacity=".9"/><path d="${d}" fill="none" stroke="${C.body2}" stroke-width="12" stroke-linejoin="round"/>`;
+    const inj = ph >= 3; s += `<rect x="600" y="170" width="80" height="80" rx="12" fill="${C.body}" stroke="${inj ? C.red : C.cy}" stroke-width="4"/>` + T(640, 274, 'POMPĂ', { s: 15, c: inj ? C.red : C.dim, a: 'middle' });
+    s += `<rect x="660" y="98" width="214" height="44" rx="22" fill="${C.body2}" stroke="${inj ? C.red : C.cy}" stroke-width="4"/>`;
+    [700, 760, 820].forEach(x => { s += `<rect x="${x - 10}" y="142" width="20" height="60" rx="5" fill="${C.steelD}" stroke="${inj ? C.red : C.cy}" stroke-width="3"/>`; if (inj) s += xmark(x, 226, 11, C.red, 5); });
+    s += T(767, 84, 'SISTEM DE INJECȚIE', { s: 15, c: inj ? C.red : C.dim, a: 'middle' });
+    // flow
+    const L = []; let tot = 0; for (let i = 1; i < path.length; i++) { const dd = Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]); L.push(dd); tot += dd; }
+    const at = k => { let dd = k * tot; for (let i = 0; i < L.length; i++) { if (dd <= L[i] || i === L.length - 1) { const q = dd / L[i]; return [lerp(path[i][0], path[i + 1][0], q), lerp(path[i][1], path[i + 1][1], q)]; } dd -= L[i]; } };
+    for (let i = 0; i < 8; i++) { const k = (tl * .4 + i / 8) % 1; const [x, y] = at(k); const isW = inj && i % 2 === 0;
+      s += isW ? drop(x, y + 4, 7, '#3FA9F5', 1) : `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="${C.oil}" opacity=".9"/>`; }
+    const H = [['REZERVOR PLIN: PUȚIN AER, PUȚIN CONDENS', C.grn], ['NIVEL FOARTE JOS: MULT AER UMED', C.org], ['APARE CONDENS ÎN CANTITATE MARE', '#62D8FF'], ['APA AJUNGE ÎN SISTEMUL DE INJECȚIE', C.red]][Math.min(ph, 3)];
+    s += tag(457, 30, H[0], H[1], 'middle', 18);
+    return s;
+  }
+
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens };
 })();
