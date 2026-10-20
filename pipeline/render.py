@@ -1,4 +1,6 @@
 """Render pipeline: prep assets, preview frames, full render (Chromium compositor -> ffmpeg)."""
+# preinstalled Chromium (the pip playwright may expect a different build)
+CHROME = __import__("os").environ.get("TD_CHROME") or ("/opt/pw-browsers/chromium" if __import__("os").path.exists("/opt/pw-browsers/chromium") else None)
 import argparse, base64, json, os, subprocess, sys, time
 import cv2, numpy as np
 from playwright.sync_api import sync_playwright
@@ -53,7 +55,7 @@ def prep(page):
 
 
 def open_compositor(pw):
-    b = pw.chromium.launch(args=["--allow-file-access-from-files", "--disable-web-security", "--force-color-profile=srgb",
+    b = pw.chromium.launch(executable_path=CHROME, args=["--allow-file-access-from-files", "--disable-web-security", "--force-color-profile=srgb",
                                  "--disable-gpu", "--hide-scrollbars", "--font-render-hinting=none"])
     pg = b.new_page(viewport={"width": 1080, "height": 1920}, device_scale_factor=1)
     errs = []
@@ -77,7 +79,7 @@ def main():
     write_data()
     with sync_playwright() as pw:
         if args.prep:
-            b = pw.chromium.launch(); pg = b.new_page(); prep(pg); b.close(); print("prep done")
+            b = pw.chromium.launch(executable_path=CHROME); pg = b.new_page(); prep(pg); b.close(); print("prep done")
         b, pg, errs = open_compositor(pw)
         ce = pg.evaluate("window.CFG_ERR || ''")
         if ce: print("CFG_ERR:", ce)

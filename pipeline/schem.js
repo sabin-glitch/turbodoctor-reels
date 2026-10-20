@@ -485,5 +485,53 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route };
+  // 16) rail pressure sensor -> ECU feedback loop: healthy / wrong readings / ECU blind -> injection goes haywire (BMW N47)
+  //     P.real = real rail pressure (bar). Steps: 0 sensor OK, 1 sensor defective, 2 wrong/incoherent data, 3 ECU blind, 4 injection haywire
+  function sensorFeedback(tl, ph, pt, P) {
+    let s = ''; const bad = ph >= 1;
+    // rail + injectors
+    const rx = 60, ry = 300, rw = 470;
+    s += `<rect x="${rx}" y="${ry - 22}" width="${rw}" height="44" rx="22" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/>`;
+    s += T(rx + rw / 2, ry + 112, 'RAMPA COMUNĂ + INJECTOARE', { s: 17, c: C.dim, a: 'middle' });
+    for (let i = 0; i < 4; i++) { const x = rx + 70 + i * 105; const wild = ph >= 4; const amp = wild ? (.4 + .6 * rnd(i + Math.floor(tl * 6))) : .55;
+      s += `<rect x="${x - 11}" y="${ry + 22}" width="22" height="46" rx="5" fill="${C.steelD}" stroke="${wild ? C.red : C.cy}" stroke-width="3"/>`;
+      const cyc = ((tl * (wild ? 3.3 + i * .7 : 2.4)) + i * .25) % 1; if (cyc < .4) { const k = cyc / .4; for (let j = 0; j < 3; j++) s += `<circle cx="${f(x + (j - 1) * 12 * k)}" cy="${f(ry + 74 + 26 * k * amp * 2)}" r="${f(4 * (1 - k * .4))}" fill="${wild ? C.yel : '#A5E9FF'}" opacity="${f(1 - k * .6)}"/>`; } }
+    // fuel moving inside the rail
+    for (let i = 0; i < 7; i++) { const k = ((tl * .5 + i / 7) % 1); s += `<circle cx="${f(rx + 24 + k * (rw - 48))}" cy="${ry}" r="7" fill="${C.cy}" opacity=".75"/>`; }
+    s += tag(rx + rw / 2 - 40, ry - 58, 'PRESIUNE REALĂ ÎN RAMPĂ', C.cy, 'middle', 18);
+    // sensor at the rail end
+    const sx = rx + rw + 30, sy = ry; const scol = bad ? C.red : C.grn; const pulse = bad ? 1 + .06 * Math.sin(tl * 10) : 1;
+    s += `<g transform="translate(${sx} ${sy}) scale(${f(pulse)})"><rect x="-30" y="-24" width="60" height="48" rx="10" fill="${C.body}" stroke="${scol}" stroke-width="5"/><rect x="-46" y="-11" width="16" height="22" fill="${C.steel}"/>` +
+      (bad ? xmark(0, 0, 11, C.red, 6) : check(0, 0, 12, C.grn, 6)) + '</g>';
+    s += T(sx, sy + 58, 'SENZOR', { s: 17, c: scol, a: 'middle' });
+    // ECU
+    const ex = 770, ey = 120; const blind = ph >= 3;
+    s += `<rect x="${ex - 112}" y="${ey - 72}" width="224" height="144" rx="16" fill="${C.body}" stroke="${blind ? C.red : C.cy}" stroke-width="5"/>`;
+    s += T(ex, ey - 40, 'CALCULATOR', { s: 17, c: C.dim, a: 'middle' }) + T(ex, ey - 18, 'INJECȚIE', { s: 17, c: C.dim, a: 'middle' });
+    // ECU display: what the ECU "believes" (bar) vs the real rail pressure (cyan marker)
+    const bx0 = ex - 86, bw = 172, by = ey + 4, lvl = .62; let rd = lvl, rcol = C.grn;
+    if (ph === 1 || ph === 2) { const q = Math.floor(tl * (ph === 2 ? 9 : 4)); rd = .1 + .85 * rnd(q + 3); rcol = C.red; }
+    if (blind) { const k = .5 + .5 * Math.sin(tl * 8); s += T(ex, ey + 50, '???', { s: 46, c: C.red, a: 'middle', op: f(.6 + .4 * k) }); }
+    else { s += `<rect x="${bx0}" y="${by}" width="${bw}" height="26" rx="6" fill="rgba(255,255,255,.08)"/><rect x="${bx0}" y="${by}" width="${f(bw * rd)}" height="26" rx="6" fill="${rcol}"/>`;
+      s += `<line x1="${f(bx0 + bw * lvl)}" y1="${by - 8}" x2="${f(bx0 + bw * lvl)}" y2="${by + 34}" stroke="${C.cy}" stroke-width="4"/>`;
+      s += T(ex, by + 56, rcol === C.grn ? 'CITIRE = REALĂ' : 'CITIRE GREȘITĂ', { s: 15, c: rcol, a: 'middle' }); }
+    // signal wire sensor -> ECU
+    const wx0 = sx, wy0 = sy - 26, wx1 = ex, wy1 = ey + 72; const path = `M ${wx0} ${wy0} L ${wx0} ${ey + 150} L ${wx1} ${ey + 150} L ${wx1} ${wy1}`;
+    s += `<path d="${path}" fill="none" stroke="${bad ? 'rgba(255,75,75,.45)' : C.cyD}" stroke-width="5" stroke-dasharray="10 7"/>`;
+    const segL = [(wy0 - (ey + 150)), (wx1 - wx0), ((ey + 150) - wy1)]; const tot = segL.reduce((a, b) => a + Math.abs(b), 0);
+    const ptOn = k => { let d = k * tot; if (d < Math.abs(segL[0])) return [wx0, wy0 - d]; d -= Math.abs(segL[0]); if (d < segL[1]) return [wx0 + d, ey + 150]; d -= segL[1]; return [wx1, ey + 150 - d]; };
+    for (let i = 0; i < 4; i++) { const k = ((tl * .9 + i / 4) % 1); let [x, y] = ptOn(k); if (bad) { x += (rnd(i + Math.floor(tl * 12)) - .5) * 18; y += (rnd(i + 7 + Math.floor(tl * 12)) - .5) * 18; }
+      s += bad ? `<rect x="${f(x - 7)}" y="${f(y - 7)}" width="14" height="14" fill="${C.red}" transform="rotate(45 ${f(x)} ${f(y)})"/>` : `<circle cx="${f(x)}" cy="${f(y)}" r="7" fill="${C.grn}"/>`; }
+    s += T((wx0 + wx1) / 2 + 30, ey + 182, ph >= 2 ? 'SEMNAL INCOERENT' : 'SEMNAL', { s: 16, c: bad ? C.red : C.dim, a: 'middle' });
+    // ECU commands -> rail (regulator / injectors)
+    const cmdCol = blind ? C.red : C.cy; const jit = ph >= 4 ? (rnd(Math.floor(tl * 10)) - .5) * 30 : 0;
+    s += ARW(ex - 112, ey, rx + rw / 2 + 60 + jit, ry - 84, cmdCol, 4, 16);
+    s += T(ex - 300, ey + 34, 'COMANDĂ', { s: 16, c: cmdCol, a: 'middle' });
+    if (ph >= 4) { s += tag(300, 34, 'INJECȚIA O IA RAZNA', C.red, 'middle', 21); }
+    else if (ph === 0) s += tag(300, 34, 'CITIRE CORECTĂ = INJECȚIE CORECTĂ', C.grn, 'middle', 18);
+    else if (ph === 3) s += tag(300, 34, 'NU MAI ȘTIE PRESIUNEA REALĂ', C.red, 'middle', 19);
+    return s;
+  }
+
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback };
 })();
