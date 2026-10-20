@@ -469,10 +469,10 @@ function fitHook() { if (!CFG.hook) return; fitText($('hL1'), 960); fitText($('h
 function hookCues() {
   const H = CFG.hook; if (!H) return;
   sfx(HS, 'hit', .9); sfx(HS + 0.02, 'glitch', .5);
-  if (H.l1) sfx((H.l1At || .05) + .02, 'whoosh', .45);
-  if (H.l2) { sfx((H.l2At || .9) - .03, 'impact', .85); sfx((H.l2At || .9) - .03, 'stamp', .6); }
-  if (H.car) sfx((H.carAt || 1.3), 'pop', .45);
-  (H.chips || []).forEach((c, i) => sfx(c[2] ?? ((H.chipsAt || 1.6) + .1 + i * .18), 'pop', .5));
+  if (H.l1) sfx((H.l1At || HS + .05) + .02, 'whoosh', .45);
+  if (H.l2) { sfx((H.l2At || HS + .9) - .03, 'impact', .85); sfx((H.l2At || HS + .9) - .03, 'stamp', .6); }
+  if (H.car) sfx((H.carAt || HS + 1.3), 'pop', .45);
+  (H.chips || []).forEach((c, i) => sfx(c[2] ?? ((H.chipsAt || HS + 1.6) + .1 + i * .18), 'pop', .5));
   if (HAS_COLD) { sfx(HOOK_END - .16, 'whoosh', .9); sfx(HOOK_END - .12, 'glitch', .55); }
 }
 function rHook(t) {
@@ -480,11 +480,11 @@ function rHook(t) {
   let L = life(t, HS, out, .25, .16);
   if (L) setT($('hTag'), 540, y0 + lerp(150, 214, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hTag'));
   if (L) $('hTag').querySelector('.dot').style.opacity = (Math.floor(t * 4) % 2 ? .25 : 1);
-  L = life(t, H.l1At || 0.05, out, .26, .16, 1.6); if (L && H.l1) setT($('hL1'), 540, y0 + 368, L.s, -2, L.o); else hide($('hL1'));
-  L = life(t, (H.l2At || .9) - .04, out, .18, .16, 1.2);
+  L = life(t, H.l1At || HS + .05, out, .26, .16, 1.6); if (L && H.l1) setT($('hL1'), 540, y0 + 368, L.s, -2, L.o); else hide($('hL1'));
+  L = life(t, (H.l2At || HS + .9) - .04, out, .18, .16, 1.2);
   if (L && H.l2) { const st = lerp(1.55, 1, eOut(clamp(L.k / .15))); setT($('hL2'), 540, y0 + 532, st * (1 + .022 * Math.sin(t * 18)), -4, L.o); } else hide($('hL2'));
-  L = life(t, H.carAt || 1.3, out, .26, .16, 2.2); if (L && H.car) setT($('hCar'), 540, y0 + 676, L.s, 0, L.o); else hide($('hCar'));
-  const ca = H.chipsAt || 1.6;
+  L = life(t, H.carAt || HS + 1.3, out, .26, .16, 2.2); if (L && H.car) setT($('hCar'), 540, y0 + 676, L.s, 0, L.o); else hide($('hCar'));
+  const ca = H.chipsAt || HS + 1.6;
   L = life(t, ca, out, .2, .16); if (L && (H.chips || []).length) { setT($('hookChips'), 540, y0 + (H.chipsY || 776), +$('hookChips').dataset.sc, 0, L.o); (H.chips || []).forEach((c, i) => popIn($('hc' + i), t, c[2] ?? (ca + .1 + i * .18))); } else hide($('hookChips'));
   L = life(t, HS + 0.1, out, .3, .16, 2.6); if (L && H.stk1) setT($('hookStk1'), 960, y0 + 214 + bob(L.k, 0, 4), L.s * (1 + .08 * Math.max(0, Math.sin(t * 14))), Math.sin(t * 20) * 8, L.o); else hide($('hookStk1'));
 }
