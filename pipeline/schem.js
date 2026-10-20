@@ -533,5 +533,59 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback };
+  // 18) diesel filter not replaced: filter clogs -> dirt reaches the HP pump -> pump wears -> metal shavings in rail + injectors
+  function fuelFilterFlow(tl, ph, pt, P) {
+    let s = '';
+    const pl = pts => { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; }
+      return k => { let d = cl(k) * tot; for (let i = 0; i < L.length; i++) { if (d <= L[i] || i === L.length - 1) { const q = L[i] ? d / L[i] : 0; return [lerp(pts[i][0], pts[i + 1][0], q), lerp(pts[i][1], pts[i + 1][1], q)]; } d -= L[i]; } }; };
+    const pipe = (pts, col, w = 14) => { const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ');
+      return `<path d="${d}" fill="none" stroke="${C.cy}" stroke-width="${w + 8}" stroke-linejoin="round" stroke-linecap="round" opacity=".9"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`; };
+    const A = [[105, 300], [105, 236], [258, 236]], B = [[300, 132], [300, 96], [392, 96], [392, 252], [428, 252]], Cc = [[492, 176], [492, 68], [572, 68]], R = [[572, 68], [866, 68]];
+    const injX = [622, 694, 766, 838];
+    const clog = ph === 0 ? 0 : ph === 1 ? eo(pt / 1.4) : 1; const pumpBad = ph >= 3; const shav = ph >= 3; const injBad = ph >= 4;
+    // tank
+    s += `<rect x="30" y="300" width="150" height="104" rx="14" fill="${C.body}" stroke="${C.cy}" stroke-width="5"/><rect x="36" y="350" width="138" height="48" rx="9" fill="${C.oil}" opacity=".55"/>`;
+    s += T(105, 428, 'REZERVOR', { s: 16, c: C.dim, a: 'middle' });
+    // pipes
+    s += pipe(A, C.body2) + pipe(B, C.body2) + pipe(Cc, C.body2);
+    // rail
+    s += `<rect x="560" y="46" width="320" height="44" rx="22" fill="${C.body2}" stroke="${injBad ? C.red : C.cy}" stroke-width="5"/>`;
+    s += T(720, 30, 'RAMPA COMUNĂ', { s: 16, c: injBad ? C.red : C.dim, a: 'middle' });
+    injX.forEach((x, i) => { s += `<rect x="${x - 12}" y="90" width="24" height="88" rx="6" fill="${C.steelD}" stroke="${injBad ? C.red : C.cy}" stroke-width="3"/><path d="M ${x - 7} 178 L ${x + 7} 178 L ${x} 194 Z" fill="${C.steel}"/>`;
+      if (injBad) s += xmark(x, 226, 13, C.red, 6);
+      else { const cyc = (tl * 2.4 + i * .25) % 1; if (cyc < .4) { const k = cyc / .4; for (let j = 0; j < 3; j++) s += `<circle cx="${f(x + (j - 1) * 10 * k)}" cy="${f(198 + 26 * k)}" r="${f(3.6 * (1 - k * .4))}" fill="#A5E9FF" opacity=".85"/>`; } } });
+    s += T(730, 268, 'INJECTOARE', { s: 16, c: injBad ? C.red : C.dim, a: 'middle' });
+    // filter (vertical cartridge with pleats); dirt fills it from the bottom
+    const fx0 = 248, fx1 = 352, fy0 = 132, fy1 = 340; const fcol = clog > .5 ? C.red : clog > 0 ? C.org : C.grn;
+    s += `<rect x="${fx0}" y="${fy0}" width="${fx1 - fx0}" height="${fy1 - fy0}" rx="18" fill="${C.body}" stroke="${fcol}" stroke-width="6"/>`;
+    const dirtH = (fy1 - fy0 - 16) * (.08 + .8 * clog); s += `<rect x="${fx0 + 8}" y="${f(fy1 - 8 - dirtH)}" width="${fx1 - fx0 - 16}" height="${f(dirtH)}" rx="10" fill="#4A3417" opacity="${f(.25 + .65 * clog)}"/>`;
+    for (let i = 0; i < 9; i++) { const x = fx0 + 18 + i * 8.6; const pc = `rgb(${Math.round(lerp(236, 92, clog))},${Math.round(lerp(214, 66, clog))},${Math.round(lerp(160, 30, clog))})`;
+      s += `<line x1="${f(x)}" y1="${fy0 + 26}" x2="${f(x)}" y2="${fy1 - 26}" stroke="${pc}" stroke-width="4"/>`; }
+    s += T(300, 372, 'FILTRU DE', { s: 16, c: fcol === C.grn ? C.dim : fcol, a: 'middle' }) + T(300, 392, 'MOTORINĂ', { s: 16, c: fcol === C.grn ? C.dim : fcol, a: 'middle' });
+    // high-pressure pump (piston going up and down)
+    const px0 = 428, px1 = 556, py0 = 176, py1 = 330; const shake = pumpBad ? (rnd(Math.floor(tl * 20)) - .5) * 5 : 0;
+    s += `<g transform="translate(${f(shake)} 0)"><rect x="${px0}" y="${py0}" width="${px1 - px0}" height="${py1 - py0}" rx="14" fill="${C.body}" stroke="${pumpBad ? C.red : ph >= 2 ? C.org : C.cy}" stroke-width="5"/>`;
+    const pst = 236 + 26 * Math.sin(tl * 7); s += `<rect x="470" y="${f(pst)}" width="44" height="66" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="3"/><rect x="484" y="${f(pst - 50)}" width="16" height="52" fill="${C.steelD}"/>`;
+    if (pumpBad) for (let i = 0; i < 3; i++) s += spark(470 + rnd(i * 3 + Math.floor(tl * 8)) * 44, pst + rnd(i * 5 + Math.floor(tl * 8)) * 60, tl * 6 + i, C.yel, 6, 15);
+    s += '</g>' + T(492, 356, 'POMPĂ DE', { s: 16, c: pumpBad ? C.red : C.dim, a: 'middle' }) + T(492, 376, 'ÎNALTĂ PRESIUNE', { s: 16, c: pumpBad ? C.red : C.dim, a: 'middle' });
+    // flow: fuel droplets + dirt (+ metal shavings from the pump)
+    const pA = pl(A), pB = pl(B), pC = pl(Cc), pR = pl(R); const sp = 1 - .55 * clog;
+    for (let i = 0; i < 6; i++) { const k = (tl * .55 * sp + i / 6) % 1; const [x, y] = pA(k); s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#A5E9FF" opacity=".8"/>`; }
+    for (let i = 0; i < 7; i++) { const k = (tl * .5 * sp + i / 7) % 1; const [x, y] = pB(k); s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#A5E9FF" opacity=".8"/>`; }
+    for (let i = 0; i < 6; i++) { const k = (tl * .7 + i / 6) % 1; const [x, y] = k < .45 ? pC(k / .45) : pR((k - .45) / .55); s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#A5E9FF" opacity=".8"/>`; }
+    // dirt: stopped at the filter while it is good; passes it from step 2
+    for (let i = 0; i < 5; i++) { const k = (tl * .45 + i / 5 + .1) % 1;
+      if (ph < 2) { const [x, y] = pA(Math.min(k * 1.3, 1)); s += `<rect x="${f(x - 6)}" y="${f(y - 6)}" width="12" height="12" fill="#5A3D16" stroke="#000" stroke-opacity=".5" stroke-width="2" transform="rotate(${f(k * 360)} ${f(x)} ${f(y)})"/>`; }
+      else { const [x, y] = k < .45 ? pA(k / .45) : pB((k - .45) / .55); s += `<rect x="${f(x - 6)}" y="${f(y - 6)}" width="12" height="12" fill="#7A4A12" stroke="${C.org}" stroke-width="2" transform="rotate(${f(k * 360)} ${f(x)} ${f(y)})"/>`; } }
+    if (shav) for (let i = 0; i < 7; i++) { const k = (tl * .6 + i / 7) % 1; let x, y;
+      if (!injBad) { [x, y] = k < .45 ? pC(k / .45) : pR((k - .45) / .55); }
+      else { const j = i % 4; if (k < .55) { [x, y] = k < .25 ? pC(k / .25) : pR(((k - .25) / .3) * ((injX[j] - 572) / 294)); } else { x = injX[j]; y = lerp(68, 180, (k - .55) / .45); } }
+      s += `<path d="M ${f(x)} ${f(y - 9)} L ${f(x + 7)} ${f(y + 6)} L ${f(x - 7)} ${f(y + 6)} Z" fill="#E8EEF4" stroke="${C.red}" stroke-width="2" transform="rotate(${f(k * 540)} ${f(x)} ${f(y)})"/>`; }
+    // headline tag per step
+    const H = [['FILTRUL REȚINE IMPURITĂȚILE', C.grn], ['FILTRU ÎMBÂCSIT, NESCHIMBAT LA TIMP', C.org], ['IMPURITĂȚILE TREC SPRE POMPĂ', C.red], ['POMPA SE UZEAZĂ: APARE PILITURA', C.red], ['PILITURĂ ÎN RAMPĂ ȘI INJECTOARE', C.red]][Math.min(ph, 4)];
+    s += tag(250, 34, H[0], H[1], 'middle', 18);
+    return s;
+  }
+
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow };
 })();
