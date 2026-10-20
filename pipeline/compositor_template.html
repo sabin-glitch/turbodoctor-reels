@@ -208,6 +208,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 <script src="data.js"></script>
 <script src="art.js"></script>
 <script src="schem.js"></script>
+<script src="intro.js"></script>
 <script src="reel.js"></script>
 </head>
 <body>
@@ -265,6 +266,7 @@ const cw = (x, k) => CWd(x, k).os, cwe = (x, k) => CWd(x, k).oe;
 const S0 = TL.story_out0, SEND = TL.story_end, TEND = TL.tip_end || TL.story_end, TOTAL = TL.total;
 const HAS_COLD = TL.cold_words.length > 0;
 const HOOK_END = HAS_COLD ? S0 : Math.min(3.0, SEND);
+const INTRO = TL.intro || null, HS = INTRO ? S0 : 0;  // synthetic intro hook (intro.js): the clip and its own hook start at S0
 
 // ===================== PER-REEL config (reel.js) =====================
 let CFG = { hook: null, stages: null, items: [], fx: [], tags: {}, sfx: [], bursts: [] }, SCENES_OK = true;
@@ -360,7 +362,7 @@ function buildChunks() {
   const width = s => cv.measureText(s.toUpperCase()).width + 36; const MAXW = 840; let cur = null;
   WORDS.forEach((w, i) => {
     const prev = WORDS[i - 1];
-    const brk = !cur || cur.words.length >= 3 || (prev && /[.,?!:]$/.test(prev.text)) || (prev && w.os - prev.oe > 0.35) || cur.w + width(w.text) > MAXW;
+    const brk = !cur || cur.words.length >= 3 || (prev && /[.,?!:]$/.test(prev.text)) || (prev && w.os - prev.oe > 0.35) || cur.w + width(w.text) > MAXW || (prev && prev.win !== w.win);
     if (brk) { cur = { words: [], w: 0, win: w.win }; CHUNKS.push(cur); }
     cur.words.push(w); cur.w += width(w.text);
   });
@@ -369,7 +371,7 @@ function buildChunks() {
 let capCur = -1;
 function renderCaptions(t) {
   const cap = $('cap'); const hidden = HIDE_CAP.some(([a, b]) => t >= a && t < b);
-  const idx = hidden ? -1 : CHUNKS.findIndex(c => t >= c.t0 && t < c.t1);
+  const idx = CHUNKS.findIndex(c => t >= c.t0 && t < c.t1 && (c.win < 0 ? !(CFG.intro && CFG.intro.cap === false) : !hidden));
   if (idx !== capCur) { capCur = idx; if (idx < 0) { cap.innerHTML = ''; return; }
     cap.innerHTML = CHUNKS[idx].words.map(w => `<span class="${capClass(w)}">${w.text.replace(/[.,?!:]$/, '')}</span>`).join(''); }
   if (idx < 0) return;
@@ -411,7 +413,8 @@ function segAt(t) { for (let k = 0; k < STORY.length; k++) { const s = STORY[k];
 let curBgSrc = '';
 function renderBg(t) {
   let z = 1, dx = 0, dy = 0;
-  if (t < HOOK_END && HAS_COLD) z = 1.18 - .1 * eOut(t / HOOK_END);
+  if (INTRO && t < S0) { const p = clamp((S0 - t) / .35); z = lerp(1.02, 1.16 - .05 * clamp(t / S0), p); }
+  else if (t < HOOK_END && HAS_COLD) z = 1.18 - .1 * eOut(t / HOOK_END);
   else if (t < SEND) { const [s, d] = segAt(t); z = ((s.zg || 0) % 2 ? 1.075 : 1.02) + .025 * clamp((t - s.out_a) / Math.max(.1, d)); }
   else if (t < TEND) z = 1.04 + .08 * eInOut(clamp((t - SEND) / Math.max(.1, TEND - SEND)));
   else z = 1.04 + .03 * clamp((t - TEND) / (TOTAL - TEND));
@@ -426,6 +429,7 @@ function renderBg(t) {
   let xr = 0; for (const f of fxOf('xray')) xr = Math.max(xr, win01(t, f.t0, f.t1, .08, .18));
   if (xr > 0.01) filt = `grayscale(${xr.toFixed(2)}) invert(${(xr * .92).toFixed(2)}) sepia(${(xr * .6).toFixed(2)}) hue-rotate(${(xr * 165).toFixed(0)}deg) saturate(${(1 + xr * 1.6).toFixed(2)}) contrast(${(1 + xr * .25).toFixed(2)})`;
   else if (bw > 0.01) filt = `grayscale(${bw.toFixed(2)}) contrast(${(1 + .18 * bw).toFixed(2)}) brightness(${(1 - .06 * bw).toFixed(2)})`;
+  if (INTRO && t < S0) { const p = clamp((S0 - t) / .35); filt = `blur(${(22 * p).toFixed(1)}px) brightness(${(1 - .62 * p).toFixed(3)}) saturate(${(1 + .25 * p).toFixed(2)})`; }
   if (bg.dataset.f !== filt) { bg.style.filter = filt; bg.dataset.f = filt; }
   const sc = $('scanLine'); let scOn = false;
   for (const f of fxOf('xray')) { if (t >= f.t0 && t <= f.t1) { const p = ((t - f.t0) / Math.max(.4, (f.t1 - f.t0))) % 1; sc.style.display = 'block'; sc.style.opacity = xr.toFixed(3); sc.style.transform = `translateY(${(lerp(-70, 1920, p)).toFixed(0)}px)`; scOn = true; } }
@@ -464,7 +468,7 @@ function fitHook() { if (!CFG.hook) return; fitText($('hL1'), 960); fitText($('h
   const hc = $('hookChips'); hc.style.display = 'flex'; hc.style.visibility = 'hidden'; const w = hc.scrollWidth; hc.dataset.sc = w > 1000 ? (1000 / w).toFixed(3) : '1'; hc.style.display = 'none'; hc.style.visibility = ''; }
 function hookCues() {
   const H = CFG.hook; if (!H) return;
-  sfx(0, 'hit', .9); sfx(0.02, 'glitch', .5);
+  sfx(HS, 'hit', .9); sfx(HS + 0.02, 'glitch', .5);
   if (H.l1) sfx((H.l1At || .05) + .02, 'whoosh', .45);
   if (H.l2) { sfx((H.l2At || .9) - .03, 'impact', .85); sfx((H.l2At || .9) - .03, 'stamp', .6); }
   if (H.car) sfx((H.carAt || 1.3), 'pop', .45);
@@ -473,7 +477,7 @@ function hookCues() {
 }
 function rHook(t) {
   const H = CFG.hook; if (!H) return; const out = (H.end || HOOK_END) - .1; const y0 = H.y || 0;
-  let L = life(t, 0, out, .25, .16);
+  let L = life(t, HS, out, .25, .16);
   if (L) setT($('hTag'), 540, y0 + lerp(150, 214, eOut(clamp(L.k / .3))), 1, 0, L.o); else hide($('hTag'));
   if (L) $('hTag').querySelector('.dot').style.opacity = (Math.floor(t * 4) % 2 ? .25 : 1);
   L = life(t, H.l1At || 0.05, out, .26, .16, 1.6); if (L && H.l1) setT($('hL1'), 540, y0 + 368, L.s, -2, L.o); else hide($('hL1'));
@@ -482,7 +486,7 @@ function rHook(t) {
   L = life(t, H.carAt || 1.3, out, .26, .16, 2.2); if (L && H.car) setT($('hCar'), 540, y0 + 676, L.s, 0, L.o); else hide($('hCar'));
   const ca = H.chipsAt || 1.6;
   L = life(t, ca, out, .2, .16); if (L && (H.chips || []).length) { setT($('hookChips'), 540, y0 + (H.chipsY || 776), +$('hookChips').dataset.sc, 0, L.o); (H.chips || []).forEach((c, i) => popIn($('hc' + i), t, c[2] ?? (ca + .1 + i * .18))); } else hide($('hookChips'));
-  L = life(t, 0.1, out, .3, .16, 2.6); if (L && H.stk1) setT($('hookStk1'), 960, y0 + 214 + bob(L.k, 0, 4), L.s * (1 + .08 * Math.max(0, Math.sin(t * 14))), Math.sin(t * 20) * 8, L.o); else hide($('hookStk1'));
+  L = life(t, HS + 0.1, out, .3, .16, 2.6); if (L && H.stk1) setT($('hookStk1'), 960, y0 + 214 + bob(L.k, 0, 4), L.s * (1 + .08 * Math.max(0, Math.sin(t * 14))), Math.sin(t * 20) * 8, L.o); else hide($('hookStk1'));
 }
 
 // ---------- ITEMS ----------
@@ -718,7 +722,7 @@ function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8);
 
 function render(t, n) {
   renderBg(t);
-  if (SCENES_OK) { rHook(t); rStages(t); for (const o of ITEMS) rItem(o, t); }
+  if (SCENES_OK) { if (INTRO && window.INTRO_FX) INTRO_FX.render(t); rHook(t); rStages(t); for (const o of ITEMS) rItem(o, t); }
   rEnd(t); renderSparks(t); renderCaptions(t);
 }
 const bg = $('bg');
@@ -731,9 +735,9 @@ window.READY = false;
 (async () => {
   for (const f of ['900 80px Mont', '800 40px Mont', '700 30px Mont', '600 30px Mont', '100px Anton', '800 30px JB', '700 30px JB', '500 30px JB', '800 30px JB']) { try { await document.fonts.load(f, 'AĂÂÎȘȚ'); } catch (e) { } }
   await document.fonts.ready;
-  if (SCENES_OK) { try { setupHook(); buildItems(); setupStages(); } catch (e) { SCENES_OK = false; window.CFG_ERR = String(e.message); console.error('build failed: ' + e.message); } }
+  if (SCENES_OK) { try { setupHook(); buildItems(); setupStages(); if (INTRO && window.INTRO_FX) INTRO_FX.build(CFG.intro, INTRO); } catch (e) { SCENES_OK = false; window.CFG_ERR = String(e.message); console.error('build failed: ' + e.message); } }
   await Promise.all([...document.images].map(im => im.decode().catch(() => { })));
-  if (SCENES_OK) { fitHook(); hookCues(); itemCues(); (CFG.sfx || []).forEach(s => sfx(s[0], s[1], s[2] ?? .5)); (CFG.bursts || []).forEach(b => burst(...b)); }
+  if (SCENES_OK) { fitHook(); hookCues(); if (INTRO && window.INTRO_FX) INTRO_FX.cues(); itemCues(); (CFG.sfx || []).forEach(s => sfx(s[0], s[1], s[2] ?? .5)); (CFG.bursts || []).forEach(b => burst(...b)); }
   endCues(); buildChunks();
   window.CHUNKS_DEBUG = CHUNKS.map(c => ({ t0: +c.t0.toFixed(2), t1: +c.t1.toFixed(2), txt: c.words.map(w => w.text).join(' ') }));
   window.READY = true;

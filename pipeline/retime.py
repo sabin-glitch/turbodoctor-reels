@@ -9,6 +9,7 @@ if tl.get("speed"): tl = json.load(open(p1))
 else: json.dump(tl, open(p1, "w"), ensure_ascii=False, indent=1)
 cfg = json.load(open(f"{ROOT}/out/v2.json")) if os.path.exists(f"{ROOT}/out/v2.json") else {}
 SP = float(cfg.get("speed", 1.0)); tip = cfg.get("tip", {"dur": 0})  # default 1.0: natural pace (Sabin, 18.10.2026)
+assert not (tl.get("intro") and abs(SP - 1) > 1e-3), "synthetic intro needs speed 1.0"
 for s in tl["segments"]: s["out_a"] = round(s["out_a"] / SP, 4)
 for w in tl["words"]: w["os"] = round(w["os"] / SP, 4); w["oe"] = round(w["oe"] / SP, 4)
 for w in tl["cold_words"]: w["os"] = round(w["os"] / SP, 4); w["oe"] = round(w["oe"] / SP, 4)

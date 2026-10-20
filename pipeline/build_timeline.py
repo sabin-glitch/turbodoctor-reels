@@ -1,5 +1,5 @@
 """Align curated transcript to Parakeet token timestamps, build the edit decision list (EDL)
-with tightened pauses + cold open, map word times to output time, write out/timeline.json."""
+with tightened pauses + cold open (+ optional synthetic intro, out/intro.json), map word times to output time, write out/timeline.json."""
 import os
 import json, unicodedata, difflib, re
 
@@ -173,8 +173,12 @@ for k in range(1, len(keep)):
 import os
 COLD = json.load(open(f"{ROOT}/out/cold.json")) if os.path.exists(f"{ROOT}/out/cold.json") else {"audio": [], "video_src": 0.0, "extra": 0.0}
 COLD_AUDIO = [tuple(x) for x in COLD["audio"]]
+# optional synthetic intro hook (graphics + generated voice, out/intro.json from intro_vo.py): the story starts after it
+INTRO = json.load(open(f"{ROOT}/out/intro.json")) if os.path.exists(f"{ROOT}/out/intro.json") else None
 segments = []
 t = 0.0
+if INTRO:
+    segments.append(dict(kind="intro", src_a=INTRO["bg_src"], src_b=INTRO["bg_src"], out_a=0.0, dur=INTRO["dur"])); t = INTRO["dur"]
 for a, b in COLD_AUDIO:
     segments.append(dict(kind="cold_audio", src_a=a, src_b=b, out_a=round(t, 3))); t += b - a
 cold_len = t
@@ -211,9 +215,11 @@ for w in words:
             os_ = sg["out_a"] + (w["s"] - sg["src_a"]); oe_ = sg["out_a"] + (min(w["e"], sg["src_b"]) - sg["src_a"])
             cold_words.append(dict(text=w["text"], os=round(max(0, os_), 3), oe=round(oe_, 3)))
 
+intro_words = [dict(text=w["text"], s=w["s"], e=w["e"], os=w["s"], oe=w["e"], win=-1, ph=w["ph"]) for w in INTRO["words"]] if INTRO else []
 tl = dict(fps=30, width=1080, height=1920, total=round(total, 3), story_out0=round(story_out0, 3),
-          story_end=round(story_end, 3), end_card=END_CARD, segments=segments, words=words,
+          story_end=round(story_end, 3), end_card=END_CARD, segments=segments, words=intro_words + words,
           cold_words=cold_words)
+if INTRO: tl["intro"] = dict(dur=INTRO["dur"], vo_dur=INTRO["vo_dur"], bg_src=INTRO["bg_src"], phrases=INTRO["phrases"])
 json.dump(tl, open(f"{ROOT}/out/timeline.json", "w"), ensure_ascii=False, indent=1)
 print(f"total {total:.2f}s  story starts {story_out0:.2f}  story ends {story_end:.2f}  cuts {len(keep)}  src story {sum(b-a for a,b in keep):.1f}s of {SRC_DUR:.1f}s")
 import sys

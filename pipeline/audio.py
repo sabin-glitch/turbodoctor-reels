@@ -30,6 +30,13 @@ vp, _ = sf.read(f"{ROOT}/audio/voice_proc.wav", dtype="float32")
 if vp.ndim == 1: vp = np.stack([vp, vp], 1)
 vp = vp[:n_total] if len(vp) >= n_total else np.vstack([vp, np.zeros((n_total - len(vp), 2), np.float32)])
 vp[int((SEND + .35) * SR):] = 0
+if tl.get("intro") and os.path.exists(f"{ROOT}/audio/intro_vo.wav"):  # generated intro voice (intro_vo.py): skips the denoise/compressor chain
+    # (it smears the synthetic consonants), gets only the EQ, and is level-matched to the processed presenter
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", f"{ROOT}/audio/intro_vo.wav", "-af", "highpass=f=75,equalizer=f=3200:t=q:w=1.2:g=2.5,equalizer=f=250:t=q:w=1:g=-1.5",
+                    "-ar", str(SR), "-ac", "1", "-c:a", "pcm_f32le", f"{ROOT}/audio/intro_vo_eq.wav"], check=True)
+    iv, _ = sf.read(f"{ROOT}/audio/intro_vo_eq.wav", dtype="float32")
+    def srms(x): f = int(.02 * SR); k = len(x) // f; r = np.sqrt((x[:k * f].reshape(k, f) ** 2).mean(1) + 1e-12); return float(np.sqrt(np.mean(r[r > r.max() * .1] ** 2)))
+    n = min(len(iv), int(S0 * SR)); vp[:n] += (iv[:n] * srms(vp[int(S0 * SR):int(SEND * SR), 0]) / srms(iv))[:, None]
 
 def bp(x, lo, hi, order=2): return sosfilt(butter(order, [lo, hi], btype="band", fs=SR, output="sos"), x, axis=0)
 def lp(x, fc, order=2): return sosfilt(butter(order, fc, btype="low", fs=SR, output="sos"), x, axis=0)
@@ -86,6 +93,7 @@ def music():
     ramp(SEND, SEND + .4, .78, 1.0); g[int((SEND + .4) * SR):] = 1.0
     ramp(TEND, TEND + .3, 1.0, 1.1); g[int((TEND + .3) * SR):] = 1.1
     ramp(TOTAL - 1.4, TOTAL, 1.1, 0)
+    if tl.get("intro"): ramp(.25, S0 - .4, .62, .62); ramp(S0 - .4, S0, .62, .95)  # intro hook: bed lower under the generated voice
     # ducking under the voice
     mono = np.abs(vp[:, 0]); win = int(.03 * SR)
     rmsv = np.sqrt(np.convolve(mono ** 2, np.ones(win) / win, mode="same") + 1e-12)
@@ -176,7 +184,12 @@ def data():
     return np.stack([out] * 2, 1) * .14
 def confetti():
     x = np.zeros((int(1.0 * SR), 2)); p = pop(); x[:len(p)] += p * 1.2; s = shimmer(); x[int(.05 * SR):int(.05 * SR) + len(s)] += s[:len(x) - int(.05 * SR)] * 1.2; return x
-GEN = dict(impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
+def crank():  # starter motor cranking a cold diesel (intro hooks)
+    d = 1.7; t = T(d); n = len(t); ph = (t * 4.6) % 1
+    amp = .5 + .5 * np.exp(-ph * 5); motor = np.sign(np.sin(2 * np.pi * 112 * t)) * .22 + np.sin(2 * np.pi * 224 * t) * .2
+    x = (motor + lp(rng.standard_normal(n), 320) * 1.3) * amp; x = bp(x, 60, 3200) * np.minimum(1, t / .05) * np.minimum(1, (d - t) / .2)
+    return np.stack([x, x], 1) * .34
+GEN = dict(crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
            tick=tick, tick2=tick2, ding=ding, confetti=confetti, type=typing, scan=scan, lock=lock, glitch=glitch, data=data)
 fx = np.zeros((n_total, 2), np.float32)
 for c in json.load(open(f"{ROOT}/out/sfx.json")):
@@ -186,6 +199,10 @@ for c in json.load(open(f"{ROOT}/out/sfx.json")):
     n = min(len(s), n_total - o)
     if n > 0: fx[o:o + n] += s[:n]
 fx *= 0.5
+if tl.get("intro"):  # intro hook: SFX duck ~5 dB under the generated voice so every word stays clear
+    e = np.abs(vp[:int(S0 * SR), 0]); w = int(.04 * SR); r = np.sqrt(np.convolve(e ** 2, np.ones(w) / w, mode="same") + 1e-12)
+    a = np.clip((20 * np.log10(r + 1e-9) + 40) / 12, 0, 1); a = np.convolve(a, np.ones(int(.08 * SR)) / int(.08 * SR), mode="same")
+    fx[:len(a)] *= (1 - .6 * a)[:, None]
 mus = music()
 mix = vp + fx + mus * float(cfg.get("music_gain", 0.5))  # 0.5 = muzica la jumătate (cerut de Sabin, 18.10.2026)
 sf.write(f"{ROOT}/audio/mix_pre.wav", mix, SR, subtype="FLOAT")
