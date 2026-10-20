@@ -2,7 +2,8 @@
 Reads out/intro_script.json {"speed": 1.15, "tail": 0.5, "bg_src": 0.0, "phrases": [{"text": "...", "gap": 0.16}, ...]},
 synthesizes each phrase with the Romanian TTS voice, matches its loudness to the presenter (audio/src48.wav),
 keeps the clearest of several takes per phrase (the TTS varies from take to take; ASR on the whole sequence, clean and under
-a noise bed, scores them; a phrase can instead reuse a verified clip: {"text": ..., "wav": "cta.wav"}),
+a noise bed, scores them; a phrase can instead reuse a verified clip: {"text": ..., "wav": "cta.wav"}, or be spoken
+differently from its caption: {"text": "1.500 €", "say": "o mie cinci sute de euro"}),
 gets word timings with ASR on the clean TTS audio and writes audio/intro_vo.wav + out/intro.json.
 build_timeline.py then starts the story after the intro (story_out0 = intro dur)."""
 import os, json, glob, difflib, unicodedata
@@ -76,7 +77,7 @@ def clip(p):  # a verified clip (path relative to out/), or a fresh TTS take
     if p.get("wav"):
         y, r = sf.read(os.path.join(f"{ROOT}/out", p["wav"]), dtype="float32"); y = y.mean(1) if y.ndim > 1 else y
         y = resample_poly(y, SR, r).astype(np.float32) if r != SR else y
-    else: y = synth(p["text"], p.get("speed", cfg.get("speed", 1.15)))
+    else: y = synth(p.get("say", p["text"]), p.get("speed", cfg.get("speed", 1.15)))  # "say": spoken form when it differs from the caption
     return y * target / speech_rms(y) * float(cfg.get("gain", 1.0))
 
 
@@ -94,7 +95,7 @@ for k in range(int(cfg.get("takes", 6))):  # per phrase, keep the take the ASR u
         spans.append((t, t + len(y) / SR)); seq += [y, np.zeros(int(float(P[i].get("gap", .14)) * SR), np.float32)]; t += len(y) / SR + float(P[i].get("gap", .14))
     x = np.concatenate(seq + [np.zeros(int(.4 * SR), np.float32)]); nz = bed[:len(x)] * (speech_rms(x) / speech_rms(bed[:len(x)]) * 10 ** (-15 / 20))
     for i, (hc, hn) in enumerate(zip(heard(x, spans), heard(x + nz, spans))):
-        sc = min(difflib.SequenceMatcher(None, norm(P[i]["text"]), norm(h), autojunk=False).ratio() for h in (hc, hn))
+        sc = min(difflib.SequenceMatcher(None, norm(P[i].get("say", P[i]["text"])), norm(h), autojunk=False).ratio() for h in (hc, hn))
         if sc > best[i][0]: best[i] = (sc, ys[i], f"{hc.strip()} / {hn.strip()}")
     if min(b[0] for b in best) > .98: break
 for i, b in enumerate(best): print(f"take p{i} {b[0]:.2f} | {P[i]['text']} | heard: {b[2]}")

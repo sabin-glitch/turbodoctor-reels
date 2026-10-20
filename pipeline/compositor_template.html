@@ -265,8 +265,8 @@ function CWd(text, nth = 0) { const n = norm(text); const c = TL.cold_words.filt
 const cw = (x, k) => CWd(x, k).os, cwe = (x, k) => CWd(x, k).oe;
 const S0 = TL.story_out0, SEND = TL.story_end, TEND = TL.tip_end || TL.story_end, TOTAL = TL.total;
 const HAS_COLD = TL.cold_words.length > 0;
-const HOOK_END = HAS_COLD ? S0 : Math.min(3.0, SEND);
-const INTRO = TL.intro || null, HS = INTRO ? S0 : 0;  // synthetic intro hook (intro.js): the clip and its own hook start at S0
+const INTRO = TL.intro || null, HS = INTRO ? INTRO.dur : 0;  // synthetic intro hook (intro.js): the clip and its own hook start at HS
+const HOOK_END = HAS_COLD ? S0 : Math.min(HS + 3.0, SEND);
 
 // ===================== PER-REEL config (reel.js) =====================
 let CFG = { hook: null, stages: null, items: [], fx: [], tags: {}, sfx: [], bursts: [] }, SCENES_OK = true;
@@ -413,8 +413,8 @@ function segAt(t) { for (let k = 0; k < STORY.length; k++) { const s = STORY[k];
 let curBgSrc = '';
 function renderBg(t) {
   let z = 1, dx = 0, dy = 0;
-  if (INTRO && t < S0) { const p = clamp((S0 - t) / .35); z = lerp(1.02, 1.16 - .05 * clamp(t / S0), p); }
-  else if (t < HOOK_END && HAS_COLD) z = 1.18 - .1 * eOut(t / HOOK_END);
+  if (INTRO && t < HS) { const p = clamp((HS - t) / .35); z = lerp(1.02, 1.16 - .05 * clamp(t / HS), p); }
+  else if (t < HOOK_END && HAS_COLD) z = 1.18 - .1 * eOut((t - HS) / (HOOK_END - HS));
   else if (t < SEND) { const [s, d] = segAt(t); z = ((s.zg || 0) % 2 ? 1.075 : 1.02) + .025 * clamp((t - s.out_a) / Math.max(.1, d)); }
   else if (t < TEND) z = 1.04 + .08 * eInOut(clamp((t - SEND) / Math.max(.1, TEND - SEND)));
   else z = 1.04 + .03 * clamp((t - TEND) / (TOTAL - TEND));
@@ -429,7 +429,7 @@ function renderBg(t) {
   let xr = 0; for (const f of fxOf('xray')) xr = Math.max(xr, win01(t, f.t0, f.t1, .08, .18));
   if (xr > 0.01) filt = `grayscale(${xr.toFixed(2)}) invert(${(xr * .92).toFixed(2)}) sepia(${(xr * .6).toFixed(2)}) hue-rotate(${(xr * 165).toFixed(0)}deg) saturate(${(1 + xr * 1.6).toFixed(2)}) contrast(${(1 + xr * .25).toFixed(2)})`;
   else if (bw > 0.01) filt = `grayscale(${bw.toFixed(2)}) contrast(${(1 + .18 * bw).toFixed(2)}) brightness(${(1 - .06 * bw).toFixed(2)})`;
-  if (INTRO && t < S0) { const p = clamp((S0 - t) / .35); filt = `blur(${(22 * p).toFixed(1)}px) brightness(${(1 - .62 * p).toFixed(3)}) saturate(${(1 + .25 * p).toFixed(2)})`; }
+  if (INTRO && t < HS) { const p = clamp((HS - t) / .35); filt = `blur(${(22 * p).toFixed(1)}px) brightness(${(1 - .62 * p).toFixed(3)}) saturate(${(1 + .25 * p).toFixed(2)})`; }
   if (bg.dataset.f !== filt) { bg.style.filter = filt; bg.dataset.f = filt; }
   const sc = $('scanLine'); let scOn = false;
   for (const f of fxOf('xray')) { if (t >= f.t0 && t <= f.t1) { const p = ((t - f.t0) / Math.max(.4, (f.t1 - f.t0))) % 1; sc.style.display = 'block'; sc.style.opacity = xr.toFixed(3); sc.style.transform = `translateY(${(lerp(-70, 1920, p)).toFixed(0)}px)`; scOn = true; } }

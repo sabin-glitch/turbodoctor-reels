@@ -3,9 +3,10 @@
 // Types:
 //   dash  – instrument cluster: hard start (starter cranking), then Limp Mode (rpm capped, check engine), then the CTA
 //   board – three symptom cards slam in, red strings tie them to one "?" (same cause), then the CTA
-// Shared CTA: "ASCULTĂ MAI DEPARTE" pill + TURBO DOCTOR wordmark on the CTA phrase; everything flies out into the clip at S0.
+//           (cards: [[emoji, title, sub, t0?, mark 'x'|'q'|'none'?], ...]; mergeAt / causeAt: intro words; causeTxt: label; q: centre glyph)
+// Shared CTA: "ASCULTĂ MAI DEPARTE" pill + TURBO DOCTOR wordmark on the CTA phrase; everything flies out into the clip at IE.
 window.INTRO_FX = (() => {
-  let C = {}, P = null, svg = null; const IM = {};
+  let C = {}, P = null, svg = null, IE = 0; const IM = {};  // IE: end of the intro (out/intro.json dur)
   const f = x => (+x).toFixed(1);
   const IW = (x, k = 0) => { const n = norm(x); const c = WORDS.filter(w => w.win === -1 && norm(w.text) === n); if (!c[k]) throw new Error('intro anchor not found: ' + x + ' #' + k); return c[k]; };
   const ia = (x, k) => IW(x, k).os;
@@ -44,12 +45,12 @@ window.INTRO_FX = (() => {
   }
   function ctaImgs(t) {
     const p0 = ph(C.ctaPh).t0; const im = mkImg('backhand_index_pointing_down', 110); const k = t - p0 - .15;
-    if (k < 0 || t > S0 - .05) { hide(im); return; }
-    const out = S0 - .4; const o = clamp(k / .2) * (1 - clamp((t - out) / .3));
+    if (k < 0 || t > IE - .05) { hide(im); return; }
+    const out = IE - .4; const o = clamp(k / .2) * (1 - clamp((t - out) / .3));
     setT(im, 540, 902 + Math.abs(Math.sin(k * 6)) * 18, eBack(clamp(k / .3), 2.4) * outS(t), 0, o);
   }
-  const outS = t => 1 + .14 * eIn(clamp((t - (S0 - .4)) / .35));
-  const outO = t => 1 - clamp((t - (S0 - .4)) / .33);
+  const outS = t => 1 + .14 * eIn(clamp((t - (IE - .4)) / .35));
+  const outO = t => 1 - clamp((t - (IE - .4)) / .33);
   function grid(t) { let s = '';
     for (let x = 0; x <= 1080; x += 90) s += `<line x1="${x}" y1="0" x2="${x}" y2="1920" stroke="rgba(98,216,255,.07)" stroke-width="2"/>`;
     const off = (t * 40) % 90; for (let y = -90; y <= 1920; y += 90) s += `<line x1="0" y1="${f(y + off)}" x2="1080" y2="${f(y + off)}" stroke="rgba(98,216,255,.07)" stroke-width="2"/>`;
@@ -142,8 +143,8 @@ window.INTRO_FX = (() => {
       const card = `<rect x="-400" y="-74" width="800" height="148" rx="30" fill="#fff" stroke="#E11D2E" stroke-width="6"/>` +
         `<rect x="-400" y="-74" width="26" height="148" rx="13" fill="#E11D2E"/>` +
         `<circle cx="-300" cy="0" r="56" fill="#111827" stroke="#E11D2E" stroke-width="5"/>` +
-        TX(-226, c[2] ? -2 : 18, c[1], { s: 52, c: '#0F1216', a: 'start', ls: 0 }) + (c[2] ? TX(-224, 40, c[2], { fam: 'JB', w: 800, s: 24, c: '#8A8F98', a: 'start', ls: 2 }) : '') +
-        `<g transform="translate(330 0)">${'<path d="M -22 -22 L 22 22 M 22 -22 L -22 22" stroke="#E11D2E" stroke-width="12" stroke-linecap="round"/>'}</g>`;
+        TX(-226, c[2] ? -2 : 18, c[1], { s: Math.min(52, Math.floor(506 / (.62 * c[1].length))), c: '#0F1216', a: 'start', ls: 0 }) + (c[2] ? TX(-224, 40, c[2], { fam: 'JB', w: 800, s: 24, c: '#8A8F98', a: 'start', ls: 2 }) : '') +
+        `<g transform="translate(330 0)">${(c[4] || C.mark || 'x') === 'x' ? '<path d="M -22 -22 L 22 22 M 22 -22 L -22 22" stroke="#E11D2E" stroke-width="12" stroke-linecap="round"/>' : (c[4] || C.mark) === 'q' ? TX(0, 26, '?', { fam: 'Anton', w: 400, s: 76, c: '#E11D2E', ls: 0 }) : ''}</g>`;
       s += G(cx + shake, cy, sc, clamp(p * 3), `<g transform="rotate(${f(rot)})">${card}</g>`);
       ends.push([cx + 400 * sc, cy]); IM['c' + i] = [cx - 300 * sc + shake, cy, sc, clamp(p * 3), rot];
     });
@@ -157,9 +158,9 @@ window.INTRO_FX = (() => {
       const [qs, qo] = pop(t, cz, .3, 2.6);
       if (qo) { const rk = ((t - cz) % 1) / 1;
         s += `<circle cx="${TXC}" cy="${TYC}" r="${f(120 + rk * 60)}" fill="none" stroke="#FF3B30" stroke-width="6" opacity="${f(.8 * (1 - rk))}"/>`;
-        s += G(TXC, TYC, qs, qo, `<circle r="120" fill="#E11D2E" stroke="#fff" stroke-width="8"/>` + TX(0, 70, '?', { fam: 'Anton', w: 400, s: 200, st: 10, ls: 0 })); }
+        s += G(TXC, TYC, qs, qo, `<circle r="120" fill="#E11D2E" stroke="#fff" stroke-width="8"/>` + TX(0, 70, C.q || '?', { fam: 'Anton', w: 400, s: 200, st: 10, ls: 0 })); }
       const [ls, lo] = pop(t, cz + .12, .28, 2);
-      if (lo) s += G(540, 915, ls, lo, TX(0, 0, C.causeTxt || 'ACEEAȘI CAUZĂ', { fam: 'Anton', w: 400, s: 104, c: '#FFD21F', st: 14, ls: 2 }));
+      if (lo) s += G(540, 915, ls, lo, TX(0, 0, C.causeTxt || 'ACEEAȘI CAUZĂ', { fam: 'Anton', w: 400, s: Math.min(104, Math.floor(980 / (.47 * (C.causeTxt || 'ACEEAȘI CAUZĂ').length))), c: '#FFD21F', st: 14, ls: 2 }));
     }
     return `<g opacity="${fo.toFixed(3)}">${s}</g>`;
   }
@@ -172,7 +173,7 @@ window.INTRO_FX = (() => {
 
   // ---------- API ----------
   function build(cfg, intro) {
-    C = Object.assign({ type: 'dash', ctaPh: 2 }, cfg || {}); P = intro;
+    C = Object.assign({ type: 'dash', ctaPh: 2 }, cfg || {}); P = intro; IE = intro.dur;
     const d = document.createElement('div'); d.id = 'intro'; d.className = 'abs'; d.style.cssText = 'display:block;left:0;top:0;width:1080px;height:1920px';
     $('stage').insertBefore(d, $('items'));
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', '0 0 1080 1920'); svg.setAttribute('width', '1080'); svg.setAttribute('height', '1920');
@@ -185,7 +186,7 @@ window.INTRO_FX = (() => {
       CFG.fx.push({ k: 'punch', t: av, a: .05, sh: 8 }, { k: 'red', t0: av - .05, t1: ph(1).t1 + .15, max: 1.8 }, { k: 'punch', t: ia('accelerezi'), a: .03, sh: 5 }); }
     if (C.type === 'board') { (C.cards || []).forEach((c, i) => CFG.fx.push({ k: 'punch', t: (c[3] ?? (ph(i).t0 - .04)) + .12, a: .035, sh: 6 }));
       CFG.fx.push({ k: 'punch', t: ia(C.causeAt || 'aceeași'), a: .05, sh: 8 }); }
-    CFG.fx.push({ k: 'punch', t: (C.brandAt ?? ia('Turbo') - .06) + .1, a: .04 }, { k: 'flash', t: S0 - .05, a: .32 });
+    CFG.fx.push({ k: 'punch', t: (C.brandAt ?? ia('Turbo') - .06) + .1, a: .04 }, { k: 'flash', t: IE - .05, a: .32 });
   }
   function cues() {  // SFX land just before the words, quieter than the clip's; under the voice only short ones (a long boom or whoosh masks the next word)
     const ctaT = ph(C.ctaPh).t0, bt = C.brandAt ?? ia('Turbo') - .06;
@@ -195,13 +196,13 @@ window.INTRO_FX = (() => {
       sfx(ia('greu') - .1, 'pop', .3); }
     if (C.type === 'board') { (C.cards || []).forEach((c, i) => { const t0 = c[3] ?? (ph(i).t0 - .04); sfx(t0 - .02, 'stamp', .45); });
       const tr = ia(C.mergeAt || 'Trei') - .05, cz = ia(C.causeAt || 'aceeași') - .1;
-      sfx(tr - .14, 'tick2', .4); [0, 1, 2].forEach(i => sfx(cz - .3 + i * .08 + .24, 'lock', .28)); sfx(cz - .06, 'hit', .42); sfx(ia('cauză') + .5, 'stamp', .4); }
+      sfx(tr - .14, 'tick2', .4); [0, 1, 2].forEach(i => sfx(cz - .3 + i * .08 + .24, 'lock', .28)); sfx(cz - .06, 'hit', .42); sfx(ph(C.ctaPh - 1).t1 + .03, 'stamp', .4); }
     sfx(ctaT - .42, 'whoosh', .45); sfx(ctaT - .06, 'pop', .35); sfx(bt - .02, 'pop', .3); sfx(ph(C.ctaPh).t1 + .05, 'shimmer', .5);
-    sfx(S0 - 1.0, 'riser', .35); sfx(S0 - .45, 'whoosh', .8);
+    sfx(IE - 1.0, 'riser', .35); sfx(IE - .45, 'whoosh', .8);
   }
   function render(t) {
     const d = $('intro'); if (!d) return;
-    if (t >= S0) { if (d.style.display !== 'none') { d.style.display = 'none'; Object.values(IM).forEach(im => im instanceof HTMLElement && hide(im)); } return; }
+    if (t >= IE) { if (d.style.display !== 'none') { d.style.display = 'none'; Object.values(IM).forEach(im => im instanceof HTMLElement && hide(im)); } return; }
     d.style.display = 'block';
     let s = grid(t) + tag(t);
     if (C.type === 'dash') s += dash(t);

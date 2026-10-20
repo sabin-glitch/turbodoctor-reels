@@ -29,10 +29,11 @@ def out_to_src(t):
     for b in BR:
         if b["out_a"] <= t < b["out_b"] and t < SEND:
             return b["src"] + (t - b["out_a"]) * b["speed"]
-    if tl.get("intro") and t < tl["story_out0"]:  # synthetic intro: frozen frame of the same clip (blurred by the compositor)
+    IE = tl["intro"]["dur"] if tl.get("intro") else 0.0
+    if t < IE:  # synthetic intro: frozen frame of the same clip (blurred by the compositor)
         return tl["intro"]["bg_src"]
     if ovr and t < tl["story_out0"]:
-        return ovr["src_a"] + t * SP
+        return ovr["src_a"] + (t - IE) * SP
     for s in story:
         d = (s["src_b"] - s["src_a"]) / SP
         if s["out_a"] - 1e-6 <= t < s["out_a"] + d:
