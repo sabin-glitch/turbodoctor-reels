@@ -11,6 +11,9 @@ window.INTRO_FX = (() => {
   const IW = (x, k = 0) => { const n = norm(x); const c = WORDS.filter(w => w.win === -1 && norm(w.text) === n); if (!c[k]) throw new Error('intro anchor not found: ' + x + ' #' + k); return c[k]; };
   const ia = (x, k) => IW(x, k).os;
   const ph = i => P.phrases[Math.min(i, P.phrases.length - 1)];
+  const MC = document.createElement('canvas').getContext('2d');  // fit a text to a width with the real font metrics
+  const fitPx = (txt, font, px, maxW, extra = 0) => { MC.font = `${font.replace('PX', px + 'px')}`; const w = MC.measureText(txt).width + extra; return w > maxW ? Math.floor(px * maxW / w) : px; };
+  let TS = [], LS = 104;
   const TX = (x, y, txt, o = {}) => `<text x="${f(x)}" y="${f(y)}" font-family="${o.fam || 'Mont'}" font-weight="${o.w || 900}" font-size="${o.s || 40}" fill="${o.c || '#fff'}" text-anchor="${o.a || 'middle'}" letter-spacing="${o.ls ?? 1}"` +
     (o.st ? ` stroke="${o.stc || '#000'}" stroke-width="${o.st}" paint-order="stroke" stroke-linejoin="round"` : '') + (o.op != null ? ` opacity="${(+o.op).toFixed(3)}"` : '') + (o.tr ? ` transform="${o.tr}"` : '') + `>${txt}</text>`;
   const G = (x, y, s, o, inner) => `<g transform="translate(${f(x)} ${f(y)}) scale(${(+s).toFixed(4)})" opacity="${clamp(o).toFixed(3)}">${inner}</g>`;
@@ -143,7 +146,7 @@ window.INTRO_FX = (() => {
       const card = `<rect x="-400" y="-74" width="800" height="148" rx="30" fill="#fff" stroke="#E11D2E" stroke-width="6"/>` +
         `<rect x="-400" y="-74" width="26" height="148" rx="13" fill="#E11D2E"/>` +
         `<circle cx="-300" cy="0" r="56" fill="#111827" stroke="#E11D2E" stroke-width="5"/>` +
-        TX(-226, c[2] ? -2 : 18, c[1], { s: Math.min(52, Math.floor(506 / (.62 * c[1].length))), c: '#0F1216', a: 'start', ls: 0 }) + (c[2] ? TX(-224, 40, c[2], { fam: 'JB', w: 800, s: 24, c: '#8A8F98', a: 'start', ls: 2 }) : '') +
+        TX(-226, c[2] ? -2 : 18, c[1], { s: TS[i] || 52, c: '#0F1216', a: 'start', ls: 0 }) + (c[2] ? TX(-224, 40, c[2], { fam: 'JB', w: 800, s: 24, c: '#8A8F98', a: 'start', ls: 2 }) : '') +
         `<g transform="translate(330 0)">${(c[4] || C.mark || 'x') === 'x' ? '<path d="M -22 -22 L 22 22 M 22 -22 L -22 22" stroke="#E11D2E" stroke-width="12" stroke-linecap="round"/>' : (c[4] || C.mark) === 'q' ? TX(0, 26, '?', { fam: 'Anton', w: 400, s: 76, c: '#E11D2E', ls: 0 }) : ''}</g>`;
       s += G(cx + shake, cy, sc, clamp(p * 3), `<g transform="rotate(${f(rot)})">${card}</g>`);
       ends.push([cx + 400 * sc, cy]); IM['c' + i] = [cx - 300 * sc + shake, cy, sc, clamp(p * 3), rot];
@@ -160,7 +163,7 @@ window.INTRO_FX = (() => {
         s += `<circle cx="${TXC}" cy="${TYC}" r="${f(120 + rk * 60)}" fill="none" stroke="#FF3B30" stroke-width="6" opacity="${f(.8 * (1 - rk))}"/>`;
         s += G(TXC, TYC, qs, qo, `<circle r="120" fill="#E11D2E" stroke="#fff" stroke-width="8"/>` + TX(0, 70, C.q || '?', { fam: 'Anton', w: 400, s: 200, st: 10, ls: 0 })); }
       const [ls, lo] = pop(t, cz + .12, .28, 2);
-      if (lo) s += G(540, 915, ls, lo, TX(0, 0, C.causeTxt || 'ACEEAȘI CAUZĂ', { fam: 'Anton', w: 400, s: Math.min(104, Math.floor(980 / (.47 * (C.causeTxt || 'ACEEAȘI CAUZĂ').length))), c: '#FFD21F', st: 14, ls: 2 }));
+      if (lo) s += G(540, 915, ls, lo, TX(0, 0, C.causeTxt || 'ACEEAȘI CAUZĂ', { fam: 'Anton', w: 400, s: LS, c: '#FFD21F', st: 14, ls: 2 }));
     }
     return `<g opacity="${fo.toFixed(3)}">${s}</g>`;
   }
@@ -174,6 +177,7 @@ window.INTRO_FX = (() => {
   // ---------- API ----------
   function build(cfg, intro) {
     C = Object.assign({ type: 'dash', ctaPh: 2 }, cfg || {}); P = intro; IE = intro.dur;
+    TS = (C.cards || []).map(c => fitPx(c[1], '900 PX Mont', 52, 500)); const ct = C.causeTxt || 'ACEEAȘI CAUZĂ'; LS = fitPx(ct, '400 PX Anton', 104, 960, ct.length * 2 + 14);
     const d = document.createElement('div'); d.id = 'intro'; d.className = 'abs'; d.style.cssText = 'display:block;left:0;top:0;width:1080px;height:1920px';
     $('stage').insertBefore(d, $('items'));
     svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); svg.setAttribute('viewBox', '0 0 1080 1920'); svg.setAttribute('width', '1080'); svg.setAttribute('height', '1920');
