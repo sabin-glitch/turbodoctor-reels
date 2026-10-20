@@ -673,5 +673,196 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData };
+  // 22) impurities / metal shavings in the injectors -> return flow too big -> rail pressure drops -> pressure error
+  function injectorReturn(tl, ph, pt, P) {
+    let s = ''; const injX = [220, 360, 500, 640], ry0 = 74, ry1 = 116, retY = 180;
+    const dirt = ph >= 1 ? (ph === 1 ? eo(pt / 1.2) : 1) : 0; const big = ph >= 2 ? (ph === 2 ? eo(pt / 1.0) : 1) : 0;
+    const press = lerp(.86, .34, big); const pcol = big > .5 ? C.red : C.grn;
+    // rail + pressure gauge
+    s += `<rect x="150" y="${ry0}" width="560" height="${ry1 - ry0}" rx="21" fill="${C.body2}" stroke="${big > .5 ? C.red : C.cy}" stroke-width="5"/>`;
+    s += T(430, ry0 - 18, 'RAMPA COMUNĂ', { s: 16, c: big > .5 ? C.red : C.dim, a: 'middle' });
+    const gx = 76, gy = 95, gr = 50; s += `<circle cx="${gx}" cy="${gy}" r="${gr}" fill="${C.body}" stroke="${pcol}" stroke-width="5"/>`;
+    for (let i = 0; i <= 8; i++) { const a = rad(150 + i * 30); const [x1, y1] = P2(gx, gy, gr - 6, a), [x2, y2] = P2(gx, gy, gr - 16, a); s += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="${C.dim}" stroke-width="3"/>`; }
+    const na = rad(150 + 240 * (press + (big > .5 ? .03 * Math.sin(tl * 13) : .008 * Math.sin(tl * 5)))); const [nx, ny] = P2(gx, gy, gr - 12, na);
+    s += `<line x1="${gx}" y1="${gy}" x2="${f(nx)}" y2="${f(ny)}" stroke="${pcol}" stroke-width="6" stroke-linecap="round"/><circle cx="${gx}" cy="${gy}" r="7" fill="${pcol}"/>`;
+    s += T(gx, gy + gr + 24, 'PRESIUNE', { s: 15, c: pcol, a: 'middle' }) + `<line x1="${gx + gr}" y1="${gy}" x2="150" y2="${gy}" stroke="${C.cy}" stroke-width="6"/>`;
+    // metal shavings travelling along the rail into the injectors
+    if (dirt > 0) for (let i = 0; i < 9; i++) { const k = (tl * .45 + i / 9) % 1; const x = 170 + k * 640; const y = ry0 + 12 + rnd(i * 7) * 18;
+      s += `<rect x="${f(x)}" y="${f(y)}" width="9" height="5" rx="1.5" fill="${C.steel}" transform="rotate(${f(rnd(i) * 180)} ${f(x + 4)} ${f(y + 2)})" opacity="${f(dirt)}"/>`; }
+    // return line (top side of the injectors -> back to the tank)
+    s += `<path d="M ${injX[0] + 22} ${retY} L 880 ${retY}" fill="none" stroke="${big > .5 ? C.org : C.cyD}" stroke-width="12" stroke-linecap="round"/>`;
+    s += T(884, retY - 18, big > .5 ? 'RETUR PREA MARE!' : 'RETUR', { s: 16, c: big > .5 ? C.org : C.dim, a: 'end' }) + T(884, retY + 32, '→ REZERVOR', { s: 14, c: C.dim, a: 'end' });
+    injX.forEach((x, i) => {
+      const bad = dirt > .5; const oc = big > .5 ? C.red : bad ? C.org : C.cy;
+      s += `<rect x="${x - 16}" y="${ry1}" width="32" height="170" rx="8" fill="${C.steelD}" stroke="${oc}" stroke-width="3"/><rect x="${x - 9}" y="${ry1 + 172}" width="18" height="22" rx="4" fill="${C.steel}"/><path d="M ${x - 6} ${ry1 + 194} L ${x + 6} ${ry1 + 194} L ${x} ${ry1 + 208} Z" fill="${C.steel}"/>`;
+      s += `<line x1="${x + 16}" y1="${retY}" x2="${x + 22}" y2="${retY}" stroke="${C.steelD}" stroke-width="10"/>`;
+      if (bad) for (let j = 0; j < 4; j++) s += `<rect x="${f(x - 10 + rnd(i * 5 + j) * 16)}" y="${f(ry1 + 40 + rnd(i * 3 + j) * 110)}" width="7" height="4" rx="1" fill="${C.yel}" opacity=".85"/>`;
+      // spray at the nozzle: weaker when the pressure drops
+      const cyc = (tl * 2.4 + i * .25) % 1; if (cyc < .4) { const k = cyc / .4, sp = lerp(1, .45, big); for (let j = 0; j < 3; j++) s += `<circle cx="${f(x + (j - 1) * 12 * k * sp)}" cy="${f(ry1 + 214 + 34 * k * sp)}" r="${f(3.8 * (1 - k * .4))}" fill="#A5E9FF" opacity=".85"/>`; }
+    });
+    // return flow: a few drops when healthy, a stream when the injectors leak back
+    const nR = Math.round(lerp(3, 14, big)), spR = lerp(.22, .9, big);
+    for (let i = 0; i < nR; i++) { const k = (tl * spR + i / nR) % 1; const x = injX[0] + 26 + k * (880 - injX[0] - 40); s += `<circle cx="${f(x)}" cy="${retY}" r="${f(lerp(4, 6, big))}" fill="${big > .5 ? C.org : '#A5E9FF'}" opacity=".9"/>`; }
+    const H = [['INJECTOARE BUNE · RETUR MIC', C.grn], ['IMPURITĂȚI / PILITURĂ ÎN INJECTOARE', C.org], ['PRESIUNEA SCADE ÎN RAMPĂ', C.red], ['⚠ EROARE: PRESIUNE ÎN RAMPA COMUNĂ', C.red]][Math.min(ph, 3)];
+    if (ph >= 3) { const k = .55 + .45 * Math.sin(tl * 9); s += `<rect x="150" y="${ry0}" width="560" height="${ry1 - ry0}" rx="21" fill="${C.red}" opacity="${f(.15 + .15 * k)}"/>`; }
+    s += tag(457, 404, H[0], H[1], 'middle', 19);
+    return s;
+  }
+
+  // 23) low-pressure supply: in-tank pump -> fuel filter -> high-pressure pump -> rail; a clogged filter or a weak tank pump starves the HP pump -> low rail pressure (looks like a bad regulator)
+  function supplyChain(tl, ph, pt, P) {
+    let s = '';
+    const pl = pts => { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; }
+      return k => { let d = cl(k) * tot; for (let i = 0; i < L.length; i++) { if (d <= L[i] || i === L.length - 1) { const q = L[i] ? d / L[i] : 0; return [lerp(pts[i][0], pts[i + 1][0], q), lerp(pts[i][1], pts[i + 1][1], q)]; } d -= L[i]; } }; };
+    const pipe = (pts, col, w = 14) => { const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ');
+      return `<path d="${d}" fill="none" stroke="${C.cyD}" stroke-width="${w + 8}" stroke-linejoin="round" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`; };
+    const clog = ph === 1 ? eo(pt / 1.2) : ph === 2 ? 1 : 0; const weak = ph === 3 ? eo(pt / 1.0) : ph >= 4 ? 1 : 0; const starve = Math.max(clog, weak);
+    const flash = ph === 2 || ph >= 4;
+    // tank with the electric low-pressure pump inside
+    const tx0 = 26, tx1 = 214, ty0 = 200, ty1 = 334;
+    s += `<rect x="${tx0}" y="${ty0}" width="${tx1 - tx0}" height="${ty1 - ty0}" rx="18" fill="${C.body}" stroke="${C.cy}" stroke-width="5"/><rect x="${tx0 + 6}" y="${ty0 + 50}" width="${tx1 - tx0 - 12}" height="${ty1 - ty0 - 56}" rx="12" fill="${C.oil}" opacity=".5"/>`;
+    const pc = weak > .5 ? C.red : C.cy; const px = 120, py = 266;
+    s += `<rect x="${px - 30}" y="${py - 44}" width="60" height="78" rx="10" fill="${C.body2}" stroke="${pc}" stroke-width="4"/>`;
+    const rot = tl * lerp(9, 1.6, weak); for (let i = 0; i < 4; i++) { const a = rot + i * Math.PI / 2; const [x2, y2] = P2(px, py, 20, a); s += `<line x1="${px}" y1="${py}" x2="${f(x2)}" y2="${f(y2)}" stroke="${pc}" stroke-width="5" stroke-linecap="round"/>`; }
+    s += `<circle cx="${px}" cy="${py}" r="6" fill="${pc}"/>`;
+    s += T((tx0 + tx1) / 2, ty1 + 26, 'REZERVOR', { s: 15, c: C.dim, a: 'middle' }) + T((tx0 + tx1) / 2, ty1 + 46, 'POMPA DE JOASĂ', { s: 15, c: weak > .5 ? C.red : C.cy, a: 'middle' });
+    // pipes: tank pump -> filter -> HP pump -> rail
+    const A = [[120, 222], [120, 168], [270, 168]], B = [[330, 110], [330, 70], [432, 70], [432, 220], [462, 220]], Cc = [[526, 150], [526, 64], [620, 64]];
+    s += pipe(A, C.body2) + pipe(B, C.body2) + pipe(Cc, C.body2);
+    // fuel filter (pleated cartridge, darkens when clogged)
+    const fx0 = 270, fx1 = 390, fy0 = 110, fy1 = 310; const fcol = clog > .5 ? C.red : clog > 0 ? C.org : C.grn;
+    s += `<rect x="${fx0}" y="${fy0}" width="${fx1 - fx0}" height="${fy1 - fy0}" rx="18" fill="${C.body}" stroke="${fcol}" stroke-width="6"/>`;
+    const dirtH = (fy1 - fy0 - 16) * (.06 + .86 * clog); s += `<rect x="${fx0 + 8}" y="${f(fy1 - 8 - dirtH)}" width="${fx1 - fx0 - 16}" height="${f(dirtH)}" rx="10" fill="#4A3417" opacity="${f(.2 + .7 * clog)}"/>`;
+    for (let i = 0; i < 10; i++) { const x = fx0 + 18 + i * 9.4; const c2 = `rgb(${Math.round(lerp(236, 92, clog))},${Math.round(lerp(214, 66, clog))},${Math.round(lerp(160, 30, clog))})`; s += `<line x1="${f(x)}" y1="${fy0 + 24}" x2="${f(x)}" y2="${fy1 - 24}" stroke="${c2}" stroke-width="4"/>`; }
+    s += T((fx0 + fx1) / 2, fy1 + 26, clog > .5 ? 'FILTRU ÎNFUNDAT' : 'FILTRU', { s: 15, c: clog > .5 ? C.red : C.dim, a: 'middle' }) + T((fx0 + fx1) / 2, fy1 + 46, 'COMBUSTIBIL', { s: 15, c: clog > .5 ? C.red : C.dim, a: 'middle' });
+    // high-pressure pump
+    const hx0 = 462, hx1 = 590, hy0 = 150, hy1 = 300; const hcol = starve > .5 ? C.org : C.cy;
+    s += `<rect x="${hx0}" y="${hy0}" width="${hx1 - hx0}" height="${hy1 - hy0}" rx="14" fill="${C.body}" stroke="${hcol}" stroke-width="5"/>`;
+    const pst = 206 + 24 * Math.sin(tl * 7); s += `<rect x="504" y="${f(pst)}" width="44" height="60" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="3"/><rect x="518" y="${f(pst - 46)}" width="16" height="48" fill="${C.steelD}"/>`;
+    s += T(526, hy1 + 26, 'POMPA DE', { s: 15, c: starve > .5 ? C.org : C.dim, a: 'middle' }) + T(526, hy1 + 46, 'ÎNALTĂ PRESIUNE', { s: 15, c: starve > .5 ? C.org : C.dim, a: 'middle' });
+    if (starve > .5) s += tag(526, hy0 - 26, 'NU PRIMEȘTE DESTUL', C.org, 'middle', 15);
+    // rail + gauge
+    s += `<rect x="610" y="44" width="280" height="40" rx="20" fill="${C.body2}" stroke="${flash ? C.red : C.cy}" stroke-width="5"/>` + T(750, 30, 'RAMPA COMUNĂ', { s: 15, c: flash ? C.red : C.dim, a: 'middle' });
+    const press = lerp(.84, .3, starve); const gcol = starve > .5 ? C.red : C.grn; const gx = 780, gy = 196, gr = 54;
+    s += `<line x1="${gx}" y1="84" x2="${gx}" y2="${gy - gr}" stroke="${C.cy}" stroke-width="6"/><circle cx="${gx}" cy="${gy}" r="${gr}" fill="${C.body}" stroke="${gcol}" stroke-width="5"/>`;
+    for (let i = 0; i <= 8; i++) { const a = rad(150 + i * 30); const [x1, y1] = P2(gx, gy, gr - 6, a), [x2, y2] = P2(gx, gy, gr - 16, a); s += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="${C.dim}" stroke-width="3"/>`; }
+    const [nx, ny] = P2(gx, gy, gr - 12, rad(150 + 240 * (press + .01 * Math.sin(tl * 6)))); s += `<line x1="${gx}" y1="${gy}" x2="${f(nx)}" y2="${f(ny)}" stroke="${gcol}" stroke-width="6" stroke-linecap="round"/><circle cx="${gx}" cy="${gy}" r="7" fill="${gcol}"/>`;
+    s += T(gx, gy + gr + 26, starve > .5 ? 'PRESIUNE PREA MICĂ' : 'PRESIUNE OK', { s: 15, c: gcol, a: 'middle' });
+    // flow droplets (slower and sparser when the supply is starved)
+    const pA = pl(A), pB = pl(B), pC = pl(Cc); const sA = lerp(1, .3, weak), sB = lerp(1, .25, starve);
+    const dots = (fn, n, sp, off) => { let o = ''; const m = Math.max(2, Math.round(n * (.35 + .65 * sp))); for (let i = 0; i < m; i++) { const k = (tl * .55 * sp + i / m + off) % 1; const [x, y] = fn(k); o += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#A5E9FF" opacity=".85"/>`; } return o; };
+    s += dots(pA, 5, sA, 0) + dots(pB, 7, sB, .2) + dots(pC, 5, sB, .4);
+    if (flash) { const k = .55 + .45 * Math.sin(tl * 9); s += `<rect x="610" y="44" width="280" height="40" rx="20" fill="${C.red}" opacity="${f(.15 + .15 * k)}"/>`; }
+    const H = [['ALIMENTARE NORMALĂ · PRESIUNE CORECTĂ', C.grn], ['FILTRUL ÎNFUNDAT BLOCHEAZĂ ALIMENTAREA', C.red], ['⚠ SIMPTOME CA LA UN REGULATOR DEFECT', C.red], ['POMPA DE JOASĂ PRESIUNE FUNCȚIONEAZĂ DEFECTUOS', C.red], ['⚠ ERORI CA LA REGULATORUL DE PE RAMPĂ', C.red]][Math.min(ph, 4)];
+    s += tag(457, 412, H[0], H[1], 'middle', 18);
+    return s;
+  }
+
+  // 24) how it works: rail pressure sensor -> injection ECU -> two regulators (flow regulator on the HP pump, pressure regulator on the rail)
+  function controlLoop(tl, ph, pt, P) {
+    let s = '';
+    const pl = pts => { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; }
+      return k => { let d = cl(k) * tot; for (let i = 0; i < L.length; i++) { if (d <= L[i] || i === L.length - 1) { const q = L[i] ? d / L[i] : 0; return [lerp(pts[i][0], pts[i + 1][0], q), lerp(pts[i][1], pts[i + 1][1], q)]; } d -= L[i]; } }; };
+    const wire = (pts, col, on) => { const d = pts.map((q, i) => (i ? 'L' : 'M') + q[0] + ' ' + q[1]).join(' ');
+      return `<path d="${d}" fill="none" stroke="${on ? col : 'rgba(234,246,255,.18)'}" stroke-width="${on ? 5 : 3}" stroke-dasharray="12 9" stroke-linecap="round"/>`; };
+    const pulses = (pts, col, n, sp) => { const fn = pl(pts); let o = ''; for (let i = 0; i < n; i++) { const k = (tl * sp + i / n) % 1; const [x, y] = fn(k); o += `<circle cx="${f(x)}" cy="${f(y)}" r="7" fill="${col}"/><circle cx="${f(x)}" cy="${f(y)}" r="14" fill="${col}" opacity=".25"/>`; } return o; };
+    const glow = (x, y, r, col) => { const k = .5 + .5 * Math.sin(tl * 6); return `<circle cx="${x}" cy="${y}" r="${f(r + 6 * k)}" fill="none" stroke="${col}" stroke-width="4" opacity="${f(.5 + .4 * k)}"/>`; };
+    // ECU
+    s += `<rect x="330" y="24" width="260" height="96" rx="14" fill="${C.body}" stroke="${ph >= 1 ? C.cy : C.cyD}" stroke-width="5"/>`;
+    for (let i = 0; i < 6; i++) s += `<line x1="${352 + i * 43}" y1="24" x2="${352 + i * 43}" y2="14" stroke="${C.steelD}" stroke-width="4"/>`;
+    s += T(460, 64, 'CALCULATOR', { s: 18, c: C.w, a: 'middle' }) + T(460, 90, 'DE INJECȚIE', { s: 18, c: C.w, a: 'middle' });
+    if (ph >= 1) s += T(460, 112, ph >= 2 ? 'COMANDĂ CORECT' : 'PRIMEȘTE PRESIUNEA', { s: 13, c: ph >= 2 ? C.grn : C.yel, a: 'middle' });
+    // HP pump + flow regulator on top
+    s += `<rect x="60" y="262" width="160" height="124" rx="14" fill="${C.body}" stroke="${C.cy}" stroke-width="5"/>` + T(140, 316, 'POMPA DE', { s: 13, c: C.dim, a: 'middle', ls: .5 }) + T(140, 338, 'ÎNALTĂ PRESIUNE', { s: 13, c: C.dim, a: 'middle', ls: .5 });
+    const dOn = ph === 3; s += `<rect x="112" y="214" width="46" height="48" rx="8" fill="${C.body2}" stroke="${dOn ? C.grn : ph >= 2 ? C.cy : C.steelD}" stroke-width="5"/>`;
+    s += T(170, 242, 'REGULATOR DE DEBIT', { s: 15, c: dOn ? C.grn : C.dim });
+    if (dOn) s += glow(135, 238, 40, C.grn);
+    // pump -> rail
+    s += `<line x1="220" y1="330" x2="360" y2="330" stroke="${C.cyD}" stroke-width="20" stroke-linecap="round"/><line x1="220" y1="330" x2="360" y2="330" stroke="${C.body2}" stroke-width="12" stroke-linecap="round"/>`;
+    // rail, pressure regulator (left end), sensor (right end)
+    s += `<rect x="360" y="300" width="480" height="44" rx="22" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/>`;
+    for (let i = 0; i < 7; i++) { const k = (tl * .5 + i / 7) % 1; s += `<circle cx="${f(380 + k * 440)}" cy="322" r="5" fill="#A5E9FF" opacity=".85"/>`; }
+    const pOn = ph === 4; s += `<rect x="382" y="252" width="46" height="48" rx="8" fill="${C.body2}" stroke="${pOn ? C.grn : ph >= 2 ? C.cy : C.steelD}" stroke-width="5"/>`;
+    if (pOn) s += glow(405, 276, 40, C.grn);
+    const sOn = ph <= 1; s += `<rect x="790" y="262" width="40" height="38" rx="6" fill="${C.body2}" stroke="${sOn ? C.yel : C.cy}" stroke-width="5"/><rect x="800" y="248" width="20" height="14" fill="${C.steelD}"/>`;
+    if (ph === 0) s += glow(810, 280, 36, C.yel);
+    s += T(405, 374, 'REGULATOR DE PRESIUNE', { s: 15, c: pOn ? C.grn : C.dim, a: 'middle' }) + T(615, 374, 'RAMPA COMUNĂ', { s: 15, c: C.dim, a: 'middle' }) + T(810, 374, 'SENZOR DE PRESIUNE', { s: 15, c: sOn ? C.yel : C.dim, a: 'middle' });
+    // signal + commands
+    const SIG = [[810, 248], [810, 72], [590, 72]], CMD1 = [[330, 72], [135, 72], [135, 214]], CMD2 = [[405, 120], [405, 252]];
+    s += wire(SIG, C.yel, ph >= 1) + wire(CMD1, C.grn, ph >= 2) + wire(CMD2, C.grn, ph >= 2);
+    if (ph >= 1) s += pulses(SIG, C.yel, 3, .6);
+    if (ph >= 2) { s += pulses(CMD1, C.grn, ph === 3 ? 3 : 2, .55) + pulses(CMD2, C.grn, ph === 4 ? 3 : 1, .7); }
+    const H = [['SENZORUL CITEȘTE PRESIUNEA DIN RAMPĂ', C.yel], ['INFORMAȚIA AJUNGE LA CALCULATOR', C.yel], ['CALCULATORUL COMANDĂ 2 COMPONENTE VITALE', C.grn], ['REGULATORUL DE DEBIT · POMPA DE ÎNALTĂ', C.grn], ['REGULATORUL DE PRESIUNE · RAMPA COMUNĂ', C.grn]][Math.min(ph, 4)];
+    s += tag(457, 412, H[0], H[1], 'middle', 18);
+    return s;
+  }
+
+  // 25) oscilloscope: how the sensor and the regulator talk to the injection ECU (CH1 sensor signal, CH2 PWM command)
+  function scopeTrace(tl, ph, pt, P) {
+    let s = ''; const x0 = 40, x1 = 700, y0 = 34, y1 = 350;
+    s += `<rect x="${x0 - 20}" y="${y0 - 20}" width="${x1 - x0 + 220}" height="${y1 - y0 + 40}" rx="22" fill="${C.body}" stroke="${C.steelD}" stroke-width="5"/>`;
+    s += `<rect x="${x0}" y="${y0}" width="${x1 - x0}" height="${y1 - y0}" rx="8" fill="#03101C" stroke="${C.cyD}" stroke-width="3"/>`;
+    for (let i = 1; i < 10; i++) { const x = x0 + (x1 - x0) * i / 10; s += `<line x1="${f(x)}" y1="${y0}" x2="${f(x)}" y2="${y1}" stroke="rgba(98,216,255,${i === 5 ? .22 : .09})" stroke-width="2"/>`; }
+    for (let i = 1; i < 8; i++) { const y = y0 + (y1 - y0) * i / 8; s += `<line x1="${x0}" y1="${f(y)}" x2="${x1}" y2="${f(y)}" stroke="rgba(98,216,255,${i === 4 ? .22 : .09})" stroke-width="2"/>`; }
+    // knobs / channel buttons
+    const kx = x1 + 100; [[92, C.yel], [182, C.cy], [272, C.steel]].forEach(([y, c], i) => { s += `<circle cx="${kx}" cy="${y}" r="30" fill="${C.body2}" stroke="${c}" stroke-width="5"/>`; const [ax, ay] = P2(kx, y, 22, tl * (i === 2 ? .4 : 0) - 1.2 + i); s += `<line x1="${kx}" y1="${y}" x2="${f(ax)}" y2="${f(ay)}" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`; });
+    s += T(kx, 138, 'CH1', { s: 14, c: C.yel, a: 'middle' }) + T(kx, 228, 'CH2', { s: 14, c: C.cy, a: 'middle' }) + T(kx, 318, 'TIMP', { s: 14, c: C.dim, a: 'middle' });
+    // CH1: sensor signal (analog, follows the rail pressure), upper half
+    const on1 = ph === 0 || ph >= 2, on2 = ph >= 1; const sc = tl * 1.6; let d1 = '', d2 = '';
+    for (let i = 0; i <= 160; i++) { const k = i / 160, u = k * 6 + sc; const x = x0 + k * (x1 - x0);
+      const v = .5 + .28 * Math.sin(u * .9) + .06 * Math.sin(u * 4.3); d1 += (i ? 'L' : 'M') + f(x) + ' ' + f(y0 + 20 + (1 - v) * 130); }
+    // CH2: PWM command from the ECU to the regulator, lower half (duty follows CH1)
+    let prev = null; for (let i = 0; i <= 320; i++) { const k = i / 320, u = k * 6 + sc; const x = x0 + k * (x1 - x0); const duty = .35 + .3 * (.5 + .5 * Math.sin(u * .9));
+      const hi = ((u * 3) % 1) < duty; const y = hi ? y0 + 196 : y0 + 288; if (prev !== null && prev !== y) d2 += 'L' + f(x) + ' ' + f(prev); d2 += (i ? 'L' : 'M') + f(x) + ' ' + f(y); prev = y; }
+    s += `<path d="${d1}" fill="none" stroke="${C.yel}" stroke-width="${on1 ? 5 : 3}" opacity="${on1 ? 1 : .35}" stroke-linejoin="round"/>`;
+    s += `<path d="${d2}" fill="none" stroke="${C.cy}" stroke-width="${on2 ? 5 : 3}" opacity="${on2 ? 1 : .35}" stroke-linejoin="round"/>`;
+    s += T(x0 + 12, y0 + 24, 'CH1 · SEMNAL SENZOR PRESIUNE', { s: 15, c: C.yel, op: on1 ? 1 : .5 }) + T(x0 + 12, y0 + 180, 'CH2 · COMANDĂ CALCULATOR → REGULATOR', { s: 15, c: C.cy, op: on2 ? 1 : .5 });
+    const H = [['OSCILOSCOP · SEMNALUL SENZORULUI', C.yel], ['COMANDA CALCULATORULUI CĂTRE REGULATOR', C.cy], ['CUM COMUNICĂ CU CALCULATORUL DE INJECȚIE', C.grn]][Math.min(ph, 2)];
+    s += tag(457, 412, H[0], H[1], 'middle', 18);
+    return s;
+  }
+
+  function wearCurve(tl, ph, pt, P) {
+    let s = ''; const x0 = 96, x1 = 860, y0 = 30, y1 = 330;
+    const X = k => x0 + k * (x1 - x0), Y = v => y1 - cl(v, 0, 1) * (y1 - y0);
+    const w = k => .05 + 1.1 * Math.pow(k, 1.7);
+    // zones: normal / high wear / failure
+    [[0, .45, C.grn, 'NORMAL'], [.45, .75, C.yel, 'UZURĂ RIDICATĂ'], [.75, 1, C.red, 'DEFECȚIUNE']].forEach(([a, b, c, l]) => {
+      s += `<rect x="${x0}" y="${f(Y(b))}" width="${x1 - x0}" height="${f(Y(a) - Y(b))}" fill="${c}" opacity=".09"/>`;
+      s += T(x0 + 14, Y(b) + 22, l, { s: 13, c, a: 'start', op: .85 }); });
+    s += `<line x1="${x0}" y1="${y1}" x2="${x1 + 14}" y2="${y1}" stroke="${C.steel}" stroke-width="4"/><line x1="${x0}" y1="${y1}" x2="${x0}" y2="${y0 - 10}" stroke="${C.steel}" stroke-width="4"/>`;
+    s += T(x0 - 18, (y0 + y1) / 2, 'UZURĂ', { s: 16, c: C.dim, a: 'middle' }).replace('<text ', `<text transform="rotate(-90 ${x0 - 18} ${(y0 + y1) / 2})" `);
+    s += T(x1, y1 + 30, 'TIMP · KILOMETRI →', { s: 15, c: C.dim, a: 'end' });
+    // periodic check-ups
+    const ks = [.2, .4, .6];
+    const kc = ph === 0 ? Math.min(.6, .04 + pt * .16) : .6;
+    ks.forEach((k, i) => { const on = kc >= k - .001; const warn = i === 2 && ph >= 1; const col = warn ? C.yel : on ? C.grn : C.steelD;
+      s += `<line x1="${f(X(k))}" y1="${y0 + 18}" x2="${f(X(k))}" y2="${y1}" stroke="${col}" stroke-width="3" stroke-dasharray="8 8" opacity="${on ? .9 : .5}"/>`;
+      s += T(X(k), y1 + 30, 'DIAGNOZĂ ' + (i + 1), { s: 14, c: col, a: 'middle' });
+      if (on && !warn) s += check(X(k), y0 + 6, 11, C.grn, 5); });
+    // wear curve up to the current point
+    let d = ''; const N = 90; for (let i = 0; i <= N; i++) { const k = kc * i / N; d += (i ? 'L' : 'M') + f(X(k)) + ' ' + f(Y(w(k))); }
+    s += `<path d="${d}" fill="none" stroke="${ph >= 1 ? C.yel : C.cy}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
+    const px = X(kc), py = Y(w(kc));
+    if (ph >= 1) { const pr = (pt * 1.4) % 1; s += `<circle cx="${f(px)}" cy="${f(py)}" r="${f(14 + pr * 34)}" fill="none" stroke="${C.yel}" stroke-width="4" opacity="${f(ph === 1 ? 1 - pr : .3 * (1 - pr))}"/>`; }
+    s += `<circle cx="${f(px)}" cy="${f(py)}" r="11" fill="${ph >= 1 ? C.yel : C.cy}" stroke="#071425" stroke-width="3"/>`;
+    if (ph === 1) s += tag(px - 16, py - 44, 'UZURĂ RIDICATĂ!', C.yel, 'end', 17);
+    // without intervention the wear keeps rising (ghost, then the failure)
+    if (ph >= 2) { const kg = ph === 2 ? Math.min(.74, .6 + pt * .05) : Math.min(.88, .74 + pt * .14); let g = '';
+      for (let i = 0; i <= 40; i++) { const k = .6 + (kg - .6) * i / 40; g += (i ? 'L' : 'M') + f(X(k)) + ' ' + f(Y(w(k))); }
+      s += `<path d="${g}" fill="none" stroke="${C.red}" stroke-width="${ph === 3 ? 7 : 4}" stroke-dasharray="${ph === 3 ? 'none' : '12 9'}" opacity="${ph === 3 ? 1 : .55}" stroke-linecap="round"/>`;
+      if (ph === 3 && kg >= .86) { const bx = X(kg), by = Y(w(kg)); const pu = 1 + .12 * Math.sin(pt * 12); let st = '';
+        for (let i = 0; i < 16; i++) { const r = (i % 2 ? 16 : 36) * pu, [sx, sy] = P2(bx, by, r, rad(i * 22.5 - 90)); st += (i ? 'L' : 'M') + f(sx) + ' ' + f(sy); }
+        s += `<path d="${st}Z" fill="${C.red}" stroke="${C.yel}" stroke-width="4"/>` + tag(bx - 46, by + 10, 'CATASTROFĂ', C.red, 'end', 19); }
+      // intervention in time: wear drops back and stays low
+      const kr = ph === 2 ? Math.min(1, .6 + pt * .16) : 1; let r = `M ${f(X(.6))} ${f(Y(w(.6)))}`;
+      for (let i = 1; i <= 40; i++) { const k = .6 + (kr - .6) * i / 40; const v = k < .63 ? lerp(w(.6), .1, (k - .6) / .03) : .1 + .08 * Math.pow((k - .63) / .37, 1.4); r += ' L' + f(X(k)) + ' ' + f(Y(v)); }
+      s += `<path d="${r}" fill="none" stroke="${C.grn}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
+      s += tag(X(.8), Y(.1) - 34, 'INTERVENIM LA TIMP', C.grn, 'middle', 17); }
+    const H = [['DIAGNOZĂ PERIODICĂ · PARAMETRII REALI', C.cy], ['DETERMINĂM UZURA SISTEMULUI DE INJECȚIE', C.yel], ['INTERVENIM LA TIMP · PREVENIM DEFECȚIUNEA', C.grn], ['⚠ ÎN LOC SĂ TRATĂM O CATASTROFĂ', C.red]][Math.min(ph, 3)];
+    s += tag(457, 412, H[0], H[1], 'middle', 18);
+    return s;
+  }
+
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
 })();
