@@ -1,12 +1,13 @@
 """Synthetic intro hook (graphics + generated voice) before the clip.
 Reads out/intro_script.json {"speed": 1.15, "tail": 0.5, "bg_src": 0.0, "phrases": [{"text": "...", "gap": 0.16}, ...]},
 synthesizes each phrase with the Romanian TTS voice, matches its loudness to the presenter (audio/src48.wav),
-keeps the clearest of several takes per phrase (the TTS varies from take to take; ASR on the whole sequence scores them),
+keeps the clearest of several takes per phrase (the TTS varies from take to take; ASR on the whole sequence, clean and under
+a noise bed, scores them; a phrase can instead reuse a verified clip: {"text": ..., "wav": "cta.wav"}),
 gets word timings with ASR on the clean TTS audio and writes audio/intro_vo.wav + out/intro.json.
 build_timeline.py then starts the story after the intro (story_out0 = intro dur)."""
 import os, json, glob, difflib, unicodedata
 import numpy as np, soundfile as sf, sherpa_onnx
-from scipy.signal import resample_poly
+from scipy.signal import resample_poly, butter, sosfilt
 
 ROOT = os.environ.get("REEL_ROOT") or os.path.dirname(os.path.abspath(__file__)); SR = 48000
 M = os.environ.get("TD_MODELS", "/home/claude/models")
@@ -69,17 +70,32 @@ def word_times(text, x, off):
 
 src, sr = sf.read(f"{ROOT}/audio/src48.wav", dtype="float32"); src = src.mean(1) if src.ndim > 1 else src
 target = speech_rms(src); P = cfg["phrases"]
+
+
+def clip(p):  # a verified clip (path relative to out/), or a fresh TTS take
+    if p.get("wav"):
+        y, r = sf.read(os.path.join(f"{ROOT}/out", p["wav"]), dtype="float32"); y = y.mean(1) if y.ndim > 1 else y
+        y = resample_poly(y, SR, r).astype(np.float32) if r != SR else y
+    else: y = synth(p["text"], p.get("speed", cfg.get("speed", 1.15)))
+    return y * target / speech_rms(y) * float(cfg.get("gain", 1.0))
+
+
+def heard(x, spans):  # ASR on the sequence -> text heard inside each phrase span
+    s = asr.create_stream(); s.accept_waveform(16000, resample_poly(x, 1, 3).astype(np.float32)); asr.decode_stream(s)
+    return ["".join(tok for tok, ts in zip(s.result.tokens, s.result.timestamps) if a - .08 <= ts < b + .02) for a, b in spans]
+
+
+bed = sosfilt(butter(1, 1200, fs=SR, output="sos"), np.random.default_rng(5).standard_normal(SR * 30)).astype(np.float32)  # music-like noise
 best = [(-1.0, None, "")] * len(P)
-for k in range(int(cfg.get("takes", 6))):  # per phrase, keep the take the ASR understands best in context
-    ys = [synth(p["text"], p.get("speed", cfg.get("speed", 1.15))) for p in P]; ys = [y * target / speech_rms(y) * float(cfg.get("gain", 1.0)) for y in ys]
+for k in range(int(cfg.get("takes", 6))):  # per phrase, keep the take the ASR understands best in context, clean and 15 dB under a noise bed
+    ys = [best[i][1] if p.get("wav") and k else clip(p) for i, p in enumerate(P)]
     seq, spans, t = [], [], 0.0
     for i, y in enumerate(ys):
         spans.append((t, t + len(y) / SR)); seq += [y, np.zeros(int(float(P[i].get("gap", .14)) * SR), np.float32)]; t += len(y) / SR + float(P[i].get("gap", .14))
-    s = asr.create_stream(); s.accept_waveform(16000, resample_poly(np.concatenate(seq), 1, 3).astype(np.float32)); asr.decode_stream(s)
-    for i, (a, b) in enumerate(spans):
-        heard = "".join(tok for tok, ts in zip(s.result.tokens, s.result.timestamps) if a - .08 <= ts < b + .02)
-        sc = difflib.SequenceMatcher(None, norm(P[i]["text"]), norm(heard), autojunk=False).ratio()
-        if sc > best[i][0]: best[i] = (sc, ys[i], heard.strip())
+    x = np.concatenate(seq + [np.zeros(int(.4 * SR), np.float32)]); nz = bed[:len(x)] * (speech_rms(x) / speech_rms(bed[:len(x)]) * 10 ** (-15 / 20))
+    for i, (hc, hn) in enumerate(zip(heard(x, spans), heard(x + nz, spans))):
+        sc = min(difflib.SequenceMatcher(None, norm(P[i]["text"]), norm(h), autojunk=False).ratio() for h in (hc, hn))
+        if sc > best[i][0]: best[i] = (sc, ys[i], f"{hc.strip()} / {hn.strip()}")
     if min(b[0] for b in best) > .98: break
 for i, b in enumerate(best): print(f"take p{i} {b[0]:.2f} | {P[i]['text']} | heard: {b[2]}")
 parts, phrases, words, t = [], [], [], 0.0

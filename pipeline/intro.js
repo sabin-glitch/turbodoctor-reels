@@ -187,16 +187,16 @@ window.INTRO_FX = (() => {
       CFG.fx.push({ k: 'punch', t: ia(C.causeAt || 'aceeași'), a: .05, sh: 8 }); }
     CFG.fx.push({ k: 'punch', t: (C.brandAt ?? ia('Turbo') - .06) + .1, a: .04 }, { k: 'flash', t: S0 - .05, a: .32 });
   }
-  function cues() {  // SFX land just before the words, quieter than the clip's, so the voice stays clear
+  function cues() {  // SFX land just before the words, quieter than the clip's; under the voice only short ones (a long boom or whoosh masks the next word)
     const ctaT = ph(C.ctaPh).t0, bt = C.brandAt ?? ia('Turbo') - .06;
     sfx(0, 'impact', .6); sfx(.02, 'glitch', .35);
     if (C.type === 'dash') { const av = ia('avarie');
       sfx(.1, 'beep', .4); sfx(.15, 'tick2', .45); sfx(.5, 'crank', .7); sfx(av - .5, 'riser', .3); sfx(av - .14, 'impact', .42); sfx(ia('accelerezi') + .5, 'alarm', .32);
       sfx(ia('greu') - .1, 'pop', .3); }
-    if (C.type === 'board') { (C.cards || []).forEach((c, i) => { const t0 = c[3] ?? (ph(i).t0 - .04); sfx(t0 - .02, 'impact', .42); });
+    if (C.type === 'board') { (C.cards || []).forEach((c, i) => { const t0 = c[3] ?? (ph(i).t0 - .04); sfx(t0 - .02, 'stamp', .45); });
       const tr = ia(C.mergeAt || 'Trei') - .05, cz = ia(C.causeAt || 'aceeași') - .1;
-      sfx(tr - .22, 'whoosh', .35); [0, 1, 2].forEach(i => sfx(cz - .3 + i * .08 + .24, 'lock', .28)); sfx(cz - .06, 'hit', .42); sfx(ia('cauză') + .5, 'stamp', .4); }
-    sfx(ctaT - .2, 'whoosh', .45); sfx(ctaT - .06, 'pop', .35); sfx(bt - .02, 'pop', .3); sfx(ph(C.ctaPh).t1 + .05, 'shimmer', .5);
+      sfx(tr - .14, 'tick2', .4); [0, 1, 2].forEach(i => sfx(cz - .3 + i * .08 + .24, 'lock', .28)); sfx(cz - .06, 'hit', .42); sfx(ia('cauză') + .5, 'stamp', .4); }
+    sfx(ctaT - .42, 'whoosh', .45); sfx(ctaT - .06, 'pop', .35); sfx(bt - .02, 'pop', .3); sfx(ph(C.ctaPh).t1 + .05, 'shimmer', .5);
     sfx(S0 - 1.0, 'riser', .35); sfx(S0 - .45, 'whoosh', .8);
   }
   function render(t) {
