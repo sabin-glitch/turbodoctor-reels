@@ -87,7 +87,8 @@ Ancore pe cuvinte: `aw(fereastră, 'cuvânt', nth)` = începutul cuvântului, `e
 - `stages`: `[[t, 'SIMPTOME'], [t, 'INVESTIGAȚIE'], [t, 'CAUZA'], [t, 'SOLUȚIA']]`.
 - `items[].k`: `scan`, `file` (fișa pacientului, `ecg`), `schem` (`type` din `schem.js`), `ring`, `call` (săgeată pe piesă, `track`), `pipe` (tratament), `list`, `chip`, `kin` (text cinetic), `stamp`, `cmp`, `stat`, `bars`, `gauge`, `chain`, `def` (dicționar tehnic), `art`, `ecg`, `eq`, `stk`, `tip` (Rețeta Turbo Doctor).
 - `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie.
-- Scheme (`schem.js`): `turboPlay`, `turboOil`, `injectorSpray`, `chainSkip`, `wastegate`, `pistonSeize`, `systemMap`, `oilPaths`, `railPressure`, `engineSwap`, `camTiming`, `coolingHybrid`, `oilFilter`, `camWear`, `route`.
+- Scheme (`schem.js`), motor și turbo: `turboPlay`, `turboOil`, `wastegate`, `pistonSeize`, `chainSkip`, `camTiming`, `camWear`, `oilPaths`, `oilFilter`, `engineSwap`, `coolingHybrid`, `systemMap`, `route`.
+- Scheme, injecție common-rail: `injectorSpray`, `railPressure`, `sensorFeedback`, `controlLoop`, `pressureLag`, `supplyChain`, `fuelFilterFlow`, `injectorReturn`, `tankCondens`, `liveData`, `scopeTrace`, `wearCurve`. Lista completă e în `return`-ul de la finalul `schem.js`.
 
 Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar subtitrările și finalul (`CFG_ERR` în `render.py`).
 
