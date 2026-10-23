@@ -56,7 +56,7 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO) |
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
 | `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **clipuri de pe TikTok, fără laptopul lui Sabin:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
-| `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars static (inpainting doar pe litere) și estompează numerele de înmatriculare (`--blur t0-t1:x0:y0:x1:y1`); fără crop, fără zoom, cadrele rămân în ordinea filmată |
+| `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars static (inpainting doar pe litere) și estompează numerele de înmatriculare (`--blur t0-t1:x0:y0:x1:y1`; estomparea crește cu mărimea plăcii; pentru o placă în mișcare, câte un `--blur` pe cadru); fără crop, fără zoom, cadrele rămân în ordinea filmată |
 | `publish_media.sh <mp4> <aaaa-ll-zz_slug>` | urcă videoclipul aprobat pe branch-ul `media` și afișează linkul public pentru Metricool |
 | `pipeline/wm_remove.py` | scoate watermark-ul TikTok (`--probe` găsește momentul în care se mută logo-ul) |
 | `pipeline/stab.sh` | dezactivat: imaginea rămâne cum a fost filmată |
@@ -77,6 +77,7 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `pipeline/qa.py`, `qsheet.py`, `gridframe.py`, `csheet.sh`, `sheet.py`, `toks.py`, `wl.py` | control: foi de contact, grile de coordonate, cuvinte cu timpi |
 | `pipeline/track_point.py` | urmărește un punct (optical flow) pentru cercuri, scanări și săgeți pe piese reale |
 | `pipeline/vo_build.py` | voiceover TTS (Piper ro_RO-mihai), doar când se cere voce nouă |
+| `pipeline/vo_narrator.py` | **narator peste clipul întreg** (cerut de Sabin pe 23.10.2026 la #0209, unde vocea originală nu se înțelegea): `vo_script.json` cu replici la timpi fixați pe imagine, voce Piper făcută mai gravă și calmă (Praat: formanți ×0,94, ~95 Hz), cea mai clară din 8 variante după ASR; sunetul original rămâne dedesubt (`out/v2.json`: `"narrator": true, "orig_gain": 0.32`). Apoi `retime.py`, `extract_frames.py`, ca de obicei. Se rulează după `setup.sh --tts` |
 | `assets/` | fonturi Montserrat, Anton și JetBrains Mono (OFL), emoji Fluent 3D (MIT) |
 
 ## `reel.js`: piesele disponibile

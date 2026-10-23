@@ -41,7 +41,7 @@ BL = []
 for b in a.blur:
     rng, x0, y0, x1, y1 = b.split(":"); t0, t1 = map(float, rng.split("-")); x0, y0, x1, y1 = map(int, (x0, y0, x1, y1))
     al = np.zeros((H, W), np.float32); cv2.rectangle(al, (x0, y0), (x1, y1), 1.0, -1); al = cv2.GaussianBlur(al, (0, 0), 9)[..., None]
-    BL.append((t0, t1, al, (max(0, x0 - 40), max(0, y0 - 40), min(W, x1 + 40), min(H, y1 + 40))))
+    BL.append((t0, t1, al, (max(0, x0 - 60), max(0, y0 - 60), min(W, x1 + 60), min(H, y1 + 60)), max(14.0, (y1 - y0) / 3.5)))  # sigma grows with the plate size
 
 dec = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-i", a.src, "-vf", f"fps={FPS},scale={W}:{H}", "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], stdout=subprocess.PIPE)
 enc = subprocess.Popen(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-f", "rawvideo", "-pix_fmt", "bgr24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
@@ -56,9 +56,9 @@ while True:
         roi = out[Y0:Y1, X0:X1]
         fixed = cv2.inpaint(roi, mroi, 7, cv2.INPAINT_TELEA).astype(np.float32)
         out[Y0:Y1, X0:X1] = (fixed * feather + roi.astype(np.float32) * (1 - feather)).astype(np.uint8)
-    for t0, t1, al, (px0, py0, px1, py1) in BL:
+    for t0, t1, al, (px0, py0, px1, py1), sg in BL:
         if t0 <= t < t1:
-            reg = out[py0:py1, px0:px1].astype(np.float32); bl = cv2.GaussianBlur(reg, (0, 0), 14)
+            reg = out[py0:py1, px0:px1].astype(np.float32); bl = cv2.GaussianBlur(reg, (0, 0), sg)
             aa = al[py0:py1, px0:px1]; out[py0:py1, px0:px1] = (bl * aa + reg * (1 - aa)).astype(np.uint8)
     enc.stdin.write(out.tobytes()); n += 1
 enc.stdin.close(); enc.wait(); dec.wait()

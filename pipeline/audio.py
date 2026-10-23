@@ -39,6 +39,19 @@ if tl.get("intro") and os.path.exists(f"{ROOT}/audio/intro_vo.wav"):  # generate
     def srms(x): f = int(.02 * SR); k = len(x) // f; r = np.sqrt((x[:k * f].reshape(k, f) ** 2).mean(1) + 1e-12); return float(np.sqrt(np.mean(r[r > r.max() * .1] ** 2)))
     n = min(len(iv), int(IE * SR)); vp[:n] += (iv[:n] * srms(vp[int(S0 * SR):int(SEND * SR), 0]) / srms(iv))[:, None]
 
+if cfg.get("narrator") and os.path.exists(f"{ROOT}/audio/vo_track.wav"):
+    # narrator mode (vo_narrator.py): the generated narrator carries the story; the presenter's own audio stays underneath,
+    # at orig_gain, and dips further while the narrator speaks so the two voices never compete
+    subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", f"{ROOT}/audio/vo_track.wav", "-af",
+                    "highpass=f=70,equalizer=f=3000:t=q:w=1.2:g=2,equalizer=f=250:t=q:w=1:g=-1,acompressor=threshold=-20dB:ratio=2.5:attack=6:release=120:makeup=3dB,loudnorm=I=-15:TP=-2:LRA=7",
+                    "-ar", str(SR), "-ac", "1", "-c:a", "pcm_f32le", f"{ROOT}/audio/vo_proc.wav"], check=True)
+    vo, _ = sf.read(f"{ROOT}/audio/vo_proc.wav", dtype="float32")
+    vo = vo[:n_total] if len(vo) >= n_total else np.concatenate([vo, np.zeros(n_total - len(vo), np.float32)])
+    w = int(.03 * SR); r = np.sqrt(np.convolve(vo ** 2, np.ones(w) / w, mode="same") + 1e-12)
+    act = np.clip((20 * np.log10(r + 1e-9) + 45) / 12, 0, 1); act = np.convolve(act, np.ones(int(.15 * SR)) / int(.15 * SR), mode="same")
+    og = float(cfg.get("orig_gain", 0.32)) * (1 - float(cfg.get("orig_duck", 0.55)) * act)
+    vp = vp * og[:, None] + np.stack([vo, vo], 1)
+
 def bp(x, lo, hi, order=2): return sosfilt(butter(order, [lo, hi], btype="band", fs=SR, output="sos"), x, axis=0)
 def lp(x, fc, order=2): return sosfilt(butter(order, fc, btype="low", fs=SR, output="sos"), x, axis=0)
 def hp(x, fc, order=2): return sosfilt(butter(order, fc, btype="high", fs=SR, output="sos"), x, axis=0)
