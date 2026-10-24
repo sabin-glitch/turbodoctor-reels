@@ -864,5 +864,77 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
+  // turbo oil consumption caused by the ENGINE (blow-by): ring seals, pressure balance, crankcase pressure up the oil return
+  // phases: 0 seals, 1 seals leak-by, 2 pressure principle, 3 intake +, 4 exhaust +, 5 interior pressure up, 6 engine blow-by, 7 good turbo leaks oil
+  function turboBlowby(tl, ph, pt, P) {
+    let s = ''; const yc = 215; const pulse = .5 + .5 * Math.sin(tl * 7);
+    if (ph <= 5) {
+      const sealCol = ph === 1 ? C.yel : ph === 5 ? C.red : C.grn;
+      s += turboCore(0, 0, 0, { spin: tl * 2.4, oilFeed: true });
+      s += `<rect x="350" y="${yc - 20}" width="8" height="40" fill="${sealCol}"/><rect x="556" y="${yc - 20}" width="8" height="40" fill="${sealCol}"/>`;
+      if (ph === 5) s += `<rect x="352" y="146" width="210" height="138" rx="18" fill="${C.red}" opacity="${f(.12 + .16 * pulse)}"/>`;
+      for (let i = 0; i < 6; i++) { const k = ((tl * .7 + i / 6) % 1); s += drop(lerp(436, 478, rnd(i)), lerp(112, 300, k), 6, C.oil, .9 - .4 * k); }
+      s += T(457, 92, 'ULEI', { s: 17, c: C.oil, a: 'middle' });
+      if (ph <= 1) {
+        s += tag(250, 52, 'SEGMENT', sealCol, 'middle', 19) + ARW(268, 70, 346, 196, sealCol, 3);
+        s += tag(664, 52, 'SEGMENT', sealCol, 'middle', 19) + ARW(646, 70, 566, 196, sealCol, 3);
+        s += T(150, 140, 'ADMISIE', { s: 18, c: C.cy, a: 'middle' }) + T(764, 140, 'EVACUARE', { s: 18, c: C.cy, a: 'middle' });
+        if (ph === 0) s += T(457, 398, 'SEGMENTUL ȚINE ULEIUL ÎN ANSAMBLUL CENTRAL', { s: 18, c: C.dim, a: 'middle' });
+        else {
+          for (const [x, d] of [[354, -1], [560, 1]]) for (let i = 0; i < 3; i++) { const k = ((tl * 1.1 + i / 3) % 1); s += `<circle cx="${f(x + d * (4 + k * 34))}" cy="${f(yc - 10 + i * 10)}" r="3.5" fill="${C.yel}" opacity="${f(1 - k)}"/>`; }
+          s += T(457, 398, 'UN SEGMENT NU POATE ETANȘA COMPLET', { s: 19, c: C.yel, a: 'middle' });
+        }
+      } else {
+        s += tag(457, 352, ph === 5 ? 'P INTERIOR ↑' : 'P INTERIOR', ph === 5 ? C.red : C.cy, 'middle', 18);
+        const okL = ph >= 3, okR = ph >= 4, rev = ph === 5;
+        s += tag(160, 120, okL ? 'P ADMISIE +' : 'P ADMISIE', okL ? (rev ? C.dim : C.grn) : C.dim, 'middle', 18);
+        s += tag(754, 120, okR ? 'P EVACUARE +' : 'P EVACUARE', okR ? (rev ? C.dim : C.grn) : C.dim, 'middle', 18);
+        const sh = 6 * Math.sin(tl * 6);
+        if (okL && !rev) { s += ARW(270 + sh, 168, 340 + sh, 196, C.grn, 5); s += ARW(270 + sh, 262, 340 + sh, 234, C.grn, 5); }
+        if (okR && !rev) { s += ARW(644 - sh, 168, 574 - sh, 196, C.grn, 5); s += ARW(644 - sh, 262, 574 - sh, 234, C.grn, 5); }
+        if (rev) { s += ARW(344 - sh, 196, 274 - sh, 168, C.red, 5) + ARW(344 - sh, 234, 274 - sh, 262, C.red, 5) + ARW(570 + sh, 196, 640 + sh, 168, C.red, 5) + ARW(570 + sh, 234, 640 + sh, 262, C.red, 5);
+          for (let i = 0; i < 6; i++) { const k = ((pt * .6 + i / 6) % 1); const L = i % 2; s += drop(L ? 350 - k * 90 : 564 + k * 90, yc + (i % 3 - 1) * 12, 5, C.oil, eo(pt / 1.5) * (1 - k)); } }
+        if (ph === 2) s += T(457, 398, 'TURBINA FUNCȚIONEAZĂ PE O DIFERENȚĂ DE PRESIUNE', { s: 18, c: C.dim, a: 'middle' });
+        if (ph === 4) s += T(457, 398, 'PRESIUNE MAI MARE AFARĂ → ULEIUL RĂMÂNE ÎNĂUNTRU', { s: 18, c: C.grn, a: 'middle' });
+        if (ph === 5) s += T(457, 398, 'PRESIUNE MAI MARE ÎN INTERIOR → ULEIUL E ÎMPINS AFARĂ', { s: 18, c: C.red, a: 'middle' });
+      }
+      return s;
+    }
+    // ---- engine + turbo (ph 6, 7) ----
+    const ox = 330, oy = 4, sc = .64; const X = x => ox + x * sc, Y = y => oy + y * sc;
+    s += `<g transform="translate(${ox} ${oy}) scale(${sc})">` + turboCore(0, 0, 0, { spin: tl * 2.4, oilFeed: true }) + `<rect x="352" y="146" width="210" height="138" rx="18" fill="${C.red}" opacity="${f(.12 + .16 * pulse)}"/></g>`;
+    const goodCol = ph === 7 ? C.grn : C.cy;
+    // engine: head, cylinder, piston
+    s += `<rect x="70" y="86" width="220" height="34" rx="6" fill="${C.body}" stroke="${C.cy}" stroke-width="3"/>`;
+    s += `<line x1="92" y1="120" x2="92" y2="322" stroke="${C.cy}" stroke-width="5"/><line x1="268" y1="120" x2="268" y2="322" stroke="${C.cy}" stroke-width="5"/>`;
+    const py = 196 + 14 * Math.sin(tl * 4);
+    s += `<rect x="96" y="${f(py)}" width="168" height="74" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="2.5"/>`;
+    for (let i = 0; i < 3; i++) s += `<rect x="96" y="${f(py + 9 + i * 10)}" width="168" height="4" fill="${C.red}"/>`;
+    const fl = .5 + .5 * Math.sin(tl * 13); s += `<ellipse cx="180" cy="${f((120 + py) / 2)}" rx="${f(60 + 8 * fl)}" ry="${f(Math.max(8, (py - 124) / 2.4))}" fill="${C.org}" opacity="${f(.28 + .22 * fl)}"/>`;
+    // crankcase + oil
+    s += `<rect x="40" y="322" width="700" height="82" rx="14" fill="${C.body}" stroke="${C.cy}" stroke-width="3"/>`;
+    s += `<rect x="44" y="384" width="692" height="16" rx="6" fill="${C.oil}" opacity=".85"/>`;
+    s += T(80, 360, 'CARTER', { s: 17, c: C.dim });
+    // oil return pipe turbo -> crankcase
+    const rx = X(457); s += `<rect x="${f(rx - 10)}" y="${f(Y(316))}" width="20" height="${f(322 - Y(316))}" fill="${C.body2}" stroke="${C.red}" stroke-width="2.5"/>`;
+    // blow-by gas: chamber -> past rings -> crankcase -> along -> up the return
+    for (let i = 0; i < 10; i++) { const k = ((tl * .55 + i / 10) % 1);
+      let x, y; const side = i % 2 ? 100 : 260;
+      if (k < .3) { x = side; y = lerp(py - 6, 340, k / .3); }
+      else if (k < .7) { x = lerp(side, rx, (k - .3) / .4); y = 342 + (i % 3) * 6; }
+      else { x = rx; y = lerp(330, Y(300), (k - .7) / .3); }
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="5.5" fill="${C.red}" opacity="${f(.95 - .3 * k)}"/>`; }
+    s += ARW(rx + 34, 300, rx + 34, Y(318), C.red, 5);
+    s += tag(180, 48, 'MOTOR CARE PIERDE COMPRESIE', C.red, 'middle', 17);
+    s += tag(400, 300, 'GAZE ÎN CARTER', C.red, 'middle', 16);
+    s += tag(rx + 150, 298, 'PRESIUNE PE RETUR', C.red, 'middle', 16);
+    if (ph === 7) {
+      for (let i = 0; i < 8; i++) { const k = ((pt * .7 + i / 8) % 1); const L = i % 2; const x0 = L ? X(354) : X(560); s += drop(L ? x0 - k * 120 : x0 + k * 110, Y(215) + (i % 3 - 1) * 8 + k * 26, 5, C.oil, eo(pt / 1.2) * (1 - k * .7)); }
+      s += tag(X(150), Y(330) + 26, 'ULEI ÎN ADMISIE', C.oil, 'middle', 15) + tag(X(764) - 8, Y(330) + 26, 'ULEI ÎN EVACUARE', C.oil, 'middle', 15);
+      s += tag(X(457), 24, 'TURBINA E BUNĂ', goodCol, 'middle', 18);
+    } else s += tag(X(457), 24, 'TURBINA', C.cy, 'middle', 17);
+    return s;
+  }
+
+  return { _gauge, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
 })();

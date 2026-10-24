@@ -536,7 +536,7 @@ function buildItems() {
     if (o.k === 'comment') {  // {k:'comment', t0, t1, name, text, mini: t (shrinks to a sticker), y, miniX, miniY, miniS, col: avatar colour, initial}
       const av = o.initial ? `<div class="av" style="background:${o.col || '#7C8BA1'}">${o.initial}</div>`
         : `<div class="av" style="background:#D5D9DF"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="31" r="15" fill="#fff"/><path d="M 12 76 C 14 54 66 54 68 76 Z" fill="#fff"/></svg></div>`;
-      o.el = mk('abs cmt', `<div class="ch">Răspuns la comentariul de la <b>${o.name}</b></div><div class="cb">${av}<div class="ct">${o.text}</div></div>`, 'overlays'); }
+      o.el = mk('abs cmt', `<div class="ch">${o.head || `Răspuns la comentariul de la <b>${o.name}</b>`}</div><div class="cb">${av}<div class="ct">${o.text}</div></div>`, 'overlays'); }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'stk') { const im = document.createElement('img'); im.className = 'abs emo'; im.src = `assets/emoji/${o.ico}.png`; im.style.width = im.style.height = (o.size || 130) + 'px'; $('overlays').appendChild(im); o.el = im; }

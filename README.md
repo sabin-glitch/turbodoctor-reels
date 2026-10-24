@@ -86,9 +86,10 @@ Ancore pe cuvinte: `aw(fereastră, 'cuvânt', nth)` = începutul cuvântului, `e
 
 - `hook`: `tag`, `l1`, `l2` (+ `l1At`, `l2At`, `l2Col`), `car`, `chips`.
 - `stages`: `[[t, 'SIMPTOME'], [t, 'INVESTIGAȚIE'], [t, 'CAUZA'], [t, 'SOLUȚIA']]`.
+- `comment`: card de comentariu ca sticker-ul TikTok (`name`, `text`, opțional `head`, `initial`/`col` pentru avatar, `y`, `mini` = momentul în care se micșorează în colț, `miniX/miniY/miniS`); hook-ul reel-urilor de răspuns la comentarii.
 - `items[].k`: `scan`, `file` (fișa pacientului, `ecg`), `schem` (`type` din `schem.js`), `ring`, `call` (săgeată pe piesă, `track`), `pipe` (tratament), `list`, `chip`, `kin` (text cinetic), `stamp`, `cmp`, `stat`, `bars`, `gauge`, `chain`, `def` (dicționar tehnic), `art`, `ecg`, `eq`, `stk`, `tip` (Rețeta Turbo Doctor).
 - `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie.
-- Scheme (`schem.js`), motor și turbo: `turboPlay`, `turboOil`, `wastegate`, `pistonSeize`, `chainSkip`, `camTiming`, `camWear`, `oilPaths`, `oilFilter`, `engineSwap`, `coolingHybrid`, `systemMap`, `route`.
+- Scheme (`schem.js`), motor și turbo: `turboBlowby` (consum de ulei la o turbină bună din cauza motorului: segmenți, echilibrul presiunilor, gaze din carter pe retur; faze 0–7), `turboPlay`, `turboOil`, `wastegate`, `pistonSeize`, `chainSkip`, `camTiming`, `camWear`, `oilPaths`, `oilFilter`, `engineSwap`, `coolingHybrid`, `systemMap`, `route`.
 - Scheme, injecție common-rail: `injectorSpray`, `railPressure`, `sensorFeedback`, `controlLoop`, `pressureLag`, `supplyChain`, `fuelFilterFlow`, `injectorReturn`, `tankCondens`, `liveData`, `scopeTrace`, `wearCurve`. Lista completă e în `return`-ul de la finalul `schem.js`.
 
 Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar subtitrările și finalul (`CFG_ERR` în `render.py`).
