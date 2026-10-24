@@ -54,6 +54,7 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | Fișier | Rol |
 |---|---|
 | `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO) |
+| `pipeline/sdr.sh <in> <out.mp4>` | **clipurile de pe iPhone sunt HDR (HLG/Dolby Vision): le normalizez mereu cu `sdr.sh` (1080×1920, 30 fps, tone mapping la SDR BT.709) înainte să le lipesc.** Fără tone mapping, fața iese palidă și „arsă”, ca un filtru de lumină (respins de Sabin pe 24.10.2026). `new_reel.sh` face același tone mapping dacă primește direct un clip HDR |
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
 | `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **clipuri de pe TikTok, fără laptopul lui Sabin:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
 | `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars static (inpainting doar pe litere) și estompează numerele de înmatriculare (`--blur t0-t1:x0:y0:x1:y1`; estomparea crește cu mărimea plăcii; pentru o placă în mișcare, câte un `--blur` pe cadru); fără crop, fără zoom, cadrele rămân în ordinea filmată |
