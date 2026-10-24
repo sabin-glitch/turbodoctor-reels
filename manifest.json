@@ -1,5 +1,10 @@
 [
  {
+  "id": "toyota_v2",
+  "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/9084b354-da6e-42d4-ab81-581ba017d2d6_a4d6001a-0736-4d1e-aa27-84ec5201bd56_70cff3f3-148c-453f-bef6-1c5d3b0e4058.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "td_ai_toyota",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/a5e3c24c-74fe-4dfc-a892-4135cdce4370_347bd90e-d286-4765-ad64-092e312ebe98_0a96985f-81dc-45e7-b01c-1834fa2e0812.mp4",
   "downloader": "curl"
