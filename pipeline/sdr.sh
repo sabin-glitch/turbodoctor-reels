@@ -4,7 +4,7 @@
 # washed-out "lighting filter" look Sabin rejected on 24.10.2026 - so HDR is always tone-mapped (hable) to BT.709 here.
 set -e
 IN=$1; OUT=$2
-TRC=$(ffprobe -v error -select_streams v:0 -show_entries stream=color_transfer -of csv=p=0 "$IN" | head -1)
+TRC=$(ffprobe -v error -select_streams v:0 -show_entries stream=color_transfer -of csv=p=0 "$IN" | head -1); TRC=${TRC%%,*}  # side data adds a trailing comma
 case "$TRC" in
   arib-std-b67|smpte2084) TM="zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p," ;;
   *) TM="" ;;
