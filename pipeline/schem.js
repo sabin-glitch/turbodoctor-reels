@@ -1005,5 +1005,39 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
+  // used cars: the car loses value, labour is paid at today's price -> past a point the repair isn't worth it; plus much more intensive use
+  // phases: 0 value falls / labour rises, 1 crossing: not worth repairing, 2 km per year then vs now
+  function valueVsLabor(tl, ph, pt, P) {
+    let s = '';
+    if (ph <= 1) {
+      const x0 = 120, x1 = 870, yt = 56, yb = 320; const X = k => x0 + k * (x1 - x0), Y = v => yb - cl(v) * (yb - yt);
+      const val = k => 1 - .78 * Math.pow(k, .8), lab = k => .18 + .55 * Math.pow(k, 1.5);
+      let kx = .64; for (let i = 0; i < 30; i++) { const d = val(kx) - lab(kx); kx += d * .4; }
+      if (ph === 1) { s += `<rect x="${f(X(kx))}" y="${yt - 10}" width="${f(x1 - X(kx))}" height="${yb - yt + 10}" fill="${C.red}" opacity="${f(.12 * eo(pt / .6))}"/>`; }
+      s += `<line x1="${x0}" y1="${yb}" x2="${x1 + 14}" y2="${yb}" stroke="${C.steel}" stroke-width="4"/><line x1="${x0}" y1="${yb}" x2="${x0}" y2="${yt - 14}" stroke="${C.steel}" stroke-width="4"/>`;
+      s += T(x0 - 16, (yt + yb) / 2, 'LEI', { s: 15, c: C.dim, a: 'middle' }).replace('<text ', `<text transform="rotate(-90 ${x0 - 16} ${(yt + yb) / 2})" `);
+      [[0, '2015'], [.45, '2020'], [1, 'AZI']].forEach(([k, l]) => { s += `<line x1="${f(X(k))}" y1="${yb}" x2="${f(X(k))}" y2="${yb + 8}" stroke="${C.steel}" stroke-width="3"/>` + T(X(k), yb + 30, l, { s: 15, c: C.dim, a: k ? (k === 1 ? 'end' : 'middle') : 'start' }); });
+      const kc = ph === 0 ? Math.min(1, .05 + pt * .3) : 1;
+      const path = (fn) => { let d = ''; for (let i = 0; i <= 70; i++) { const k = kc * i / 70; d += (i ? 'L' : 'M') + f(X(k)) + ' ' + f(Y(fn(k))); } return d; };
+      s += `<path d="${path(val)}" fill="none" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+      s += `<path d="${path(lab)}" fill="none" stroke="${C.org}" stroke-width="7" stroke-linecap="round"/>`;
+      s += `<circle cx="${f(X(kc))}" cy="${f(Y(val(kc)))}" r="9" fill="${C.cy}"/><circle cx="${f(X(kc))}" cy="${f(Y(lab(kc)))}" r="9" fill="${C.org}"/>`;
+      s += tag(X(.03), Y(1) - 4, 'VALOAREA MAȘINII', C.cy, 'start', 16);
+      s += tag(X(.03), Y(.18) - 30, 'COSTUL REPARAȚIEI (MANOPERA DE AZI)', C.org, 'start', 15);
+      if (ph === 1) { const pr = (pt * 1.3) % 1; s += `<circle cx="${f(X(kx))}" cy="${f(Y(val(kx)))}" r="${f(14 + pr * 30)}" fill="none" stroke="${C.red}" stroke-width="4" opacity="${f(1 - pr)}"/>` + xmark(X(kx), Y(val(kx)), 13, C.red, 6);
+        s += tag((X(kx) + x1) / 2 + 20, Y(.86), 'REPARAȚIA NU MAI MERITĂ', C.red, 'middle', 18);
+        s += T((X(kx) + x1) / 2 + 20, Y(.86) + 40, 'MOTOR · CUTIE DE VITEZĂ', { s: 15, c: C.red, a: 'middle' }); }
+      return s;
+    }
+    // ph 2: km per year, then vs now
+    const yb = 330; const bars = [['ACUM 5-10 ANI', .34, C.steel], ['AZI', .92, C.org]];
+    s += `<line x1="140" y1="${yb}" x2="790" y2="${yb}" stroke="${C.steel}" stroke-width="4"/>`;
+    s += T(150, 52, 'KILOMETRI PE AN', { s: 16, c: C.dim });
+    bars.forEach(([l, h, c], i) => { const x = 300 + i * 300, H = 250 * h * eo((pt - i * .35) / .8);
+      s += `<rect x="${x - 70}" y="${f(yb - H)}" width="140" height="${f(H)}" rx="10" fill="${c}" opacity=".9"/>` + T(x, yb + 32, l, { s: 18, c: i ? C.org : C.dim, a: 'middle' }); });
+    if (pt > 1.1) s += tag(640, 92, 'EXPLOATARE MULT MAI INTENSĂ', C.org, 'middle', 18);
+    return s;
+  }
+
+  return { _gauge, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
 })();
