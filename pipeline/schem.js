@@ -864,5 +864,152 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
+  // ---------- DPF (wall-flow) in section: flow, loading, regeneration, ash, clogging, cleaned ----------
+  // phase = step[3] name ('flow' | 'load' | 'regen' | 'ash' | 'clog' | 'clean') or index into P.modes
+  function dpfFlow(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['flow', 'load', 'regen', 'ash'])[ph] || 'flow';
+    const X0 = 176, X1 = 738, Y0 = 104, Y1 = 326, N = 6, CH = (Y1 - Y0 - 12) / N, PL = 26; let s = '';
+    let soot = .3, ash = .12, glow = 0, block = 0;
+    if (mode === 'flow') soot = .22 + .12 * eo(pt / 3);
+    if (mode === 'load') soot = lerp(.3, .92, eo(pt / 2.6));
+    const BURN = P.burn || 2.4; // seconds the soot takes to burn off in the regen step
+    if (mode === 'regen') { soot = lerp(.92, .04, eio(pt / BURN)); ash = lerp(.12, .3, eo(pt / BURN)); glow = cl(pt / .5) * (pt < BURN ? 1 : cl(1 - (pt - BURN) / .8)); }
+    if (mode === 'ash') { soot = .04; ash = .32 + .04 * Math.sin(tl * 4); }
+    if (mode === 'clog') { soot = 1; ash = .62; block = 1; }
+    if (mode === 'clean') { soot = 0; ash = 0; }
+    // inlet / outlet pipes + cones
+    s += `<path d="M 26 194 L 120 194 L ${X0} ${Y0 + 10} L ${X0} ${Y1 - 10} L 120 236 L 26 236" fill="${C.body}" stroke="${C.cy}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += `<path d="M 888 194 L 794 194 L ${X1} ${Y0 + 10} L ${X1} ${Y1 - 10} L 794 236 L 888 236" fill="${C.body}" stroke="${C.cy}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += `<rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" rx="16" fill="${C.body2}" stroke="${C.cy}" stroke-width="6"/>`;
+    if (glow > 0) s += `<rect x="${X0 + 4}" y="${Y0 + 4}" width="${X1 - X0 - 8}" height="${Y1 - Y0 - 8}" rx="13" fill="${C.org}" opacity="${f(.28 * glow * (.85 + .15 * Math.sin(tl * 9)))}"/>`;
+    for (let i = 0; i < N; i++) {
+      const y0 = Y0 + 6 + i * CH, y1 = y0 + CH, inlet = i % 2 === 0;
+      // plugs: inlet channels closed at the outlet end, outlet channels closed at the inlet end
+      s += inlet ? `<rect x="${X1 - PL}" y="${f(y0 + 1)}" width="${PL - 4}" height="${f(CH - 2)}" fill="${C.steelD}"/>` : `<rect x="${X0 + 4}" y="${f(y0 + 1)}" width="${PL - 4}" height="${f(CH - 2)}" fill="${C.steelD}"/>`;
+      if (inlet) {
+        const th = soot * (CH / 2 - 3); // soot cake on both walls of the inlet channel
+        if (th > .5) { const sc = block ? '#050505' : '#151515';
+          s += `<rect x="${X0 + 6}" y="${f(y0 + 1)}" width="${X1 - X0 - PL - 8}" height="${f(th)}" fill="${sc}"/><rect x="${X0 + 6}" y="${f(y1 - 1 - th)}" width="${X1 - X0 - PL - 8}" height="${f(th)}" fill="${sc}"/>`;
+          if (glow > .05) for (let k = 0; k < 7; k++) { const xx = X0 + 40 + k * 72 + 20 * Math.sin(tl * 3 + k + i); const fl = .5 + .5 * Math.sin(tl * 13 + k * 2 + i);
+            s += `<circle cx="${f(xx)}" cy="${f(y0 + th * .6)}" r="${f(3 + 3 * fl)}" fill="${C.yel}" opacity="${f(glow * .9)}"/><circle cx="${f(xx + 30)}" cy="${f(y1 - th * .6)}" r="${f(3 + 3 * (1 - fl))}" fill="${C.org}" opacity="${f(glow * .9)}"/>`; } }
+        const aw = ash * 150; if (aw > 1) s += `<rect x="${f(X1 - PL - aw)}" y="${f(y0 + 2)}" width="${f(aw)}" height="${f(CH - 4)}" rx="4" fill="#8E949C" opacity=".95"/>`;
+      }
+    }
+    for (let i = 1; i < N; i++) { const y = Y0 + 6 + i * CH; s += `<line x1="${X0 + 4}" y1="${f(y)}" x2="${X1 - 4}" y2="${f(y)}" stroke="${C.cyD}" stroke-width="4" stroke-dasharray="12 7"/>`; }
+    // moving gas (cyan) and soot (black) particles
+    const speed = block ? .18 : .55;
+    for (let j = 0; j < 18; j++) {
+      const i = (j % 3) * 2; const y0 = Y0 + 6 + i * CH; const k = ((tl * speed + rnd(j) ) % 1); const isSoot = j % 3 === 1 && mode !== 'clean';
+      let x, y;
+      if (k < .18) { x = lerp(30, X0 + 8, k / .18); y = lerp(215, y0 + CH / 2, k / .18); }
+      else if (k < .62) { x = lerp(X0 + 8, X0 + 70 + rnd(j + 7) * (X1 - X0 - 180), (k - .18) / .44); y = y0 + CH / 2; }
+      else if (isSoot) { x = X0 + 70 + rnd(j + 7) * (X1 - X0 - 180); y = y0 + CH / 2 + (rnd(j + 3) > .5 ? -1 : 1) * (CH / 2 - 4 - soot * (CH / 2 - 6)); }
+      else if (block) { x = X0 + 70 + rnd(j + 7) * (X1 - X0 - 180) + 4 * Math.sin(tl * 9 + j); y = y0 + CH / 2; }
+      else { const xs = X0 + 70 + rnd(j + 7) * (X1 - X0 - 180); const yo = y0 + CH / 2 + CH * (rnd(j + 3) > .5 ? 1 : -1) * (i === 0 ? 1 : (i === N - 2 ? -1 : 1));
+        if (k < .74) { x = xs; y = lerp(y0 + CH / 2, yo, (k - .62) / .12); } else { x = lerp(xs, 900, (k - .74) / .26); y = x > X1 ? lerp(yo, 215, cl((x - X1) / 60)) : yo; } }
+      s += isSoot ? `<circle cx="${f(x)}" cy="${f(y)}" r="7" fill="#111" stroke="#bbb" stroke-width="1.5"/>` : `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="${C.cy}" opacity=".85"/>`;
+    }
+    // labels
+    s += tag(10, 160, mode === 'clean' ? 'GAZE' : 'GAZE + FUNINGINE', mode === 'clean' ? C.cy : C.dim, 'start', 15);
+    s += tag(904, 160, block ? 'BLOCAT' : 'GAZE CURATE', block ? C.red : C.grn, 'end', 15);
+    const L = Object.assign({ flow: ['FILTREAZĂ PARTICULELE', C.cy], load: ['SE ÎNCARCĂ CU FUNINGINE', C.red], regen: ['REGENERARE: FUNINGINEA ARDE', C.yel], ash: ['RĂMÂNE CENUȘA', '#C9CED4'],
+      clog: ['DPF ÎNFUNDAT', C.red], clean: ['CURĂȚAT', C.grn] }, P.labels || {})[mode];
+    s += tag(457, 372, L[0], L[1], 'middle', 22);
+    if (mode === 'clog') { s += xmark(457, 215, 34, C.red, 10); s += tag(457, 62, 'CONTRAPRESIUNE MARE', C.red, 'middle', 17); }
+    if (mode === 'clean') s += check(457, 215, 34, C.grn, 10);
+    s += T(457, 420, P.cap || 'FILTRU DE PARTICULE · SECȚIUNE', { s: 15, c: C.dim, a: 'middle' });
+    return s;
+  }
+
+  // ---------- DPF: the three regeneration types (passive / active / forced) ----------
+  // ph = 0 pasivă, 1 activă, 2 forțată (index of the highlighted panel); P.all = true shows all three lit
+  function regenModes(tl, ph, pt, P) {
+    let s = ''; const cols = [[152, 'PASIVĂ', 'racing_car', ['MERS LUNG, TURAȚIE', 'ARDE SINGURĂ'], C.grn], [457, 'ACTIVĂ', 'brain', ['CALCULATORUL VEDE', 'DPF ÎNCĂRCAT'], C.yel], [762, 'FORȚATĂ', 'wrench', ['ÎN SERVICE,', 'CU TESTERUL'], C.org]];
+    cols.forEach(([x, lab, em, lines, col], i) => {
+      const on = P.all || i === ph, seen = i <= ph || P.all, k = i === ph ? eo(pt / .45) : 1;
+      if (!seen) { s += `<rect x="${x - 136}" y="58" width="272" height="300" rx="20" fill="${C.body}" stroke="${C.cyD}" stroke-width="3" stroke-dasharray="10 8" opacity=".55"/>` + T(x, 220, '?', { s: 64, a: 'middle', c: C.dim }); return; }
+      const op = on ? 1 : .45; const sc = i === ph ? lerp(.82, 1, k) : 1;
+      s += `<g transform="translate(${x} 208) scale(${f(sc)}) translate(${-x} -208)" opacity="${op}">`;
+      s += `<rect x="${x - 136}" y="58" width="272" height="300" rx="20" fill="${C.body}" stroke="${on ? col : C.cyD}" stroke-width="${on ? 6 : 3}"/>`;
+      s += T(x, 104, lab, { s: 30, a: 'middle', c: col, ls: 3 });
+      s += emoji(x, 176, 84, em);
+      // little DPF bar: soot level falls as it burns
+      const lvl = i === 0 ? .55 - .25 * cl(pt / 2) : i === 1 ? .9 - .6 * cl(pt / 2.2) : 1 - .85 * cl(pt / 2.4);
+      s += `<rect x="${x - 96}" y="236" width="192" height="26" rx="8" fill="${C.body2}" stroke="${C.cy}" stroke-width="3"/><rect x="${x - 93}" y="239" width="${f(186 * (i === ph || P.all ? lvl : .3))}" height="20" rx="6" fill="#151515"/>`;
+      if (i === ph) s += glowC(x - 93 + 186 * lvl, 249, 14 + 4 * Math.sin(tl * 9), C.org, .55);
+      s += T(x, 300, lines[0], { s: 17, a: 'middle', c: C.w, ls: 1 }) + T(x, 326, lines[1], { s: 17, a: 'middle', c: C.w, ls: 1 });
+      s += '</g>';
+    });
+    s += T(457, 404, P.cap || 'REGENERAREA FILTRULUI DE PARTICULE · 3 TIPURI', { s: 15, c: C.dim, a: 'middle' });
+    return s;
+  }
+
+  // ---------- post-injection: fuel injected late (exhaust stroke) burns in the DPF and heats it for regeneration ----------
+  // phase = 'main' | 'post' | 'weak' (worn injector: too little post-injection, DPF stays cold) or index into P.modes
+  function postInject(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['main', 'post', 'weak'])[ph] || 'main';
+    let s = ''; const cx = 230, cyl = [150, 70, 310, 330];
+    // piston position: main = near TDC, post/weak = moving down then up (exhaust stroke)
+    const cyc = (tl * .7) % 1; const py = mode === 'main' ? 150 + 20 * Math.sin(tl * 3) : 150 + 120 * Math.sin(cyc * Math.PI);
+    s += `<rect x="${cyl[0]}" y="${cyl[1]}" width="${cyl[2] - cyl[0]}" height="${cyl[3] - cyl[1]}" fill="${C.body2}" stroke="${C.cy}" stroke-width="6" rx="6"/>`;
+    s += `<rect x="${cyl[0] + 8}" y="${f(py)}" width="${cyl[2] - cyl[0] - 16}" height="70" rx="6" fill="${C.steelD}" stroke="${C.steel}" stroke-width="3"/>`;
+    s += `<line x1="${cx}" y1="${f(py + 70)}" x2="${cx}" y2="400" stroke="${C.steel}" stroke-width="12"/>`;
+    // injector on top
+    s += `<rect x="${cx - 14}" y="18" width="28" height="64" rx="6" fill="${C.steel}"/>` + T(cx, 14, 'INJECTOR', { s: 15, a: 'middle', c: C.dim });
+    // exhaust valve + pipe to the DPF
+    s += `<path d="M ${cyl[2]} 92 L 520 92 L 520 128 L ${cyl[2]} 128" fill="${C.body}" stroke="${C.cy}" stroke-width="5"/>`;
+    const hot = mode === 'post' ? cl(pt / 1.6) : 0, cold = mode === 'weak';
+    const sprayAmt = mode === 'main' ? 1 : mode === 'post' ? .75 : .22;
+    const sprayOn = mode === 'main' ? (Math.sin(tl * 6) > -.2) : (cyc > .05 && cyc < .4);
+    if (sprayOn) for (let i = -2; i <= 2; i++) { const a = rad(90 + i * 14); const L = 30 + 60 * sprayAmt; s += `<line x1="${cx}" y1="84" x2="${f(cx + Math.cos(a) * L)}" y2="${f(84 + Math.sin(a) * L)}" stroke="${C.oil}" stroke-width="${f(3 + 4 * sprayAmt)}" stroke-linecap="round" opacity=".9"/>`; }
+    if (mode === 'main') { const fl = .6 + .4 * Math.sin(tl * 11); s += glowC(cx, 120, 46 * fl, C.org, .45) + glowC(cx, 120, 24 * fl, C.yel, .6); s += tag(457, 372, 'INJECȚIA PRINCIPALĂ: ARDE ÎN CILINDRU', C.cy, 'middle', 16); }
+    // fuel vapour travelling to the DPF
+    if (mode !== 'main') for (let i = 0; i < 8; i++) { const k = ((tl * .5 + i / 8) % 1); const x = lerp(cyl[2], 600, k); s += `<circle cx="${f(x)}" cy="${f(110 + 6 * Math.sin(k * 9 + i))}" r="${f(mode === 'weak' ? 4 : 7)}" fill="${C.oil}" opacity="${f((mode === 'weak' ? .45 : .9) * (1 - k * .3))}"/>`; }
+    // DPF block at right
+    const X0 = 600, X1 = 880, Y0 = 70, Y1 = 330;
+    s += `<rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" rx="16" fill="${C.body2}" stroke="${C.cy}" stroke-width="6"/>`;
+    s += `<path d="M 520 92 L ${X0} ${Y0 + 30} M 520 128 L ${X0} ${Y0 + 70}" stroke="${C.cy}" stroke-width="5"/>`;
+    const soot = mode === 'post' ? lerp(.9, .15, eio(cl(pt / 3))) : mode === 'weak' ? .9 - .1 * cl(pt / 3) : .6;
+    for (let i = 0; i < 6; i++) { const y = Y0 + 16 + i * 40; s += `<rect x="${X0 + 14}" y="${y}" width="${f((X1 - X0 - 28) * soot)}" height="22" rx="5" fill="#151515"/>`; }
+    if (hot > 0) s += `<rect x="${X0 + 4}" y="${Y0 + 4}" width="${X1 - X0 - 8}" height="${Y1 - Y0 - 8}" rx="13" fill="${C.org}" opacity="${f(.32 * hot * (.85 + .15 * Math.sin(tl * 9)))}"/>`;
+    if (hot > .3) for (let k = 0; k < 6; k++) s += glowC(X0 + 40 + k * 40 + 10 * Math.sin(tl * 4 + k), Y0 + 40 + (k % 3) * 80, 6 + 3 * Math.sin(tl * 12 + k), C.yel, .8 * hot);
+    s += T((X0 + X1) / 2, Y0 - 14, 'DPF', { s: 22, a: 'middle', c: C.cy });
+    if (mode === 'post') { s += tag(712, 372, 'DPF ÎNCINS: FUNINGINEA ARDE', C.yel, 'middle', 15); s += tag(250, 372, 'POST-INJECȚIE PE EVACUARE', C.oil, 'middle', 15); }
+    if (mode === 'weak') { s += tag(712, 372, 'REGENERARE INCOMPLETĂ', C.red, 'middle', 15); s += tag(250, 372, 'INJECTOR UZAT: PREA PUȚIN', C.red, 'middle', 15); s += xmark(840, 40, 18, C.red, 7); }
+    s += T(457, 420, P.cap || 'POST-INJECȚIA · CUM SE ÎNCĂLZEȘTE DPF-UL', { s: 15, c: C.dim, a: 'middle' });
+    return s;
+  }
+
+  // ---------- EGR loop: part of the exhaust gas goes back to the intake through the EGR valve ----------
+  // phase = 'ok' | 'dirty' (deposits, valve stuck open: too much gas back -> incomplete burn -> more soot to the DPF) or index into P.modes
+  function egrLoop(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['ok', 'dirty'])[ph] || 'ok';
+    const bad = mode === 'dirty'; let s = '';
+    // engine block in the middle
+    s += `<rect x="330" y="150" width="254" height="200" rx="18" fill="${C.body2}" stroke="${C.cy}" stroke-width="6"/>` + T(457, 262, 'MOTOR', { s: 26, a: 'middle', c: C.w });
+    const fl = .6 + .4 * Math.sin(tl * 10); s += glowC(457, 300, 22 * fl, bad ? C.smoke : C.org, bad ? .5 : .5);
+    // intake (left) and exhaust (right) pipes
+    s += `<path d="M 30 250 L 330 250" stroke="${C.cy}" stroke-width="30" stroke-linecap="round" opacity=".35"/>` + T(40, 226, 'AER PROASPĂT', { s: 15, c: C.cy });
+    s += `<path d="M 584 250 L 890 250" stroke="${C.smoke}" stroke-width="30" stroke-linecap="round" opacity=".35"/>` + T(880, 226, 'SPRE DPF', { s: 15, c: bad ? C.red : C.smoke, a: 'end' });
+    // EGR loop on top: exhaust -> valve -> intake
+    s += `<path d="M 700 250 L 700 70 L 214 70 L 214 250" fill="none" stroke="${C.smoke}" stroke-width="22" stroke-linejoin="round" opacity=".35"/>`;
+    const vx = 457, vy = 70; const open = bad ? 1 : .35 + .3 * Math.sin(tl * 1.4);
+    s += `<circle cx="${vx}" cy="${vy}" r="40" fill="${C.body}" stroke="${bad ? C.red : C.cy}" stroke-width="6"/>`;
+    s += `<line x1="${f(vx - 30 * Math.cos(open * 1.4))}" y1="${f(vy - 30 * Math.sin(open * 1.4))}" x2="${f(vx + 30 * Math.cos(open * 1.4))}" y2="${f(vy + 30 * Math.sin(open * 1.4))}" stroke="${C.w}" stroke-width="8" stroke-linecap="round"/>`;
+    if (bad) for (let i = 0; i < 9; i++) { const a = rad(i * 40 + 10); s += `<circle cx="${f(vx + Math.cos(a) * 30)}" cy="${f(vy + Math.sin(a) * 30)}" r="7" fill="#111"/>`; }
+    s += T(vx, 140, bad ? 'EGR ÎNCĂRCAT · NU MAI ÎNCHIDE' : 'SUPAPA EGR', { s: 16, a: 'middle', c: bad ? C.red : C.cy });
+    // particles: fresh air (cyan), recirculated gas (grey), soot (black)
+    const nR = bad ? 12 : 5;
+    for (let i = 0; i < nR; i++) { const k = ((tl * .45 + i / nR) % 1); let x, y;
+      if (k < .2) { x = 700; y = lerp(250, 70, k / .2); } else if (k < .8) { x = lerp(700, 214, (k - .2) / .6); y = 70; } else { x = 214; y = lerp(70, 250, (k - .8) / .2); }
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="7" fill="${C.smoke}" opacity=".9"/>`; }
+    const nA = bad ? 3 : 7;
+    for (let i = 0; i < nA; i++) { const k = ((tl * .6 + i / nA) % 1); s += `<circle cx="${f(lerp(30, 330, k))}" cy="${f(250 + 6 * Math.sin(i))}" r="7" fill="${C.cy}"/>`; }
+    const nS = bad ? 10 : 3;
+    for (let i = 0; i < nS; i++) { const k = ((tl * .6 + i / nS) % 1); s += `<circle cx="${f(lerp(584, 890, k))}" cy="${f(250 + 8 * Math.sin(i * 2))}" r="${bad ? 8 : 6}" fill="#111" stroke="#bbb" stroke-width="1.5"/>`; }
+    if (bad) { s += tag(457, 392, 'ARDERE INCOMPLETĂ → MAI MULTĂ FUNINGINE ÎN DPF', C.red, 'middle', 17); }
+    else s += tag(457, 392, 'RECIRCULĂ DOAR O PARTE DIN GAZE', C.grn, 'middle', 17);
+    return s;
+  }
+  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();

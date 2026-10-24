@@ -89,7 +89,10 @@ Ancore pe cuvinte: `aw(fereastră, 'cuvânt', nth)` = începutul cuvântului, `e
 - `items[].k`: `scan`, `file` (fișa pacientului, `ecg`), `schem` (`type` din `schem.js`), `ring`, `call` (săgeată pe piesă, `track`), `pipe` (tratament), `list`, `chip`, `kin` (text cinetic), `stamp`, `cmp`, `stat`, `bars`, `gauge`, `chain`, `def` (dicționar tehnic), `art`, `ecg`, `eq`, `stk`, `tip` (Rețeta Turbo Doctor).
 - `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie.
 - Scheme (`schem.js`), motor și turbo: `turboPlay`, `turboOil`, `wastegate`, `pistonSeize`, `chainSkip`, `camTiming`, `camWear`, `oilPaths`, `oilFilter`, `engineSwap`, `coolingHybrid`, `systemMap`, `route`.
-- Scheme, injecție common-rail: `injectorSpray`, `railPressure`, `sensorFeedback`, `controlLoop`, `pressureLag`, `supplyChain`, `fuelFilterFlow`, `injectorReturn`, `tankCondens`, `liveData`, `scopeTrace`, `wearCurve`. Lista completă e în `return`-ul de la finalul `schem.js`.
+- Scheme, injecție common-rail: `injectorSpray`, `railPressure`, `sensorFeedback`, `controlLoop`, `pressureLag`, `supplyChain`, `fuelFilterFlow`, `injectorReturn`, `tankCondens`, `liveData`, `scopeTrace`, `wearCurve`.
+- Scheme, DPF și admisie: `dpfFlow` (funingine → regenerare → cenușă), `regenModes` (pasivă / activă / forțată), `postInject` (post-injecție care încinge DPF-ul), `egrLoop` (recircularea gazelor). Lista completă e în `return`-ul de la finalul `schem.js`.
+
+Cold open (hook din clip, aprobat 2026-10-24): `out/cold.json` = `{"audio":[[a,b]],"video_src":a,"extra":0.25}`, o singură bucată continuă de 4–8 s; peste ea `l1`/`l2` legate de cuvântul-cheie, un `kin` mare la y 1620 (mărime ≤ 1600/nr. caractere), `punch` + `glitch` + accent scurt `red`/`green`. Fără voce AI.
 
 Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar subtitrările și finalul (`CFG_ERR` în `render.py`).
 
