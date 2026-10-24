@@ -1025,8 +1025,8 @@ window.SCHEM = (() => {
       s += tag(X(.03), Y(1) - 4, 'VALOAREA MAȘINII', C.cy, 'start', 16);
       s += tag(X(.03), Y(.18) - 30, 'COSTUL REPARAȚIEI (MANOPERA DE AZI)', C.org, 'start', 15);
       if (ph === 1) { const pr = (pt * 1.3) % 1; s += `<circle cx="${f(X(kx))}" cy="${f(Y(val(kx)))}" r="${f(14 + pr * 30)}" fill="none" stroke="${C.red}" stroke-width="4" opacity="${f(1 - pr)}"/>` + xmark(X(kx), Y(val(kx)), 13, C.red, 6);
-        s += tag((X(kx) + x1) / 2 + 20, Y(.86), 'REPARAȚIA NU MAI MERITĂ', C.red, 'middle', 18);
-        s += T((X(kx) + x1) / 2 + 20, Y(.86) + 40, 'MOTOR · CUTIE DE VITEZĂ', { s: 15, c: C.red, a: 'middle' }); }
+        s += tag(x1 - 28, Y(.9), 'REPARAȚIA NU MAI MERITĂ', C.red, 'end', 18);
+        s += T(x1 - 40, Y(.9) + 40, 'MOTOR · CUTIE DE VITEZE', { s: 15, c: C.red, a: 'end' }); }
       return s;
     }
     // ph 2: km per year, then vs now
