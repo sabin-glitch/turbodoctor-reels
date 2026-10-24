@@ -55,7 +55,7 @@ if cfg.get("narrator") and os.path.exists(f"{ROOT}/audio/vo_track.wav"):
 def bp(x, lo, hi, order=2): return sosfilt(butter(order, [lo, hi], btype="band", fs=SR, output="sos"), x, axis=0)
 def lp(x, fc, order=2): return sosfilt(butter(order, fc, btype="low", fs=SR, output="sos"), x, axis=0)
 def hp(x, fc, order=2): return sosfilt(butter(order, fc, btype="high", fs=SR, output="sos"), x, axis=0)
-def env(n, a, d): t = np.arange(n) / SR; e = np.exp(-t * d); na = max(1, int(a * SR)); e[:na] *= np.linspace(0, 1, na); return e
+def env(n, a, d): t = np.arange(n) / SR; e = np.exp(-t * d); na = max(1, min(n, int(a * SR))); e[:na] *= np.linspace(0, 1, na); return e  # min(n): a note cut by the end of the track
 T = lambda d: np.arange(int(d * SR)) / SR
 mf = lambda m: 440.0 * 2 ** ((m - 69) / 12)
 
