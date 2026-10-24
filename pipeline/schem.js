@@ -936,5 +936,74 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
+  // why all injectors go together: same diesel / temperature / pulses -> same wear; repairing one -> big correction factors; 1st failure at high km -> the rest follow
+  // phases: 0 base, 1 diesel, 2 temperature, 3 pulses, 4 same wear, 5 balanced, 6 one repaired, 7 correction factors, 8 inj3 fails first, 9 20.000 km case, 10 300.000 km: all fail
+  function injectorSet(tl, ph, pt, P) {
+    let s = ''; const IX = [230, 390, 550, 710];
+    if (ph <= 7) {
+      s += `<rect x="150" y="60" width="640" height="26" rx="13" fill="${C.body2}" stroke="${C.cy}" stroke-width="3"/>`;
+      s += T(140, 80, 'RAMPĂ', { s: 15, c: C.dim, a: 'end' });
+      for (let i = 0; i < 16; i++) { const k = ((tl * .35 + i / 16) % 1); s += `<circle cx="${f(lerp(162, 778, k))}" cy="73" r="5" fill="${C.yel}" opacity="${ph >= 1 ? .95 : .45}"/>`; }
+      const wear = ph === 4 ? .62 * eo(pt / 1.4) : .62;
+      IX.forEach((x, i) => {
+        const rep = ph >= 6 && i === 2; const col = rep ? C.grn : (ph === 5 ? C.grn : C.cy);
+        s += `<rect x="${x - 10}" y="86" width="20" height="10" fill="${C.steelD}"/>`;
+        s += `<rect x="${x - 22}" y="96" width="44" height="136" rx="8" fill="${rep ? '#0F3B2A' : C.steelD}" stroke="${col}" stroke-width="3"/>`;
+        s += `<path d="M ${x - 12} 232 L ${x + 12} 232 L ${x} 256 Z" fill="${C.steel}"/>`;
+        s += T(x, 182, String(i + 1), { s: 30, c: rep ? C.grn : C.w, a: 'middle', fam: 'Anton', w: 400, ls: 0 });
+        if (ph >= 1 && ph <= 3) for (let j = 0; j < 3; j++) { const k = ((tl * .8 + j / 3 + i * .07) % 1); s += `<circle cx="${x}" cy="${f(lerp(100, 226, k))}" r="4" fill="${C.yel}" opacity="${f(.9 - .5 * k)}"/>`; }
+        if (ph >= 2 && ph <= 3) { const fl = .5 + .5 * Math.sin(tl * 9 + i); s += `<ellipse cx="${x}" cy="246" rx="${f(26 + 6 * fl)}" ry="16" fill="${C.org}" opacity="${f(.25 + .2 * fl)}"/>`;
+          for (let j = 0; j < 2; j++) { const k = ((tl * 1.1 + j / 2 + i * .2) % 1); s += `<path d="M ${x + 28 + j * 10} ${f(232 - k * 36)} q 6 -8 0 -16 q -6 -8 0 -16" fill="none" stroke="${C.org}" stroke-width="3" opacity="${f(1 - k)}"/>`; } }
+        if (ph === 3) { let d = ''; for (let q = 0; q <= 120; q += 4) { const ph2 = ((q / 120) * 3 - tl * 1.3) % 1; const hi = ((ph2 + 1) % 1) < .35; d += (q ? 'L' : 'M') + f(x - 60 + q) + ' ' + (hi ? 318 : 346); } s += `<path d="${d}" fill="none" stroke="${C.cy}" stroke-width="4" stroke-linejoin="round"/>`; }
+        if (ph === 4 || ph >= 6) { const w = rep ? .04 : wear; const bc = w > .5 ? C.yel : C.grn;
+          s += `<rect x="${x + 30}" y="96" width="14" height="136" rx="4" fill="none" stroke="${C.steelD}" stroke-width="2"/><rect x="${x + 31}" y="${f(232 - 136 * w)}" width="12" height="${f(136 * w)}" rx="3" fill="${bc}"/>`; }
+        if (ph === 5 || ph >= 6) { const amt = ph === 7 && !rep ? [1.35, .6, 1, 1.25][i] : 1; const cyc = (tl * 3 + i * .25) % 1;
+          if (cyc < .55) for (let j = -2; j <= 2; j++) for (let q = 1; q <= 4; q++) { const a = rad(90 + j * 14), r = q * 9 * amt * (cyc / .55 + .3); s += `<circle cx="${f(x + Math.cos(a) * r)}" cy="${f(258 + Math.sin(a) * r)}" r="${f(3.2 * Math.min(1.3, amt))}" fill="${ph === 7 && !rep ? C.red : '#A5E9FF'}" opacity=".85"/>`; } }
+        if (ph === 5) s += check(x, 120, 14, C.grn, 6);
+        if (ph === 7) { const v = [.85, -.7, .08, .75][i]; const h = 46 * v * eo((pt - .15 * i) / .5); const bc = Math.abs(v) > .4 ? C.red : C.grn;
+          s += `<line x1="${x - 34}" y1="350" x2="${x + 34}" y2="350" stroke="${C.steelD}" stroke-width="2"/><rect x="${x - 12}" y="${f(h > 0 ? 350 - h : 350)}" width="24" height="${f(Math.abs(h))}" rx="3" fill="${bc}"/>`;
+          s += T(x, 404, Math.abs(v) > .4 ? 'MARE' : 'MIC', { s: 14, c: bc, a: 'middle' }); }
+      });
+      const TOP = { 1: ['ACEEAȘI MOTORINĂ', C.yel], 2: ['ACEEAȘI TEMPERATURĂ', C.org], 3: ['ACELAȘI NUMĂR DE IMPULSURI', C.cy], 4: ['ACEEAȘI UZURĂ → ACELEAȘI PROBLEME', C.yel],
+        5: ['4 INJECTOARE BUNE ȘI ECHILIBRATE', C.grn], 7: ['FACTORI DE CORECȚIE MARI PE CELELALTE', C.red] };
+      if (TOP[ph]) s += tag(457, 24, TOP[ph][0], TOP[ph][1], 'middle', 19);
+      if (ph === 0) s += tag(457, 24, 'INJECTOARELE: 4, 6, 8...', C.cy, 'middle', 19);
+      if (ph === 6) s += tag(457, 24, 'INJ 3 RECONDIȚIONAT · CELELALTE RĂMÂN UZATE', C.grn, 'middle', 18);
+      if (ph === 7) s += T(70, 356, 'CORECȚIE', { s: 14, c: C.dim, a: 'middle' });
+      if (ph === 2 || ph === 3) s += T(457, 404, ph === 2 ? 'LA ACEEAȘI TEMPERATURĂ' : 'ACELEAȘI COMENZI DE LA CALCULATOR', { s: 16, c: C.dim, a: 'middle' });
+      return s;
+    }
+    // ---- wear vs kilometres ----
+    const x0 = 120, x1 = 870, yt = 50, yb = 330, KM = 320000;
+    const X = km => x0 + km / KM * (x1 - x0), Y = w => yb - cl(w, 0, 1.05) * (yb - yt);
+    s += `<rect x="${x0}" y="${f(Y(1.02))}" width="${x1 - x0}" height="${f(Y(.8) - Y(1.02))}" fill="${C.red}" opacity=".1"/>`;
+    s += `<line x1="${x0}" y1="${f(Y(.8))}" x2="${x1}" y2="${f(Y(.8))}" stroke="${C.red}" stroke-width="3" stroke-dasharray="12 8"/>` + T(x0 + 10, Y(.8) - 10, 'DEFECȚIUNE', { s: 14, c: C.red });
+    s += `<line x1="${x0}" y1="${yb}" x2="${x1}" y2="${yb}" stroke="${C.steel}" stroke-width="4"/><line x1="${x0}" y1="${yb}" x2="${x0}" y2="${yt - 10}" stroke="${C.steel}" stroke-width="4"/>`;
+    s += T(x0 - 16, (yt + yb) / 2, 'UZURĂ', { s: 15, c: C.dim, a: 'middle' }).replace('<text ', `<text transform="rotate(-90 ${x0 - 16} ${(yt + yb) / 2})" `);
+    [[0, '0'], [100000, '100.000'], [200000, '200.000'], [300000, '300.000 KM']].forEach(([k, l]) => { s += `<line x1="${f(X(k))}" y1="${yb}" x2="${f(X(k))}" y2="${yb + 8}" stroke="${C.steel}" stroke-width="3"/>` + T(X(k), yb + 30, l, { s: 14, c: C.dim, a: k ? 'middle' : 'start' }); });
+    const CR = [282000, 304000, 270000, 292000], COL = [C.cy, C.steel, C.red, '#B794F6'];
+    const wf = (i, km) => .8 * Math.pow(km / CR[i], 1.8);
+    const cross = i => CR[i];
+    const curve = (fn, upto, col, w = 5, op = 1, dash = '') => { let d = ''; for (let q = 0; q <= 80; q++) { const km = upto * q / 80; d += (q ? 'L' : 'M') + f(X(km)) + ' ' + f(Y(fn(km))); }
+      return `<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" opacity="${op}" stroke-linecap="round" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`; };
+    const xm = (km, w, col, sz = 14) => xmark(X(km), Y(w), sz, col, 6);
+    if (ph === 8 || ph === 10) {
+      const upto = ph === 8 ? Math.min(cross(2) + 6000, 30000 + pt * 120000) : Math.min(306000, 280000 + pt * 14000);
+      [0, 1, 3, 2].forEach(i => { s += curve(km => wf(i, km), upto, COL[i], i === 2 ? 7 : 5); });
+      if (upto >= cross(2)) { s += xm(cross(2), .8, C.red, 16); s += tag(X(cross(2)) - 20, Y(.8) - 44, 'INJ 3 CEDEAZĂ PRIMUL', C.red, 'end', 16); }
+      if (ph === 8 && upto >= cross(2) && pt > 5.5) s += tag(X(200000), Y(.36), 'ȘI URMĂTOARELE O SĂ PICE', C.yel, 'middle', 16);
+      if (ph === 10) { [[0, 1.0], [3, 1.6], [1, 2.2]].forEach(([i, at]) => { if (pt > at && upto >= cross(i)) s += xm(cross(i), .8, C.red, 13); });
+        if (pt > 2.4) s += tag(X(105000), Y(.62), 'LA 300.000 KM: VOR PICA TOATE', C.red, 'middle', 19); }
+      [['INJ 1', 0], ['INJ 2', 1], ['INJ 3', 2], ['INJ 4', 3]].forEach(([l, i], j) => s += T(x0 + 18 + j * 96, yt - 12, l, { s: 14, c: COL[i] }));
+    }
+    if (ph === 9) {
+      [0, 1, 3].forEach(i => { s += curve(km => .05 + km / 300000 * .12 + i * .01, 70000, COL[i], 5); });
+      const sp = km => km < 8000 ? .05 : .05 + Math.pow((km - 8000) / 13000, 2) * .8;
+      const up = Math.min(21500, 9000 + pt * 9000); s += curve(sp, up, C.red, 7);
+      if (up >= 21000) { s += xm(21000, .82, C.red, 16); s += tag(X(21000) + 24, Y(.86), 'LA 20.000 KM: DEFECT DE FABRICAȚIE', C.yel, 'start', 16); s += tag(X(150000), Y(.3), 'CELELALTE: ÎN REGULĂ', C.grn, 'middle', 16); }
+    }
+    return s;
+  }
+
+  return { _gauge, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve };
 })();
