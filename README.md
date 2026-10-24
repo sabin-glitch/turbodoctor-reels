@@ -54,6 +54,7 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | Fișier | Rol |
 |---|---|
 | `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO) |
+| `pipeline/sdr.sh <in> <out.mp4>` | **clipurile de pe iPhone sunt HDR (HLG/Dolby Vision): le normalizez mereu cu `sdr.sh` (1080×1920, 30 fps, tone mapping la SDR BT.709) înainte să le lipesc.** Fără tone mapping, fața iese palidă și „arsă”, ca un filtru de lumină (respins de Sabin pe 24.10.2026). `new_reel.sh` face același tone mapping dacă primește direct un clip HDR |
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
 | `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **clipuri de pe TikTok, fără laptopul lui Sabin:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
 | `pipeline/caption_clean.py` | înainte de `new_reel.sh`: șterge textul vechi ars static (inpainting doar pe litere) și estompează numerele de înmatriculare (`--blur t0-t1:x0:y0:x1:y1`; estomparea crește cu mărimea plăcii; pentru o placă în mișcare, câte un `--blur` pe cadru); fără crop, fără zoom, cadrele rămân în ordinea filmată |
@@ -86,10 +87,12 @@ Ancore pe cuvinte: `aw(fereastră, 'cuvânt', nth)` = începutul cuvântului, `e
 
 - `hook`: `tag`, `l1`, `l2` (+ `l1At`, `l2At`, `l2Col`), `car`, `chips`.
 - `stages`: `[[t, 'SIMPTOME'], [t, 'INVESTIGAȚIE'], [t, 'CAUZA'], [t, 'SOLUȚIA']]`.
+- `comment`: card de comentariu ca sticker-ul TikTok (`name`, `text`, opțional `head`, `initial`/`col` pentru avatar, `y`, `mini` = momentul în care se micșorează în colț, `miniX/miniY/miniS`); hook-ul reel-urilor de răspuns la comentarii.
 - `items[].k`: `scan`, `file` (fișa pacientului, `ecg`), `schem` (`type` din `schem.js`), `ring`, `call` (săgeată pe piesă, `track`), `pipe` (tratament), `list`, `chip`, `kin` (text cinetic), `stamp`, `cmp`, `stat`, `bars`, `gauge`, `chain`, `def` (dicționar tehnic), `art`, `ecg`, `eq`, `stk`, `tip` (Rețeta Turbo Doctor).
 - `fx[].k`: `red`, `green`, `xray`, `bw`, `punch`, `glitch`, `flash` — scurte, doar pe momente-cheie.
-- Scheme (`schem.js`), motor și turbo: `turboPlay`, `turboOil`, `wastegate`, `pistonSeize`, `chainSkip`, `camTiming`, `camWear`, `oilPaths`, `oilFilter`, `engineSwap`, `coolingHybrid`, `systemMap`, `route`.
-- Scheme, injecție common-rail: `injectorSpray`, `railPressure`, `sensorFeedback`, `controlLoop`, `pressureLag`, `supplyChain`, `fuelFilterFlow`, `injectorReturn`, `tankCondens`, `liveData`, `scopeTrace`, `wearCurve`.
+- Scheme (`schem.js`), motor și turbo: `turboBlowby` (consum de ulei la o turbină bună din cauza motorului: segmenți, echilibrul presiunilor, gaze din carter pe retur; faze 0–7), `turboPlay`, `turboOil`, `wastegate`, `pistonSeize`, `chainSkip`, `camTiming`, `camWear`, `oilPaths`, `oilFilter`, `engineSwap`, `coolingHybrid`, `systemMap`, `route`.
+- Scheme, costuri: `valueVsLabor` (valoarea mașinii scade, manopera e la prețul de azi → reparația nu mai merită; km pe an atunci vs. acum).
+- Scheme, injecție common-rail: `injectorSet` (de ce se uzează toate injectoarele împreună: aceeași motorină, temperatură, impulsuri; un singur injector reparat → factori de corecție mari; primul defect la km mulți → urmează celelalte; faze 0–10), `injectorSpray`, `railPressure`, `sensorFeedback`, `controlLoop`, `pressureLag`, `supplyChain`, `fuelFilterFlow`, `injectorReturn`, `tankCondens`, `liveData`, `scopeTrace`, `wearCurve`.
 - Scheme, DPF și admisie: `dpfFlow` (funingine → regenerare → cenușă), `regenModes` (pasivă / activă / forțată), `postInject` (post-injecție care încinge DPF-ul), `egrLoop` (recircularea gazelor). Lista completă e în `return`-ul de la finalul `schem.js`.
 
 Cold open (hook din clip, aprobat 2026-10-24): `out/cold.json` = `{"audio":[[a,b]],"video_src":a,"extra":0.25}`, o singură bucată continuă de 4–8 s; peste ea `l1`/`l2` legate de cuvântul-cheie, un `kin` mare la y 1620 (mărime ≤ 1600/nr. caractere), `punch` + `glitch` + accent scurt `red`/`green`. Fără voce AI.

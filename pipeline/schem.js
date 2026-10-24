@@ -1011,5 +1011,180 @@ window.SCHEM = (() => {
     else s += tag(457, 392, 'RECIRCULĂ DOAR O PARTE DIN GAZE', C.grn, 'middle', 17);
     return s;
   }
-  return { _gauge, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+  // turbo oil consumption caused by the ENGINE (blow-by): ring seals, pressure balance, crankcase pressure up the oil return
+  // phases: 0 seals, 1 seals leak-by, 2 pressure principle, 3 intake +, 4 exhaust +, 5 interior pressure up, 6 engine blow-by, 7 good turbo leaks oil
+  function turboBlowby(tl, ph, pt, P) {
+    let s = ''; const yc = 215; const pulse = .5 + .5 * Math.sin(tl * 7);
+    if (ph <= 5) {
+      const sealCol = ph === 1 ? C.yel : ph === 5 ? C.red : C.grn;
+      s += turboCore(0, 0, 0, { spin: tl * 2.4, oilFeed: true });
+      s += `<rect x="350" y="${yc - 20}" width="8" height="40" fill="${sealCol}"/><rect x="556" y="${yc - 20}" width="8" height="40" fill="${sealCol}"/>`;
+      if (ph === 5) s += `<rect x="352" y="146" width="210" height="138" rx="18" fill="${C.red}" opacity="${f(.12 + .16 * pulse)}"/>`;
+      for (let i = 0; i < 6; i++) { const k = ((tl * .7 + i / 6) % 1); s += drop(lerp(436, 478, rnd(i)), lerp(112, 300, k), 6, C.oil, .9 - .4 * k); }
+      s += T(457, 92, 'ULEI', { s: 17, c: C.oil, a: 'middle' });
+      if (ph <= 1) {
+        s += tag(250, 52, 'SEGMENT', sealCol, 'middle', 19) + ARW(268, 70, 346, 196, sealCol, 3);
+        s += tag(664, 52, 'SEGMENT', sealCol, 'middle', 19) + ARW(646, 70, 566, 196, sealCol, 3);
+        s += T(150, 140, 'ADMISIE', { s: 18, c: C.cy, a: 'middle' }) + T(764, 140, 'EVACUARE', { s: 18, c: C.cy, a: 'middle' });
+        if (ph === 0) s += T(457, 398, 'SEGMENTUL ȚINE ULEIUL ÎN ANSAMBLUL CENTRAL', { s: 18, c: C.dim, a: 'middle' });
+        else {
+          for (const [x, d] of [[354, -1], [560, 1]]) for (let i = 0; i < 3; i++) { const k = ((tl * 1.1 + i / 3) % 1); s += `<circle cx="${f(x + d * (4 + k * 34))}" cy="${f(yc - 10 + i * 10)}" r="3.5" fill="${C.yel}" opacity="${f(1 - k)}"/>`; }
+          s += T(457, 398, 'UN SEGMENT NU POATE ETANȘA COMPLET', { s: 19, c: C.yel, a: 'middle' });
+        }
+      } else {
+        s += tag(457, 352, ph === 5 ? 'P INTERIOR ↑' : 'P INTERIOR', ph === 5 ? C.red : C.cy, 'middle', 18);
+        const okL = ph >= 3, okR = ph >= 4, rev = ph === 5;
+        s += tag(160, 120, okL ? 'P ADMISIE +' : 'P ADMISIE', okL ? (rev ? C.dim : C.grn) : C.dim, 'middle', 18);
+        s += tag(754, 120, okR ? 'P EVACUARE +' : 'P EVACUARE', okR ? (rev ? C.dim : C.grn) : C.dim, 'middle', 18);
+        const sh = 6 * Math.sin(tl * 6);
+        if (okL && !rev) { s += ARW(270 + sh, 168, 340 + sh, 196, C.grn, 5); s += ARW(270 + sh, 262, 340 + sh, 234, C.grn, 5); }
+        if (okR && !rev) { s += ARW(644 - sh, 168, 574 - sh, 196, C.grn, 5); s += ARW(644 - sh, 262, 574 - sh, 234, C.grn, 5); }
+        if (rev) { s += ARW(344 - sh, 196, 274 - sh, 168, C.red, 5) + ARW(344 - sh, 234, 274 - sh, 262, C.red, 5) + ARW(570 + sh, 196, 640 + sh, 168, C.red, 5) + ARW(570 + sh, 234, 640 + sh, 262, C.red, 5);
+          for (let i = 0; i < 6; i++) { const k = ((pt * .6 + i / 6) % 1); const L = i % 2; s += drop(L ? 350 - k * 90 : 564 + k * 90, yc + (i % 3 - 1) * 12, 5, C.oil, eo(pt / 1.5) * (1 - k)); } }
+        if (ph === 2) s += T(457, 398, 'TURBINA FUNCȚIONEAZĂ PE O DIFERENȚĂ DE PRESIUNE', { s: 18, c: C.dim, a: 'middle' });
+        if (ph === 4) s += T(457, 398, 'PRESIUNE MAI MARE AFARĂ → ULEIUL RĂMÂNE ÎNĂUNTRU', { s: 18, c: C.grn, a: 'middle' });
+        if (ph === 5) s += T(457, 398, 'PRESIUNE MAI MARE ÎN INTERIOR → ULEIUL E ÎMPINS AFARĂ', { s: 18, c: C.red, a: 'middle' });
+      }
+      return s;
+    }
+    // ---- engine + turbo (ph 6, 7) ----
+    const ox = 330, oy = 4, sc = .64; const X = x => ox + x * sc, Y = y => oy + y * sc;
+    s += `<g transform="translate(${ox} ${oy}) scale(${sc})">` + turboCore(0, 0, 0, { spin: tl * 2.4, oilFeed: true }) + `<rect x="352" y="146" width="210" height="138" rx="18" fill="${C.red}" opacity="${f(.12 + .16 * pulse)}"/></g>`;
+    const goodCol = ph === 7 ? C.grn : C.cy;
+    // engine: head, cylinder, piston
+    s += `<rect x="70" y="86" width="220" height="34" rx="6" fill="${C.body}" stroke="${C.cy}" stroke-width="3"/>`;
+    s += `<line x1="92" y1="120" x2="92" y2="322" stroke="${C.cy}" stroke-width="5"/><line x1="268" y1="120" x2="268" y2="322" stroke="${C.cy}" stroke-width="5"/>`;
+    const py = 196 + 14 * Math.sin(tl * 4);
+    s += `<rect x="96" y="${f(py)}" width="168" height="74" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="2.5"/>`;
+    for (let i = 0; i < 3; i++) s += `<rect x="96" y="${f(py + 9 + i * 10)}" width="168" height="4" fill="${C.red}"/>`;
+    const fl = .5 + .5 * Math.sin(tl * 13); s += `<ellipse cx="180" cy="${f((120 + py) / 2)}" rx="${f(60 + 8 * fl)}" ry="${f(Math.max(8, (py - 124) / 2.4))}" fill="${C.org}" opacity="${f(.28 + .22 * fl)}"/>`;
+    // crankcase + oil
+    s += `<rect x="40" y="322" width="700" height="82" rx="14" fill="${C.body}" stroke="${C.cy}" stroke-width="3"/>`;
+    s += `<rect x="44" y="384" width="692" height="16" rx="6" fill="${C.oil}" opacity=".85"/>`;
+    s += T(80, 360, 'CARTER', { s: 17, c: C.dim });
+    // oil return pipe turbo -> crankcase
+    const rx = X(457); s += `<rect x="${f(rx - 10)}" y="${f(Y(316))}" width="20" height="${f(322 - Y(316))}" fill="${C.body2}" stroke="${C.red}" stroke-width="2.5"/>`;
+    // blow-by gas: chamber -> past rings -> crankcase -> along -> up the return
+    for (let i = 0; i < 10; i++) { const k = ((tl * .55 + i / 10) % 1);
+      let x, y; const side = i % 2 ? 100 : 260;
+      if (k < .3) { x = side; y = lerp(py - 6, 340, k / .3); }
+      else if (k < .7) { x = lerp(side, rx, (k - .3) / .4); y = 342 + (i % 3) * 6; }
+      else { x = rx; y = lerp(330, Y(300), (k - .7) / .3); }
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="5.5" fill="${C.red}" opacity="${f(.95 - .3 * k)}"/>`; }
+    s += ARW(rx + 34, 300, rx + 34, Y(318), C.red, 5);
+    s += tag(180, 48, 'MOTOR CARE PIERDE COMPRESIE', C.red, 'middle', 17);
+    s += tag(400, 300, 'GAZE ÎN CARTER', C.red, 'middle', 16);
+    s += tag(rx + 150, 298, 'PRESIUNE PE RETUR', C.red, 'middle', 16);
+    if (ph === 7) {
+      for (let i = 0; i < 8; i++) { const k = ((pt * .7 + i / 8) % 1); const L = i % 2; const x0 = L ? X(354) : X(560); s += drop(L ? x0 - k * 120 : x0 + k * 110, Y(215) + (i % 3 - 1) * 8 + k * 26, 5, C.oil, eo(pt / 1.2) * (1 - k * .7)); }
+      s += tag(X(150), Y(330) + 26, 'ULEI ÎN ADMISIE', C.oil, 'middle', 15) + tag(X(764) - 8, Y(330) + 26, 'ULEI ÎN EVACUARE', C.oil, 'middle', 15);
+      s += tag(X(457), 24, 'TURBINA E BUNĂ', goodCol, 'middle', 18);
+    } else s += tag(X(457), 24, 'TURBINA', C.cy, 'middle', 17);
+    return s;
+  }
+
+  // why all injectors go together: same diesel / temperature / pulses -> same wear; repairing one -> big correction factors; 1st failure at high km -> the rest follow
+  // phases: 0 base, 1 diesel, 2 temperature, 3 pulses, 4 same wear, 5 balanced, 6 one repaired, 7 correction factors, 8 inj3 fails first, 9 20.000 km case, 10 300.000 km: all fail
+  function injectorSet(tl, ph, pt, P) {
+    let s = ''; const IX = [230, 390, 550, 710];
+    if (ph <= 7) {
+      s += `<rect x="150" y="60" width="640" height="26" rx="13" fill="${C.body2}" stroke="${C.cy}" stroke-width="3"/>`;
+      s += T(140, 80, 'RAMPĂ', { s: 15, c: C.dim, a: 'end' });
+      for (let i = 0; i < 16; i++) { const k = ((tl * .35 + i / 16) % 1); s += `<circle cx="${f(lerp(162, 778, k))}" cy="73" r="5" fill="${C.yel}" opacity="${ph >= 1 ? .95 : .45}"/>`; }
+      const wear = ph === 4 ? .62 * eo(pt / 1.4) : .62;
+      IX.forEach((x, i) => {
+        const rep = ph >= 6 && i === 2; const col = rep ? C.grn : (ph === 5 ? C.grn : C.cy);
+        s += `<rect x="${x - 10}" y="86" width="20" height="10" fill="${C.steelD}"/>`;
+        s += `<rect x="${x - 22}" y="96" width="44" height="136" rx="8" fill="${rep ? '#0F3B2A' : C.steelD}" stroke="${col}" stroke-width="3"/>`;
+        s += `<path d="M ${x - 12} 232 L ${x + 12} 232 L ${x} 256 Z" fill="${C.steel}"/>`;
+        s += T(x, 182, String(i + 1), { s: 30, c: rep ? C.grn : C.w, a: 'middle', fam: 'Anton', w: 400, ls: 0 });
+        if (ph >= 1 && ph <= 3) for (let j = 0; j < 3; j++) { const k = ((tl * .8 + j / 3 + i * .07) % 1); s += `<circle cx="${x}" cy="${f(lerp(100, 226, k))}" r="4" fill="${C.yel}" opacity="${f(.9 - .5 * k)}"/>`; }
+        if (ph >= 2 && ph <= 3) { const fl = .5 + .5 * Math.sin(tl * 9 + i); s += `<ellipse cx="${x}" cy="246" rx="${f(26 + 6 * fl)}" ry="16" fill="${C.org}" opacity="${f(.25 + .2 * fl)}"/>`;
+          for (let j = 0; j < 2; j++) { const k = ((tl * 1.1 + j / 2 + i * .2) % 1); s += `<path d="M ${x + 28 + j * 10} ${f(232 - k * 36)} q 6 -8 0 -16 q -6 -8 0 -16" fill="none" stroke="${C.org}" stroke-width="3" opacity="${f(1 - k)}"/>`; } }
+        if (ph === 3) { let d = ''; for (let q = 0; q <= 120; q += 4) { const ph2 = ((q / 120) * 3 - tl * 1.3) % 1; const hi = ((ph2 + 1) % 1) < .35; d += (q ? 'L' : 'M') + f(x - 60 + q) + ' ' + (hi ? 318 : 346); } s += `<path d="${d}" fill="none" stroke="${C.cy}" stroke-width="4" stroke-linejoin="round"/>`; }
+        if (ph === 4 || ph >= 6) { const w = rep ? .04 : wear; const bc = w > .5 ? C.yel : C.grn;
+          s += `<rect x="${x + 30}" y="96" width="14" height="136" rx="4" fill="none" stroke="${C.steelD}" stroke-width="2"/><rect x="${x + 31}" y="${f(232 - 136 * w)}" width="12" height="${f(136 * w)}" rx="3" fill="${bc}"/>`; }
+        if (ph === 5 || ph >= 6) { const amt = ph === 7 && !rep ? [1.35, .6, 1, 1.25][i] : 1; const cyc = (tl * 3 + i * .25) % 1;
+          if (cyc < .55) for (let j = -2; j <= 2; j++) for (let q = 1; q <= 4; q++) { const a = rad(90 + j * 14), r = q * 9 * amt * (cyc / .55 + .3); s += `<circle cx="${f(x + Math.cos(a) * r)}" cy="${f(258 + Math.sin(a) * r)}" r="${f(3.2 * Math.min(1.3, amt))}" fill="${ph === 7 && !rep ? C.red : '#A5E9FF'}" opacity=".85"/>`; } }
+        if (ph === 5) s += check(x, 120, 14, C.grn, 6);
+        if (ph === 7) { const v = [.85, -.7, .08, .75][i]; const h = 46 * v * eo((pt - .15 * i) / .5); const bc = Math.abs(v) > .4 ? C.red : C.grn;
+          s += `<line x1="${x - 34}" y1="350" x2="${x + 34}" y2="350" stroke="${C.steelD}" stroke-width="2"/><rect x="${x - 12}" y="${f(h > 0 ? 350 - h : 350)}" width="24" height="${f(Math.abs(h))}" rx="3" fill="${bc}"/>`;
+          s += T(x, 404, Math.abs(v) > .4 ? 'MARE' : 'MIC', { s: 14, c: bc, a: 'middle' }); }
+      });
+      const TOP = { 1: ['ACEEAȘI MOTORINĂ', C.yel], 2: ['ACEEAȘI TEMPERATURĂ', C.org], 3: ['ACELAȘI NUMĂR DE IMPULSURI', C.cy], 4: ['ACEEAȘI UZURĂ → ACELEAȘI PROBLEME', C.yel],
+        5: ['4 INJECTOARE BUNE ȘI ECHILIBRATE', C.grn], 7: ['FACTORI DE CORECȚIE MARI PE CELELALTE', C.red] };
+      if (TOP[ph]) s += tag(457, 24, TOP[ph][0], TOP[ph][1], 'middle', 19);
+      if (ph === 0) s += tag(457, 24, 'INJECTOARELE: 4, 6, 8...', C.cy, 'middle', 19);
+      if (ph === 6) s += tag(457, 24, 'INJ 3 RECONDIȚIONAT · CELELALTE RĂMÂN UZATE', C.grn, 'middle', 18);
+      if (ph === 7) s += T(70, 356, 'CORECȚIE', { s: 14, c: C.dim, a: 'middle' });
+      if (ph === 2 || ph === 3) s += T(457, 404, ph === 2 ? 'LA ACEEAȘI TEMPERATURĂ' : 'ACELEAȘI COMENZI DE LA CALCULATOR', { s: 16, c: C.dim, a: 'middle' });
+      return s;
+    }
+    // ---- wear vs kilometres ----
+    const x0 = 120, x1 = 870, yt = 50, yb = 330, KM = 320000;
+    const X = km => x0 + km / KM * (x1 - x0), Y = w => yb - cl(w, 0, 1.05) * (yb - yt);
+    s += `<rect x="${x0}" y="${f(Y(1.02))}" width="${x1 - x0}" height="${f(Y(.8) - Y(1.02))}" fill="${C.red}" opacity=".1"/>`;
+    s += `<line x1="${x0}" y1="${f(Y(.8))}" x2="${x1}" y2="${f(Y(.8))}" stroke="${C.red}" stroke-width="3" stroke-dasharray="12 8"/>` + T(x0 + 10, Y(.8) - 10, 'DEFECȚIUNE', { s: 14, c: C.red });
+    s += `<line x1="${x0}" y1="${yb}" x2="${x1}" y2="${yb}" stroke="${C.steel}" stroke-width="4"/><line x1="${x0}" y1="${yb}" x2="${x0}" y2="${yt - 10}" stroke="${C.steel}" stroke-width="4"/>`;
+    s += T(x0 - 16, (yt + yb) / 2, 'UZURĂ', { s: 15, c: C.dim, a: 'middle' }).replace('<text ', `<text transform="rotate(-90 ${x0 - 16} ${(yt + yb) / 2})" `);
+    [[0, '0'], [100000, '100.000'], [200000, '200.000'], [300000, '300.000 KM']].forEach(([k, l]) => { s += `<line x1="${f(X(k))}" y1="${yb}" x2="${f(X(k))}" y2="${yb + 8}" stroke="${C.steel}" stroke-width="3"/>` + T(X(k), yb + 30, l, { s: 14, c: C.dim, a: k ? 'middle' : 'start' }); });
+    const CR = [282000, 304000, 270000, 292000], COL = [C.cy, C.steel, C.red, '#B794F6'];
+    const wf = (i, km) => .8 * Math.pow(km / CR[i], 1.8);
+    const cross = i => CR[i];
+    const curve = (fn, upto, col, w = 5, op = 1, dash = '') => { let d = ''; for (let q = 0; q <= 80; q++) { const km = upto * q / 80; d += (q ? 'L' : 'M') + f(X(km)) + ' ' + f(Y(fn(km))); }
+      return `<path d="${d}" fill="none" stroke="${col}" stroke-width="${w}" opacity="${op}" stroke-linecap="round" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ''}/>`; };
+    const xm = (km, w, col, sz = 14) => xmark(X(km), Y(w), sz, col, 6);
+    if (ph === 8 || ph === 10) {
+      const upto = ph === 8 ? Math.min(cross(2) + 6000, 30000 + pt * 120000) : Math.min(306000, 280000 + pt * 14000);
+      [0, 1, 3, 2].forEach(i => { s += curve(km => wf(i, km), upto, COL[i], i === 2 ? 7 : 5); });
+      if (upto >= cross(2)) { s += xm(cross(2), .8, C.red, 16); s += tag(X(cross(2)) - 20, Y(.8) - 44, 'INJ 3 CEDEAZĂ PRIMUL', C.red, 'end', 16); }
+      if (ph === 8 && upto >= cross(2) && pt > 5.5) s += tag(X(200000), Y(.36), 'ȘI URMĂTOARELE O SĂ PICE', C.yel, 'middle', 16);
+      if (ph === 10) { [[0, 1.0], [3, 1.6], [1, 2.2]].forEach(([i, at]) => { if (pt > at && upto >= cross(i)) s += xm(cross(i), .8, C.red, 13); });
+        if (pt > 2.4) s += tag(X(105000), Y(.62), 'LA 300.000 KM: VOR PICA TOATE', C.red, 'middle', 19); }
+      [['INJ 1', 0], ['INJ 2', 1], ['INJ 3', 2], ['INJ 4', 3]].forEach(([l, i], j) => s += T(x0 + 18 + j * 96, yt - 12, l, { s: 14, c: COL[i] }));
+    }
+    if (ph === 9) {
+      [0, 1, 3].forEach(i => { s += curve(km => .05 + km / 300000 * .12 + i * .01, 70000, COL[i], 5); });
+      const sp = km => km < 8000 ? .05 : .05 + Math.pow((km - 8000) / 13000, 2) * .8;
+      const up = Math.min(21500, 9000 + pt * 9000); s += curve(sp, up, C.red, 7);
+      if (up >= 21000) { s += xm(21000, .82, C.red, 16); s += tag(X(21000) + 24, Y(.86), 'LA 20.000 KM: DEFECT DE FABRICAȚIE', C.yel, 'start', 16); s += tag(X(150000), Y(.3), 'CELELALTE: ÎN REGULĂ', C.grn, 'middle', 16); }
+    }
+    return s;
+  }
+
+  // used cars: the car loses value, labour is paid at today's price -> past a point the repair isn't worth it; plus much more intensive use
+  // phases: 0 value falls / labour rises, 1 crossing: not worth repairing, 2 km per year then vs now
+  function valueVsLabor(tl, ph, pt, P) {
+    let s = '';
+    if (ph <= 1) {
+      const x0 = 120, x1 = 870, yt = 56, yb = 320; const X = k => x0 + k * (x1 - x0), Y = v => yb - cl(v) * (yb - yt);
+      const val = k => 1 - .78 * Math.pow(k, .8), lab = k => .18 + .55 * Math.pow(k, 1.5);
+      let kx = .64; for (let i = 0; i < 30; i++) { const d = val(kx) - lab(kx); kx += d * .4; }
+      if (ph === 1) { s += `<rect x="${f(X(kx))}" y="${yt - 10}" width="${f(x1 - X(kx))}" height="${yb - yt + 10}" fill="${C.red}" opacity="${f(.12 * eo(pt / .6))}"/>`; }
+      s += `<line x1="${x0}" y1="${yb}" x2="${x1 + 14}" y2="${yb}" stroke="${C.steel}" stroke-width="4"/><line x1="${x0}" y1="${yb}" x2="${x0}" y2="${yt - 14}" stroke="${C.steel}" stroke-width="4"/>`;
+      s += T(x0 - 16, (yt + yb) / 2, 'LEI', { s: 15, c: C.dim, a: 'middle' }).replace('<text ', `<text transform="rotate(-90 ${x0 - 16} ${(yt + yb) / 2})" `);
+      [[0, '2015'], [.45, '2020'], [1, 'AZI']].forEach(([k, l]) => { s += `<line x1="${f(X(k))}" y1="${yb}" x2="${f(X(k))}" y2="${yb + 8}" stroke="${C.steel}" stroke-width="3"/>` + T(X(k), yb + 30, l, { s: 15, c: C.dim, a: k ? (k === 1 ? 'end' : 'middle') : 'start' }); });
+      const kc = ph === 0 ? Math.min(1, .05 + pt * .3) : 1;
+      const path = (fn) => { let d = ''; for (let i = 0; i <= 70; i++) { const k = kc * i / 70; d += (i ? 'L' : 'M') + f(X(k)) + ' ' + f(Y(fn(k))); } return d; };
+      s += `<path d="${path(val)}" fill="none" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+      s += `<path d="${path(lab)}" fill="none" stroke="${C.org}" stroke-width="7" stroke-linecap="round"/>`;
+      s += `<circle cx="${f(X(kc))}" cy="${f(Y(val(kc)))}" r="9" fill="${C.cy}"/><circle cx="${f(X(kc))}" cy="${f(Y(lab(kc)))}" r="9" fill="${C.org}"/>`;
+      s += tag(X(.03), Y(1) - 4, 'VALOAREA MAȘINII', C.cy, 'start', 16);
+      s += tag(X(.03), Y(.18) - 30, 'COSTUL REPARAȚIEI (MANOPERA DE AZI)', C.org, 'start', 15);
+      if (ph === 1) { const pr = (pt * 1.3) % 1; s += `<circle cx="${f(X(kx))}" cy="${f(Y(val(kx)))}" r="${f(14 + pr * 30)}" fill="none" stroke="${C.red}" stroke-width="4" opacity="${f(1 - pr)}"/>` + xmark(X(kx), Y(val(kx)), 13, C.red, 6);
+        s += tag(x1 - 28, Y(.9), 'REPARAȚIA NU MAI MERITĂ', C.red, 'end', 18);
+        s += T(x1 - 40, Y(.9) + 40, 'MOTOR · CUTIE DE VITEZE', { s: 15, c: C.red, a: 'end' }); }
+      return s;
+    }
+    // ph 2: km per year, then vs now
+    const yb = 330; const bars = [['ACUM 5-10 ANI', .34, C.steel], ['AZI', .92, C.org]];
+    s += `<line x1="140" y1="${yb}" x2="790" y2="${yb}" stroke="${C.steel}" stroke-width="4"/>`;
+    s += T(150, 52, 'KILOMETRI PE AN', { s: 16, c: C.dim });
+    bars.forEach(([l, h, c], i) => { const x = 300 + i * 300, H = 250 * h * eo((pt - i * .35) / .8);
+      s += `<rect x="${x - 70}" y="${f(yb - H)}" width="140" height="${f(H)}" rx="10" fill="${c}" opacity=".9"/>` + T(x, yb + 32, l, { s: 18, c: i ? C.org : C.dim, a: 'middle' }); });
+    if (pt > 1.1) s += tag(640, 92, 'EXPLOATARE MULT MAI INTENSĂ', C.org, 'middle', 18);
+    return s;
+  }
+
+  return { _gauge, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();

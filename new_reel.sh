@@ -9,7 +9,10 @@ cp "$HERE"/pipeline/*.py "$HERE"/pipeline/*.sh "$HERE"/pipeline/art.js "$HERE"/p
 [ -f "$R/reel.js" ] || cp "$HERE/pipeline/reel_example.js" "$R/reel.js"
 [ -f "$R/compositor.html" ] || cp "$HERE/pipeline/compositor_template.html" "$R/compositor.html"
 cp "$HERE/pipeline/map.json" "$R/out/map.json"; cp -r "$HERE"/assets/* "$R/assets/"
-ffmpeg -hide_banner -loglevel error -y -i "$SRC" -vf fps=30 -c:v libx264 -preset veryfast -crf 10 -pix_fmt yuv420p -c:a aac -b:a 256k "$R/src/cfr.mp4"
+# HDR phone clips (HLG/PQ) are tone-mapped to SDR BT.709 - a raw conversion looks pale and over-lit (rejected by Sabin, 24.10.2026)
+TRC=$(ffprobe -v error -select_streams v:0 -show_entries stream=color_transfer -of csv=p=0 "$SRC" | head -1); TRC=${TRC%%,*}  # side data adds a trailing comma
+case "$TRC" in arib-std-b67|smpte2084) TM="zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv,format=yuv420p," ;; *) TM="" ;; esac
+ffmpeg -hide_banner -loglevel error -y -i "$SRC" -vf "fps=30,${TM}format=yuv420p" -c:v libx264 -preset veryfast -crf 10 -pix_fmt yuv420p -c:a aac -b:a 256k "$R/src/cfr.mp4"
 ffmpeg -hide_banner -loglevel error -y -i "$R/src/cfr.mp4" -vn -ac 1 -ar 16000 "$R/audio/voice16k.wav"
 ffmpeg -hide_banner -loglevel error -y -i "$R/src/cfr.mp4" -vn -ac 1 -ar 48000 "$R/audio/src48.wav"
 python3 "$R/contact.py" "$R/src/cfr.mp4" "$R/frames/contact.jpg" 3
