@@ -166,6 +166,14 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .def .t{font-family:Anton;font-size:58px;line-height:1.05;margin-top:2px;color:#fff;letter-spacing:1px}
 .def .d{font-weight:700;font-size:28px;line-height:1.22;color:#D6E4F0;margin-top:6px}
 /* tip (prescription) */
+/* comment card (reply-to-comment reels): TikTok-like white bubble, big in the hook, then a small sticker */
+.cmt{width:840px;background:#fff;border-radius:30px;padding:22px 30px 28px;box-shadow:0 22px 56px rgba(0,0,0,.55);color:#111;transform-origin:0 0}
+.cmt:after{content:'';position:absolute;left:0;bottom:-26px;border-left:34px solid #fff;border-bottom:28px solid transparent}
+.cmt .ch{font-weight:700;font-size:28px;color:#8A8A8A;line-height:1.2;margin-left:100px}
+.cmt .ch b{color:#6B6B6B;font-weight:800}
+.cmt .cb{display:flex;gap:20px;align-items:flex-start;margin-top:6px}
+.cmt .av{width:80px;height:80px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:Anton;font-size:42px;color:#fff;overflow:hidden}
+.cmt .ct{font-weight:900;font-size:42px;line-height:1.17;color:#111;padding-top:2px}
 .tip{width:920px;background:#fff;border-radius:30px;box-shadow:0 22px 56px rgba(0,0,0,.6);color:var(--ink);overflow:hidden}
 .tipH{display:flex;align-items:center;gap:14px;padding:22px 28px 18px;background:linear-gradient(90deg,#0F1216,#1E293B);color:#fff}
 .tipH img{width:64px;height:64px}
@@ -525,6 +533,10 @@ function buildItems() {
     if (o.k === 'bars') o.el = mk('abs dk barsC', `<div class="kTitle"><span>${img(o.ico || 'bar_chart')}${o.title}</span><span class="t2">${o.sub || ''}</span></div>` + o.bars.map(b => `<div class="bRow ${b[3] || ''}"><div class="bLab"><span>${b[1]}</span><span class="bv">${b[4] || ''}</span></div><div class="bTrack"><div class="bFill"></div></div></div>`).join(''));
     if (o.k === 'eq') o.el = mk('abs dk eqC', `<div class="kTitle"><span>${img(o.ico || 'counter')}${o.title}</span><span class="t2">${o.sub || ''}</span></div>` + o.lines.map(l => `<div class="eqL ${l[2] || 'w'}">${l[1]}</div>`).join(''));
     if (o.k === 'tip') o.el = mk('abs tip', `<div class="tipH">${img(o.ico || 'stethoscope')}<div><div class="a">${o.sub || 'SFAT DE INGINER'}</div><div class="b">${o.title || 'REȚETA TURBO DOCTOR'}</div></div><div class="rx">Rx</div></div>` + o.rows.map(r => `<div class="tRow">${img(r[1])}<span>${r[2]}</span></div>`).join(''));
+    if (o.k === 'comment') {  // {k:'comment', t0, t1, name, text, mini: t (shrinks to a sticker), y, miniX, miniY, miniS, col: avatar colour, initial}
+      const av = o.initial ? `<div class="av" style="background:${o.col || '#7C8BA1'}">${o.initial}</div>`
+        : `<div class="av" style="background:#D5D9DF"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="31" r="15" fill="#fff"/><path d="M 12 76 C 14 54 66 54 68 76 Z" fill="#fff"/></svg></div>`;
+      o.el = mk('abs cmt', `<div class="ch">Răspuns la comentariul de la <b>${o.name}</b></div><div class="cb">${av}<div class="ct">${o.text}</div></div>`, 'overlays'); }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'stk') { const im = document.createElement('img'); im.className = 'abs emo'; im.src = `assets/emoji/${o.ico}.png`; im.style.width = im.style.height = (o.size || 130) + 'px'; $('overlays').appendChild(im); o.el = im; }
@@ -556,6 +568,7 @@ function itemCues() {
     if (o.k === 'bars') o.bars.forEach(b => sfx(b[0], 'data', .45));
     if (o.k === 'eq') o.lines.forEach(l => sfx(l[0], l[2] === 'big' || l[2] === 'y' ? 'impact' : 'type', l[2] === 'big' ? .5 : .45));
     if (o.k === 'tip') { sfx(o.t0, 'ding', .45); o.rows.forEach(r => sfx(r[0], 'pop', .45)); }
+    if (o.k === 'comment') { sfx(o.t0, 'pop', .6); sfx(o.t0 + .05, 'whoosh', .4); if (o.mini) sfx(o.mini, 'whoosh', .45); }
     if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
     if (o.k === 'kin') { sfx(o.t - .02, 'impact', .7); sfx(o.t, 'glitch', .35); }
     if (o.k === 'stk') sfx(o.t0, 'pop', .4);
@@ -619,6 +632,16 @@ function rItem(o, t) {
     el.style.display = 'block'; el.style.opacity = (eOut(bp) * op).toFixed(3); el.style.transformOrigin = right ? '0 50%' : '100% 50%';
     el.style.transform = `translate(${lx.toFixed(1)}px,${ly.toFixed(1)}px) translate(${right ? '0' : '-100%'},-50%) scale(${lerp(.6, 1, eBack(bp, 2)).toFixed(3)})`;
     typeText(el.querySelector('.v'), o.v, t, o.t0 + .42, o.cps || 34); return;
+  }
+  if (o.k === 'comment') {
+    const L = life(t, o.t0, o.t1, .34, .25, 2.0); if (!L) { hide(el); return; }
+    const W = el.offsetWidth || 840, H = el.offsetHeight || 260;
+    const m = o.mini ? eInOut(clamp((t - o.mini) / .4)) : 0;
+    const bigS = o.s || 1, miniS = o.miniS || .5;
+    const x0 = 540 - W * bigS / 2, y0 = (o.y || 330), x1 = o.miniX ?? 40, y1 = o.miniY ?? 170;
+    const sc = lerp(bigS, miniS, m) * (m > 0 ? 1 : L.s);
+    el.style.display = 'block'; el.style.opacity = L.o.toFixed(3);
+    el.style.transform = `translate(${lerp(x0, x1, m).toFixed(1)}px,${(lerp(y0, y1, m) + bob(L.k, 1, m > 0 ? 2 : 4)).toFixed(1)}px) scale(${sc.toFixed(4)}) rotate(${lerp(-1.5, 0, m).toFixed(2)}deg)`; return;
   }
   if (o.k === 'scan') {
     if (t < o.t0 || t > o.t1 + .25) { hide(el); o.g.style.display = 'none'; return; }
