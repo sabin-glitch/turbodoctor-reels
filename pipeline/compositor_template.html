@@ -194,22 +194,14 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* stamp */
 .stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
-/* end card (standard, unchanged) */
+/* end card (din 25.10.2026: fără CTA — fără „Distribuie”, telefon și site; doar TURBO DOCTOR, harta și „Diagnoză gratuită”) */
 #endCard{width:1080px;height:1920px}
-#endCard .eWord{position:absolute;left:0;right:0;top:196px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
+#endCard .eWord{position:absolute;left:0;right:0;top:380px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
 #endCard .eWord .y{color:var(--yellow)}
-#eShare{position:absolute;left:90px;width:900px;top:330px;height:236px;border-radius:40px;background:#fff;box-shadow:0 20px 50px rgba(0,0,0,.6);display:flex;align-items:center;gap:26px;padding:0 34px;color:var(--ink)}
-#eShare .sIco{width:150px;height:150px;flex:none}
-#eShare .sT1{font-weight:900;font-size:50px;line-height:1.02}
-#eShare .sT2{display:flex;align-items:center;gap:10px;font-weight:800;font-size:33px;color:#4B5563;margin-top:10px}
-#eShare .sT2 img{width:48px;height:48px}
-#eMap{position:absolute;left:220px;top:612px;width:640px;height:447px}
-#eMapTitle{position:absolute;left:0;right:0;top:1066px;text-align:center;font-weight:800;font-size:26px;letter-spacing:4px;color:#CBD5E1}
-#eFree{position:absolute;left:230px;width:620px;top:1112px;height:88px;border-radius:999px;background:#16A34A;border:5px solid #fff;color:#fff;font-weight:900;font-size:42px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 14px 34px rgba(0,0,0,.55);white-space:nowrap}
+#eMap{position:absolute;left:220px;top:540px;width:640px;height:447px}
+#eMapTitle{position:absolute;left:0;right:0;top:994px;text-align:center;font-weight:800;font-size:26px;letter-spacing:4px;color:#CBD5E1}
+#eFree{position:absolute;left:230px;width:620px;top:1046px;height:88px;border-radius:999px;background:#16A34A;border:5px solid #fff;color:#fff;font-weight:900;font-size:42px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 14px 34px rgba(0,0,0,.55);white-space:nowrap}
 #eFree img{width:54px;height:54px}
-#ePhone{position:absolute;left:190px;width:700px;top:1220px;height:112px;border-radius:999px;background:var(--yellow);color:var(--ink);font-weight:900;font-size:62px;display:flex;align-items:center;justify-content:center;gap:16px;box-shadow:0 16px 38px rgba(0,0,0,.55);letter-spacing:1px;white-space:nowrap}
-#ePhone img{width:70px;height:70px}
-#eUrl{position:absolute;left:0;right:0;top:1352px;text-align:center;font-weight:900;font-size:44px;color:#fff;letter-spacing:1px}
 .cityLbl{font-family:Mont;font-weight:900;font-size:34px;fill:#fff;paint-order:stroke;stroke:#0B0F14;stroke-width:9px;stroke-linejoin:round;letter-spacing:1px}
 .spark{width:90px;height:90px}
 </style>
@@ -240,15 +232,12 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
  <div id="overlays"></div>
  <div id="sparks"></div>
  <div id="cap"></div>
- <!-- END CARD (standard, unchanged) -->
+ <!-- END CARD (din 25.10.2026: fără CTA) -->
  <div id="endCard" class="abs">
   <div class="eWord">TURBO <span class="y">DOCTOR</span></div>
-  <div id="eShare"><div class="sIco" id="sIco"></div><div><div class="sT1">DISTRIBUIE ACEST VIDEO</div><div class="sT2">unui prieten care ar avea nevoie!<img src="assets/emoji/folded_hands.png" alt=""></div></div></div>
   <div id="eMap"></div>
   <div id="eMapTitle">UNITĂȚILE NOASTRE</div>
   <div id="eFree"><img src="assets/emoji/stethoscope.png" alt="">DIAGNOZĂ GRATUITĂ</div>
-  <div id="ePhone"><img src="assets/emoji/phone.png" alt="">0739 065 065</div>
-  <div id="eUrl">turbodoctor.ro</div>
  </div>
  <div id="flash"></div>
 </div>
@@ -283,8 +272,6 @@ catch (e) { SCENES_OK = false; console.warn('scenes disabled: ' + e.message); wi
 
 const img = n => `<img src="assets/emoji/${n}.png" alt="">`;
 const ck = (txt, bad) => `<div class="box${bad ? ' bad' : ''}"><div class="fill"></div><svg width="52" height="52" viewBox="0 0 54 54"><path d="${bad ? 'M 15 15 L 39 39 M 39 15 L 15 39' : 'M 11 28 L 23 40 L 44 15'}" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" pathLength="${bad ? 2 : 1}" stroke-dasharray="${bad ? 2 : 1}" stroke-dashoffset="${bad ? 2 : 1}"/></svg></div><span>${txt}</span>`;
-$('sIco').innerHTML = `<svg viewBox="-80 -80 160 160" width="150" height="150"><circle id="sRing" r="74" fill="none" stroke="#E11D2E" stroke-width="5" opacity=".4"/><circle r="64" fill="#E11D2E"/>
- <g id="sArrow"><path d="M -34 26 C -34 -6 -8 -22 20 -22 L 20 -42 L 52 -8 L 20 26 L 20 6 C -2 6 -20 12 -34 26 Z" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/></g></svg>`;
 { // map (end card)
   const M = TL.map; const pin = (x, y, id) => `<g id="${id}" transform="translate(${x} ${y})"><g class="pinG"><path d="M 0 0 C -7 -16 -26 -28 -26 -46 A 26 26 0 1 1 26 -46 C 26 -28 7 -16 0 0 Z" fill="#E11D2E" stroke="#fff" stroke-width="5"/><circle cx="0" cy="-46" r="9" fill="#fff"/></g></g>`;
   const lblPos = { 'GALAȚI': [34, -40, 'start'], 'BUCUREȘTI': [0, 50, 'middle'], 'IAȘI': [34, -46, 'start'], 'PIATRA NEAMȚ': [-34, -46, 'end'] };
@@ -726,22 +713,18 @@ function rItem(o, t) {
 function rEnd(t) {
   const el = $('endCard'); if (t < TEND) { hide(el); return; }
   const k = t - TEND; el.style.display = 'block'; el.style.opacity = clamp(k / .3); el.style.transform = 'none';
-  const seq = [['.eWord', .05], ['#eShare', .25], ['#eMap', 1.3], ['#eMapTitle', 1.45], ['#eFree', 2.9], ['#ePhone', 3.1], ['#eUrl', 3.3]];
+  const seq = [['.eWord', .05], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1]];
   seq.forEach(([sel, d]) => { const c = el.querySelector(sel); const p = clamp((k - d) / .4);
     let tr = `translateY(${(1 - eOut(p)) * 40}px)`;
-    if (sel === '#eShare') tr += ` scale(${p > 0 ? eBack(p, 2.0) * (1 + .025 * Math.sin((k - d) * 5)) : 0})`;
-    if (sel === '#eFree' || sel === '#ePhone') tr += ` scale(${p > 0 ? eBack(p, 2.0) : 0})`;
+    if (sel === '#eFree') tr += ` scale(${p > 0 ? eBack(p, 2.0) : 0})`;
     c.style.opacity = eOut(p); c.style.transform = tr; c.style.transformOrigin = '50% 50%'; });
-  const ka = k - .6; const nud = ka > 0 ? Math.max(0, Math.sin(ka * 4.2)) : 0;
-  $('sArrow').setAttribute('transform', `translate(${(nud * 10).toFixed(1)} ${(-nud * 6).toFixed(1)}) rotate(${(-nud * 10).toFixed(1)})`);
-  const rk = (k % 1.2) / 1.2; $('sRing').setAttribute('r', (64 + rk * 16).toFixed(1)); $('sRing').setAttribute('opacity', (0.7 * (1 - rk)).toFixed(2));
-  TL.map.cities.forEach((c, i) => { const d = 1.85 + i * .26, p = clamp((k - d) / .35);
+  TL.map.cities.forEach((c, i) => { const d = 1.05 + i * .26, p = clamp((k - d) / .35);
     document.getElementById('pin' + i).querySelector('.pinG').setAttribute('transform', `translate(0 ${(-(1 - eOut(p)) * 60).toFixed(1)}) scale(${p > 0 ? eBack(p, 2.2) : 0})`);
     document.getElementById('lbl' + i).setAttribute('opacity', clamp((k - d - .15) / .3));
     const h = document.getElementById('halo' + i); const hk = ((k - d - .2) % 1.6 + 1.6) % 1.6; h.setAttribute('r', 10 + hk * 34); h.setAttribute('opacity', p >= 1 ? Math.max(0, .9 - hk / 1.6) : 0); });
 }
-function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8); sfx(TEND, 'hit', .55); sfx(TEND + .3, 'ding', .55); sfx(TEND + .9, 'pop', .45);
-  [0, 1, 2, 3].forEach(i => sfx(TEND + 1.9 + i * .26, 'pop', .45)); sfx(TEND + 3.1, 'ding', .45); }
+function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8); sfx(TEND, 'hit', .55); sfx(TEND + .3, 'ding', .55);
+  [0, 1, 2, 3].forEach(i => sfx(TEND + 1.1 + i * .26, 'pop', .45)); sfx(TEND + 2.1, 'ding', .45); }
 
 function render(t, n) {
   renderBg(t);

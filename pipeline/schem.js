@@ -1186,5 +1186,55 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+  // Euro 7 exhaust line (as shown by Sabin at a trade-fair stand): turbo -> electric heater -> AdBlue 1 + NOx -> T + SCR 1 -> DOC -> T + DPF
+  //   -> AdBlue 2 + NOx + T (+ O2?) -> SCR 2 + T + NOx (+ O2?) -> tailpipe. Phases: 0 overview, 1 heater, 2 AdBlue1+NOx1, 3 T1+SCR1, 4 DOC,
+  //   5 T2+DPF, 6 AdBlue2+NOx2+T3, 7 O2 (probably), 8 SCR2+T4+NOx3+O2, 9 whole system. Visited parts stay lit, the current one glows yellow.
+  function euro7Line(tl, ph, pt, P) {
+    let s = ''; const Y = P.Y || 136, PIPE = 30, NOX = '#C084FC';
+    const EL = { heat: 1, inj1: 2, nox1: 2, t1: 3, scr1: 3, doc: 4, t2: 5, dpf: 5, inj2: 6, nox2: 6, t3: 6, o2a: 7, scr2: 8, t4: 8, nox3: 8, o2b: 8 };
+    const st = k => { if (ph === 0 || ph >= 9) return 'on'; const q = EL[k]; return q < ph ? 'on' : q === ph ? 'cur' : 'dim'; };
+    const pulse = .5 + .5 * Math.sin(tl * 7);
+    const col = v => v === 'cur' ? C.yel : C.cy, op = v => v === 'dim' ? .28 : 1;
+    // pipe + turbo + tailpipe
+    s += `<line x1="70" y1="${Y}" x2="896" y2="${Y}" stroke="${C.body2}" stroke-width="${PIPE}" stroke-linecap="round"/>`;
+    s += `<line x1="70" y1="${Y - PIPE / 2}" x2="896" y2="${Y - PIPE / 2}" stroke="${C.cyD}" stroke-width="2"/><line x1="70" y1="${Y + PIPE / 2}" x2="896" y2="${Y + PIPE / 2}" stroke="${C.cyD}" stroke-width="2"/>`;
+    s += `<circle cx="42" cy="${Y}" r="30" fill="${C.body}" stroke="${C.steel}" stroke-width="4"/>`;
+    for (let i = 0; i < 6; i++) { const a = tl * 9 + i * Math.PI / 3; s += `<line x1="42" y1="${Y}" x2="${f(42 + 22 * Math.cos(a))}" y2="${f(Y + 22 * Math.sin(a))}" stroke="${C.steel}" stroke-width="4" stroke-linecap="round"/>`; }
+    s += T(42, Y - 42, 'TURBO', { s: 14, c: C.dim, a: 'middle' });
+    s += `<path d="M 878 ${Y - 20} L 906 ${Y - 26} L 906 ${Y + 26} L 878 ${Y + 20} Z" fill="${C.body2}" stroke="${C.steel}" stroke-width="3"/>` + T(906, Y + 72, 'TOBĂ', { s: 14, c: C.dim, a: 'end' });
+    // gas flow: darker before the treatment, clean after SCR 2
+    for (let i = 0; i < 26; i++) { const k = ((tl * .16 + i / 26) % 1); const x = 70 + k * 826; const y = Y + 9 * Math.sin(i * 2.3 + tl * 3);
+      const c = x < 360 ? '#5B6B7C' : x < 570 ? C.smoke : x < 770 ? '#C9D6E3' : '#FFFFFF'; s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="${c}" opacity=".85"/>`; }
+    const ring = (x, y, r, v) => v === 'cur' ? `<circle cx="${f(x)}" cy="${f(y)}" r="${f(r + 6 + pulse * 6)}" fill="none" stroke="${C.yel}" stroke-width="4" opacity="${f(.35 + .45 * pulse)}"/>` : '';
+    // monolith / heater boxes
+    const box = (x0, x1, key, lab, kind) => { const v = st(key), c = col(v); let g = '';
+      if (v === 'cur') g += `<rect x="${x0 - 9}" y="${Y - 51}" width="${x1 - x0 + 18}" height="102" rx="16" fill="${C.yel}" opacity="${f(.12 + .14 * pulse)}"/>`;
+      g += `<rect x="${x0}" y="${Y - 42}" width="${x1 - x0}" height="84" rx="12" fill="${C.body}" stroke="${c}" stroke-width="${v === 'cur' ? 5 : 3.5}"/>`;
+      if (kind === 'heat') { const hot = v !== 'dim' && ph >= 1; let d = `M ${x0 + 10} ${Y}`; for (let i = 0; i < 7; i++) d += ` L ${f(x0 + 15 + i * (x1 - x0 - 30) / 6)} ${Y + (i % 2 ? -24 : 24)}`; d += ` L ${x1 - 10} ${Y}`;
+        g += `<path d="${d}" fill="none" stroke="${hot ? C.org : C.steelD}" stroke-width="5" stroke-linejoin="round" opacity="${hot ? f(.75 + .25 * Math.sin(tl * 11)) : 1}"/>`;
+        if (hot) g += `<rect x="${x0}" y="${Y - 42}" width="${x1 - x0}" height="84" rx="12" fill="${C.org}" opacity="${f(.12 + .08 * Math.sin(tl * 9))}"/>`; }
+      else if (kind === 'dpf') { for (let r = 0; r < 4; r++) for (let q = 0; q < 6; q++) if ((r + q) % 2) g += `<rect x="${f(x0 + 8 + q * (x1 - x0 - 16) / 6)}" y="${f(Y - 34 + r * 17)}" width="${f((x1 - x0 - 16) / 6)}" height="17" fill="${C.cyD}"/>`; }
+      else { const n = kind === 'doc' ? 6 : 8; for (let i = 1; i < n; i++) { const x = x0 + i * (x1 - x0) / n; g += `<line x1="${f(x)}" y1="${Y - 34}" x2="${f(x)}" y2="${Y + 34}" stroke="${C.cyD}" stroke-width="2.5"/>`; } }
+      g += T((x0 + x1) / 2, Y + 72, lab, { s: 17, c: v === 'cur' ? C.yel : C.w, a: 'middle' });
+      return `<g opacity="${op(v)}">${g}</g>`; };
+    // sensors (NOx purple, T orange, O2 green; "probably" = dashed) and AdBlue injectors
+    const sensor = (x, key, type, maybe) => { const v = st(key); const c = type === 'nox' ? NOX : type === 't' ? C.org : C.grn;
+      return `<g opacity="${op(v)}"><line x1="${x}" y1="${Y - PIPE / 2}" x2="${x}" y2="${Y - 44}" stroke="${C.steel}" stroke-width="4"/>` + ring(x, Y - 52, 9, v) +
+        `<circle cx="${x}" cy="${Y - 52}" r="9" fill="${maybe ? C.bg : c}" stroke="${c}" stroke-width="3"${maybe ? ' stroke-dasharray="4 3"' : ''}/></g>`; };
+    const inj = (x, key) => { const v = st(key); let g = `<rect x="${x - 7}" y="${Y - 74}" width="14" height="40" rx="4" fill="${C.steel}"/><path d="M ${x - 5} ${Y - 34} L ${x + 5} ${Y - 34} L ${x} ${Y - 22} Z" fill="${C.steel}"/>`;
+      g += drop(x, Y - 90, 8, C.cy) + ring(x, Y - 60, 18, v);
+      if (v !== 'dim') for (let i = 0; i < 5; i++) { const k = ((tl * 1.6 + i / 5) % 1); g += `<circle cx="${f(x + k * 30)}" cy="${f(Y - 20 + k * 22 + (i % 2 ? 4 : -4) * k)}" r="${f(4 - 2 * k)}" fill="${C.cy}" opacity="${f(1 - k)}"/>`; }
+      return `<g opacity="${op(v)}">${g}</g>` + T(x, Y - 112, 'ADBLUE', { s: 13, c: v === 'cur' ? C.yel : C.cy, a: 'middle', op: op(v) }); };
+    s += box(92, 162, 'heat', 'ÎNCĂLZITOR', 'heat');
+    s += box(248, 338, 'scr1', 'SCR 1', 'scr') + box(366, 436, 'doc', 'DOC', 'doc') + box(478, 568, 'dpf', 'DPF', 'dpf') + box(674, 764, 'scr2', 'SCR 2', 'scr');
+    s += inj(188, 'inj1') + sensor(210, 'nox1', 'nox') + sensor(230, 't1', 't') + sensor(458, 't2', 't');
+    s += inj(594, 'inj2') + sensor(616, 'nox2', 'nox') + sensor(636, 't3', 't') + sensor(656, 'o2a', 'o2', true);
+    s += sensor(786, 't4', 't') + sensor(806, 'nox3', 'nox') + sensor(826, 'o2b', 'o2', true);
+    // legend
+    const lg = [[NOX, 'NOx'], [C.org, 'TEMP.'], [C.grn, 'O2']]; lg.forEach(([c, l], i) => { const x = [690, 772, 868][i]; s += `<circle cx="${x}" cy="18" r="8" fill="${c}"/>` + T(x + 14, 24, l, { s: 15, c: C.dim }); });
+    if (ph >= 9) s += tag(457, Y + 106, 'EURO 7: 4 MONOLITURI · 2 INJECTOARE ADBLUE · SENZORI NOx, TEMP., O2', C.yel, 'middle', 15);
+    return s;
+  }
+
+  return { _gauge, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();
