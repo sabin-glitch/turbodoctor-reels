@@ -1236,5 +1236,32 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+  // Euro 7 "what's inside" kit (hook of the Euro 7 reel): 8 tiles (4 x 2) that fill in exactly when Sabin names each part.
+  //   P.items = [[t, count, label, sub, icon, colour]], P.all = time when every tile pulses yellow ("asta ne așteaptă").
+  function euro7Kit(tl, ph, pt, P, t) {
+    let s = ''; const items = P.items || []; const TW = 214, TH = 120, GX = 10, GY = 12, X0 = 14, Y0 = 12;
+    const eb = p => { const c1 = 1.9, c3 = c1 + 1; return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+    const all = P.all != null && t >= P.all, pulse = .5 + .5 * Math.sin(tl * 6);
+    const icon = (ic, x, y, c) => {
+      if (ic === 'drop') return drop(x, y + 6, 11, c);
+      if (ic === 'nox' || ic === 'temp') return `<line x1="${x}" y1="${y + 20}" x2="${x}" y2="${y + 2}" stroke="${C.steel}" stroke-width="4"/><circle cx="${x}" cy="${y - 6}" r="11" fill="${c}"/>`;
+      if (ic === 'coil') { let d = `M ${x - 20} ${y}`; for (let i = 0; i < 6; i++) d += ` L ${f(x - 16 + i * 6.4)} ${y + (i % 2 ? -14 : 14)}`; return `<path d="${d} L ${x + 20} ${y}" fill="none" stroke="${c}" stroke-width="4.5" stroke-linejoin="round"/>`; }
+      let g = `<rect x="${x - 20}" y="${y - 20}" width="40" height="40" rx="7" fill="${C.body2}" stroke="${c}" stroke-width="3"/>`;
+      if (ic === 'dpf') { for (let r = 0; r < 4; r++) for (let q = 0; q < 4; q++) if ((r + q) % 2) g += `<rect x="${x - 16 + q * 8}" y="${y - 16 + r * 8}" width="8" height="8" fill="${c}" opacity=".7"/>`; }
+      else if (ic === 'mono') { for (let r = 0; r < 4; r++) for (let q = 0; q < 4; q++) g += `<rect x="${x - 15 + q * 8}" y="${y - 15 + r * 8}" width="6" height="6" fill="${c}" opacity=".55"/>`; }
+      else { const n = ic === 'doc' ? 4 : 6; for (let i = 1; i < n; i++) g += `<line x1="${f(x - 20 + i * 40 / n)}" y1="${y - 14}" x2="${f(x - 20 + i * 40 / n)}" y2="${y + 14}" stroke="${c}" stroke-width="2.5" opacity=".75"/>`; }
+      return g; };
+    items.forEach(([ti, cnt, lab, sub, ic, col], i) => {
+      const x = X0 + (i % 4) * (TW + GX), y = Y0 + Math.floor(i / 4) * (TH + GY), cx = x + TW / 2, cy = y + TH / 2, k = t - ti;
+      if (k < 0) { s += `<rect x="${x}" y="${y}" width="${TW}" height="${TH}" rx="14" fill="rgba(14,39,66,.55)" stroke="${C.cyD}" stroke-width="2" stroke-dasharray="7 6"/>` + T(cx, cy + 12, '?', { s: 34, c: 'rgba(98,216,255,.35)', a: 'middle' }); return; }
+      const c = col || C.cy, sc = .45 + .55 * eb(cl(k / .28));
+      let g = `<rect x="${x}" y="${y}" width="${TW}" height="${TH}" rx="14" fill="${C.body}" stroke="${all ? C.yel : c}" stroke-width="${f(all ? 3 + 2 * pulse : 3.5)}"/>`;
+      if (k < .5) g += `<rect x="${x}" y="${y}" width="${TW}" height="${TH}" rx="14" fill="${c}" opacity="${f(.35 * (1 - k / .5))}"/>`;
+      g += icon(ic, x + 34, y + 42, c) + T(x + 70, y + 60, cnt, { s: 46, c, ls: 1 }) + T(x + 12, y + 93, lab, { s: 18, c: C.w, ls: .8 }) + (sub ? T(x + 12, y + 112, sub, { s: 13.5, c: C.dim, ls: .4 }) : '');
+      s += `<g transform="translate(${f(cx)} ${f(cy)}) scale(${f(sc)}) translate(${f(-cx)} ${f(-cy)})">${g}</g>`;
+    });
+    return s;
+  }
+
+  return { _gauge, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();

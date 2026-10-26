@@ -203,7 +203,15 @@ def crank():  # starter motor cranking a cold diesel (intro hooks)
     amp = .5 + .5 * np.exp(-ph * 5); motor = np.sign(np.sin(2 * np.pi * 112 * t)) * .22 + np.sin(2 * np.pi * 224 * t) * .2
     x = (motor + lp(rng.standard_normal(n), 320) * 1.3) * amp; x = bp(x, 60, 3200) * np.minimum(1, t / .05) * np.minimum(1, (d - t) / .2)
     return np.stack([x, x], 1) * .34
-GEN = dict(crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
+def boom():  # deep cinematic hit for hook titles (Euro 7, 26.10.2026): saturated sub sweep + thud + rumble + snap, audible on phone speakers too
+    t = T(2.4); f = 26 + 64 * np.exp(-t * 4.0); sub = np.sin(2 * np.pi * np.cumsum(f) / SR) * env(len(t), .002, 1.5)
+    sub = np.tanh(sub * 2.4) / np.tanh(2.4)
+    thud = np.sin(2 * np.pi * np.cumsum(110 + 140 * np.exp(-t * 30)) / SR) * env(len(t), .001, 11) * .8
+    rumble = lp(rng.standard_normal(len(t)), 180) * env(len(t), .003, 2.2) * .9
+    snap = bp(rng.standard_normal(len(t)), 1200, 5000) * env(len(t), .0004, 38) * .55
+    x = sub + thud + rumble + snap; x = x / (np.abs(x).max() + 1e-9); return np.stack([x, np.roll(x, 180)], 1) * .95
+def rise(): return riser(0.62)  # short riser that peaks on a boom
+GEN = dict(boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
            tick=tick, tick2=tick2, ding=ding, confetti=confetti, type=typing, scan=scan, lock=lock, glitch=glitch, data=data)
 fx = np.zeros((n_total, 2), np.float32)
 for c in json.load(open(f"{ROOT}/out/sfx.json")):

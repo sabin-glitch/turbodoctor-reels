@@ -191,6 +191,8 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .scanLab.red{color:#FF8A8A;border-color:#FF4B4B}
 /* kinetic word */
 .kin{font-family:Anton;font-size:210px;line-height:1;white-space:nowrap;-webkit-text-stroke:16px #000;paint-order:stroke fill;text-shadow:0 12px 0 #000,0 22px 40px rgba(0,0,0,.6);letter-spacing:2px}
+/* boom: hook title that slams in (Euro 7, 26.10.2026): huge, chromatic aberration, blur-in, shake */
+.boom{font-family:Anton;font-size:300px;line-height:1;white-space:nowrap;-webkit-text-stroke:18px #000;paint-order:stroke fill;letter-spacing:3px;color:#FFD21F}
 /* stamp */
 .stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
@@ -525,6 +527,7 @@ function buildItems() {
         : `<div class="av" style="background:#D5D9DF"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="31" r="15" fill="#fff"/><path d="M 12 76 C 14 54 66 54 68 76 Z" fill="#fff"/></svg></div>`;
       o.el = mk('abs cmt', `<div class="ch">${o.head || `Răspuns la comentariul de la <b>${o.name}</b>`}</div><div class="cb">${av}<div class="ct">${o.text}</div></div>`, 'overlays'); }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
+    if (o.k === 'boom') { o.el = mk('abs boom', o.txt, 'overlays'); o.el.style.color = o.col || '#FFD21F'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'stk') { const im = document.createElement('img'); im.className = 'abs emo'; im.src = `assets/emoji/${o.ico}.png`; im.style.width = im.style.height = (o.size || 130) + 'px'; $('overlays').appendChild(im); o.el = im; }
     if (o.k === 'call') { o.el = mk('abs cl ' + (o.col || ''), `<div class="h">${o.h || ''}</div><div class="v"></div>`, 'overlays');
@@ -558,6 +561,7 @@ function itemCues() {
     if (o.k === 'comment') { sfx(o.t0, 'pop', .6); sfx(o.t0 + .05, 'whoosh', .4); if (o.mini) sfx(o.mini, 'whoosh', .45); }
     if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
     if (o.k === 'kin') { sfx(o.t - .02, 'impact', .7); sfx(o.t, 'glitch', .35); }
+    if (o.k === 'boom') { if (o.riser !== false) sfx(o.t - .62, 'rise', o.rg ?? .6); sfx(o.t - .03, 'boom', o.bg ?? 1); sfx(o.t, 'crack', o.cg ?? .55); sfx(o.t + .01, 'glitch', .35); }
     if (o.k === 'stk') sfx(o.t0, 'pop', .4);
     if (o.k === 'call') { sfx(o.t0, 'lock', .45); sfx(o.t0 + .38, 'type', .4); }
     if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, 'alarm', .3); } }
@@ -589,6 +593,16 @@ function rItem(o, t) {
     const t1 = o.t1 || o.t + 1.4; if (t < o.t - .02 || t > t1 + .25) { hide(el); return; }
     const k = t - o.t; const p = clamp(k / .16); const s = k < .16 ? lerp(2.4, 1, eIn(p)) : 1 + .04 * Math.exp(-(k - .16) * 10) * Math.sin((k - .16) * 40);
     setT(el, o.x || 540, o.y || 640, s * (o.s || 1), o.rot ?? -9, clamp(p * 3) * (1 - clamp((t - t1) / .25)) * .96); return;
+  }
+  if (o.k === 'boom') {
+    const d = o.dur || 2.5, k = t - o.t; if (k < -0.02 || k > d) { hide(el); return; }
+    const pin = clamp(k / .14), pout = clamp((k - (d - .22)) / .22);
+    let s = k < .14 ? lerp(o.from || 3.6, 1, eIn(pin)) : 1 + .07 * Math.exp(-(k - .14) * 7) * Math.sin((k - .14) * 32);
+    s *= 1 + .3 * eIn(pout);
+    const sh = (o.sh ?? 20) * Math.exp(-Math.max(0, k) * 6.5), ca = (o.ca ?? 26) * Math.exp(-Math.max(0, k) * 8), gl = .5 + .5 * Math.sin(k * 6);
+    el.style.textShadow = `${(-ca).toFixed(1)}px 0 0 rgba(255,40,90,.85), ${ca.toFixed(1)}px 0 0 rgba(0,220,255,.85), 0 14px 0 #000, 0 0 ${(34 + 22 * gl).toFixed(0)}px ${o.glow || 'rgba(255,210,31,.6)'}`;
+    el.style.filter = k < .12 ? `blur(${(9 * (1 - pin)).toFixed(1)}px)` : 'none';
+    setT(el, (o.x || 540) + sh * Math.sin(k * 97), (o.y || 900) + sh * Math.cos(k * 83), s, o.rot ?? -3, (k < 0 ? 0 : clamp(pin * 3)) * (1 - pout)); return;
   }
   if (o.k === 'kin') {
     const d = o.dur || 1.0; if (t < o.t - .02 || t > o.t + d) { hide(el); return; }
@@ -726,8 +740,19 @@ function rEnd(t) {
 function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8); sfx(TEND, 'hit', .55); sfx(TEND + .3, 'ding', .55);
   [0, 1, 2, 3].forEach(i => sfx(TEND + 1.1 + i * .26, 'pop', .45)); sfx(TEND + 2.1, 'ding', .45); }
 
+let SHOCK_G = null;
+function renderShock(t) {  // fx {k:'shock', t, x, y, r, n, col, col2, w}: expanding rings from the impact point
+  const F = fxOf('shock'); if (!F.length) return;
+  if (!SHOCK_G) { SHOCK_G = document.createElementNS(SVGNS, 'g'); $('ovl').appendChild(SHOCK_G); }
+  let h = '';
+  for (const f of F) { const d = t - f.t; if (d < 0 || d > 1) continue; const cx = f.x || 540, cy = f.y || 900;
+    for (let j = 0; j < (f.n || 2); j++) { const dd = d - j * .1; if (dd < 0 || dd > .75) continue; const p = clamp(dd / .75);
+      const r = (f.r0 || 80) + (f.r || 700) * eOut(p), w = (f.w || 54) * (1 - p) + 2;
+      h += `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}" fill="none" stroke="${j ? (f.col2 || '#62D8FF') : (f.col || '#FFFFFF')}" stroke-width="${w.toFixed(1)}" opacity="${(.9 * (1 - p)).toFixed(3)}"/>`; } }
+  SHOCK_G.innerHTML = h;
+}
 function render(t, n) {
-  renderBg(t);
+  renderBg(t); renderShock(t);
   if (SCENES_OK) { if (INTRO && window.INTRO_FX) INTRO_FX.render(t); rHook(t); rStages(t); for (const o of ITEMS) rItem(o, t); }
   rEnd(t); renderSparks(t); renderCaptions(t);
 }
