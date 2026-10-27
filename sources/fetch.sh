@@ -1,6 +1,6 @@
 #!/bin/bash
 # Rulează pe GitHub Actions (vezi .github/workflows/fetch-sources.yml). Descarcă fiecare URL din $URLS sau din
-# sources/queue.txt cu yt-dlp (fără watermark, H.264 de preferință), cu tikwm.com ca variantă de rezervă, apoi urcă
+# sources/queue.txt cu yt-dlp (fără watermark, cea mai mare rezoluție și bitrate), cu tikwm.com ca variantă de rezervă, apoi urcă
 # <id>.mp4 + <id>.json și manifest.json pe branch-ul `sources`. ID-urile deja prezente pe branch se sar.
 set -uo pipefail
 ROOT=$(pwd); DL=$(mktemp -d); SRC=$(mktemp -d)
@@ -38,8 +38,8 @@ while IFS= read -r URL; do
       ok=1
       python3 -c 'import json,sys; json.dump({"id":sys.argv[1],"source_url":sys.argv[2],"downloader":"curl"},open(sys.argv[3],"w"),indent=1)' "$ID" "$BARE" "$META"
     fi
-  # a) yt-dlp: H.264 mp4 fără watermark dacă există, altfel cel mai bun format
-  elif yt-dlp -q --no-warnings --no-playlist -S 'vcodec:h264,res,br' --merge-output-format mp4 \
+  # a) yt-dlp: varianta fără watermark cu cea mai mare rezoluție și bitrate (H.264 doar la egalitate)
+  elif yt-dlp -q --no-warnings --no-playlist -S 'res,br,vcodec:h264' --merge-output-format mp4 \
        --write-info-json -o "$DL/$ID.%(ext)s" "$URL" && [ -s "$OUT" ]; then
     ok=1
     python3 - "$DL/$ID.info.json" "$META" "$URL" <<'PY'
