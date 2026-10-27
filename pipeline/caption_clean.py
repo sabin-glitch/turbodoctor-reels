@@ -6,13 +6,15 @@
 usage: python3 caption_clean.py <src.mp4> <out.mp4> [--band 1500-1700] [--blur t0-t1:x0:y0:x1:y1 ...]
   --band y0-y1   vertical band (source px, 1080x1920) holding the static text; mask = pixels near-white in >=90%
                  of 40 samples + their consistently dark outline, dilated. Omit when the clip has no static text.
+  --band-t t0-t1 only when the static text is on screen just for [t0, t1) seconds (e.g. a title in the first 10 s):
+                 the mask is learnt and applied only inside that range.
   --blur ...     soft blur box (feathered) on [t0, t1) seconds; repeat for each plate / time range.
 Output: 30 fps CFR, libx264 crf 12, original audio (AAC 256k), same timing as the source. Check with a contact sheet."""
 import argparse, subprocess
 import cv2, numpy as np
 
 ap = argparse.ArgumentParser(); ap.add_argument("src"); ap.add_argument("out")
-ap.add_argument("--band", default=""); ap.add_argument("--blur", action="append", default=[])
+ap.add_argument("--band", default=""); ap.add_argument("--band-t", default=""); ap.add_argument("--blur", action="append", default=[])
 a = ap.parse_args()
 W, H, FPS = 1080, 1920, 30
 
@@ -21,7 +23,8 @@ if a.band:
     B0, B1 = map(int, a.band.split("-"))
     cap = cv2.VideoCapture(a.src); n_src = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)); fps_src = cap.get(cv2.CAP_PROP_FPS) or 30
     white, dark = [], []
-    for t in np.linspace(0.5, max(0.6, n_src / fps_src - 0.5), 40):
+    BT0, BT1 = map(float, a.band_t.split("-")) if a.band_t else (0.0, 1e9)
+    for t in np.linspace(max(0.5, BT0 + .1), max(0.6, min(n_src / fps_src, BT1) - 0.3), 40):
         cap.set(cv2.CAP_PROP_POS_FRAMES, int(t * fps_src)); ok, fr = cap.read()
         if not ok: continue
         if fr.shape[1] != W or fr.shape[0] != H: fr = cv2.resize(fr, (W, H))
@@ -52,7 +55,7 @@ while True:
     buf = dec.stdout.read(FB)
     if len(buf) < FB: break
     out = np.frombuffer(buf, np.uint8).reshape(H, W, 3).copy(); t = n / FPS
-    if mroi is not None:
+    if mroi is not None and BT0 <= t < BT1:
         roi = out[Y0:Y1, X0:X1]
         fixed = cv2.inpaint(roi, mroi, 7, cv2.INPAINT_TELEA).astype(np.float32)
         out[Y0:Y1, X0:X1] = (fixed * feather + roi.astype(np.float32) * (1 - feather)).astype(np.uint8)
