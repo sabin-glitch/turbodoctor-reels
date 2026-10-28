@@ -1263,5 +1263,54 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+  // ---------- clogged DPF -> back-pressure + overheating on the exhaust -> turbo and engine at risk (promo DPF, 28.10.2026) ----------
+  // phases: 0 clogged DPF (gases can't get out), 1 back-pressure waves run back to the turbo and the engine,
+  //         2 overheating on the exhaust side (manifold, turbo, engine glow), 3 turbo + engine in danger (pressure + heat, crack)
+  function dpfBackpressure(tl, ph, pt, P) {
+    let s = ''; const Y = 172, red = ph >= 1, hot = ph >= 2, dmg = ph >= 3;
+    const hp = ph === 2 ? eo(pt / .8) : ph > 2 ? 1 : 0, pulse = .5 + .5 * Math.sin(tl * 8);
+    const pipe = (x1, x2, hw, col) => `<rect x="${x1}" y="${Y - hw}" width="${x2 - x1}" height="${hw * 2}" fill="${C.body}" stroke="${col}" stroke-width="4"/>`;
+    const pc = red ? C.red : C.cy;
+    s += pipe(206, 300, 22, pc) + pipe(410, 534, 22, pc) + pipe(796, 904, 18, C.cyD);
+    if (hot) s += `<rect x="206" y="${Y - 22}" width="94" height="44" fill="${C.org}" opacity="${f(.5 * hp * (.75 + .25 * pulse))}"/><rect x="410" y="${Y - 22}" width="124" height="44" fill="${C.org}" opacity="${f(.4 * hp * (.75 + .25 * pulse))}"/>`;
+    // engine block, 4 cylinders
+    s += `<rect x="24" y="78" width="190" height="196" rx="18" fill="${C.body2}" stroke="${dmg ? C.red : C.cy}" stroke-width="5"/>`;
+    if (hot) s += `<rect x="28" y="82" width="182" height="188" rx="15" fill="${C.org}" opacity="${f(.24 * hp * (.7 + .3 * pulse))}"/>`;
+    for (let i = 0; i < 4; i++) { const x = 44 + i * 40, py = 104 + 60 * (.5 + .5 * Math.sin(tl * (dmg ? 4 : 9) + i * Math.PI / 2)) + (dmg ? 3 * Math.sin(tl * 37 + i) : 0);
+      s += `<rect x="${x}" y="96" width="30" height="104" rx="4" fill="${C.bg}" stroke="${C.cyD}" stroke-width="3"/><rect x="${x + 3}" y="${f(py)}" width="24" height="26" rx="3" fill="${C.steelD}" stroke="${C.steel}" stroke-width="2"/>`; }
+    s += T(119, 248, 'MOTOR', { s: 24, a: 'middle', c: dmg ? C.red : C.w });
+    if (dmg) s += `<path d="M 150 80 L 136 118 L 156 140 L 138 176 L 160 206" fill="none" stroke="${C.red}" stroke-width="6" stroke-linejoin="round" opacity="${f(.75 + .25 * pulse)}"/>`;
+    // turbo (turbine side) with a spinning wheel that slows down as the pressure builds
+    const TX = 355, spin = tl * (ph === 0 ? 9 : ph === 1 ? 5 : 3.2);
+    s += `<circle cx="${TX}" cy="${Y}" r="64" fill="${C.body2}" stroke="${red ? C.red : C.cy}" stroke-width="5"/>`;
+    if (hot) s += glowC(TX, Y, 60, C.org, .42 * hp * (.7 + .3 * pulse));
+    for (let i = 0; i < 7; i++) { const a = spin + i * 2 * Math.PI / 7;
+      s += `<path d="M ${TX} ${Y} Q ${f(TX + 30 * Math.cos(a + .5))} ${f(Y + 30 * Math.sin(a + .5))} ${f(TX + 42 * Math.cos(a))} ${f(Y + 42 * Math.sin(a))}" fill="none" stroke="${C.steel}" stroke-width="5" stroke-linecap="round"/>`; }
+    s += `<circle cx="${TX}" cy="${Y}" r="10" fill="${C.steel}"/>` + T(TX, 270, 'TURBO', { s: 22, a: 'middle', c: red ? C.red : C.w });
+    if (dmg) s += xmark(TX + 52, Y - 56, 13, C.red, 6);
+    // DPF canister packed with soot, outlet blocked
+    const DX0 = 534, DX1 = 796, DY0 = 104, DY1 = 240;
+    s += `<rect x="${DX0}" y="${DY0}" width="${DX1 - DX0}" height="${DY1 - DY0}" rx="22" fill="#0B0B0B" stroke="${C.red}" stroke-width="6"/>`;
+    for (let i = 1; i < 5; i++) { const y = DY0 + i * (DY1 - DY0) / 5; s += `<line x1="${DX0 + 12}" y1="${f(y)}" x2="${DX1 - 12}" y2="${f(y)}" stroke="#3A3A3A" stroke-width="3" stroke-dasharray="14 8"/>`; }
+    for (let i = 0; i < 44; i++) s += `<circle cx="${f(DX0 + 18 + rnd(i) * (DX1 - DX0 - 36))}" cy="${f(DY0 + 14 + rnd(i + 50) * (DY1 - DY0 - 28))}" r="${f(3 + 3 * rnd(i + 99))}" fill="#2E2E2E"/>`;
+    s += T((DX0 + DX1) / 2, 90, 'DPF', { s: 24, a: 'middle', c: C.red }) + xmark(850, Y, 17, C.red, 7);
+    // exhaust gas: engine -> turbo -> DPF, it slows down and piles up in front of the DPF
+    for (let j = 0; j < 16; j++) { const k = (tl * (ph === 0 ? .55 : .3) + rnd(j + 3)) % 1, x = lerp(214, 526, Math.pow(k, .8)), near = cl((x - 440) / 86);
+      s += `<circle cx="${f(x)}" cy="${f(Y + 12 * Math.sin(j * 1.7))}" r="6" fill="${near > .5 ? C.smoke : C.cy}" opacity="${f(.9 - .3 * near)}"/>`; }
+    // back-pressure waves running back from the DPF towards the turbo and the engine
+    if (red) for (let j = 0; j < 4; j++) { const k = (tl * .9 + j / 4) % 1, x = lerp(DX0 - 8, 150, eo(k)), op = (1 - k) * (ph === 1 ? eo(pt / .4) : 1);
+      s += `<path d="M ${f(x + 16)} ${Y - 56} Q ${f(x - 14)} ${Y} ${f(x + 16)} ${Y + 56}" fill="none" stroke="${C.red}" stroke-width="7" stroke-linecap="round" opacity="${f(op)}"/>`; }
+    // heat shimmer above the manifold and the turbo
+    if (hot) for (let j = 0; j < 5; j++) { const x0 = 232 + j * 38, k = (tl * .8 + j * .23) % 1; let d = `M ${x0} ${f(Y - 72 - k * 26)}`;
+      for (let q = 1; q <= 6; q++) d += ` L ${f(x0 + 7 * Math.sin(tl * 6 + q + j))} ${f(Y - 72 - k * 26 - q * 9)}`;
+      s += `<path d="${d}" fill="none" stroke="${C.org}" stroke-width="4" stroke-linecap="round" opacity="${f(hp * (1 - k))}"/>`; }
+    if (hot) s += emoji(50, 40, 54, 'thermometer') + T(80, 52, '°C ↑', { s: 26, c: C.org });
+    if (red) s += tag(665, 42, 'PRESIUNE ↑', C.red, 'middle', 17);
+    const L = [['DPF ÎNFUNDAT: GAZELE NU MAI IES', C.red], ['CONTRAPRESIUNE: GAZELE APASĂ ÎNAPOI', C.red], ['SUPRAÎNCĂLZIRE PE EVACUARE', C.org], ['TURBO ȘI MOTOR ÎN PERICOL', C.red]][Math.min(3, ph)];
+    s += tag(457, 322, L[0], L[1], 'middle', 19);
+    s += T(457, 362, P.cap || 'DPF ÎNFUNDAT → CONTRAPRESIUNE → SUPRAÎNCĂLZIRE', { s: 15, c: C.dim, a: 'middle' });
+    return s;
+  }
+
+  return { _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();
