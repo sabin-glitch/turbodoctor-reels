@@ -1,35 +1,21 @@
-# Coada de descărcare: câte un URL TikTok pe linie. Orice push pe main care modifică fișierul pornește
-# workflow-ul fetch-sources, care urcă videoclipurile pe branch-ul `sources`. ID-urile deja descărcate se sar.
-# Clipurile DPF de pe @turbodoctoroficial (22 aug - 17 oct 2026), ordonate după vizualizări:
-https://www.tiktok.com/@turbodoctoroficial/video/7683223876435840258  # 20260908 45932v 143s Stai pana la final sa vezi cum iti omori zilnic DPF-ul!
-https://www.tiktok.com/@turbodoctoroficial/video/7685256912702688534  # 20260914 44935v 43s DPF OFF EGR OFF , anulam tot si dupa dam toti banii pe medic
-https://www.tiktok.com/@turbodoctoroficial/video/7679786234343918850  # 20260830 35656v 243s Vrei sa nu iti mai fie frica de DPF?  Stai pana la final pen
-https://www.tiktok.com/@turbodoctoroficial/video/7684636860261469462  # 20260912 34750v 16s Distribuie aceasta postare unui prieten care are DPF OFF sau
-https://www.tiktok.com/@turbodoctoroficial/video/7678736664629497110  # 20260827 10161v 37s Dupa cum stiti deja , atunci cand motorul vostru are Problem
-https://www.tiktok.com/@turbodoctoroficial/video/7691032957343108374  # 20260929 6474v 34s Tu stiai ce face un filtru de particule?
-https://www.tiktok.com/@turbodoctoroficial/video/7690078738301685014  # 20260927 4678v 67s Anularea DPF este facuta de foarte multe ori gresit! Problem
-https://www.tiktok.com/@turbodoctoroficial/video/7684883127470279958  # 20260913 3147v 67s Ce se poate intampla daca mergi cu DPF-ul infundat?
-https://www.tiktok.com/@turbodoctoroficial/video/7688412379931053334  # 20260922 3086v 130s Ca răspuns pentru @Alex Ander DPF OFF NU E INGINERIE… Cautar
-https://www.tiktok.com/@turbodoctoroficial/video/7693999509533134102  # 20261007 3001v 87s Cand verificam prima data filtrul de particule?
-https://www.tiktok.com/@turbodoctoroficial/video/7693185855095344407  # 20261005 2985v 178s Mai distrugem niste mituri?  Despre DPF am auzit de-alungul 
-https://www.tiktok.com/@turbodoctoroficial/video/7692701804835933463  # 20261004 2609v 138s Ca răspuns pentru @Marius Valentin Stan ADEVARUL DESPRE INFU
-https://www.tiktok.com/@turbodoctoroficial/video/7677138986413985046  # 20260823 2495v 138s Ca răspuns pentru @vasivasi ADEVARUL DESPRE DPF OFF , EGR OF
-https://www.tiktok.com/@turbodoctoroficial/video/7694329560896130326  # 20261008 2399v 59s Ca răspuns pentru @Alex Nicoara Ce sunt oil ash, soot acumul
-https://www.tiktok.com/@turbodoctoroficial/video/7689702802909695254  # 20260926 2055v 270s Cum iti distrugi singur DPF-ul?
-https://www.tiktok.com/@turbodoctoroficial/video/7679349443023588611  # 20260829 1938v 121s Ce reparam?  1. Motoare  2.Turbine  3.Injectoare si Pompe  4
-https://www.tiktok.com/@turbodoctoroficial/video/7694363419725630742  # 20261008 1812v 16s Curat , Perfect!  Asa ies filtrele de particule de la curata
-https://www.tiktok.com/@turbodoctoroficial/video/7697358795214736662  # 20261016 1569v 57s #dpf #turbodiesel #vag #for #fy
-https://www.tiktok.com/@turbodoctoroficial/video/7686187533075664131  # 20260916 1010v 164s Ca răspuns pentru @Bogdan Andrei Pica motoarele din cauza DP
-https://www.tiktok.com/@turbodoctoroficial/video/7696924159942692118  # 20261015 602v 67s Credem ca DPF OFF ESTE VIITORUL!!!#dpfoff #dpf #diesel #dies
-td_ai_toyota=https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/a5e3c24c-74fe-4dfc-a892-4135cdce4370_347bd90e-d286-4765-ad64-092e312ebe98_0a96985f-81dc-45e7-b01c-1834fa2e0812.mp4  # reel categorii de soferi, cadru AI Toyota
-toyota_v2=https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/9084b354-da6e-42d4-ab81-581ba017d2d6_a4d6001a-0736-4d1e-aa27-84ec5201bd56_70cff3f3-148c-453f-bef6-1c5d3b0e4058.mp4  # reel categorii de soferi
-# Top 10 DPF după vizualizări (2026-10-27), descărcate la calitate maximă:
-https://www.tiktok.com/@turbodoctoroficial/video/7658634943752408342  # 469769v Cum functioneaza Filtrul de particule?
-https://www.tiktok.com/@turbodoctoroficial/video/7662639435837623574  # 215125v DPF-UL NU SE INFUNDA SINGUR
-https://www.tiktok.com/@turbodoctoroficial/video/7659470133861059842  # 164528v Turatie pentru regenerarea DPF?
-https://www.tiktok.com/@turbodoctoroficial/video/7651126255894482198  # 134677v Adevarul despre regenerarea fortata
-https://www.tiktok.com/@turbodoctoroficial/video/7661131685991386391  # 92955v Curatare Vs Anulare DPF
-https://www.tiktok.com/@turbodoctoroficial/video/7665790820192210198  # 83842v Problema serioasa pe DPF, solutia rapida
-https://www.tiktok.com/@turbodoctoroficial/video/7669006545878813974  # 76470v DPF INCARCAT ITI POATE DISTRUGE
-https://www.tiktok.com/@turbodoctoroficial/video/7667987843947580694  # 72905v Regenerarea fortata nu poate rezolva
-https://www.tiktok.com/@turbodoctoroficial/video/7643358114590510339  # 64946v La cati km isi face regenerare DPF-ul?
+# top 11–30 DPF (2026-10-28)
+https://www.tiktok.com/@turbodoctoroficial/video/7671638287798324502  # #11 drum_lung_nu_rezolva
+https://www.tiktok.com/@turbodoctoroficial/video/7685256912702688534  # #12 dpf_off_egr_off_medicamente
+https://www.tiktok.com/@turbodoctoroficial/video/7679786234343918850  # #13 frica_de_dpf
+https://www.tiktok.com/@turbodoctoroficial/video/7684636860261469462  # #14 prieten_dpf_off
+https://www.tiktok.com/@turbodoctoroficial/video/7675024648173587734  # #15 top3_distrugi_dpf
+https://www.tiktok.com/@turbodoctoroficial/video/7668187171194555670  # #16 turbina_dpf_vinovate
+https://www.tiktok.com/@turbodoctoroficial/video/7653344092272790806  # #17 ulei_special_dpf
+https://www.tiktok.com/@turbodoctoroficial/video/7658902545766681878  # #18 preventie_vs_reparatie
+https://www.tiktok.com/@turbodoctoroficial/video/7645572033669123350  # #19 monolit_ceramic
+https://www.tiktok.com/@turbodoctoroficial/video/7659843240744471830  # #20 regenerare_fortata_risc
+https://www.tiktok.com/@turbodoctoroficial/video/7639404356827237665  # #21 vlog_interval_km
+https://www.tiktok.com/@turbodoctoroficial/video/7666734254889389334  # #22 curatare_apa_de_ploaie
+https://www.tiktok.com/@turbodoctoroficial/video/7671637574909250838  # #23 curatare_fara_demontare
+https://www.tiktok.com/@turbodoctoroficial/video/7671014061051596054  # #24 anulare_catalizator
+https://www.tiktok.com/@turbodoctoroficial/video/7639060776220642582  # #25 rasfatam_dpf
+https://www.tiktok.com/@turbodoctoroficial/video/7647564494910000406  # #26 dpf_topit
+https://www.tiktok.com/@turbodoctoroficial/video/7691032957343108374  # #27 ce_face_filtrul
+https://www.tiktok.com/@turbodoctoroficial/video/7676094144523046166  # #28 fum_dupa_anulare
+https://www.tiktok.com/@turbodoctoroficial/video/7683855730276879638  # #29 unde_dai_unde_crapa
+https://www.tiktok.com/@turbodoctoroficial/video/7690078738301685014  # #30 anulare_gresita_podcast
