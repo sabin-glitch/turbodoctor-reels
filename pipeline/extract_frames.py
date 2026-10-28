@@ -1,6 +1,7 @@
 """Base frames in OUTPUT order, NO stabilization: src/cfr.mp4 (720x1280) -> lanczos upscale 1080x1920.
 Handles global speed (timeline 'speed'), in-reel B-roll (out/broll.json, same clip only) and the tip segment.
 B-roll: [{"at": [win, "word", nth, offset_s] | seconds, "dur": s, "src": source_seconds, "speed": 1.0}]"""
+import math
 import json, os, unicodedata, shutil
 import cv2, numpy as np
 ROOT = os.environ.get("REEL_ROOT") or os.path.dirname(os.path.abspath(__file__))
@@ -43,7 +44,7 @@ cap = cv2.VideoCapture(f"{ROOT}/src/cfr.mp4")
 LAST = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
 need = {}
 for n in range(n_out):
-    need.setdefault(max(0, min(LAST, int(round(out_to_src(n / FPS) * FPS)))), []).append(n)
+    need.setdefault(max(0, min(LAST, int(math.floor(out_to_src(n / FPS) * FPS + 1e-3)))), []).append(n)
 shutil.rmtree(f"{ROOT}/frames_base", ignore_errors=True); os.makedirs(f"{ROOT}/frames_base", exist_ok=True)
 i = 0; written = 0; last = max(need)
 while i <= last:
