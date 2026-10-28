@@ -12,7 +12,7 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     pretul: aw(2, 'prețul'), mic: aw(2, 'mic'),
     nu3: aw(3, 'Nu'), diagnoza3: aw(3, 'diagnoză'), gratuita3: aw(3, 'gratuită'), oferim: aw(3, 'oferim'), locatie: aw(3, 'locație'), buc: aw(3, 'București'),
     iasi: aw(3, 'Iași'), galati: aw(3, 'Galați'), piatra: aw(3, 'Piatra'), cazul: aw(3, 'cazul'), demontate: aw(3, 'demontate'), verif3: aw(3, 'verificarea'),
-    n75: aw(3, '75'), verif3b: aw(3, 'verificarea', 1), pompei: aw(3, 'pompei'), n150: aw(3, '150'), n350: aw(3, '350'),
+    n75: aw(3, '75'), injectoarelor: aw(3, 'injectoarelor'), verif3b: aw(3, 'verificarea', 1), pompei: aw(3, 'pompei'), n150: aw(3, '150'), n350: aw(3, '350'),
     asa4: aw(4, 'Așa'), ajuta4: aw(4, 'ajuta'), diag4: aw(4, 'diagnosticarea'), inainte4: aw(4, 'înainte'), banii: aw(4, 'banii'),
     te5: aw(5, 'Te'), programa: aw(5, 'programa'), numarul: aw(5, 'numărul'),
   };
@@ -34,8 +34,8 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     },
     items: [
       // HOOK 1 (cadru AI, bordul și cheia): demarorul se chinuie, motorul prinde abia după „greu”
-      { k: 'boom', t: T1, dur: CUT1 - .06 - T1, txt: 'PORNEȘTE', y: 360, size: 165, col: '#FFFFFF', from: 3.2, sh: 18, ca: 22, riser: false, bg: .8, glow: 'rgba(98,216,255,.55)' },
-      { k: 'boom', t: T2, dur: CUT1 - .06 - T2, txt: 'GREU?', y: 575, size: 255, col: '#FFD21F', from: 3.6, sh: 26, ca: 30, riser: false, bg: 1 },
+      { k: 'boom', t: T1, dur: CUT1 - .06 - T1, txt: 'PORNEȘTE', y: 335, size: 165, col: '#FFFFFF', from: 3.2, sh: 18, ca: 22, riser: false, bg: .8, glow: 'rgba(98,216,255,.55)' },
+      { k: 'boom', t: T2, dur: CUT1 - .06 - T2, txt: 'GREU?', y: 592, size: 255, col: '#FFD21F', from: 3.6, sh: 26, ca: 30, riser: false, bg: 1 },
       { k: 'chip', t0: A.a0 - .05, t1: CUT1 - .1, y: 172, ph: [[A.a0 - .05, 'snowflake', 'A VENIT IARNA', 'blue']] },
       // HOOK 2 (cadru AI, motorul care trepidează)
       { k: 'boom', t: T3, dur: CUT2 - .06 - T3, txt: 'TREPIDAȚII?', y: 420, size: 190, col: '#FF4B4B', from: 3.6, sh: 30, ca: 30, riser: false, bg: 1, glow: 'rgba(255,75,75,.55)' },
@@ -57,11 +57,12 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       // IMG_1882 (selfie): oferta — DIAGNOZĂ ... GRATUITĂ! (boom pe fiecare cuvânt, deasupra capului)
       { k: 'boom', t: A.diagnoza3, dur: BOOM_END - A.diagnoza3, txt: 'DIAGNOZĂ', y: 224, size: 112, col: '#FFFFFF', from: 2.8, sh: 14, ca: 18, riser: false, bg: .6, glow: 'rgba(98,216,255,.5)' },
       { k: 'boom', t: A.gratuita3, dur: BOOM_END - A.gratuita3, txt: 'GRATUITĂ!', y: 380, size: 142, col: '#4ADE80', from: 3.6, sh: 26, ca: 28, bg: 1, glow: 'rgba(74,222,128,.6)' },
-      { k: 'eq', t0: A.locatie - .1, t1: A.cazul - .3, top: 196, ico: 'round_pushpin', title: 'ÎN ORICE LOCAȚIE', sub: 'TURBO DOCTOR',
+      { k: 'chip', t0: BOOM_END + .05, t1: A.buc - .5, y: 330, ph: [[BOOM_END + .05, 'round_pushpin', 'ÎN ORICE LOCAȚIE TURBO DOCTOR', 'blue']] },
+      { k: 'eq', t0: A.buc - .25, t1: A.cazul - .3, top: 196, ico: 'round_pushpin', title: 'DIAGNOZĂ GRATUITĂ', sub: 'ORICE LOCAȚIE',
         lines: [[A.buc - .05, 'BUCUREȘTI · IAȘI', 'c'], [A.galati - .05, 'GALAȚI · PIATRA NEAMȚ', 'c']] },
       { k: 'chip', t0: A.cazul - .1, t1: A.verif3 - .3, y: 330, ph: [[A.cazul - .1, 'wrench', 'AI DEJA PIESELE DEMONTATE?', 'yellow']] },
       { k: 'eq', t0: A.verif3 - .1, t1: A.asa4 - .3, top: 138, ico: 'microscope', title: 'VERIFICARE PIESE DEMONTATE', sub: 'PREȚ',
-        lines: [[A.n75 - .05, 'INJECTOR · 75 LEI/BUC', 'big y'], [A.n150 - .05, 'POMPĂ · 150–350 LEI', 'big y']] },
+        lines: [[A.injectoarelor - .05, 'INJECTOR · 75 LEI/BUC', 'big y'], [A.pompei - .05, 'POMPĂ · 150–350 LEI', 'big y']] },
       { k: 'chip', t0: A.ajuta4 - .1, t1: A.te5 - .35, y: 330, ph: [[A.ajuta4 - .1, 'stethoscope', 'DIAGNOSTICARE PERFECTĂ', 'green'], [A.inainte4 - .05, 'money_bag', 'ÎNAINTE SĂ BAGI BANII ÎN REPARAȚII', 'yellow']] },
       // programarea: telefonul, mare, exact când spune „numărul de telefon de pe ecran”
       { k: 'chip', t0: A.te5 - .05, t1: A.programa - .4, y: 330, ph: [[A.te5 - .05, 'round_pushpin', 'TE AȘTEPTĂM LA NOI!', 'green']] },
@@ -73,8 +74,8 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     ],
     fx: [
       // hook 1
-      { k: 'punch', t: T1, a: .1, sh: 22 }, { k: 'glitch', t: T1, d: .14 }, { k: 'shock', t: T1 + .01, x: 540, y: 360, r: 620, n: 1, col: '#FFFFFF' },
-      { k: 'flash', t: T2 - .11, a: .45 }, { k: 'punch', t: T2, a: .12, sh: 28 }, { k: 'shock', t: T2 + .01, x: 540, y: 575, r: 720, n: 2, col: '#FFD21F', col2: '#FFFFFF' },
+      { k: 'punch', t: T1, a: .1, sh: 22 }, { k: 'glitch', t: T1, d: .14 }, { k: 'shock', t: T1 + .01, x: 540, y: 335, r: 620, n: 1, col: '#FFFFFF' },
+      { k: 'flash', t: T2 - .11, a: .45 }, { k: 'punch', t: T2, a: .12, sh: 28 }, { k: 'shock', t: T2 + .01, x: 540, y: 592, r: 720, n: 2, col: '#FFD21F', col2: '#FFFFFF' },
       { k: 'punch', t: CATCH, a: .035, sh: 12 },
       // hook 2
       { k: 'flash', t: CUT1 - .09, a: .6 }, { k: 'glitch', t: CUT1 - .02, d: .16 }, { k: 'punch', t: T3, a: .13, sh: 30 },
@@ -90,6 +91,6 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       { k: 'punch', t: A.programa + .02, a: .06, sh: 12 },
     ],
     sfx: [[CUT2 - .12, 'whoosh', .45], [CLIP[3] - .1, 'whoosh', .45], [CLIP[4] - .1, 'whoosh', .45], [CLIP[5] - .1, 'whoosh', .45]],
-    bursts: [[T2 + .04, 540, 575, 8, 460, 1.3], [T3 + .04, 540, 420, 7, 420, 1.2], [A.gratuita3 + .04, 540, 372, 8, 460, 1.4]],
+    bursts: [[T2 + .04, 540, 592, 8, 460, 1.3], [T3 + .04, 540, 420, 7, 420, 1.2], [A.gratuita3 + .04, 540, 372, 8, 460, 1.4]],
   };
 };
