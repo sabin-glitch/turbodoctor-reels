@@ -49,6 +49,18 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 5. Pe reel-uri deja făcute: `tools/hook_b/` (scenariile în `hook_specs.py`, apoi `hook_all.sh <slug…>` și `render_all.sh <slug…>`, care randează și verifică vocea intro-ului cu ASR, LUFS și o foaie de cadre).
 6. Vocea TTS pierde consoanele de la începutul frazei (T, C, V, „Și nu”, „Știi”): frazele încep cu vocală, „Iar”, „Însă”, „dar”.
 
+## Hook cu cadre AI (promo injectoare, 28.10.2026)
+
+Când Sabin cere în hook imagini care nu există în clipurile lui (ex. „un motor care pornește greu și după aia un motor care trepidează”):
+
+1. Generez cadrele cu vidIQ (`vidiq_generate_video`, `gemini-omni-flash`, 9:16, 720p, **cu sunet**; ~20 credite/s) și îi spun lui Sabin costul. Promptul cere „vertical smartphone footage, no music, no voices, no text”.
+2. Le aduc prin `fetch-sources`: linii `nume=URL` în `sources/queue.txt`, push pe `main`, apoi `git show origin/sources:<nume>.mp4` (după aceea șterg ref-ul `origin/sources` și rulez `git gc`: branch-ul are sute de MB).
+3. `tools/hook_ai/build_hook_promo_injectoare.py` construiește sursa: cadrele AI peste prima frază (vocea lui rămâne întreagă, întârziată cu `PRE`), apoi clipurile lui de la fraza următoare. Demarorul e pus în buclă, tăiat pe golurile dintre compresii, până motorul „prinde” imediat după cuvântul-cheie („greu”); imaginea merge înainte-înapoi pe partea statică, ca momentul în care prinde să cadă pe sunet. Motorul care trepidează primește o vibrație a cadrului sincronizată cu sunetul lui (anvelopa 20–150 Hz). Sunetul real al cadrelor AI merge separat în `audio/hook_bed.wav`.
+4. `out/v2.json`: `"beds": [{"wav": "audio/hook_bed.wav", "t": 0, "gain": 1.0, "duck": 0.5}]` (sunetul nu trece prin lanțul de curățare a vocii și coboară sub voce) și `"music_in": <s>` (muzica intră abia când apare el).
+5. Transcrierea făcută pe clipurile lui se mută cu `PRE` (`out/transcript.json`, `out/transcript_ctx.json`, `out/wins.json`), fără o nouă transcriere.
+6. Titlurile hook-ului: `boom` pe cuvintele-cheie, sus, peste zona fără acțiune (parbrizul înghețat, capota); subtitrările ascunse cât durează hook-ul (`hideCap`). Exemplu: `pipeline/examples/reel_promo_injectoare_hook_ai.js`.
+7. La postare: `isAiGenerated: true` pe Instagram și `isAigc: true` pe TikTok.
+
 ## Structură
 
 | Fișier | Rol |
@@ -72,11 +84,12 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `pipeline/schem.js` | schemele animate ale defectelor |
 | `pipeline/examples/*.js` | configurații reale de scene (`reel.js`) din reel-urile aprobate |
 | `pipeline/render.py` | `--prep`, `--test t1,t2` pentru previzualizări, `--full` pentru randare (~4–5 fps) |
-| `pipeline/audio.py` | vocea pe EDL + atempo, muzică discretă cu ducking, SFX sintetizate, loudnorm −14 LUFS |
+| `pipeline/audio.py` | vocea pe EDL + atempo, muzică discretă cu ducking, SFX sintetizate, sunet real de hook (`beds`, cu ducking sub voce), loudnorm −14 LUFS |
 | `pipeline/finish.sh` | randare completă, audio, mux, compresie sub 85 MB, copertă, `verify_sync.py` |
 | `pipeline/runner.sh` | coadă serială de joburi de randare (`/home/claude/queue/todo/*.job`) |
 | `pipeline/qa.py`, `qsheet.py`, `gridframe.py`, `csheet.sh`, `sheet.py`, `toks.py`, `wl.py` | control: foi de contact, grile de coordonate, cuvinte cu timpi |
 | `pipeline/track_point.py` | urmărește un punct (optical flow) pentru cercuri, scanări și săgeți pe piese reale |
+| `tools/hook_ai/` | hook din cadre AI cu sunet (vezi „Hook cu cadre AI”) |
 | `pipeline/vo_build.py` | voiceover TTS (Piper ro_RO-mihai), doar când se cere voce nouă |
 | `pipeline/vo_narrator.py` | **narator peste clipul întreg** (cerut de Sabin pe 23.10.2026 la #0209, unde vocea originală nu se înțelegea): `vo_script.json` cu replici la timpi fixați pe imagine, voce Piper făcută mai gravă și calmă (Praat: formanți ×0,94, ~95 Hz), cea mai clară din 8 variante după ASR; sunetul original rămâne dedesubt (`out/v2.json`: `"narrator": true, "orig_gain": 0.32`). Apoi `retime.py`, `extract_frames.py`, ca de obicei. Se rulează după `setup.sh --tts` |
 | `assets/` | fonturi Montserrat, Anton și JetBrains Mono (OFL), emoji Fluent 3D (MIT) |
