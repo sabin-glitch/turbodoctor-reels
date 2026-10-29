@@ -13,6 +13,8 @@ get asr-models/silero_vad.onnx silero_vad.onnx
 get asr-models/sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8.tar.bz2 sherpa-onnx-nemo-parakeet-tdt-0.6b-v3-int8
 get asr-models/sherpa-onnx-whisper-turbo.tar.bz2 sherpa-onnx-whisper-turbo
 rm -f "$M"/sherpa-onnx-whisper-turbo/turbo-encoder.onnx "$M"/sherpa-onnx-whisper-turbo/turbo-decoder.onnx "$M"/sherpa-onnx-whisper-turbo/*.weights 2>/dev/null || true
-if [ "$1" = "--tts" ]; then mkdir -p "$M/tts"; [ -e "$M/tts/vits-piper-ro_RO-mihai-medium" ] || curl -sSL "$REL/tts-models/vits-piper-ro_RO-mihai-medium.tar.bz2" | tar -xj -C "$M/tts"
+if [ "$1" = "--tts" ] || [ "$2" = "--tts" ]; then mkdir -p "$M/tts"; [ -e "$M/tts/vits-piper-ro_RO-mihai-medium" ] || curl -sSL "$REL/tts-models/vits-piper-ro_RO-mihai-medium.tar.bz2" | tar -xj -C "$M/tts"
   pip install -q --break-system-packages praat-parselmouth >/dev/null; fi  # parselmouth: deeper, calmer narrator voice
+# --sep: UVR MDX-Net voice model (sep_voice.py) for compilations built from reels already published (voice without their old music/SFX)
+case " $* " in *" --sep "*) mkdir -p "$M/sep"; [ -e "$M/sep/UVR-MDX-NET-Voc_FT.onnx" ] || curl -sSL -o "$M/sep/UVR-MDX-NET-Voc_FT.onnx" "$REL/source-separation-models/UVR-MDX-NET-Voc_FT.onnx" ;; esac
 echo "setup ok -> models in $M"

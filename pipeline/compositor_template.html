@@ -196,6 +196,21 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* stamp */
 .stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
+/* band (29.10.2026, promo compilație): bară opacă peste bara de etape arsă în reel-urile deja editate, cu cazul curent */
+.band{display:none;align-items:center;gap:16px;padding:0 30px;border-radius:999px;background:#070B12;border:2px solid rgba(255,255,255,.18);box-shadow:0 10px 26px rgba(0,0,0,.5);font-family:JB;font-weight:800;font-size:25px;letter-spacing:1.6px;color:#fff;white-space:nowrap;overflow:hidden}
+.band .bDot{width:16px;height:16px;border-radius:50%;background:#FF3B30;box-shadow:0 0 0 5px rgba(255,59,48,.25);flex:none}
+.band .bK{color:var(--yellow)}.band .bSep{color:rgba(255,255,255,.35)}.band .bTx{display:inline-block}
+.band .bSub{margin-left:auto;color:var(--cyan);font-weight:700;font-size:22px}
+/* lbl (29.10.2026): eticheta opacă pe 2 rânduri peste titlul vechi ars (după caption_clean, inpainting-ul lasă urme pe fundaluri detaliate); al doilea rând urmează ce spune */
+.lbl{display:none;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-radius:26px;background:#070B12;border:3px solid rgba(98,216,255,.45);box-shadow:0 14px 34px rgba(0,0,0,.5);overflow:hidden;text-align:center}
+.lbl .lK{font-family:JB;font-weight:800;font-size:24px;letter-spacing:4px;color:var(--yellow);white-space:nowrap}
+.lbl .lT{font-family:Anton;font-size:68px;line-height:1.04;color:#fff;letter-spacing:1px;white-space:nowrap;display:inline-block}
+.lbl .lT.g{color:#4ADE80}.lbl .lT.y{color:var(--yellow)}.lbl .lT.c{color:var(--cyan)}.lbl .lT.r{color:#FF4B4B}
+/* chap (29.10.2026): cardul de capitol la începutul fiecărui caz, peste fundalul estompat de fx veil */
+.chap{display:none;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.chap .cK{font-family:JB;font-weight:800;font-size:30px;letter-spacing:6px;color:var(--yellow);padding:8px 22px;border:3px solid var(--yellow);border-radius:12px;background:rgba(0,0,0,.35)}
+.chap .cT{font-family:Anton;font-size:112px;line-height:1;color:#fff;letter-spacing:1px;text-shadow:0 10px 30px rgba(0,0,0,.6);white-space:nowrap}
+.chap .cS{font-weight:900;font-size:40px;color:#fff;background:var(--red2);padding:8px 26px;border-radius:999px;border:3px solid #fff;white-space:nowrap}
 /* end card (din 25.10.2026: fără CTA — fără „Distribuie”, telefon și site; doar TURBO DOCTOR, harta și „Diagnoză gratuită”) */
 #endCard{width:1080px;height:1920px}
 #endCard .eWord{position:absolute;left:0;right:0;top:380px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
@@ -418,6 +433,8 @@ function renderBg(t) {
   for (const P of fxOf('punch')) { const d = t - P.t; if (d >= -0.02 && d < .7) { z += (P.a || .06) * Math.exp(-Math.max(0, d) * 6.5) * (d < .05 ? clamp((d + .02) / .07) : 1);
     const sh = P.sh || 0; dx += sh * Math.exp(-d * 9) * Math.sin(d * 75); dy += sh * Math.exp(-d * 9) * Math.cos(d * 61); } }
   if (HAS_COLD && t < .45) { const s = 4 * (1 - clamp(t / 0.45)); dx += s * Math.sin(t * 90); dy += s * Math.cos(t * 70); }
+  // bgFix (29.10.2026): reel-uri deja editate (grafică și subtitrări arse) -> fundalul nu se mărește și nu se mișcă, ca band-ul să rămână aliniat
+  const FIXED = (CFG.bgFix || []).some(([a, b]) => t >= a && t < b); if (FIXED) { z = 1; dx = 0; dy = 0; }
   BGX.z = z; BGX.dx = dx; BGX.dy = dy;
   const bg = $('bg'); bg.style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(${z.toFixed(4)})`;
   // colour filters ONLY on highlighted moments
@@ -426,6 +443,9 @@ function renderBg(t) {
   let xr = 0; for (const f of fxOf('xray')) xr = Math.max(xr, win01(t, f.t0, f.t1, .08, .18));
   if (xr > 0.01) filt = `grayscale(${xr.toFixed(2)}) invert(${(xr * .92).toFixed(2)}) sepia(${(xr * .6).toFixed(2)}) hue-rotate(${(xr * 165).toFixed(0)}deg) saturate(${(1 + xr * 1.6).toFixed(2)}) contrast(${(1 + xr * .25).toFixed(2)})`;
   else if (bw > 0.01) filt = `grayscale(${bw.toFixed(2)}) contrast(${(1 + .18 * bw).toFixed(2)}) brightness(${(1 - .06 * bw).toFixed(2)})`;
+  // veil (29.10.2026): fundal estompat și întunecat sub cardul de capitol (chap), plin din primul cadru
+  let ve = 0; for (const f of fxOf('veil')) ve = Math.max(ve, win01(t, f.t0, f.t1, .001, f.out ?? .16));
+  if (ve > 0.01) filt = `blur(${(24 * ve).toFixed(1)}px) brightness(${(1 - .6 * ve).toFixed(3)}) saturate(${(1 + .2 * ve).toFixed(2)})`;
   if (INTRO && t < HS) { const p = clamp((HS - t) / .35); filt = `blur(${(22 * p).toFixed(1)}px) brightness(${(1 - .62 * p).toFixed(3)}) saturate(${(1 + .25 * p).toFixed(2)})`; }
   if (bg.dataset.f !== filt) { bg.style.filter = filt; bg.dataset.f = filt; }
   const sc = $('scanLine'); let scOn = false;
@@ -438,7 +458,7 @@ function renderBg(t) {
   let fl = 0; if (HAS_COLD) { const dh = t - (HOOK_END - .1); if (dh >= 0 && dh < .26) fl = .55 * Math.sin(clamp(dh / .26) * Math.PI); }
   for (const f of fxOf('flash')) { const d = t - f.t; if (d >= 0 && d < .22) fl = Math.max(fl, (f.a || .35) * Math.sin(clamp(d / .22) * Math.PI)); }
   const de = t - (TEND - .08); if (de >= 0 && de < .3) fl = Math.max(fl, .6 * Math.sin(clamp(de / .3) * Math.PI));
-  $('flash').style.opacity = fl.toFixed(3); $('vig').style.opacity = t >= TEND ? 0 : 1;
+  $('flash').style.opacity = fl.toFixed(3); $('vig').style.opacity = t >= TEND || FIXED ? 0 : 1;  // reel-urile deja editate au vigneta lor
   // glitch slices (hook -> story transition + extra glitch fx)
   let g = 0; if (HAS_COLD) { const d = t - (HOOK_END - .14); if (d >= 0 && d < .24) g = 1; }
   for (const f of fxOf('glitch')) { const d = t - f.t; if (d >= 0 && d < (f.d || .2)) g = 1; }
@@ -526,6 +546,11 @@ function buildItems() {
       const av = o.initial ? `<div class="av" style="background:${o.col || '#7C8BA1'}">${o.initial}</div>`
         : `<div class="av" style="background:#D5D9DF"><svg width="80" height="80" viewBox="0 0 80 80"><circle cx="40" cy="31" r="15" fill="#fff"/><path d="M 12 76 C 14 54 66 54 68 76 Z" fill="#fff"/></svg></div>`;
       o.el = mk('abs cmt', `<div class="ch">${o.head || `Răspuns la comentariul de la <b>${o.name}</b>`}</div><div class="cb">${av}<div class="ct">${o.text}</div></div>`, 'overlays'); }
+    if (o.k === 'band') { o.el = mk('abs band', `<span class="bDot"></span><span class="bK">${o.kicker || 'CAZ REAL'}</span><span class="bSep">·</span><span class="bTx"></span><span class="bSub"></span>`, 'overlays');
+      o.el.dataset.disp = 'flex'; o.el.style.width = (o.w || 960) + 'px'; o.el.style.height = (o.h || 70) + 'px'; }
+    if (o.k === 'lbl') { o.el = mk('abs lbl', '<div class="lK"></div><div class="lT"></div>', 'overlays'); o.el.dataset.disp = 'flex';
+      o.el.style.width = (o.w || 660) + 'px'; o.el.style.height = (o.h || 168) + 'px'; }
+    if (o.k === 'chap') { o.el = mk('abs chap', `<div class="cK">${o.kicker || 'CAZ REAL'}</div><div class="cT">${o.title}</div>${o.sub ? `<div class="cS">${o.sub}</div>` : ''}`, 'overlays'); o.el.dataset.disp = 'flex'; }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
     if (o.k === 'boom') { o.el = mk('abs boom', o.txt, 'overlays'); o.el.style.color = o.col || '#FFD21F'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
@@ -559,6 +584,9 @@ function itemCues() {
     if (o.k === 'eq') o.lines.forEach(l => sfx(l[0], l[2] === 'big' || l[2] === 'y' ? 'impact' : 'type', l[2] === 'big' ? .5 : .45));
     if (o.k === 'tip') { sfx(o.t0, 'ding', .45); o.rows.forEach(r => sfx(r[0], 'pop', .45)); }
     if (o.k === 'comment') { sfx(o.t0, 'pop', .6); sfx(o.t0 + .05, 'whoosh', .4); if (o.mini) sfx(o.mini, 'whoosh', .45); }
+    if (o.k === 'chap') { sfx(o.t0 - .07, 'whoosh', .75); sfx(o.t0, 'hit', .45); }
+    if (o.k === 'lbl') o.ph.slice(1).forEach(p => sfx(p[0], p[3] === 'g' ? 'ding' : 'tick2', .4));
+    if (o.k === 'band') o.ph.slice(1).forEach(p => sfx(p[0] + .12, 'tick2', .35));
     if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
     if (o.k === 'kin') { sfx(o.t - .02, 'impact', .7); sfx(o.t, 'glitch', .35); }
     if (o.k === 'boom') { if (o.riser !== false) sfx(o.t - .62, 'rise', o.rg ?? .6); sfx(o.t - .03, 'boom', o.bg ?? 1); sfx(o.t, 'crack', o.cg ?? .55); sfx(o.t + .01, 'glitch', .35); }
@@ -588,6 +616,29 @@ function rItem(o, t) {
     if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('img').src = `assets/emoji/${ph[1]}.png`; el.querySelector('span').textContent = ph[2]; el.className = 'chip abs ' + (ph[3] || ''); el.style.display = 'flex'; }
     const sw = ph === o.ph[0] ? 1 : lerp(.75, 1, eBack(clamp((t - ph[0]) / .25), 2.4));
     setT(el, o.x || 540, o.y || 330, L.s * sw, -2, L.o); return;
+  }
+  if (o.k === 'band') {  // {k:'band', t0, t1, y, w, h, kicker, ph: [[t, text, sub?]]}: opaque from its first frame (covers burned-in graphics), only the text animates
+    if (t < o.t0 || t >= o.t1) { hide(el); return; }
+    let ph = o.ph[0]; for (const p of o.ph) if (t >= p[0]) ph = p;
+    const key = ph[1] + '|' + (ph[2] || ''), tx = el.querySelector('.bTx');
+    if (el.dataset.k !== key) { el.dataset.k = key; tx.innerHTML = ph[1]; el.querySelector('.bSub').innerHTML = ph[2] || ''; }
+    const p = clamp((t - ph[0]) / .24); tx.style.transform = `translateY(${((1 - eOut(p)) * 28).toFixed(1)}px)`; tx.style.opacity = eOut(p).toFixed(3);
+    el.querySelector('.bDot').style.opacity = Math.floor(t * 3) % 2 ? .35 : 1;
+    setT(el, o.x || 540, o.y || 222, 1, 0, 1); return;
+  }
+  if (o.k === 'lbl') {  // {k:'lbl', t0, t1, x, y, w, h, ph: [[t, kicker, text, cls?]]}: opaque from its first frame; the big line follows the voice
+    if (t < o.t0 || t >= o.t1) { hide(el); return; }
+    let ph = o.ph[0]; for (const p of o.ph) if (t >= p[0]) ph = p;
+    const tx = el.querySelector('.lT'), key = ph[1] + '|' + ph[2] + '|' + (ph[3] || '');
+    if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('.lK').innerHTML = ph[1] || ''; tx.innerHTML = ph[2]; tx.className = 'lT ' + (ph[3] || '');
+      el.style.display = 'flex'; tx.style.fontSize = '68px'; const mw = (o.w || 660) - 56; if (tx.scrollWidth > mw) tx.style.fontSize = (68 * mw / tx.scrollWidth).toFixed(1) + 'px'; }
+    const p = clamp((t - ph[0]) / .24); tx.style.transform = `translateY(${((1 - eOut(p)) * 30).toFixed(1)}px)`; tx.style.opacity = eOut(p).toFixed(3);
+    const pop = ph === o.ph[0] ? lerp(.97, 1, eOut(clamp((t - o.t0) / .2))) : 1;
+    setT(el, o.x || 540, o.y || 333, pop, 0, 1); return;
+  }
+  if (o.k === 'chap') {  // {k:'chap', t0, t1, kicker, title, sub, y}
+    const L = life(t, o.t0, o.t1, .16, .14, 1.6); if (!L) { hide(el); return; }
+    setT(el, 540, o.y || 860, L.s, 0, L.o); return;
   }
   if (o.k === 'stamp') {
     const t1 = o.t1 || o.t + 1.4; if (t < o.t - .02 || t > t1 + .25) { hide(el); return; }
