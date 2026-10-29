@@ -19,8 +19,9 @@ SEGS = [  # name, file, t0, t1, audio ('orig' = original sound, 'sep' = voice se
     # 29.10 (Sabin): fără coada scurtă „din Piatra Neamț” -> se termină după „motoarelor”, înainte de tranziția reel-ului vechi (cadrul 427)
     ("opel",  f"{SRC}/orig_opel_0213.mp4",           5.05, 427 / 30, "sep",  "La Turbo Doctor primim și motoare din afara țării ... reparație completă a motoarelor."),
     ("trust", "/home/claude/promo/seg/pre_clean.mp4", 108.35, 129.80, "orig", "Țineți minte: ... diagnoza este complet gratuită."),  # pauza de după „gratuită” (până la „Tocmai”, 129.86)
-    # 29.10 (Sabin): un singur „țineți minte” la final -> fraza începe direct cu „Vă puteți programa…” („v” de la 142.12)
-    ("cta",   "/home/claude/promo/seg/pre_clean.mp4", 142.10, 147.80, "orig", "Vă puteți programa ... turbodoctor.ro", {"mute_until": 142.12, "fade_in": .02}),
+    # 29.10 (Sabin): un singur „țineți minte” la final -> fraza începe direct cu „Vă puteți programa…”; de la cadrul 4265 (142,167 s)
+    # nu mai rămâne nimic din „că” (verificat cu ASR în context: de la 142,12 Whisper mai auzea „Când vă…”)
+    ("cta",   "/home/claude/promo/seg/pre_clean.mp4", 4265 / 30, 147.80, "orig", "Vă puteți programa ... turbodoctor.ro", {"mute_until": 4265 / 30, "fade_in": .02}),
 ]
 TARGET_LUFS = -20.0
 ONLY = [x for x in os.environ.get("ONLY", "").split(",") if x]
