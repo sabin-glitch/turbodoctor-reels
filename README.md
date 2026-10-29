@@ -53,7 +53,7 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 
 | Fișier | Rol |
 |---|---|
-| `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO) |
+| `setup.sh` | dependențe + modele offline (ASR Parakeet + Whisper, VAD; `--tts` pentru vocea Piper RO; `--sep` pentru modelul UVR de separare a vocii) |
 | `pipeline/sdr.sh <in> <out.mp4>` | **clipurile de pe iPhone sunt HDR (HLG/Dolby Vision): le normalizez mereu cu `sdr.sh` (1080×1920, 30 fps, tone mapping la SDR BT.709) înainte să le lipesc.** Fără tone mapping, fața iese palidă și „arsă”, ca un filtru de lumină (respins de Sabin pe 24.10.2026). `new_reel.sh` face același tone mapping dacă primește direct un clip HDR |
 | `new_reel.sh <nume> <video>` | creează `/home/claude/reels/<nume>` cu scripturile, compozitorul, `schem.js`, fonturile, sursa la 30 fps, audio și contact sheet |
 | `.github/workflows/fetch-sources.yml`, `sources/queue.txt` | **clipuri de pe TikTok, fără laptopul lui Sabin:** URL-urile din `sources/queue.txt` (push pe `main`) sunt descărcate de GitHub Actions pe branch-ul `sources` (`<id>.mp4` + `<id>.json` + `manifest.json`) |
@@ -78,6 +78,8 @@ python3 qsheet.py /home/claude/deliver/TurboDoctor_<Nume>.mp4 /tmp/qs.jpg 12   #
 | `pipeline/qa.py`, `qsheet.py`, `gridframe.py`, `csheet.sh`, `sheet.py`, `toks.py`, `wl.py` | control: foi de contact, grile de coordonate, cuvinte cu timpi |
 | `pipeline/track_point.py` | urmărește un punct (optical flow) pentru cercuri, scanări și săgeți pe piese reale |
 | `pipeline/vo_build.py` | voiceover TTS (Piper ro_RO-mihai), doar când se cere voce nouă |
+| `pipeline/sep_voice.py <in.wav 44,1 kHz> <voce.wav> [<rest.wav>]` | separă vocea de muzica și SFX-urile unui reel deja editat (UVR MDX-Net prin sherpa-onnx; după `setup.sh --sep`) |
+| `tools/compilatie/` | promo din istoric (29.10.2026): `build_promo_motoare.py` construiește sursa din secvențe (`nume, fișier, t0, t1, 'sep'\|'orig', text, {mute_until, fade_in}`), `setup_reel_promo_motoare.sh` face folderul reel-ului și transcrierea pe câte o fereastră pe secvență |
 | `pipeline/vo_narrator.py` | **narator peste clipul întreg** (cerut de Sabin pe 23.10.2026 la #0209, unde vocea originală nu se înțelegea): `vo_script.json` cu replici la timpi fixați pe imagine, voce Piper făcută mai gravă și calmă (Praat: formanți ×0,94, ~95 Hz), cea mai clară din 8 variante după ASR; sunetul original rămâne dedesubt (`out/v2.json`: `"narrator": true, "orig_gain": 0.32`). Apoi `retime.py`, `extract_frames.py`, ca de obicei. Se rulează după `setup.sh --tts` |
 | `assets/` | fonturi Montserrat, Anton și JetBrains Mono (OFL), emoji Fluent 3D (MIT) |
 
