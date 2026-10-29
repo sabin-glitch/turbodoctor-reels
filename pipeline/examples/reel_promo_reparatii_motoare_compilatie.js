@@ -2,10 +2,11 @@
 // Sursa (all.mp4, vezi segs.json): 0 hook = clipul vechi „Reparații motoare” (GLE 2.0 biturbo desfăcut, titlul ars scos cu caption_clean)
 // · 1 Mercedes C200 (#0193) · 2 Suzuki SX4 (#0172) · 3 Opel Combo (#0213) — reel-uri deja editate: subtitrările și grafica lor rămân,
 // vocea e separată de muzica/SFX-urile lor (UVR), fundalul nu se mărește (bgFix), bara lor de etape e acoperită de `band`
-// · 4–5 același clip vechi, selfie: „demontăm, verificăm…” + „diagnoza este complet gratuită” · 6 selfie: „vă puteți programa…”.
+// · 4–5 același clip vechi, selfie: „demontăm, verificăm…” + „diagnoza este complet gratuită” · 6 selfie: „Vă puteți programa…”.
+// Revizia 29.10 (Sabin): fără coada scurtă „din Piatra Neamț” de la Opel și un singur „țineți minte” la final (fraza începe cu „Vă puteți programa”).
 // Promo: telefonul apare când spune „numărul de telefon” și pe cardul de final (ca la promo injectoare).
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
-  const SEG = [{"name": "hook", "out_t0": 0.0, "out_t1": 11.2667, "src": "pre_clean.mp4", "src_t0": 0.0}, {"name": "merc", "out_t0": 11.2667, "out_t1": 15.9333, "src": "orig_mercedes_0193.mp4", "src_t0": 2.6333}, {"name": "suz", "out_t0": 15.9333, "out_t1": 28.6333, "src": "orig_suzuki_0172.mp4", "src_t0": 21.8667}, {"name": "opel", "out_t0": 28.6333, "out_t1": 39.0667, "src": "orig_opel_0213.mp4", "src_t0": 5.0667}, {"name": "trust", "out_t0": 39.0667, "out_t1": 60.4, "src": "pre_clean.mp4", "src_t0": 108.3333}, {"name": "cta", "out_t0": 60.4, "out_t1": 66.9333, "src": "pre_clean.mp4", "src_t0": 141.2667}];  // din out/segs.json (build_promo_motoare.py)
+  const SEG = [{"name": "hook", "out_t0": 0.0, "out_t1": 11.2667, "src": "pre_clean.mp4", "src_t0": 0.0}, {"name": "merc", "out_t0": 11.2667, "out_t1": 15.9333, "src": "orig_mercedes_0193.mp4", "src_t0": 2.6333}, {"name": "suz", "out_t0": 15.9333, "out_t1": 28.6333, "src": "orig_suzuki_0172.mp4", "src_t0": 21.8667}, {"name": "opel", "out_t0": 28.6333, "out_t1": 37.8, "src": "orig_opel_0213.mp4", "src_t0": 5.0667}, {"name": "trust", "out_t0": 37.8, "out_t1": 59.2667, "src": "pre_clean.mp4", "src_t0": 108.3333}, {"name": "cta", "out_t0": 59.2667, "out_t1": 64.9667, "src": "pre_clean.mp4", "src_t0": 142.1}];  // din out/segs.json (build_promo_motoare.py)
   const at = n => SEG.find(s => s.name === n);
   const M = at('merc'), Z = at('suz'), O = at('opel'), T = at('trust'), C = at('cta');
   const CASES = [[M, '#1', 'MERCEDES C200', 'MOTOR PE BENZINĂ', 'MERCEDES C200 1.8 COMPRESOR', 'NU DOAR DIESEL'],
@@ -48,10 +49,9 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     [A.motor5 - .08, 'PROBLEME PE', 'MOTOR', 'c'], [A.admisie5 - .05, 'PROBLEME PE', 'MOTOR · ADMISIE', 'c'],
     [A.injectie5 - .05, 'PROBLEME PE', 'MOTOR · ADMISIE · INJECȚIE', 'c'], [A.evacuare5 - .05, 'PROBLEME PE', 'MOTOR · ADMISIE · INJECȚIE · EVACUARE', 'c'],
     [A.diagnoza5 - .05, 'LA TURBO DOCTOR', 'DIAGNOZA ESTE', '']] });
-  items.push({ k: 'stamp', t: A.gratuita5 - .05, t1: C.out_t0 + .55, txt: 'DIAGNOZĂ GRATUITĂ', y: 333, col: 'green', s: 1, rot: -5 });
+  items.push({ k: 'stamp', t: A.gratuita5 - .05, t1: A.programa - .1, txt: 'DIAGNOZĂ GRATUITĂ', y: 333, col: 'green', s: 1, rot: -5 });  // până intră telefonul
   // ---- CTA: telefonul și site-ul exact când le spune
   fx.push({ k: 'flash', t: C.out_t0, a: .3 }, { k: 'punch', t: C.out_t0, a: .06, sh: 10 });
-  items.push({ k: 'lbl', t0: C.out_t0 + .62, t1: A.programa + .45, y: 333, ph: [[C.out_t0 + .62, 'DIAGNOZĂ GRATUITĂ', 'PROGRAMEAZĂ-TE', 'y']] });  // după ștampilă
   items.push({ k: 'eq', t0: A.programa - .12, t1: SEND + .2, top: 196, ico: 'phone', title: 'PROGRAMEAZĂ-TE', sub: 'DIAGNOZĂ GRATUITĂ',
     lines: [[A.numarul - .02, '0739 065 065', 'big y'], [A.site - .02, 'TURBODOCTOR.RO', 'y']] });
   // ---- cardul de final standard + telefonul (doar pe promo)

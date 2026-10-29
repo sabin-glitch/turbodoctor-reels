@@ -11,13 +11,16 @@ FPS = 30
 SRC = "/home/claude/src_dl"
 SEP = "/home/claude/turbodoctor-reels/pipeline/sep_voice.py"
 W = "/home/claude/promo/work"; os.makedirs(W, exist_ok=True)
-SEGS = [  # name, file, t0, t1, audio ('orig' = original sound, 'sep' = voice separated from the old reel's music/SFX), what is said
+SEGS = [  # name, file, t0, t1, audio ('orig' = original sound, 'sep' = voice separated from the old reel's music/SFX), what is said, [options]
+    # options: {"mute_until": s, "fade_in": s} = sound starts only at that source time (cut inside running speech, e.g. after a removed phrase)
     ("hook",  "/home/claude/promo/seg/pre_clean.mp4", 0.00, 11.25, "orig", "Ai probleme cu motorul mașinii tale? ... rezolvarea completă și corectă a problemei tale."),
     ("merc",  f"{SRC}/orig_mercedes_0193.mp4",       2.62, 7.30, "sep",  "Nu trebuie să deții doar motor diesel ca să poți veni la Turbo Doctor."),
     ("suz",   f"{SRC}/orig_suzuki_0172.mp4",        21.85, 34.56, "sep", "În urma constatării cu camera endoscopică ... foarte multă motorină."),
-    ("opel",  f"{SRC}/orig_opel_0213.mp4",           5.05, 15.50, "sep",  "La Turbo Doctor primim și motoare din afara țării ... din Piatra Neamț."),
-    ("trust", "/home/claude/promo/seg/pre_clean.mp4", 108.35, 129.65, "orig", "Țineți minte: ... diagnoza este complet gratuită."),
-    ("cta",   "/home/claude/promo/seg/pre_clean.mp4", 141.25, 147.80, "orig", "Țineți minte că vă puteți programa ... turbodoctor.ro"),
+    # 29.10 (Sabin): fără coada scurtă „din Piatra Neamț” -> se termină după „motoarelor”, înainte de tranziția reel-ului vechi (cadrul 427)
+    ("opel",  f"{SRC}/orig_opel_0213.mp4",           5.05, 427 / 30, "sep",  "La Turbo Doctor primim și motoare din afara țării ... reparație completă a motoarelor."),
+    ("trust", "/home/claude/promo/seg/pre_clean.mp4", 108.35, 129.80, "orig", "Țineți minte: ... diagnoza este complet gratuită."),  # pauza de după „gratuită” (până la „Tocmai”, 129.86)
+    # 29.10 (Sabin): un singur „țineți minte” la final -> fraza începe direct cu „Vă puteți programa…” („v” de la 142.12)
+    ("cta",   "/home/claude/promo/seg/pre_clean.mp4", 142.10, 147.80, "orig", "Vă puteți programa ... turbodoctor.ro", {"mute_until": 142.12, "fade_in": .02}),
 ]
 TARGET_LUFS = -20.0
 ONLY = [x for x in os.environ.get("ONLY", "").split(",") if x]
@@ -35,9 +38,10 @@ def lufs(path):
 
 segs, vids, voice = [], [], []
 t_out = 0.0
-for k, (name, f, t0, t1, mode, txt) in enumerate(SEGS):
+for k, (name, f, t0, t1, mode, txt, *opt) in enumerate(SEGS):
+    opt = opt[0] if opt else {}
     n0, n1 = round(t0 * FPS), round(t1 * FPS); t0, t1 = n0 / FPS, n1 / FPS; nfr = n1 - n0; dur = nfr / FPS
-    v = f"{W}/{k}_{name}.mp4"
+    v = f"{W}/{k}_{name}_{n0}_{n1}.mp4"  # cache keyed by frame range
     if ONLY and name not in ONLY: continue
     if not os.path.exists(v): run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-ss", f"{t0:.4f}", "-i", f, "-frames:v", str(nfr), "-an",
          "-vf", "fps=30,scale=1080:1920:flags=lanczos,format=yuv420p", "-c:v", "libx264", "-preset", "medium", "-crf", "10", v])
@@ -48,13 +52,16 @@ for k, (name, f, t0, t1, mode, txt) in enumerate(SEGS):
     run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-ss", f"{a0:.4f}", "-t", f"{dur + 2 * pad:.4f}", "-i", af, "-vn", "-ac", "2", "-ar", "44100", raw])
     src = raw
     if mode == "sep":
-        voc = f"{W}/{k}_{name}_voc.wav"
+        voc = f"{W}/{k}_{name}_{n0}_{n1}_voc.wav"
         if not os.path.exists(voc): run([sys.executable, SEP, raw, voc, "-"])
         src = voc
     x, sr = sf.read(src, dtype="float32", always_2d=True); x = x.mean(1)
     x = resample_poly(x, 48000, sr).astype(np.float32) if sr != 48000 else x
     i0 = int(round((t0 - a0) * 48000)); n = int(round(dur * 48000))
     y = x[i0:i0 + n]; y = np.pad(y, (0, n - len(y)))
+    if "mute_until" in opt:
+        mu = int(round((opt["mute_until"] - t0) * 48000)); fi = int(opt.get("fade_in", .02) * 48000)
+        y[:mu] = 0; y[mu:mu + fi] *= np.linspace(0, 1, fi)
     tmp = f"{W}/{k}_{name}_v48.wav"; sf.write(tmp, y, 48000)
     L = lufs(tmp); g = 10 ** ((TARGET_LUFS - L) / 20); y = y * g
     fl = int(.012 * 48000); y[:fl] *= np.linspace(0, 1, fl); y[-fl:] *= np.linspace(1, 0, fl)
