@@ -3,6 +3,9 @@
 # Re-encodes to <= ~95 MB if needed (GitHub hard limit is 100 MB/file), force-pushes a one-file orphan commit to the
 # `media` branch and prints the public raw URL. Older media files leave the branch head - fine, because Metricool copies
 # the video to its own storage when the post is created. So: publish -> schedule, one video at a time.
+# The printed URL is pinned to the commit SHA, not to the branch: several chats publish in parallel and each force-push
+# replaces the branch head (30.10.2026: another chat's push removed a file before Metricool fetched it ->
+# "Failed to normalize media"). GitHub keeps serving the commit by SHA, so the pinned URL survives later pushes.
 set -e
 IN=$1; SLUG=$2; [ -f "$IN" ] && [ -n "$SLUG" ] || { echo "usage: $0 <video.mp4> <yyyy-mm-dd_slug>"; exit 1; }
 REPO=${TD_REPO:-https://github.com/sabin-glitch/turbodoctor-reels}
@@ -15,5 +18,5 @@ else cp "$IN" "$OUT"; fi
 cd "$W" && git init -q && git checkout -q --orphan media && git add "$SLUG.mp4" && \
 git -c user.name="Claude" -c user.email="noreply@anthropic.com" commit -q -m "media: $SLUG" && \
 git push -q -f "$REPO" media
-URL="https://raw.githubusercontent.com/${REPO#https://github.com/}/media/$SLUG.mp4"
+SHA=$(git rev-parse HEAD); URL="https://raw.githubusercontent.com/${REPO#https://github.com/}/$SHA/$SLUG.mp4"
 code=$(curl -s -o /dev/null -w '%{http_code}' -I -L "$URL"); echo "HTTP $code  $URL"
