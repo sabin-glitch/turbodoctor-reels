@@ -189,7 +189,7 @@ story_out0 = t
 for k, (a, b) in enumerate(keep):
     segments.append(dict(kind="story", src_a=round(a, 3), src_b=round(b, 3), out_a=round(t, 3), zg=ZG[k] if k < len(ZG) else 0)); t += b - a
 story_end = t
-END_CARD = 7.5
+END_CARD = float(_V2.get("end_card", 7.5))  # out/v2.json "end_card": seconds of end screen (default 7.5; longer for a promo end list)
 total = t + END_CARD
 
 

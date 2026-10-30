@@ -221,6 +221,32 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 #eFree img{width:54px;height:54px}
 .cityLbl{font-family:Mont;font-weight:900;font-size:34px;fill:#fff;paint-order:stroke;stroke:#0B0F14;stroke-width:9px;stroke-linejoin:round;letter-spacing:1px}
 .spark{width:90px;height:90px}
+/* dashboard warning lamps (promo DPF, 28.10.2026): instrument cluster whose lamps light up when he names them */
+.dashC{filter:drop-shadow(0 18px 34px rgba(0,0,0,.6))}
+.dashC svg{display:block}
+/* opis (promo mentenanță, 28.10.2026): final screen = recommended works + phone + locations, all on one frame (CFG.endCard = false hides the standard end card) */
+.opis{width:960px;color:#fff;text-align:center}
+.opis .oT{font-family:Anton;font-size:92px;line-height:1;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
+.opis .oT .y{color:var(--yellow)}
+.opis .oS{display:inline-flex;align-items:center;gap:12px;margin-top:14px;padding:8px 26px 8px 14px;border-radius:999px;background:#E11D2E;border:3px solid #fff;font-family:JB;font-weight:800;font-size:26px;letter-spacing:2px;white-space:nowrap}
+.opis .oS img{width:40px;height:40px}
+.opis .oCard{margin-top:22px;background:#fff;border-radius:30px;box-shadow:0 22px 56px rgba(0,0,0,.6);color:var(--ink);overflow:hidden;text-align:left}
+.opis .oH{display:flex;align-items:center;gap:14px;padding:18px 26px 14px;background:linear-gradient(90deg,#0F1216,#1E293B);color:#fff}
+.opis .oH img{width:56px;height:56px}
+.opis .oH .a{font-family:JB;font-weight:800;font-size:19px;letter-spacing:3px;color:#FFD21F}
+.opis .oH .b{font-weight:900;font-size:36px;line-height:1.05}
+.opis .oH .rx{margin-left:auto;font-family:Anton;font-size:72px;color:#E11D2E;line-height:1}
+.opis .oR{display:flex;align-items:center;gap:18px;padding:13px 28px;border-top:3px solid #EEF0F3;font-weight:900;font-size:35px;line-height:1.12;opacity:0}
+.opis .oR img{width:54px;height:54px;flex:none}
+.opis .oR .ok{margin-left:auto;flex:none}
+.opis .oR.sec{padding:12px 28px 2px;font-family:JB;font-weight:800;font-size:23px;letter-spacing:3px;color:#B45309;border-top:3px solid #EEF0F3}
+.opis .oR.sec + .oR{border-top:none}
+.opis .oP{margin-top:26px;font-family:Anton;font-size:118px;line-height:1;color:var(--yellow);letter-spacing:3px;-webkit-text-stroke:10px #000;paint-order:stroke fill;opacity:0}
+.opis .oP small{display:block;font-family:JB;font-weight:800;font-size:26px;color:#A5E9FF;letter-spacing:3px;-webkit-text-stroke:0;margin-bottom:8px}
+.opis .oW{margin-top:6px;font-family:JB;font-weight:800;font-size:40px;color:var(--cyan);opacity:0}
+.opis .oL{display:flex;justify-content:center;flex-wrap:wrap;gap:12px;margin-top:20px;opacity:0}
+.opis .oL span{display:inline-flex;align-items:center;gap:6px;padding:9px 20px 9px 10px;border-radius:999px;background:rgba(6,10,18,.85);border:3px solid #fff;font-weight:900;font-size:30px;white-space:nowrap}
+.opis .oL img{width:38px;height:38px}
 </style>
 <script src="data.js"></script>
 <script src="art.js"></script>
@@ -512,6 +538,50 @@ const ITEMS = [];
 const mk = (cls, html, parent = 'items') => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; $(parent).appendChild(d); return d; };
 const SVGNS = 'http://www.w3.org/2000/svg';
 const ARROW_DOWN = '<svg width="40" height="36" viewBox="0 0 40 36"><path class="ad" d="M 20 2 L 20 28 M 9 18 L 20 30 L 31 18" fill="none" stroke="#EAF6FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>';
+// ---------- dashboard warning lamps (promo DPF, 28.10.2026) ----------
+// {k:'dash', t0, t1, x, y, s, lamps:[[tOn, 'engine'|'dpf', 'ETICHETĂ']], pulse:[t…], focus:[t, index, 'ETICHETĂ NOUĂ'], shrink:[t, s, dy]}
+// Original drawings of the standard ISO 2575-style pictograms (24-unit grid centred on 12,12), amber like a real cluster.
+const DASH_ICON = {
+  engine: c => `<path fill-rule="evenodd" fill="${c}" d="M7 4H15V6H12V8H18V12H20V9H23V19H20V16H18V20H10L8 18H5V15H3V18H1V10H3V13H5V10L7 8H10V6H7Z M7 10V16H9L11 18H16V10Z"/>`,
+  dpf: c => `<rect x="5" y="7" width="14" height="10" rx="2" fill="none" stroke="${c}" stroke-width="1.8"/><path d="M1 12H5M19 12H23" stroke="${c}" stroke-width="2.2" stroke-linecap="round"/>` +
+    [9.6, 12, 14.4].map(y => [8, 10.67, 13.33, 16].map(x => `<circle cx="${x}" cy="${y}" r=".95" fill="${c}"/>`).join('')).join(''),
+};
+const DASH_BOX = { engine: [11.5, 8.5], dpf: [11.6, 5.6] };  // half extents of each pictogram (grid units), for the focus bracket
+const mixC = (a, b, p) => { const h = s => [1, 3, 5].map(i => parseInt(s.slice(i, i + 2), 16)); const A = h(a), B = h(b); return `rgb(${A.map((v, i) => Math.round(lerp(v, B[i], clamp(p)))).join(',')})`; };
+function lampLevel(t, on) { const k = t - on; if (k < 0) return 0; if (k < .05) return 1; if (k < .1) return .12; if (k < .15) return .9; if (k < .22) return .2; return 1; }  // relay flicker, then steady
+function dashSvg(o, t) {
+  const W = 880, H = 300, id = o.uid, N = o.lamps.length, gap = o.gap || 300; const f1 = v => (+v).toFixed(1);
+  let s = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}"><defs>` +
+    `<linearGradient id="${id}bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#19212B"/><stop offset=".55" stop-color="#0A0E13"/><stop offset="1" stop-color="#040608"/></linearGradient>` +
+    `<linearGradient id="${id}bz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A3AFBD"/><stop offset=".45" stop-color="#2A313B"/><stop offset="1" stop-color="#626C78"/></linearGradient>` +
+    `<radialGradient id="${id}h"><stop offset="0" stop-color="#FF9A1F" stop-opacity=".62"/><stop offset=".55" stop-color="#FF8A00" stop-opacity=".16"/><stop offset="1" stop-color="#FF8A00" stop-opacity="0"/></radialGradient>` +
+    `<filter id="${id}f" x="-45%" y="-60%" width="190%" height="220%"><feGaussianBlur stdDeviation="11"/></filter>` +
+    `<clipPath id="${id}c"><rect x="6" y="6" width="${W - 12}" height="${H - 12}" rx="44"/></clipPath></defs>`;
+  s += `<rect x="3" y="3" width="${W - 6}" height="${H - 6}" rx="47" fill="url(#${id}bg)" stroke="url(#${id}bz)" stroke-width="6"/><g clip-path="url(#${id}c)">`;
+  // partial gauges at both edges (rev counter, speedometer) so it reads as the instrument cluster
+  [[-86, 1], [W + 86, -1]].forEach(([cx, d]) => { const cy = 158, R = 232;
+    s += `<circle cx="${cx}" cy="${cy}" r="${R + 8}" fill="none" stroke="#DDE6F0" stroke-width="2" opacity=".16"/>`;
+    for (let a = -45; a <= 45; a += 5) { const big = a % 15 === 0, r0 = big ? R - 34 : R - 18, A = (d > 0 ? a : 180 - a) * Math.PI / 180;
+      s += `<line x1="${f1(cx + r0 * Math.cos(A))}" y1="${f1(cy + r0 * Math.sin(A))}" x2="${f1(cx + R * Math.cos(A))}" y2="${f1(cy + R * Math.sin(A))}" stroke="#DDE6F0" stroke-width="${big ? 5 : 2.5}" opacity="${big ? .42 : .26}"/>`; }
+    const na = (d > 0 ? 28 : 152) * Math.PI / 180;
+    s += `<line x1="${cx}" y1="${cy}" x2="${f1(cx + (R - 46) * Math.cos(na))}" y2="${f1(cy + (R - 46) * Math.sin(na))}" stroke="#FF5A36" stroke-width="7" stroke-linecap="round" opacity=".8"/>`; });
+  s += `<ellipse cx="${W / 2}" cy="-34" rx="${W * .62}" ry="118" fill="#fff" opacity=".06"/>`;  // glass reflection
+  let pul = 0; (o.pulse || []).forEach(p => { const d = t - p; if (d >= 0 && d < .9) pul = Math.max(pul, Math.exp(-d * 4.5)); });
+  o.lamps.forEach(([on, kind, label], i) => {
+    const cx = W / 2 + (i - (N - 1) / 2) * gap, cy = 126; let lv = lampLevel(t, on), sc = 1, lab = label, foc = 0;
+    if (o.focus) { const fp = eOut(clamp((t - o.focus[0]) / .35)); if (i === o.focus[1]) { sc = 1 + .14 * fp; foc = fp; if (t >= o.focus[0] + .12) lab = o.focus[2] || label; } else lv *= 1 - .72 * fp; }
+    const glow = lv * (.8 + .2 * Math.sin(t * 5.2 + i * 1.9) + .9 * pul), k = (o.size || 9.4) * sc;
+    const tr = `translate(${f1(cx - 12 * k)} ${f1(cy - 12 * k)}) scale(${k.toFixed(3)})`;
+    if (glow > .02) s += `<circle cx="${cx}" cy="${cy}" r="${f1(165 * sc)}" fill="url(#${id}h)" opacity="${clamp(glow * .95).toFixed(3)}"/>` +
+      `<g filter="url(#${id}f)" opacity="${clamp(glow).toFixed(3)}"><g transform="${tr}">${DASH_ICON[kind]('#FF8C00')}</g></g>`;
+    s += `<g transform="${tr}">${DASH_ICON[kind](mixC('#262C35', '#FFAA1A', lv))}</g>`;
+    if (foc > 0) { const [bx, by] = DASH_BOX[kind], hw = bx * k + 26 + 5 * Math.sin(t * 8), hh = by * k + 22 + 5 * Math.sin(t * 8), a = 30;
+      const X0 = cx - hw, X1 = cx + hw, Y0 = cy - hh, Y1 = cy + hh;
+      s += `<path d="M ${f1(X0)} ${f1(Y0 + a)} V ${f1(Y0)} H ${f1(X0 + a)} M ${f1(X1 - a)} ${f1(Y0)} H ${f1(X1)} V ${f1(Y0 + a)} M ${f1(X1)} ${f1(Y1 - a)} V ${f1(Y1)} H ${f1(X1 - a)} M ${f1(X0 + a)} ${f1(Y1)} H ${f1(X0)} V ${f1(Y1 - a)}" fill="none" stroke="#62D8FF" stroke-width="6" stroke-linecap="round" opacity="${foc.toFixed(3)}"/>`; }
+    s += `<text x="${cx}" y="${H - 30}" text-anchor="middle" font-family="JB" font-weight="800" font-size="${lab.length > 13 ? 24 : 32}" letter-spacing="${lab.length > 13 ? 2 : 3}" fill="${foc > .5 ? '#A5E9FF' : mixC('#4A525C', '#FFC66B', lv)}" opacity="${o.focus && i !== o.focus[1] ? (1 - .65 * eOut(clamp((t - o.focus[0]) / .35))).toFixed(3) : 1}">${lab}</text>`;
+  });
+  return s + '</g></svg>';
+}
 function buildItems() {
   const its = (CFG.items || []).map(o => Object.assign({}, o));
   const sl = its.filter(o => SLOT.includes(o.k)).sort((a, b) => a.t0 - b.t0);
@@ -562,6 +632,14 @@ function buildItems() {
     if (o.k === 'scan') { o.el = mk('abs scanLab', '', 'overlays'); o.g = document.createElementNS(SVGNS, 'g'); $('ovl').appendChild(o.g);
       o.g.innerHTML = `<path class="cr" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect class="sl" height="6" rx="3"/><path class="xh" fill="none" stroke-width="3"/>`; }
     if (o.k === 'ring') { o.g = document.createElementNS(SVGNS, 'g'); $('ovl').appendChild(o.g); o.g.innerHTML = `<circle class="a" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="20"/><circle class="b" fill="none" stroke="${o.col || '#62D8FF'}" stroke-width="10"/>`; }
+    if (o.k === 'dash') { o.el = mk('abs dashC', '', 'overlays'); o.uid = 'dsh' + ITEMS.length; }
+    if (o.k === 'opis') {  // {k:'opis', t0, t1, top, title, sub, subIco, kicker, head, ico, rows:[[t, ico, text]], phone, phoneLab, phoneAt, site, cities:[...], citiesAt}
+      const OK = '<svg class="ok" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#16A34A"/><path d="M 11 21 L 17.5 27.5 L 29.5 13.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      o.el = mk('abs opis', `<div class="oT">${o.title || 'TURBO <span class="y">DOCTOR</span>'}</div>` + (o.sub ? `<div class="oS">${img(o.subIco || 'stethoscope')}${o.sub}</div>` : '') +
+        `<div class="oCard"><div class="oH">${img(o.ico || 'stethoscope')}<div><div class="a">${o.kicker || 'OPIS · RECOMANDAREA INGINERULUI'}</div><div class="b">${o.head || 'LUCRĂRI RECOMANDATE'}</div></div><div class="rx">Rx</div></div>` +
+        o.rows.map(r => r[1] ? `<div class="oR">${img(r[1])}<span>${r[2]}</span>${o.checks ? OK : ''}</div>` : `<div class="oR sec"><span>${r[2]}</span></div>`).join('') + '</div>' +
+        `<div class="oP"><small>${o.phoneLab || 'PROGRAMĂRI'}</small>${o.phone || '0739 065 065'}</div><div class="oW">${o.site || ''}</div>` +
+        `<div class="oL">${(o.cities || []).map(c => `<span>${img('round_pushpin')}${c}</span>`).join('')}</div>`, 'overlays'); }
     ITEMS.push(o);
   }
 }
@@ -593,6 +671,8 @@ function itemCues() {
     if (o.k === 'stk') sfx(o.t0, 'pop', .4);
     if (o.k === 'call') { sfx(o.t0, 'lock', .45); sfx(o.t0 + .38, 'type', .4); }
     if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, 'alarm', .3); } }
+    if (o.k === 'opis') { sfx(o.t0, 'whoosh', .5); o.rows.forEach(r => sfx(r[0], 'tick2', .55)); sfx(o.phoneAt, 'impact', .45); sfx(o.phoneAt + .02, 'ding', .4); sfx(o.citiesAt, 'pop', .5); }
+    if (o.k === 'dash') { sfx(o.t0, 'whoosh', .35); o.lamps.forEach(l => { sfx(l[0], 'tick', .7); sfx(l[0] + .01, 'chime', o.chime ?? .9); }); (o.pulse || []).forEach(p => sfx(p, 'impact', .3)); if (o.focus) { sfx(o.focus[0], 'lock', .6); sfx(o.focus[0] + .02, 'scan', .35); } }
   }
   for (const f of (CFG.fx || [])) {
     if (f.k === 'red' && !f.silent) sfx(f.t0, 'alarm', .3);
@@ -661,6 +741,12 @@ function rItem(o, t) {
     const sh = 10 * Math.exp(-k * 8); setT(el, (o.x || 540) + sh * Math.sin(k * 90), (o.y || 900) + sh * Math.cos(k * 70), s, o.rot ?? -4, clamp(p * 3) * (1 - clamp((k - (d - .2)) / .2))); return;
   }
   if (o.k === 'stk') { const L = life(t, o.t0, o.t1, .3, .2, 2.6); if (!L) { hide(el); return; } setT(el, o.x, o.y + bob(L.k, 1, 7), L.s, (o.rot || 0) + Math.sin(L.k * 3) * 6, L.o); return; }
+  if (o.k === 'opis') { const L = life(t, o.t0, o.t1, .4, .25, 1.4); if (!L) { hide(el); return; }
+    setTop(el, 540, o.top || 150, L.s, L.o); el.querySelectorAll('.oR').forEach((r, i) => rowIn(r, t, o.rows[i][0]));
+    popIn(el.querySelector('.oP'), t, o.phoneAt, 2.0); rowIn(el.querySelector('.oW'), t, o.phoneAt + .2); popIn(el.querySelector('.oL'), t, o.citiesAt, 1.6); return; }
+  if (o.k === 'dash') { const L = life(t, o.t0, o.t1, .34, .22, 1.7); if (!L) { hide(el); return; }
+    const sp = o.shrink ? eInOut(clamp((t - o.shrink[0]) / .5)) : 0; el.innerHTML = dashSvg(o, t);
+    setT(el, o.x || 540, (o.y || 336) + (o.shrink ? o.shrink[2] || 0 : 0) * sp + bob(L.k, 2, 2), L.s * lerp(o.s || 1, o.shrink ? o.shrink[1] : (o.s || 1), sp), 0, L.o); return; }
   if (o.k === 'ring') {
     if (t < o.t0 || t > o.t1 + .2) { o.g.style.display = 'none'; return; } o.g.style.display = 'block';
     const [px, py] = trackAt(o, n); const [x, y] = mapBg(px, py); const op = clamp((t - o.t0) / .12) * (1 - clamp((t - o.t1) / .2));
@@ -776,7 +862,7 @@ function rItem(o, t) {
 }
 
 function rEnd(t) {
-  const el = $('endCard'); if (t < TEND) { hide(el); return; }
+  const el = $('endCard'); if (t < TEND || CFG.endCard === false) { hide(el); return; }  // endCard:false = promo final screen built from items (opis)
   const k = t - TEND; el.style.display = 'block'; el.style.opacity = clamp(k / .3); el.style.transform = 'none';
   const seq = [['.eWord', .05], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1]];
   seq.forEach(([sel, d]) => { const c = el.querySelector(sel); const p = clamp((k - d) / .4);
@@ -788,7 +874,7 @@ function rEnd(t) {
     document.getElementById('lbl' + i).setAttribute('opacity', clamp((k - d - .15) / .3));
     const h = document.getElementById('halo' + i); const hk = ((k - d - .2) % 1.6 + 1.6) % 1.6; h.setAttribute('r', 10 + hk * 34); h.setAttribute('opacity', p >= 1 ? Math.max(0, .9 - hk / 1.6) : 0); });
 }
-function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8); sfx(TEND, 'hit', .55); sfx(TEND + .3, 'ding', .55);
+function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8); sfx(TEND, 'hit', .55); if (CFG.endCard === false) return; sfx(TEND + .3, 'ding', .55);
   [0, 1, 2, 3].forEach(i => sfx(TEND + 1.1 + i * .26, 'pop', .45)); sfx(TEND + 2.1, 'ding', .45); }
 
 let SHOCK_G = null;

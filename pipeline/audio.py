@@ -213,7 +213,11 @@ def boom():  # deep cinematic hit for hook titles (Euro 7, 26.10.2026): saturate
     snap = bp(rng.standard_normal(len(t)), 1200, 5000) * env(len(t), .0004, 38) * .55
     x = sub + thud + rumble + snap; x = x / (np.abs(x).max() + 1e-9); return np.stack([x, np.roll(x, 180)], 1) * .95
 def rise(): return riser(0.62)  # short riser that peaks on a boom
-GEN = dict(boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
+def chime():  # dashboard warning gong when a lamp lights up (promo DPF hook, 28.10.2026): soft electronic "bong" like a car cluster
+    t = T(1.2); x = np.zeros(len(t))
+    for f0, a, d in [(740, 1.0, 4.6), (1480, .38, 7.5), (2220, .14, 11), (370, .3, 3.6)]: x += a * np.sin(2 * np.pi * f0 * t) * env(len(t), .004, d)
+    return np.stack([x, np.roll(x, 90)], 1) * .2
+GEN = dict(chime=chime, boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
            tick=tick, tick2=tick2, ding=ding, confetti=confetti, type=typing, scan=scan, lock=lock, glitch=glitch, data=data)
 fx = np.zeros((n_total, 2), np.float32)
 for c in json.load(open(f"{ROOT}/out/sfx.json")):
