@@ -5,6 +5,9 @@
 // · 4–5 același clip vechi, selfie: „demontăm, verificăm…” + „diagnoza este complet gratuită” · 6 selfie: „Vă puteți programa…”.
 // Revizia 29.10 (Sabin): fără coada scurtă „din Piatra Neamț” de la Opel și un singur „țineți minte” la final (fraza începe cu „Vă puteți programa”).
 // Promo: telefonul apare când spune „numărul de telefon” și pe cardul de final (ca la promo injectoare).
+// ORGANIC = true -> varianta pentru postarea normală (30.10.2026): fără telefon și site pe ecran (regula din 25.10), cardul de final standard;
+// locul titlului vechi rămâne acoperit: ștampila „DIAGNOZĂ GRATUITĂ”, apoi eticheta cu cele 4 unități pe „la noi”.
+const ORGANIC = false;  // true = varianta pentru postarea normală (fără telefon pe ecran)
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
   const SEG = [{"name": "hook", "out_t0": 0.0, "out_t1": 11.2667, "src": "pre_clean.mp4", "src_t0": 0.0}, {"name": "merc", "out_t0": 11.2667, "out_t1": 15.9333, "src": "orig_mercedes_0193.mp4", "src_t0": 2.6333}, {"name": "suz", "out_t0": 15.9333, "out_t1": 28.6333, "src": "orig_suzuki_0172.mp4", "src_t0": 21.8667}, {"name": "opel", "out_t0": 28.6333, "out_t1": 37.8, "src": "orig_opel_0213.mp4", "src_t0": 5.0667}, {"name": "trust", "out_t0": 37.8, "out_t1": 59.2667, "src": "pre_clean.mp4", "src_t0": 108.3333}, {"name": "cta", "out_t0": 59.2667, "out_t1": 64.9, "src": "pre_clean.mp4", "src_t0": 142.1667}];  // din out/segs.json (build_promo_motoare.py)
   const at = n => SEG.find(s => s.name === n);
@@ -19,7 +22,7 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     tineti4: aw(4, 'Țineți'), demontam: aw(4, 'demontăm'), verificam: aw(4, 'verificăm'), diagnosticam: aw(4, 'diagnosticăm'), decidem: aw(4, 'decidem'), apucam: aw(4, 'apucăm'),
     doar: aw(5, 'doar'), sute: aw(5, 'sute'), motor5: aw(5, 'motor'), admisie5: aw(5, 'admisie'), injectie5: aw(5, 'injecție'), evacuare5: aw(5, 'evacuare'),
     diagnoza5: aw(5, 'diagnoza'), gratuita5: aw(5, 'gratuită'),
-    programa: aw(6, 'programa'), numarul: aw(6, 'numărul'), site: aw(6, 'site-ul'),
+    programa: aw(6, 'programa'), la6: aw(6, 'la'), numarul: aw(6, 'numărul'), site: aw(6, 'site-ul'),
   };
   const items = [], fx = [];
   // ---- HOOK (selfie 0–2.97, apoi motorul desfăcut): „AI PROBLEME” deasupra capului + „CU MOTORUL?” sub bărbie, fața rămâne liberă
@@ -49,13 +52,14 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     [A.motor5 - .08, 'PROBLEME PE', 'MOTOR', 'c'], [A.admisie5 - .05, 'PROBLEME PE', 'MOTOR · ADMISIE', 'c'],
     [A.injectie5 - .05, 'PROBLEME PE', 'MOTOR · ADMISIE · INJECȚIE', 'c'], [A.evacuare5 - .05, 'PROBLEME PE', 'MOTOR · ADMISIE · INJECȚIE · EVACUARE', 'c'],
     [A.diagnoza5 - .05, 'LA TURBO DOCTOR', 'DIAGNOZA ESTE', '']] });
-  items.push({ k: 'stamp', t: A.gratuita5 - .05, t1: A.programa - .1, txt: 'DIAGNOZĂ GRATUITĂ', y: 333, col: 'green', s: 1, rot: -5 });  // până intră telefonul
+  items.push({ k: 'stamp', t: A.gratuita5 - .05, t1: ORGANIC ? A.la6 - .1 : A.programa - .1, txt: 'DIAGNOZĂ GRATUITĂ', y: 333, col: 'green', s: 1, rot: -5 });  // până intră telefonul / unitățile
   // ---- CTA: telefonul și site-ul exact când le spune
   fx.push({ k: 'flash', t: C.out_t0, a: .3 }, { k: 'punch', t: C.out_t0, a: .06, sh: 10 });
-  items.push({ k: 'eq', t0: A.programa - .12, t1: SEND + .2, top: 196, ico: 'phone', title: 'PROGRAMEAZĂ-TE', sub: 'DIAGNOZĂ GRATUITĂ',
+  if (ORGANIC) items.push({ k: 'lbl', t0: A.la6 - .1, t1: SEND, y: 333, w: 900, ph: [[A.la6 - .1, 'UNITĂȚILE NOASTRE', 'GALAȚI · BUCUREȘTI · IAȘI · PIATRA NEAMȚ', 'c']] });
+  else items.push({ k: 'eq', t0: A.programa - .12, t1: SEND + .2, top: 196, ico: 'phone', title: 'PROGRAMEAZĂ-TE', sub: 'DIAGNOZĂ GRATUITĂ',
     lines: [[A.numarul - .02, '0739 065 065', 'big y'], [A.site - .02, 'TURBODOCTOR.RO', 'y']] });
   // ---- cardul de final standard + telefonul (doar pe promo)
-  items.push({ k: 'eq', t0: TEND + 2.45, t1: TOTAL + 1, top: 1160, ico: 'phone', title: 'PROGRAMEAZĂ-TE', sub: 'TELEFON · SITE',
+  if (!ORGANIC) items.push({ k: 'eq', t0: TEND + 2.45, t1: TOTAL + 1, top: 1160, ico: 'phone', title: 'PROGRAMEAZĂ-TE', sub: 'TELEFON · SITE',
     lines: [[TEND + 2.7, '0739 065 065', 'big y'], [TEND + 3.1, 'TURBODOCTOR.RO', 'y']] });
   return {
     hook: null,
