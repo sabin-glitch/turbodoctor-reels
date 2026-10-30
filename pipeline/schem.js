@@ -1263,5 +1263,44 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { _gauge, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+  // 36) cause -> effect diagnostic map (free diagnostic reel, 28.10.2026): one symptom on top, several possible causes below,
+  // arrows flow from the causes into the symptom. Phases: 0 = symptom + "?" on causes, 1 = scan beam checks each cause,
+  // 2 = cause found: everything green. P: {sym: [emoji, label], causes: [[emoji, label], ...] (2-4), sweep: s (beam duration)}
+  function causeEffect(tl, ph, pt, P) {
+    const sym = P.sym || ['warning', 'EROARE PE TURBINĂ'], cs = P.causes || [['gear', 'ACȚIONARE'], ['droplet', 'INJECTOARE'], ['leaf', 'DPF']];
+    const SW = P.sweep || 2.2, SX = 457, SY = 60, CY = 262, n = cs.length; let s = '';
+    const xs = cs.map((c, i) => n === 1 ? 457 : 160 + i * (594 / (n - 1)));
+    const sweepX = ph === 1 ? lerp(20, 894, cl(pt / SW)) : ph >= 2 ? 1e9 : -1e9;
+    const chk = i => ph >= 2 || (ph === 1 && sweepX >= xs[i]);
+    // arrows cause -> symptom with flowing particles (red while the fault spreads, cyan under diagnosis, green when solved)
+    const pc = ph >= 2 ? C.grn : ph === 1 ? C.cy : C.red;
+    cs.forEach((c, i) => { const x0 = xs[i], y0 = CY - 44, x1 = SX + (x0 - SX) * .34, y1 = SY + 46;
+      s += ARW(x0, y0, x1, y1, ph >= 1 ? C.cyD : 'rgba(255,75,75,.45)', 5, 16);
+      for (let k = 0; k < 3; k++) { const q = ((tl * .55 + k / 3 + i * .17) % 1); s += `<circle cx="${f(lerp(x0, x1, q))}" cy="${f(lerp(y0, y1, q))}" r="6" fill="${pc}" opacity=".85"/>`; } });
+    // symptom box
+    const bad = ph < 2, pulse = bad ? 1 + .035 * Math.sin(tl * 8) : 1 + .05 * Math.exp(-pt * 3) * Math.sin(pt * 30);
+    s += `<g transform="translate(${SX} ${SY}) scale(${f(pulse)})"><rect x="-176" y="-44" width="352" height="88" rx="18" fill="${C.body}" stroke="${bad ? C.red : C.grn}" stroke-width="5"/>` + emoji(-132, 0, 52, sym[0]) + T(-98, 9, sym[1], { s: 22, c: C.w }) + '</g>';
+    s += T(SX - 196, SY + 7, 'SIMPTOM', { s: 16, c: bad ? C.red : C.grn, a: 'end' });
+    const bx = SX + 164, by = SY - 40;
+    if (bad) s += `<circle cx="${bx}" cy="${by}" r="21" fill="${C.red}"/>` + T(bx, by + 9, '!', { s: 28, a: 'middle', c: '#fff' });
+    else s += `<circle cx="${bx}" cy="${by}" r="21" fill="${C.grn}"/>` + check(bx, by, 10, '#fff', 5);
+    // possible causes
+    cs.forEach(([em, lab], i) => { const x = xs[i], on = chk(i); const col = on ? (ph >= 2 ? C.grn : C.cy) : C.cyD;
+      const kin = ph === 1 && on ? 1 + .06 * Math.exp(-(sweepX - x) / 300) : 1;
+      s += `<g transform="translate(${f(x)} ${CY}) scale(${f(kin)})"><rect x="-118" y="-44" width="236" height="88" rx="18" fill="${C.body}" stroke="${col}" stroke-width="${on ? 5 : 4}"${on ? '' : ' stroke-dasharray="10 7"'}/>` + emoji(-78, 0, 50, em) + T(-44, 9, lab, { s: 21, c: on ? C.w : C.dim }) + '</g>';
+      const qx = x + 104, qy = CY - 40;
+      if (!on) s += `<circle cx="${qx}" cy="${qy}" r="20" fill="${C.yel}"/>` + T(qx, qy + 8, '?', { s: 26, a: 'middle', c: '#000' });
+      else if (ph >= 2) s += `<circle cx="${qx}" cy="${qy}" r="20" fill="${C.grn}"/>` + check(qx, qy, 10, '#fff', 5);
+      else s += `<circle cx="${qx}" cy="${qy}" r="20" fill="${C.cy}"/>` + emoji(qx, qy, 26, 'magnifying_glass_tilted_left'); });
+    s += T(457, 327, ph >= 2 ? 'CAUZE VERIFICATE' : 'CAUZE POSIBILE', { s: 15, c: ph >= 2 ? C.grn : C.yel, a: 'middle' });
+    // scan beam (phase 1)
+    if (ph === 1 && pt < SW + .3) { const x = cl(sweepX, 20, 894), op = pt < SW ? 1 : 1 - (pt - SW) / .3;
+      s += `<rect x="${f(x - 26)}" y="${CY - 70}" width="52" height="140" fill="${C.cy}" opacity="${f(.18 * op)}"/><line x1="${f(x)}" y1="${CY - 72}" x2="${f(x)}" y2="${CY + 72}" stroke="${C.cy}" stroke-width="5" opacity="${f(op)}"/>`;
+      s += tag(457, 160, 'DIAGNOZĂ: VERIFICĂM FIECARE CAUZĂ', C.cy, 'middle', 16, op); }
+    if (ph >= 2) s += tag(457, 160, 'CAUZA GĂSITĂ → REPARAȚIE CU SUCCES', C.grn, 'middle', 16, cl(pt / .3));
+    if (ph === 0) s += tag(457, 160, 'EROAREA POATE VENI DIN MAI MULTE LOCURI', C.red, 'middle', 16, cl(pt / .3));
+    return s;
+  }
+
+  return { causeEffect, _gauge, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();
