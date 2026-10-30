@@ -108,6 +108,8 @@ def music():
     ramp(TEND, TEND + .3, 1.0, 1.1); g[int((TEND + .3) * SR):] = 1.1
     ramp(TOTAL - 1.4, TOTAL, 1.1, 0)
     if tl.get("intro"): ramp(.25, IE - .4, .62, .62); ramp(IE - .4, IE, .62, .95)  # intro hook: bed lower under the generated voice
+    if cfg.get("music_in"):  # music only from this moment (e.g. after a hook carried by real engine sound, promo injectoare 28.10.2026)
+        mi = float(cfg["music_in"]); g[:int(mi * SR)] = 0; ramp(mi, mi + .45, 0, .78)
     # ducking under the voice
     mono = np.abs(vp[:, 0]); win = int(.03 * SR)
     rmsv = np.sqrt(np.convolve(mono ** 2, np.ones(win) / win, mode="same") + 1e-12)
@@ -226,7 +228,20 @@ if tl.get("intro"):  # intro hook: SFX duck ~5 dB under the generated voice so e
     a = np.clip((20 * np.log10(r + 1e-9) + 40) / 12, 0, 1); a = np.convolve(a, np.ones(int(.08 * SR)) / int(.08 * SR), mode="same")
     fx[:len(a)] *= (1 - .6 * a)[:, None]
 mus = music()
-mix = vp + fx + mus * float(cfg.get("music_gain", 0.5))  # 0.5 = muzica la jumătate (cerut de Sabin, 18.10.2026)
+# real sound of an external hook clip (AI/stock footage put in the source, promo injectoare 28.10.2026):
+# out/v2.json "beds": [{"wav": "audio/hook_bed.wav", "t": 0, "gain": 1.0, "duck": .5}]. It skips the voice chain
+# (denoise would eat the engine) and dips under the presenter's voice so every word stays clear.
+bed = np.zeros((n_total, 2), np.float32)
+for b in cfg.get("beds", []):
+    x, r = sf.read(f"{ROOT}/{b['wav']}", dtype="float32"); assert r == SR, "bed wav must be 48 kHz"
+    if x.ndim == 1: x = np.stack([x, x], 1)
+    o = int(round(float(b.get("t", 0)) * SR)); n = min(len(x), n_total - o)
+    if n <= 0: continue
+    from scipy.signal import fftconvolve
+    e = vp[o:o + n, 0] ** 2; w = int(.04 * SR); r = np.sqrt(np.maximum(fftconvolve(e, np.ones(w) / w, mode="same"), 0) + 1e-12)
+    a = np.clip((20 * np.log10(r + 1e-9) + 40) / 12, 0, 1); a = np.clip(fftconvolve(a, np.ones(int(.12 * SR)) / int(.12 * SR), mode="same"), 0, 1)
+    bed[o:o + n] += x[:n] * float(b.get("gain", 1.0)) * (1 - float(b.get("duck", .5)) * a)[:, None]
+mix = vp + fx + bed + mus * float(cfg.get("music_gain", 0.5))  # 0.5 = muzica la jumătate (cerut de Sabin, 18.10.2026)
 sf.write(f"{ROOT}/audio/mix_pre.wav", mix, SR, subtype="FLOAT")
 subprocess.run(["ffmpeg", "-hide_banner", "-loglevel", "error", "-y", "-i", f"{ROOT}/audio/mix_pre.wav", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
                 "-ar", str(SR), "-c:a", "pcm_s16le", f"{ROOT}/audio/mix_final.wav"], check=True)
