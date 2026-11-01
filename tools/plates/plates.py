@@ -16,7 +16,7 @@ def interp(keys, t):
     return keys[-1][1:5]
 def frames(keys):
     for n in range(round(keys[0][0] * FPS), round(keys[-1][0] * FPS) + 1): yield n, interp(keys, n / FPS)
-rng = lambda n: f"{(n - .5) / FPS:.4f}-{(n + .5) / FPS:.4f}"
+rng = lambda n: f"{max(0.0, (n - .5) / FPS):.4f}-{(n + .5) / FPS:.4f}"  # frame 0 -> 0.0000 (a negative start broke the --blur parser)
 args = []
 for keys in cfg.get("boxes", []):
     for n, (x0, y0, x1, y1) in frames(keys): args += ["--blur", f"{rng(n)}:{int(x0)}:{int(y0)}:{int(x1)}:{min(int(y1), 1919)}"]
