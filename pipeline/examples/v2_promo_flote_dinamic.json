@@ -1,0 +1,42 @@
+{
+ "cuts": true,
+ "speed": 1.0,
+ "music_gain": 0.5,
+ "beds": [
+  {
+   "wav": "audio/hook_bed.wav",
+   "t": 0,
+   "gain": 1.0,
+   "duck": 0.5
+  }
+ ],
+ "music_in": 2.5,
+ "end_card": 10,
+ "cut_margins": {
+  "long": [
+   0.12,
+   0.1
+  ],
+  "mid": [
+   0.1,
+   0.07
+  ],
+  "short": [
+   0.08,
+   0.05
+  ]
+ },
+ "protect": [
+  [
+   0,
+   2.56
+  ],
+  [
+   111.2,
+   113.0
+  ]
+ ],
+ "start": 0,
+ "sil_local": true,
+ "min_gap": 0.24
+}

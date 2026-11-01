@@ -1,4 +1,4 @@
-// v2 – PROMO plătit pentru FLOTE (01.11.2026): „Deții o flotă auto?” → turul Turbo Doctor: mecanică, laboratoare (injecție, turbo, DPF), motoare, contract
+// v2 – PROMO plătit pentru FLOTE (01.11.2026, varianta dinamică: pauzele și „regia” tăiate, 2:39): „Deții o flotă auto?” → turul Turbo Doctor: mecanică, laboratoare (injecție, turbo, DPF), motoare, contract
 // Sursa (hook_src.mp4): 0 cadru AI „flotă” (dronă peste sute de dube albe aliniate, „ca la UMB”), peste „Deții o flotă auto?” · 2.5 IMG_2028 (la intrare, de la „Ei bine”)
 // · 8.284 IMG_2030 (ușa) · 18.266 IMG_2034 (service, plăcile estompate) · 36.463 IMG_2035 + 61.613 IMG_2036 (laborator injecție, stand Bosch)
 // · 80.235 IMG_2037 (quad turbo BMW) · 104.916 IMG_2038 (B-roll quad turbo, fără voce) · 113.0 IMG_2039 (DPF secționat) · 136.977 IMG_2052 + 162.11 IMG_2053 (motor pe stand)
@@ -28,7 +28,12 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     totul: aw(15, 'Totul'), contract: aw(15, 'contract'), cele: aw(15, 'cele'), baza: aw(15, 'baza'),
     esti: aw(16, 'Ești'), suna: aw(16, 'Sună'), numarul: aw(16, 'numărul'), whatsapp: aw(16, 'WhatsApp'), hai16: aw(16, 'hai'),
   };
-  const CLIP = [0, 8.284, 18.266, 36.463, 61.613, 80.235, 104.916, 113.0, 136.977, 162.11];
+  // Varianta dinamică (cerută de Sabin doar pentru acest reel, 01.11.2026): pauzele tăiate (out/v2.json "cuts", "sil_local"), deci
+  // începuturile de clip (timp-sursă) se mută în timpul final cu so(): un moment tăiat cade pe începutul segmentului păstrat următor.
+  const SEGS = window.TL.segments.filter(s => s.kind === 'story');
+  const so = t => { for (const s of SEGS) if (s.src_a - 1e-6 <= t && t <= s.src_b + 1e-6) return s.out_a + (t - s.src_a);
+    for (const s of SEGS) if (s.src_a > t) return s.out_a; return SEND; };
+  const CLIP = [0, 8.284, 18.266, 36.463, 61.613, 80.235, 104.916, 113.0, 136.977, 162.11].map(so);
   const CUT = 2.5;                       // cadrul AI → Sabin, chiar înainte de „Ei bine”
   const B1 = 1.31, B2 = 1.72;            // „Deții” · „flotă” (debutul real, din energia vocii)
   const N1 = A.nu1, N2 = A.un1 - .02;    // „nu suntem doar” · „un service”
@@ -119,18 +124,16 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       { k: 'chip', t0: A.standul - .05, t1: CLIP[5] - .2, y: 330, ph: [[A.standul - .05, 'check_mark_button', 'PE STANDUL ORIGINAL AL PRODUCĂTORULUI', 'green']] },
 
       // ---------- IMG_2037 (laborator turbo): quad turbo BMW ----------
-      { k: 'chip', t0: A.cazul - .05, t1: A.ar8 - .3, y: 330, ph: [[A.cazul - .05, 'dashing_away', 'TURBINELE: EXACT LA FEL', 'blue'],
-        [A.quad - .05, 'gear', 'ACEST QUAD TURBO DE BMW', 'yellow']] },
-      { k: 'cmp', t0: A.ar8 - .15, t1: A.asta - .3, top: 262, w: 780, big: true, ico: 'gear', title: 'QUAD TURBO BMW · COST', aCls: 'bad', bCls: 'ok', dimA: true,
+      { k: 'chip', t0: A.cazul - .05, t1: A.n25000 - .55, y: 330, ph: [[A.cazul - .05, 'dashing_away', 'TURBINELE: EXACT LA FEL', 'blue'],
+        [A.quad - .05, 'gear', 'ACEST QUAD TURBO DE BMW', 'yellow'], [A.ar8 - .05, 'cross_mark', 'LUAT NOU AR FI COSTAT...', 'red']] },
+      { k: 'cmp', t0: A.n25000 - .45, t1: A.asta - .3, top: 262, w: 780, big: true, ico: 'gear', title: 'QUAD TURBO BMW · COST', aCls: 'bad', bCls: 'ok', dimA: true,
         a: [A.n25000 - .05, 'cross_mark', 'LUAT NOU', 'PESTE 25.000 LEI'], b: [A.n10000 - .05, 'check_mark_button', 'LA TURBO DOCTOR', 'SUB 10.000 LEI'] },
       { k: 'chip', t0: A.asta - .05, t1: CLIP[6] - .2, y: 330, ph: [[A.asta - .05, 'chart_down', 'REDUCERI SUBSTANȚIALE', 'green'],
         [A.acelasi9 - .05, 'shield', 'ȘI GARANȚIE CA LA NOU', 'green']] },
       { k: 'stamp', t: A.n24 - .03, t1: CLIP[6] - .25, y: 520, txt: '24 LUNI GARANȚIE', col: 'green', s: .82, rot: -7 },
 
-      // ---------- IMG_2038 (B-roll quad turbo, fără voce): fișa pacientului ----------
-      { k: 'file', t0: CLIP[6] + .1, t1: CLIP[7] - .2, top: 262, no: 'QUAD', ecg: 'ok', stamp: [CLIP[6] + 2.6, 'RECONDIȚIONAT', 'green'], rows: [
-        [CLIP[6] + .3, 'PACIENT', 'QUAD TURBO · BMW', 'c', 'automobile'], [CLIP[6] + .8, 'NOU', 'PESTE 25.000 LEI', 'r', 'cross_mark'],
-        [CLIP[6] + 1.3, 'LA TURBO DOCTOR', 'SUB 10.000 LEI', 'g', 'test_tube'], [CLIP[6] + 1.8, 'GARANȚIE', '24 LUNI, CA LA NOU', 'y', 'shield']] },
+      // ---------- IMG_2038 (B-roll quad turbo, fără voce): doar 1,8 s, intrarea pe roata compresorului + ștampila ----------
+      { k: 'stamp', t: CLIP[6] + .3, t1: CLIP[7] - .06, y: 560, txt: 'RECONDIȚIONAT', col: 'green', s: 1.0, rot: -8 },
 
       // ---------- IMG_2039 (laborator DPF) ----------
       { k: 'chip', t0: A.sunt10 - .05, t1: A.salvam - .3, y: 300, ph: [[A.sunt10 - .05, 'leaf', 'AI AUZIT DE DPF-URI?', 'blue'],
@@ -153,10 +156,11 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       { k: 'stamp', t: A.calitate - .03, t1: CLIP[9] - .25, y: 430, txt: 'CEL MAI BUN RAPORT CALITATE-PREȚ', col: 'green', s: .62, rot: -5 },
 
       // ---------- IMG_2053: întreținere + contract + telefonul ----------
-      { k: 'chip', t0: A.pe14 - .05, t1: A.totul - .25, y: 330, ph: [[A.pe14 - .05, 'handshake', 'ALĂTURI DE VOI ȘI LA ÎNTREȚINERE', 'blue'],
-        [A.distributii - .05, 'wrench', 'DISTRIBUȚII', 'yellow'], [A.revizii - .05, 'oil_drum', 'REVIZII PERIODICE', 'yellow'], [A.tot14 - .05, 'check_mark_button', 'ȘI TOT AȘA', 'blue']] },
-      { k: 'eq', t0: A.totul - .1, t1: BX - .25, top: 236, ico: 'handshake', title: 'CONTRACT DE FLOTĂ', sub: 'TURBO DOCTOR',
-        lines: [[A.contract - .05, 'TOTUL ÎNTR-UN CONTRACT', 'w'], [A.cele - .05, 'CELE MAI BUNE PREȚURI', 'big g'], [A.baza - .05, 'PE BAZA RULAJULUI', 'y']] },
+      { k: 'chip', t0: A.pe14 - .05, t1: A.contract - .4, y: 330, ph: [[A.pe14 - .05, 'handshake', 'ALĂTURI DE VOI ȘI LA ÎNTREȚINERE', 'blue'],
+        [A.distributii - .05, 'wrench', 'DISTRIBUȚII', 'yellow'], [A.revizii - .05, 'oil_drum', 'REVIZII PERIODICE', 'yellow'], [A.tot14 - .05, 'check_mark_button', 'ȘI TOT AȘA', 'blue'],
+        [A.totul - .05, 'handshake', 'TOTUL SE POATE FACE...', 'yellow']] },
+      { k: 'eq', t0: A.contract - .35, t1: BX - .25, top: 236, ico: 'handshake', title: 'CONTRACT DE FLOTĂ', sub: 'TURBO DOCTOR',
+        lines: [[A.contract - .12, '...ÎNTR-UN CONTRACT', 'w'], [A.cele - .05, 'CELE MAI BUNE PREȚURI', 'big g'], [A.baza - .05, 'PE BAZA RULAJULUI', 'y']] },
       { k: 'boom', t: BX, dur: A.suna - .12 - BX, txt: 'EȘTI INTERESAT?', y: 420, size: 128, col: '#FFD21F', from: 3.2, sh: 22, ca: 24, bg: .9 },
       { k: 'eq', t0: A.suna - .1, t1: SEND + .2, top: 236, ico: 'phone', title: 'SUNĂ SAU SCRIE-NE', sub: 'TELEFON · WHATSAPP',
         lines: [[A.numarul - .05, '0727 345 459', 'big y'], [A.whatsapp - .05, 'ȘI PE WHATSAPP', 'g']] },

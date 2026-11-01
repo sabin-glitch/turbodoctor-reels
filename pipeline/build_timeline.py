@@ -128,9 +128,23 @@ rms = np.array([np.sqrt(np.mean(xb[i * HOP:i * HOP + WIN] ** 2) + 1e-12) for i i
 db = 20 * np.log10(rms)
 from scipy.ndimage import median_filter
 db = median_filter(db, 5)
+_V2 = json.load(open(f"{ROOT}/out/v2.json")) if os.path.exists(f"{ROOT}/out/v2.json") else {}
 floor, peak = np.percentile(db, 12), np.percentile(db, 95)
 thr = floor + 0.33 * (peak - floor)
 sil = db < thr
+LOCAL = bool(_V2.get("sil_local"))
+if LOCAL:  # dynamic cut: threshold from the surrounding ±5 s (workshop noise), so sentence pauses inside long takes are found too
+    def local_thr(d):
+        t_ = np.empty_like(d)
+        for k0 in range(0, len(d), 100):
+            w = d[max(0, k0 - 500):min(len(d), k0 + 600)]; f_, p_ = np.percentile(w, 10), np.percentile(w, 95)
+            t_[k0:k0 + 100] = f_ + 0.33 * (p_ - f_)
+        return t_
+    # a pause = quiet in the voice band AND in the 4-7.8 kHz band, so the „s/ș/f/ț” at a word start is not taken for silence
+    xh = sosfilt(butter(4, [4000, 7800], btype="band", fs=16000, output="sos"), x16)
+    dbh = median_filter(20 * np.log10(np.array([np.sqrt(np.mean(xh[i * HOP:i * HOP + WIN] ** 2) + 1e-12) for i in range(nfr)])), 5)
+    sil = (db < np.maximum(thr, local_thr(db))) & (dbh < local_thr(dbh))
+MINGAP = float(_V2.get("min_gap", 0.32))
 starts_w = sorted(w["s"] for w in words)
 gaps = []
 i = 0
@@ -139,9 +153,10 @@ while i < nfr:
         j = i
         while j < nfr and sil[j]: j += 1
         a, b = i * HOP / 16000, j * HOP / 16000
-        inside = [ws for ws in starts_w if a + 0.06 < ws < b - 0.04]
+        # Parakeet word starts come 0.1-0.25 s early: in the local mode a start in the last .25 s of a pause is taken as the word after it
+        inside = [ws for ws in starts_w if a + 0.06 < ws < b - (0.25 if LOCAL else 0.04)]
         if inside: b = inside[0] - 0.08
-        if b - a >= 0.32: gaps.append((a, b))
+        if b - a >= MINGAP: gaps.append((a, b))
         i = j
     else: i += 1
 # merge with VAD gaps
@@ -151,19 +166,36 @@ gaps.sort(); mg = []
 for a, b in gaps:
     if mg and a <= mg[-1][1]: mg[-1] = (mg[-1][0], max(mg[-1][1], b))
     else: mg.append((a, b))
-st0 = max(0.0, VAD[0][0] - 0.2); en0 = min(SRC_DUR, VAD[-1][1] + 0.45)
+# out/v2.json "cuts": default false = no cuts, footage exactly as filmed (pauses kept); {"cuts": true} = tighten pauses
+# Dynamic cut (asked by Sabin only for the fleet promo, 01.11.2026: „taie toate pauzele fără sens, fără chestii de regie”):
+#   "cut_margins": {"long": [tail, head], "mid": [...], "short": [...]}  seconds kept after / before speech (default .9/.7, .16/.10, .11/.07)
+#   "protect": [[a, b], ...]  source ranges never cut (AI hook, a chosen bit of B-roll); the side of a gap touching one keeps no margin
+#   "start": s                keep the source from s (default: 0.2 s before the first speech)
+#   "sil_local": true, "min_gap": .24   find pauses with a local threshold and cut those from .24 s (default: global threshold, .32 s)
+CM = _V2.get("cut_margins"); PROT = [tuple(map(float, p)) for p in _V2.get("protect", [])]
+def margins(L):
+    if CM: return tuple(CM["long"] if L > 2.5 else (CM["mid"] if L > 0.6 else CM["short"]))
+    return (0.9, 0.7) if L > 2.5 else ((0.16, 0.10) if L > 0.6 else (0.11, 0.07))
+st0 = float(_V2["start"]) if "start" in _V2 else max(0.0, VAD[0][0] - 0.2); en0 = min(SRC_DUR, VAD[-1][1] + 0.45)
 keep = []; cur_a = st0; removed_before = []
 for a, b in mg:
     if b <= st0 or a >= en0: continue
-    L = b - a
-    tail, head = (0.9, 0.7) if L > 2.5 else ((0.16, 0.10) if L > 0.6 else (0.11, 0.07))
-    ca, cb = a + tail, b - head
-    if cb - ca < 0.14: continue
-    keep.append((cur_a, ca)); removed_before.append(cb - ca); cur_a = cb
+    parts = [(max(a, st0), min(b, en0), False, False)]
+    for p0, p1 in PROT:
+        nxt = []
+        for x, y, ll, lr in parts:
+            if y <= p0 or x >= p1: nxt.append((x, y, ll, lr)); continue
+            if x < p0: nxt.append((x, p0, ll, True))
+            if y > p1: nxt.append((p1, y, True, lr))
+        parts = nxt
+    for x, y, ll, lr in parts:
+        tail, head = margins(y - x)
+        ca, cb = x + (0 if ll else tail), y - (0 if lr else head)
+        if cb - ca < 0.14: continue
+        keep.append((cur_a, ca)); removed_before.append(cb - ca); cur_a = cb
 keep.append((cur_a, en0))
 keep = [(a, b) for a, b in keep if b - a > 0.05]
-# out/v2.json "cuts": default false = no cuts, footage exactly as filmed (pauses kept); {"cuts": true} = tighten pauses
-_V2 = json.load(open(f"{ROOT}/out/v2.json")) if os.path.exists(f"{ROOT}/out/v2.json") else {}
+if len(keep) > 1 and keep[-1][1] - keep[-1][0] < 0.25: keep.pop()  # no 2-3 frame flash of footage right before the end card
 if _V2.get("cuts", False) is False:  # default (Sabin, 18.10.2026): natural pace, pauses kept
     keep = [(0.0, SRC_DUR)]; removed_before = []
 ZG = [0]
