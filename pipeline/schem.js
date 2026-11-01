@@ -1351,5 +1351,203 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+  // ---------- turbo vacuum actuator (capsula vacuumatică): diaphragm + rod + lever; torn diaphragm leaks, vacuum-gun test (Opel Astra J, 01.11.2026) ----------
+  // phases (or P.modes): 'ok' vacuum pulls the diaphragm and the rod moves the turbo lever · 'torn' diaphragm cracked, air leaks through, rod stays put ·
+  // 'test' vacuum gun: needle rises while pumping, then falls (leak) · 'fixed' reconditioned, holds vacuum
+  function vacuumCapsule(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['ok', 'torn', 'test', 'fixed'])[ph] || 'ok';
+    let s = ''; const TX = 190, TY = 205, CX = 700, CY = 205;
+    const good = mode === 'ok' || mode === 'fixed', leak = mode === 'torn' || mode === 'test';
+    // vacuum level 0..1 (gauge) and diaphragm pull 0..1
+    let v = .75 + .03 * Math.sin(tl * 3);
+    if (mode === 'torn') v = .08 + .05 * Math.abs(Math.sin(tl * 7));
+    if (mode === 'test') v = pt < 1.3 ? .72 * eo(pt / 1.3) : .72 * Math.exp(-(pt - 1.3) * 1.3);
+    let pull = good ? (mode === 'ok' ? .5 + .5 * Math.sin(tl * 2.2 - 1.2) : .9) : (mode === 'test' ? .35 * v : .04);
+    if (mode === 'ok') pull = .55 + .45 * Math.sin(tl * 2.2 - 1.2);
+    const bul = 26 * pull;
+    // ---- turbine (left): housing + spinning wheel
+    s += `<circle cx="${TX}" cy="${TY}" r="118" fill="${C.body}" stroke="${C.cy}" stroke-width="6"/><circle cx="${TX}" cy="${TY}" r="78" fill="${C.body2}" stroke="${C.cyD}" stroke-width="3"/>`;
+    const ang = tl * 520;
+    for (let i = 0; i < 9; i++) { const a = rad(ang + i * 40); const [x0, y0] = P2(TX, TY, 16, a), [x1, y1] = P2(TX, TY, 70, a + .55);
+      s += `<path d="M ${f(x0)} ${f(y0)} Q ${f(TX + Math.cos(a + .25) * 50)} ${f(TY + Math.sin(a + .25) * 50)} ${f(x1)} ${f(y1)}" fill="none" stroke="${C.cy}" stroke-width="5" stroke-linecap="round"/>`; }
+    s += `<circle cx="${TX}" cy="${TY}" r="14" fill="${C.steel}"/>`;
+    s += T(TX, 350, 'TURBINĂ', { s: 16, c: C.dim, a: 'middle' });
+    // ---- lever on the turbine housing, driven by the rod
+    const PX = 366, PY = 272, LL = 66; const d = bul; const sn = cl((14 + d) / LL, -1, 1); const th = Math.asin(sn);
+    const LX = PX + LL * Math.sin(th), LY = PY - LL * Math.cos(th);
+    s += `<path d="M 296 252 L ${PX + 10} 258 L ${PX + 10} 286 L 292 282 Z" fill="${C.body2}" stroke="${C.cyD}" stroke-width="3"/>`;
+    s += `<line x1="${PX}" y1="${PY}" x2="${f(LX)}" y2="${f(LY)}" stroke="${leak ? C.red : C.yel}" stroke-width="12" stroke-linecap="round"/><circle cx="${PX}" cy="${PY}" r="9" fill="${C.w}"/>`;
+    s += T(PX + 4, 318, 'COMANDA TURBINEI', { s: 13, c: leak ? C.red : C.dim, a: 'middle', ls: 1 });
+    // ---- capsule (right): two shells, diaphragm, spring in the vacuum chamber, rod out on the left
+    s += `<rect x="590" y="105" width="220" height="200" rx="64" fill="${C.body2}" stroke="${C.cy}" stroke-width="6"/>`;
+    s += `<rect x="${CX + 4}" y="111" width="100" height="188" rx="58" fill="${good ? 'rgba(98,216,255,.07)' : 'rgba(255,75,75,.07)'}"/>`;
+    // spring between the diaphragm plate and the right wall
+    { const x0 = CX + 10 + bul, x1 = 796, n = 7; let pth = `M ${f(x0)} ${CY}`; for (let i = 1; i <= n; i++) { const x = lerp(x0, x1, i / n); pth += ` L ${f(x - (x1 - x0) / n / 2)} ${CY + (i % 2 ? -34 : 34)} L ${f(x)} ${CY}`; }
+      s += `<path d="${pth}" fill="none" stroke="${C.steel}" stroke-width="5" stroke-linejoin="round"/>`; }
+    // diaphragm (membrane), bulging toward the vacuum side
+    const memCol = mode === 'fixed' ? C.grn : leak ? C.red : C.yel;
+    s += `<path d="M ${CX} 112 Q ${f(CX + bul * 2.1)} ${CY} ${CX} 298" fill="none" stroke="${memCol}" stroke-width="8" stroke-linecap="round"/>`;
+    s += `<rect x="${f(CX - 6 + bul)}" y="${CY - 46}" width="14" height="92" rx="5" fill="${C.steel}"/>`;
+    // rod: diaphragm plate -> lever
+    s += `<line x1="${f(LX)}" y1="${f(LY)}" x2="${f(CX + bul)}" y2="${CY}" stroke="${C.steel}" stroke-width="9" stroke-linecap="round"/>`;
+    s += T(500, CY - 16, 'TIJĂ', { s: 14, c: C.dim, a: 'middle' });
+    if (leak) { // crack across the membrane + air leaking through it
+      const mx = CX + bul * 1.05; s += `<path d="M ${f(mx - 9)} 168 L ${f(mx + 8)} 182 L ${f(mx - 7)} 196 L ${f(mx + 9)} 212 L ${f(mx - 6)} 228 L ${f(mx + 7)} 242" fill="none" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>`;
+      for (let i = 0; i < 7; i++) { const k = ((tl * .9 + i / 7) % 1); const y = 175 + (i % 4) * 20; const x = lerp(CX - 70, CX + 70, k);
+        s += `<circle cx="${f(x)}" cy="${f(y + 6 * Math.sin(k * 8 + i))}" r="6" fill="${C.org}" opacity="${f(.9 * Math.sin(k * Math.PI))}"/>`; }
+      s += ARW(CX - 74, 150, CX - 18, 166, C.org, 4, 13);
+      if (mode === 'torn') s += tag(CX - 10, 82, 'AER PRIN MEMBRANA SPARTĂ', C.red, 'middle', 14);
+    } else {
+      s += T(CX - 6, 92, 'MEMBRANĂ', { s: 14, c: mode === 'fixed' ? C.grn : C.dim, a: 'middle' });
+    }
+    s += T(CX, 345, 'CAPSULĂ VACUUMATICĂ', { s: 16, c: leak ? C.red : C.dim, a: 'middle' });
+    // ---- vacuum hose (port on top-right) -> source (vacuum line or the vacuum gun in the test)
+    s += `<path d="M 772 112 L 772 40 L 556 40" fill="none" stroke="${C.steelD}" stroke-width="12" stroke-linejoin="round"/>`;
+    const nV = good ? 5 : mode === 'test' && pt < 1.3 ? 4 : 0;
+    for (let i = 0; i < nV; i++) { const k = ((tl * .8 + i / nV) % 1); let x, y; if (k < .35) { x = 772; y = lerp(150, 40, k / .35); } else { x = lerp(772, 556, (k - .35) / .65); y = 40; }
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="${C.cy}"/>`; }
+    // gauge (vacuum level)
+    const gx = 470, gy = 52, gr = 36; s += `<circle cx="${gx}" cy="${gy}" r="${gr}" fill="${C.body}" stroke="${C.cy}" stroke-width="4"/>`;
+    { const a0 = rad(150), a1 = rad(390); const [x0, y0] = P2(gx, gy, gr - 8, a0), [x1, y1] = P2(gx, gy, gr - 8, rad(270)), [x2, y2] = P2(gx, gy, gr - 8, a1);
+      s += `<path d="M ${f(x0)} ${f(y0)} A ${gr - 8} ${gr - 8} 0 0 1 ${f(x1)} ${f(y1)}" fill="none" stroke="${C.red}" stroke-width="5"/><path d="M ${f(x1)} ${f(y1)} A ${gr - 8} ${gr - 8} 0 0 1 ${f(x2)} ${f(y2)}" fill="none" stroke="${C.grn}" stroke-width="5"/>`;
+      const an = lerp(a0, a1, cl(v)); const [nx, ny] = P2(gx, gy, gr - 12, an); s += `<line x1="${gx}" y1="${gy}" x2="${f(nx)}" y2="${f(ny)}" stroke="${C.w}" stroke-width="4" stroke-linecap="round"/><circle cx="${gx}" cy="${gy}" r="5" fill="${C.w}"/>`; }
+    if (mode === 'test') { // vacuum gun body under the gauge (grip + lever)
+      s += `<path d="M ${gx + 34} 40 L 556 40" stroke="${C.steelD}" stroke-width="12"/><rect x="${gx - 26}" y="${gy + 30}" width="52" height="26" rx="8" fill="${C.steelD}"/>`;
+      const sq = pt < 1.3 ? Math.abs(Math.sin(pt * 9)) : 0;
+      s += `<path d="M ${gx - 18} ${gy + 56} L ${gx - 30} ${gy + 120} L ${gx - 6} ${gy + 120} L ${gx + 2} ${gy + 56} Z" fill="${C.steel}"/><path d="M ${gx + 10} ${gy + 56} L ${f(gx + 34 - 14 * sq)} ${gy + 112}" stroke="${C.yel}" stroke-width="9" stroke-linecap="round"/>`;
+    } else s += T(gx - 48, gy + 6, 'VACUUM', { s: 15, c: C.dim, a: 'end' });
+    // ---- verdict
+    const L = Object.assign({ ok: ['VACUUMUL TRAGE MEMBRANA › TIJA COMANDĂ TURBINA', C.grn], torn: ['MEMBRANĂ SPARTĂ › NU ȚINE VACUUMUL', C.red],
+      test: [pt < 1.3 ? 'TEST CU PISTOLUL DE VACUUM...' : 'VACUUMUL SCADE › CAPSULA E SPARTĂ', pt < 1.3 ? C.yel : C.red], fixed: ['RECONDIȚIONATĂ › ȚINE VACUUMUL', C.grn] }, P.labels || {})[mode];
+    s += tag(457, 382, L[0], L[1], 'middle', 17);
+    if (mode === 'fixed') s += check(CX + 120, 140, 18, C.grn, 7);
+    if (leak && mode === 'torn') s += xmark(CX + 122, 140, 16, C.red, 7);
+    return s;
+  }
+
+  // ---------- intake runner: deposits narrow the passage -> insufficient air flow (Ford Focus 2.0 diesel, 01.11.2026) ----------
+  // phases (or P.modes): 'ok' free passage · 'clog' crust grows on the walls, little air gets through · 'clean' cleaned in the lab, flow restored
+  function intakeFlow(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['ok', 'clog', 'clean'])[ph] || 'ok';
+    let s = ''; const X0 = 40, X1 = 760, YT = 128, YB = 292, MID = (YT + YB) / 2;
+    const lev = mode === 'clog' ? lerp(.12, 1, eo(pt / 1.8)) : mode === 'clean' ? lerp(.35, 0, eo(pt / .9)) : .06;
+    // runner walls + cylinder head port on the right
+    s += `<rect x="${X0}" y="${YT - 14}" width="${X1 - X0}" height="${YB - YT + 28}" rx="10" fill="${C.body}" stroke="${C.cy}" stroke-width="6"/>`;
+    s += `<rect x="${X1 - 6}" y="70" width="140" height="280" rx="16" fill="${C.body2}" stroke="${C.cy}" stroke-width="6"/>` + T(X1 + 64, 98, 'CILINDRI', { s: 15, c: C.dim, a: 'middle' });
+    { const vy = MID + 8 * Math.sin(tl * 7); s += `<line x1="${X1 + 64}" y1="${f(vy - 70)}" x2="${X1 + 64}" y2="${f(vy + 20)}" stroke="${C.steel}" stroke-width="8"/><ellipse cx="${X1 + 64}" cy="${f(vy + 26)}" rx="34" ry="9" fill="${C.steel}"/>`; }
+    // deposits (crust on both walls, irregular edge)
+    const TH = 66 * lev;
+    if (TH > 1) { const N = 36; let top = `M ${X0 + 4} ${YT - 8}`, bot = `M ${X0 + 4} ${YB + 8}`;
+      for (let i = 0; i <= N; i++) { const x = lerp(X0 + 4, X1 - 4, i / N); const taper = .55 + .45 * Math.sin(Math.PI * cl((x - X0) / (X1 - X0)) * .9 + .25);
+        const nT = 1 + .22 * Math.sin(i * 1.7) + .14 * Math.sin(i * 3.1 + 1), nB = 1 + .2 * Math.sin(i * 2.3 + 2) + .15 * Math.sin(i * 4.1);
+        top += ` L ${f(x)} ${f(YT + TH * taper * nT)}`; bot += ` L ${f(x)} ${f(YB - TH * taper * nB)}`; }
+      top += ` L ${X1 - 4} ${YT - 8} Z`; bot += ` L ${X1 - 4} ${YB + 8} Z`;
+      s += `<path d="${top}" fill="#141414" stroke="#3A3A3A" stroke-width="2"/><path d="${bot}" fill="#141414" stroke="#3A3A3A" stroke-width="2"/>`;
+      for (let i = 0; i < 26; i++) { const x = X0 + 30 + rnd(i) * (X1 - X0 - 60), up = i % 2; s += `<circle cx="${f(x)}" cy="${f(up ? YT + 6 + rnd(i + 5) * TH * .6 : YB - 6 - rnd(i + 5) * TH * .6)}" r="${f(3 + 3 * rnd(i + 9))}" fill="#2B2B2B"/>`; } }
+    // air particles: fewer and slower when the passage narrows
+    const free = 1 - lev * .8, n = Math.round(4 + 14 * free), sp = .25 + .5 * free;
+    for (let i = 0; i < n; i++) { const k = ((tl * sp + i / n + rnd(i) * .05) % 1); const x = lerp(X0 + 10, X1 + 50, k);
+      const half = (YB - YT) / 2 - TH * .8 - 10; const y = MID + (rnd(i + 3) * 2 - 1) * Math.max(8, half) * .85 + 4 * Math.sin(k * 12 + i);
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="7" fill="${C.cy}" opacity=".9"/>`; }
+    s += ARW(X0 - 30, MID, X0 + 50, MID, C.cy, 6, 18) + T(X0, YT - 30, 'AER', { s: 17, c: C.cy });
+    // flow meter (top)
+    const fl = 1 - lev * .78; const bx = 250, bw = 420; s += T(bx - 14, 52, 'FLOW', { s: 17, c: C.dim, a: 'end' });
+    s += `<rect x="${bx}" y="34" width="${bw}" height="24" rx="8" fill="${C.body2}" stroke="${C.cyD}" stroke-width="3"/><rect x="${bx + 3}" y="37" width="${f((bw - 6) * fl)}" height="18" rx="6" fill="${fl < .5 ? C.red : C.grn}"/>`;
+    s += T(bx + bw + 14, 52, fl < .5 ? 'INSUFICIENT' : 'CORECT', { s: 16, c: fl < .5 ? C.red : C.grn });
+    if (mode === 'clog' && lev > .6) s += tag(400, MID - TH - 26 > YT ? MID : MID, 'DEPUNERI MASIVE', C.red, 'middle', 16, cl((lev - .6) / .2));
+    const L = Object.assign({ ok: ['FLOW CORECT: AERUL INTRĂ LIBER', C.grn], clog: ['FLOW INSUFICIENT: ADMISIE COLMATATĂ', C.red], clean: ['CURĂȚAT ÎN LABORATOR: FLOW REFĂCUT', C.grn] }, P.labels || {})[mode];
+    s += tag(457, 372, L[0], L[1], 'middle', 18);
+    s += T(457, 420, P.cap || 'GALERIA DE ADMISIE · SECȚIUNE', { s: 15, c: C.dim, a: 'middle' });
+    return s;
+  }
+
+  // ---------- timing belt drive with the water pump on the belt: pump seal leaks coolant -> complete kit (belt + water pump + rollers) (Audi Q5 2.0 TDI, 01.11.2026) ----------
+  // phases (or P.modes): 'drive' the belt also drives the water pump · 'leak' coolant leaks at the water pump · 'kit' complete kit replaced (new parts green)
+  function timingKit(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['drive', 'leak', 'kit'])[ph] || 'drive';
+    let s = ''; const kit = mode === 'kit', leak = mode === 'leak';
+    const PU = [[230, 112, 64, 'cam'], [560, 98, 50, 'hp'], [722, 212, 44, 'wp'], [602, 330, 24, 'idl'], [420, 330, 44, 'crk'], [300, 258, 28, 'ten']];
+    const isNew = k => kit && (k === 'wp' || k === 'idl' || k === 'ten');
+    // belt path: outer tangents between consecutive pulleys (clockwise on screen)
+    const n = PU.length, A = [], B = [];
+    for (let i = 0; i < n; i++) { const [x1, y1, r1] = PU[i], [x2, y2, r2] = PU[(i + 1) % n]; const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+      const sf = (r1 - r2) / L, cf = Math.sqrt(1 - sf * sf); const nx = uy * cf + ux * sf, ny = -ux * cf + uy * sf;
+      B[i] = [x1 + r1 * nx, y1 + r1 * ny]; A[(i + 1) % n] = [x2 + r2 * nx, y2 + r2 * ny]; }
+    let d = `M ${f(B[0][0])} ${f(B[0][1])}`;
+    for (let k = 1; k <= n; k++) { const i = k % n; const [cx, cy, r] = PU[i]; d += ` L ${f(A[i][0])} ${f(A[i][1])}`;
+      const ta = Math.atan2(A[i][1] - cy, A[i][0] - cx), tb = Math.atan2(B[i][1] - cy, B[i][0] - cx); let dl = tb - ta; while (dl < 0) dl += 2 * Math.PI;
+      d += ` A ${r} ${r} 0 ${dl > Math.PI ? 1 : 0} 1 ${f(B[i][0])} ${f(B[i][1])}`; }
+    s += `<path d="${d} Z" fill="none" stroke="${kit ? 'rgba(74,222,128,.45)' : 'rgba(98,216,255,.45)'}" stroke-width="26" stroke-linejoin="round"/>`;
+    s += `<path d="${d} Z" fill="none" stroke="${kit ? '#14532D' : '#1E2630'}" stroke-width="18" stroke-linejoin="round"/>`;
+    s += `<path d="${d} Z" fill="none" stroke="${kit ? C.grn : '#8FA3B8'}" stroke-width="6" stroke-dasharray="8 8" stroke-dashoffset="${f(-tl * 90)}"/>`;
+    // pulleys (spokes rotate with the belt)
+    PU.forEach(([cx, cy, r, k]) => { const nw = isNew(k), bad = leak && k === 'wp'; const col = bad ? C.red : nw ? C.grn : C.cy;
+      const pulse = bad ? 1 + .05 * Math.sin(tl * 8) : 1; const ang = tl * 9000 / r;
+      s += `<g transform="translate(${cx} ${cy}) scale(${f(pulse)})"><circle r="${r - 6}" fill="${C.body}" stroke="${col}" stroke-width="5"/>`;
+      for (let j = 0; j < 4; j++) { const a = rad(ang + j * 90); s += `<line x1="0" y1="0" x2="${f(Math.cos(a) * (r - 12))}" y2="${f(Math.sin(a) * (r - 12))}" stroke="${col}" stroke-width="4" opacity=".75"/>`; }
+      s += `<circle r="7" fill="${C.steel}"/></g>`;
+      if (nw) s += `<circle cx="${cx + r * .72}" cy="${cy - r * .72}" r="14" fill="${C.grn}"/>` + check(cx + r * .72, cy - r * .72, 7, '#fff', 4); });
+    // labels
+    s += T(144, 118, 'AX CU CAME', { s: 14, c: C.dim, a: 'end' }) + T(560, 34, 'POMPĂ INJECȚIE', { s: 14, c: C.dim, a: 'middle' });
+    s += T(780, 206, 'POMPĂ', { s: 15, c: leak ? C.red : kit ? C.grn : C.w }) + T(780, 228, 'DE APĂ', { s: 15, c: leak ? C.red : kit ? C.grn : C.w });
+    s += T(602, 380, 'ROLĂ', { s: 14, c: kit ? C.grn : C.dim, a: 'middle' }) + T(420, 394, 'ARBORE COTIT', { s: 14, c: C.dim, a: 'middle' }) + T(262, 306, 'ÎNTINZĂTOR', { s: 14, c: kit ? C.grn : C.dim, a: 'end' });
+    s += T(110, 380, kit ? 'CUREA NOUĂ' : 'CUREA DE DISTRIBUȚIE', { s: 14, c: kit ? C.grn : C.dim });
+    // coolant leak at the water pump (VAG coolant: pink)
+    if (leak) { for (let i = 0; i < 4; i++) { const k = ((pt * .9 + i / 4) % 1); s += drop(706 + (i % 2) * 22, lerp(262, 392, k), 9, '#F472B6', 1 - k * .6); }
+      s += glowC(722, 212, 58 + 6 * Math.sin(tl * 8), C.red, .16); }
+    const L = Object.assign({ drive: ['CUREAUA ANTRENEAZĂ ȘI POMPA DE APĂ', C.cy], leak: ['PIERDERE DE ANTIGEL LA POMPA DE APĂ', C.red], kit: ['KIT COMPLET: CUREA · POMPĂ DE APĂ · ROLE', C.grn] }, P.labels || {})[mode];
+    s += tag(470, 205, L[0], L[1], 'middle', 16, cl(pt / .25));
+    return s;
+  }
+
+  // ---------- combustion-leak test on the cylinder head (substanță de contrast): exhaust gases in the coolant turn the fluid from blue to yellow (Mazda 2.2 diesel, 01.11.2026) ----------
+  // phases (or P.modes): 'test' the pump draws the air above the coolant through the contrast fluid (blue) · 'positive' combustion gas leaks into the coolant, the fluid turns yellow
+  function combustionTest(tl, ph, pt, P) {
+    const mode = typeof ph === 'string' ? ph : (P.modes || ['test', 'positive'])[ph] || 'test';
+    const pos = mode === 'positive', k = pos ? eo(pt / .8) : 0; let s = '';
+    const hx = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); const B1 = hx('#3B82F6'), Y1 = hx('#FACC15');
+    const fc = `rgb(${B1.map((v, i) => Math.round(lerp(v, Y1[i], k))).join(',')})`;
+    // legend
+    s += `<rect x="40" y="22" width="18" height="18" rx="4" fill="#3B82F6"/>` + T(66, 37, 'ALBASTRU: ANTIGEL CURAT', { s: 14, c: pos ? C.dim : C.w });
+    s += `<rect x="40" y="48" width="18" height="18" rx="4" fill="#FACC15"/>` + T(66, 63, 'GALBEN: GAZE DE ARDERE', { s: 14, c: pos && k > .7 ? C.yel : C.dim });
+    // cylinder head + block
+    const HX0 = 90, HX1 = 420, HY0 = 96, HY1 = 196, BY1 = 362, cool = 'rgba(98,216,255,.30)';
+    s += `<rect x="${HX0}" y="${HY0}" width="${HX1 - HX0}" height="${HY1 - HY0}" rx="12" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/>`;
+    s += `<rect x="${HX0}" y="${HY1 + 6}" width="${HX1 - HX0}" height="${BY1 - HY1 - 6}" rx="12" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/>`;
+    [[106, 110, 50, 74], [354, 110, 50, 74], [106, 216, 50, 132], [354, 216, 50, 132]].forEach(([x, y, w, h]) => { s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="10" fill="${cool}" stroke="${C.cyD}" stroke-width="2"/>`; });
+    s += `<rect x="176" y="${HY1 + 8}" width="158" height="${BY1 - HY1 - 18}" fill="${C.bg}" stroke="${C.steelD}" stroke-width="3"/>`;
+    const py = 250 + 30 * Math.sin(tl * 5); s += `<rect x="182" y="${f(py)}" width="146" height="58" rx="6" fill="${C.steelD}" stroke="${C.steel}" stroke-width="3"/>`;
+    s += `<path d="M 186 ${HY1} Q 255 ${HY1 - 56} 324 ${HY1} Z" fill="${C.bg}" stroke="${C.steelD}" stroke-width="3"/>`;
+    const fl = .6 + .4 * Math.sin(tl * 11); s += glowC(255, HY1 - 16, 26 * fl, C.org, .55) + glowC(255, HY1 - 16, 13 * fl, C.yel, .7);
+    s += `<rect x="247" y="${HY0 - 24}" width="16" height="66" rx="5" fill="${C.steel}"/>`;
+    s += `<line x1="${HX0}" y1="${HY1 + 3}" x2="${HX1}" y2="${HY1 + 3}" stroke="${pos ? C.red : C.yel}" stroke-width="5"/>`;
+    s += T(170, 88, 'CHIULASĂ', { s: 14, c: C.dim, a: 'middle' }) + T(255, 386, 'BLOC MOTOR', { s: 14, c: C.dim, a: 'middle' }) + T(131, 386, 'ANTIGEL', { s: 13, c: C.cy, a: 'middle' });
+    if (pos) { // combustion gas escapes from the chamber into the coolant jacket and rises
+      for (let i = 0; i < 8; i++) { const q = ((tl * .8 + i / 8) % 1); let x, y;
+        if (q < .3) { x = lerp(320, 362, q / .3); y = lerp(HY1 - 6, HY1 - 2, q / .3); } else { x = 364 + 32 * rnd(i) + 4 * Math.sin(q * 10 + i); y = lerp(HY1 - 8, HY0 + 18, (q - .3) / .7); }
+        s += `<circle cx="${f(x)}" cy="${f(y)}" r="6" fill="${C.org}" opacity=".95"/>`; }
+      s += `<circle cx="352" cy="${HY1 + 3}" r="14" fill="${C.red}"/>` + T(352, HY1 + 11, '!', { s: 22, a: 'middle', c: '#fff' }); }
+    // hose: coolant jacket -> expansion tank
+    s += `<path d="M 404 286 L 474 286 L 474 330 L 560 330" fill="none" stroke="${C.steelD}" stroke-width="12" stroke-linejoin="round"/>`;
+    if (pos) for (let i = 0; i < 4; i++) { const q = ((tl * .7 + i / 4) % 1); let x, y; if (q < .35) { x = lerp(404, 474, q / .35); y = 286; } else if (q < .55) { x = 474; y = lerp(286, 330, (q - .35) / .2); } else { x = lerp(474, 560, (q - .55) / .45); y = 330; }
+      s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="${C.org}"/>`; }
+    // expansion tank
+    const TX0 = 560, TX1 = 780, TY0 = 246, TY1 = 362;
+    s += `<rect x="${TX0}" y="${TY0}" width="${TX1 - TX0}" height="${TY1 - TY0}" rx="22" fill="${C.body}" stroke="${C.cy}" stroke-width="5"/><rect x="${TX0 + 5}" y="${TY0 + 46}" width="${TX1 - TX0 - 10}" height="${TY1 - TY0 - 51}" rx="16" fill="${cool}"/>`;
+    s += T((TX0 + TX1) / 2, 386, 'VAS DE EXPANSIUNE', { s: 14, c: C.dim, a: 'middle' });
+    // tester: glass tube with the contrast fluid, on the tank neck
+    const GX0 = 640, GX1 = 700, GY0 = 74, GY1 = 246;
+    s += `<rect x="${GX0}" y="${GY0}" width="${GX1 - GX0}" height="${GY1 - GY0}" rx="14" fill="rgba(234,246,255,.08)" stroke="${pos && k > .7 ? C.yel : C.w}" stroke-width="4"/>`;
+    s += `<rect x="${GX0 + 6}" y="${GY0 + 50}" width="${GX1 - GX0 - 12}" height="${GY1 - GY0 - 56}" rx="10" fill="${fc}" opacity=".92"/>`;
+    for (let i = 0; i < 6; i++) { const q = ((tl * .9 + i / 6) % 1); s += `<circle cx="${f(GX0 + 16 + (i % 3) * 14 + 3 * Math.sin(q * 9 + i))}" cy="${f(lerp(GY1 - 12, GY0 + 58, q))}" r="5" fill="#fff" opacity=".7"/>`; }
+    s += `<path d="M ${GX1 - 12} ${GY0 + 6} L ${GX1 - 12} 50 L 756 50" fill="none" stroke="${C.steelD}" stroke-width="7" stroke-linejoin="round"/>`;
+    const sq = 1 + .12 * Math.sin(tl * 6); s += `<ellipse cx="804" cy="50" rx="${f(40 * sq)}" ry="${f(25 / sq)}" fill="${C.steelD}" stroke="${C.steel}" stroke-width="3"/>` + T(804, 100, 'POMPĂ', { s: 13, c: C.dim, a: 'middle' });
+    s += T(GX0 - 14, 136, 'SUBSTANȚĂ', { s: 15, c: C.w, a: 'end' }) + T(GX0 - 14, 158, 'DE CONTRAST', { s: 15, c: C.w, a: 'end' });
+    if (pos && k > .7) s += `<rect x="${GX0 - 8}" y="${GY0 - 8}" width="${GX1 - GX0 + 16}" height="${GY1 - GY0 + 16}" rx="18" fill="none" stroke="${C.red}" stroke-width="4" opacity="${f(.6 + .4 * Math.sin(tl * 8))}"/>`;
+    const L = pos ? (k > .7 ? ['REZULTAT POZITIV: GAZE DE ARDERE ÎN ANTIGEL', C.red] : ['SUBSTANȚA ÎȘI SCHIMBĂ CULOAREA...', C.yel]) : ['TEST: AERUL DIN VAS TRECE PRIN SUBSTANȚĂ', C.cy];
+    s += tag(457, 418, L[0], L[1], 'middle', 16);
+    return s;
+  }
+
+  return { combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();
