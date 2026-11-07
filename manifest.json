@@ -80,6 +80,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_k4_s3",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/jduAUMtJy0rNc1fWsnty/cGpA7joSomm0yyLFQOPD/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "denis_v2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/nYdI7SKxn6gZvjoTg8Ka/YKMpyDeZ1vTBVOcK7MRn/content.mp3",
   "downloader": "curl"
