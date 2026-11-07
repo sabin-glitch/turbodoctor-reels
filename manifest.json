@@ -75,6 +75,11 @@
   "downloader": "curl"
  },
  {
+  "id": "denis_v2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/nYdI7SKxn6gZvjoTg8Ka/YKMpyDeZ1vTBVOcK7MRn/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_s3",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/3f9987ae-2049-49cb-bd9d-325a831abd61_minimax-460829836222762_d1b6a228-e224-484b-9eff-6f950d21b7a5.mp4",
   "downloader": "curl"
