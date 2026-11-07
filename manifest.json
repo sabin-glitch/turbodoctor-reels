@@ -45,8 +45,23 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_s2",
+  "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/5c1b9752-f756-43ba-86ee-aa10c775211d_minimax-460831506235753_05c95db9-d91b-408f-8585-4ddeb168b08e.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "pov01_s3",
+  "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/3f9987ae-2049-49cb-bd9d-325a831abd61_minimax-460829836222762_d1b6a228-e224-484b-9eff-6f950d21b7a5.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "ai_flote_drona_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/9765448e-dc13-4bb3-b9e2-4c181cddb52f_2102189100362491046.mp4_effc9921-5ec5-42a4-824b-fae161c2018c.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "pov01_piano",
+  "source_url": "https://ai-music-tracks.s3.us-east-1.amazonaws.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/ce6d0ce2-9a94-4ecc-9b9f-0211f22590a9.wav",
   "downloader": "curl"
  },
  {
