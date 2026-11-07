@@ -5,6 +5,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_k4_G",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/snde2QOiuMIZpkd5vfLJ/q8DEwbdvOkn8dsC9Pp12/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "orig_mercedes_0193",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-12300132862232721737.mp4",
   "downloader": "curl"
@@ -70,6 +75,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_k4_D",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/FrN9qMdkRuC46ULCR7OU/qyQoc0XxGThkRtb1Kk5S/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_doctor_v2",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/55c9bc56-4e3d-45ec-846a-54f64da59bf1.mp3",
   "downloader": "curl"
@@ -95,6 +105,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_k4_B",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Bhlntqa3KWF7Vuc9w0hb/P9pag3IX67Cbfv3Id4AA/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_k4_s3",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/jduAUMtJy0rNc1fWsnty/cGpA7joSomm0yyLFQOPD/content.mp4",
   "downloader": "curl"
@@ -115,8 +130,18 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_k4_H",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/wLtF2jNLwbkyNPPnRxcj/EOvODciNLM0F45IStWK8/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_piano",
   "source_url": "https://ai-music-tracks.s3.us-east-1.amazonaws.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/ce6d0ce2-9a94-4ecc-9b9f-0211f22590a9.wav",
+  "downloader": "curl"
+ },
+ {
+  "id": "pov01_k4_E",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/x5MXoFLc9v6Ajh5feyRc/7b373qX9kz6vLcvzzvA4/content.mp4",
   "downloader": "curl"
  },
  {
@@ -137,6 +162,11 @@
  {
   "id": "ai_promoinj_pornire_grea_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/f861ab34-5482-4129-b7f5-c439953c4375_16780484670581398832.mp4_d4b75705-f7e1-4d6e-8e74-a0dcf85f668d.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "pov01_k4_I",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/BEIZSnAwjYPiikKwbill/PPHeSZTCWXZcLY6aKcte/content.mp4",
   "downloader": "curl"
  },
  {
