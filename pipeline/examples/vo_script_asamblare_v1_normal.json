@@ -1,28 +1,106 @@
 [
- {"t": 0.5,   "text": "Așa se asamblează o turbină, pas cu pas, în laboratorul Turbo Doctor."},
- {"t": 5.6,   "text": "Avem în menghină carcasa de turbină, iar în interiorul ei, geometria variabilă: inelul cu paletele mobile."},
- {"t": 12.8,  "text": "Înainte de montaj, paletele sunt verificate: trebuie să se miște liber, fără niciun punct de blocare."},
- {"t": 19.4,  "text": "Urmează inima turbinei: cartușul, adică axul cu rotorul de turbină și rotorul de compresor, montat în carcasa de lagăre."},
- {"t": 28.0,  "text": "Iar rotorul de turbină intră exact în centrul inelului cu palete, iar cartușul se așază pe carcasă."},
- {"t": 34.6,  "text": "Aici cartușul se fixează pe carcasa de turbină. Elementele de prindere se strâng uniform, pe rând, ca rotorul să rămână perfect centrat."},
- {"t": 44.0,  "text": "Orice abatere la centrare s-ar simți mai târziu, la turații de ordinul sutelor de mii de rotații pe minut."},
- {"t": 51.2,  "text": "În turbină, toleranțele se măsoară în sutimi de milimetru. De aceea, fiecare pas se face fără grabă."},
- {"t": 61.1,  "text": "Urmează actuatorul: capsula care comandă paletele geometriei variabile."},
- {"t": 67.0,  "text": "El se montează pe suportul de pe carcasa de lagăre, iar tija lui va acționa pârghia care rotește paletele."},
- {"t": 78.0,  "text": "Un actuator montat și reglat corect înseamnă răspuns prompt la accelerare și presiune de supraalimentare în parametri."},
- {"t": 92.1,  "text": "Un control rapid: rotorul de compresor se învârte liber, fără frecare și fără joc."},
- {"t": 102.9, "text": "Acum vine carcasa de compresor. Ea se așază peste rotor și se orientează după poziția conductelor de pe mașină."},
- {"t": 113.5, "text": "Elementele de prindere se montează pe rând, apoi se strâng cu cheia, uniform, pe toată circumferința."},
- {"t": 127.0, "text": "Aici nu ne grăbim: fiecare strângere se verifică, pentru ca rotorul să rămână perfect centrat în carcasă, iar jocul dintre palete și carcasă să fie cel corect."},
- {"t": 141.0, "text": "Întotdeauna lucrăm cu mănuși și cu piese curate: orice impuritate ajunsă în turbină la montaj se transformă, în exploatare, într-o uzură prematură."},
- {"t": 152.9, "text": "Odată carcasa de compresor fixată, rotorul este protejat, iar turbina începe să arate ca un ansamblu complet."},
- {"t": 160.7, "text": "Urmează legătura dintre actuator și geometrie: tija actuatorului se cuplează la pârghia care rotește paletele."},
- {"t": 169.5, "text": "Iar lungimea tijei se reglează cu precizie: ea determină poziția de repaus a paletelor și răspunsul turbinei la turații mici."},
- {"t": 180.9, "text": "Apoi tija se asigură, ca reglajul să rămână fix în timp, la vibrații și la temperatură."},
- {"t": 187.7, "text": "Ultima etapă: controlul final."},
- {"t": 190.8, "text": "Aici, fiecare strângere este verificată din nou, iar mecanismul geometriei este acționat manual, ca să ne asigurăm că paletele răspund pe toată cursa."},
- {"t": 201.0, "text": "Iar reglajul fin se face cu răbdare: un milimetru în plus sau în minus la tijă se simte în comportamentul motorului."},
- {"t": 209.0, "text": "Iar la final, un ultim control vizual: turbina asamblată este curată, strânsă corect și reglată."},
- {"t": 217.0, "text": "Așa lucrăm la Turbo Doctor."},
- {"tip": 0.35, "text": "Așadar, la montajul pe mașină: ulei și filtru noi, iar înainte de prima pornire, turbina se amorsează cu ulei."}
+ {
+  "t": 0.2,
+  "text": "Așa se asamblează o turbină, pas cu pas, în laboratorul Turbo Doctor."
+ },
+ {
+  "t": 5.5,
+  "text": "Începem cu carcasa de turbină, prinsă în menghină. Înăuntru se vede geometria variabilă: un inel cu palete mici, mobile."
+ },
+ {
+  "t": 13.7,
+  "text": "Paletele lucrează ca jaluzelele de la fereastră: se închid și se deschid, ca să dozeze gazele care învârt turbina. Le verificăm să se miște liber."
+ },
+ {
+  "t": 23.1,
+  "text": "Urmează inima turbinei: cartușul. E ca axul unei roți de bicicletă: un ax cu un rotor la fiecare capăt, care se învârte pe lagăre unse cu ulei."
+ },
+ {
+  "t": 34.52,
+  "text": "Rotorul de turbină intră exact în mijlocul inelului cu palete, iar cartușul se așază pe carcasă."
+ },
+ {
+  "t": 44.85,
+  "text": "Aici cartușul se fixează pe carcasa de turbină. Strângem puțin câte puțin, pe rând, ca atunci când montăm o roată: niciodată un singur șurub până la capăt."
+ },
+ {
+  "t": 54.82,
+  "text": "De ce atâta grijă? Pentru că turbina se învârte de sute de mii de ori pe minut, de zeci de ori mai repede decât motorul."
+ },
+ {
+  "t": 61.85,
+  "text": "La asemenea viteze, un joc cât grosimea unei foi de hârtie face diferența dintre o turbină care ține și una care se strică."
+ },
+ {
+  "t": 70.65,
+  "text": "Urmează actuatorul: capsula albastră. El e mușchiul turbinei: primește comanda de la motor și trage de o tijă."
+ },
+ {
+  "t": 79.59,
+  "text": "Se montează pe suportul de pe carcasă. Tija lui ajunge la pârghia geometriei și, când trage, rotește toate paletele deodată, ca sfoara de la jaluzele."
+ },
+ {
+  "t": 90.58,
+  "text": "Un actuator reglat bine înseamnă o mașină care răspunde imediat la accelerație, fără gol și fără întârziere."
+ },
+ {
+  "t": 101.65,
+  "text": "Un control rapid, cu degetul: rotorul trebuie să se învârtă liber, ca o roată de bicicletă bine unsă, fără să frece și fără să joace."
+ },
+ {
+  "t": 112.45,
+  "text": "Acum vine carcasa de compresor, capacul prin care turbina trage aerul și îl împinge în motor. Se așază peste rotor și se rotește în poziția în care se vor lega conductele de pe mașină."
+ },
+ {
+  "t": 125.13,
+  "text": "Elementele de prindere se pun pe rând, apoi se strâng cu cheia, uniform, de jur împrejur."
+ },
+ {
+  "t": 136.55,
+  "text": "Și aici, fără grabă: rotorul trebuie să stea perfect în mijloc. Distanța dintre palete și carcasă e ca distanța dintre ușă și toc: prea mare, pierzi presiune; prea mică, se freacă și se strică."
+ },
+ {
+  "t": 150.63,
+  "text": "Lucrăm cu mănuși și cu piese curate. Un fir de nisip în turbină e ca o pietricică în pantof: la început nu-l simți, dar în timp face rău."
+ },
+ {
+  "t": 162.45,
+  "text": "Cu carcasa de compresor fixată, rotorul e protejat, iar turbina arată deja ca un ansamblu complet."
+ },
+ {
+  "t": 170.25,
+  "text": "Urmează legătura dintre actuator și geometrie: tija se cuplează la pârghia care rotește paletele."
+ },
+ {
+  "t": 179.05,
+  "text": "Lungimea tijei se reglează la milimetru. Gândiți-vă la o jaluzea: dacă sfoara e prea lungă sau prea scurtă, nu se mai deschide cum trebuie. La fel și paletele."
+ },
+ {
+  "t": 190.45,
+  "text": "Apoi tija se asigură, ca reglajul să rămână fix ani de zile, la vibrații și la căldură."
+ },
+ {
+  "t": 197.25,
+  "text": "Ultima etapă: controlul final."
+ },
+ {
+  "t": 200.35,
+  "text": "Verificăm din nou fiecare strângere și mișcăm manual mecanismul geometriei, de la un capăt la altul, ca să vedem că paletele răspund pe toată cursa."
+ },
+ {
+  "t": 210.78,
+  "text": "Reglajul fin se face cu răbdare: un milimetru la tijă se simte în felul în care merge mașina."
+ },
+ {
+  "t": 218.55,
+  "text": "Iar la final, un ultim control vizual: turbina e curată, strânsă corect și reglată."
+ },
+ {
+  "t": 226.55,
+  "text": "Așa lucrăm la Turbo Doctor."
+ },
+ {
+  "tip": 0.35,
+  "text": "Și un sfat la montaj: ulei și filtru noi, iar înainte de prima pornire, turbina se amorsează cu ulei, ca să nu pornească pe uscat."
+ }
 ]

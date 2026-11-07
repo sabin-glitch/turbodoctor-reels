@@ -1,14 +1,50 @@
 [
- {"t": 0.4,  "text": "Așa se asamblează o turbină, pas cu pas, în laboratorul Turbo Doctor."},
- {"t": 5.5,  "text": "Întâi, geometria variabilă: paletele mobile trebuie să se miște liber."},
- {"t": 10.6, "text": "Urmează cartușul: axul cu rotorul de turbină și cel de compresor, în carcasa de lagăre."},
- {"t": 17.2, "text": "Apoi cartușul se fixează pe carcasa de turbină, cu rotorul perfect centrat."},
- {"t": 23.4, "text": "Urmează actuatorul: capsula care comandă paletele, montată pe suportul ei."},
- {"t": 34.0, "text": "Un control rapid: rotorul se învârte liber, fără frecare și fără joc."},
- {"t": 39.4, "text": "Acum, carcasa de compresor: se așază peste rotor, se orientează și se strânge uniform."},
- {"t": 48.0, "text": "Aici nu ne grăbim: jocul dintre rotor și carcasă trebuie să fie exact cel corect."},
- {"t": 56.0, "text": "Urmează tija actuatorului: se cuplează la pârghia geometriei și se reglează cu precizie."},
- {"t": 67.0, "text": "Iar la final, controlul: fiecare strângere, cursa paletelor, reglajul fin al tijei."},
- {"t": 74.0, "text": "Acum turbina este curată, strânsă corect și reglată: gata de predare."},
- {"t": 79.6, "text": "Așa lucrăm la Turbo Doctor."}
+ {
+  "t": 0.2,
+  "text": "Așa se asamblează o turbină, pas cu pas, în laboratorul Turbo Doctor."
+ },
+ {
+  "t": 4.06,
+  "text": "Întâi, geometria variabilă: paletele mobile, ca niște jaluzele, trebuie să se miște liber."
+ },
+ {
+  "t": 9.93,
+  "text": "Urmează cartușul, inima turbinei: un ax cu două rotoare, ca axul unei roți de bicicletă."
+ },
+ {
+  "t": 16.9,
+  "text": "Cartușul intră în carcasă și se strânge pe rând, ca o roată de mașină."
+ },
+ {
+  "t": 23.4,
+  "text": "Apoi actuatorul, mușchiul turbinei: capsula care trage de tijă și rotește paletele."
+ },
+ {
+  "t": 34.0,
+  "text": "Un control cu degetul: rotorul se învârte liber, ca o roată bine unsă, fără joc."
+ },
+ {
+  "t": 39.5,
+  "text": "Acum carcasa de compresor, capacul prin care turbina împinge aerul în motor: se așază, se orientează, se strânge uniform."
+ },
+ {
+  "t": 47.0,
+  "text": "Distanța dintre palete și carcasă e ca între ușă și toc: prea mare pierzi presiune, prea mică se freacă."
+ },
+ {
+  "t": 55.8,
+  "text": "Tija actuatorului se cuplează la pârghie și se reglează la milimetru, ca sfoara unei jaluzele."
+ },
+ {
+  "t": 67.0,
+  "text": "La final, controlul: fiecare strângere, cursa paletelor, reglajul fin."
+ },
+ {
+  "t": 74.0,
+  "text": "Turbina e curată, strânsă corect și reglată: gata de predare."
+ },
+ {
+  "t": 79.6,
+  "text": "Așa lucrăm la Turbo Doctor."
+ }
 ]

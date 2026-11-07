@@ -61,6 +61,18 @@ Când Sabin cere în hook imagini care nu există în clipurile lui (ex. „un m
 6. Titlurile hook-ului: `boom` pe cuvintele-cheie, sus, peste zona fără acțiune (parbrizul înghețat, capota); subtitrările ascunse cât durează hook-ul (`hideCap`). Exemplu: `pipeline/examples/reel_promo_injectoare_hook_ai.js`.
 7. La postare: `isAiGenerated: true` pe Instagram și `isAigc: true` pe TikTok.
 
+## Clip de proces fără voce, cu narator ElevenLabs (asamblare turbină, 07.11.2026)
+
+Pentru clipurile filmate continuu, doar cu mâinile și piesa (ex. asamblarea unei turbine, 5:34): două variante, **normală** (viteză naturală, fără cadrele moarte) și **timelapse** (2–4×), cu narator pe fiecare pas, explicat simplu, cu analogii.
+
+1. **Tăieturile:** foi de cadre la 1–3 s, apoi EDL în `tools/asamblare/build_sources.py` (`(src_a, src_b[, viteză])`, un encode pe segment + concat demuxer; segmentele continue se unesc). Momentele în care piesa stă și nu e nicio mână (mișcare între cadre < 0,5, măsurată) se pot întinde la 0,4–0,5× ca să facă loc vocii: imaginea înghețată nu se vede. Primele cadre după ce telefonul e pus pe loc sunt mișcate (le măsor claritatea și încep de unde e clară).
+2. **Vocea:** conectorul ElevenLabs (`creative_generate_speech`, `eleven_multilingual_v2`; vocea lui Sabin = „Sabin”, `2RuO79IWvD8wFKGk2vJi`), **o singură generare pe variantă** cu toate replicile, despărțite de rânduri goale. Fișierul (pe `elevenlabsusercontent.com`, blocat din workspace) vine prin `fetch-sources` (`nume=URL`).
+3. `tools/tts/split_lines.py <mp3> vo_script.json audio/ext` taie generarea pe replici (VAD + Parakeet, aliniere pe text; tăieturile cad în pauze).
+4. `tools/tts/fit_times.py <reel> <plan.json>` așază replicile pe imagine: în plan, momentul în care începe fiecare pas pe filmare (`t`), o accelerare discretă pe replicile prea lungi (`tempo` ≤ 1,07) și pauza minimă (`gap`); scrie `t` în `vo_script.json` și arată ce replici au fost împinse. Planurile folosite: `tools/asamblare/fit_plan_v*.json`.
+5. `out/v2.json`: `"narrator": true`, `"voice": {"ext_dir": "audio/ext", "formant": 1.0, "pitch": 0}`; apoi `pipeline/vo_external.py`, `retime.py`, `extract_frames.py`. **Nu rula `vo_external.py` după `retime.py`**: rescrie `out/timeline.json` fără Rețetă (dacă se întâmplă, rulez din nou `retime.py` și `extract_frames.py`).
+6. Grafica stă jos, pe masă (`cardTop: 1080`, `capTop: 1640`), `band` sus cu „PASUL n/7”, `chap` pe fiecare pas; tăieturile din interiorul pașilor mascate cu `glitch` + `flash` (lista `CUTS`), iar un card de capitol care cade pe o tăietură primește timpul tăieturii, nu al vocii. Exemple: `pipeline/examples/reel_asamblare_turbina_v1_normal.js` și `_v2_timelapse.js`.
+7. Verificare pe videoclipul final: `tools/tts/check_mix.py <reel> <mp4>` (fiecare replică recunoscută peste muzică și sunetul original; sub 0,85 = de ascultat).
+
 ## Structură
 
 | Fișier | Rol |
