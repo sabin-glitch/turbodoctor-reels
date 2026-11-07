@@ -55,6 +55,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_sync3_d1cu",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/lFzqegXLINdSG0uFXle3/HUtf8O42bwWoEBy3O6si/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_client",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/0cca20f0-7734-4599-b93c-1c005d46aeeb.mp3",
   "downloader": "curl"
