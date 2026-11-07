@@ -50,6 +50,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_vo_doctor_v2",
+  "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/55c9bc56-4e3d-45ec-846a-54f64da59bf1.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_s4",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/acf2c6b5-16b5-4950-9352-35cfe72a5eae_minimax-460833572913496_0e3c8ea0-2fe7-4e3b-9e68-19de4b3e5e40.mp4",
   "downloader": "curl"
@@ -87,6 +92,11 @@
  {
   "id": "ai_flote_dube_pornesc_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/27720c3a-3aac-42c8-802b-c9b38c678e44_1351381141957795982.mp4_70da3121-5dcf-4d8e-b92f-d8c31cabe0f2.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "pov01_vo_mecanic_v2",
+  "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/f80889bd-10ae-440f-9de1-1916a4daa4a1.mp3",
   "downloader": "curl"
  },
  {
