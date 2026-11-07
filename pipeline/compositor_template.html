@@ -312,6 +312,7 @@ const HOOK_END = HAS_COLD ? S0 : Math.min(HS + 3.0, SEND);
 let CFG = { hook: null, stages: null, items: [], fx: [], tags: {}, sfx: [], bursts: [] }, SCENES_OK = true;
 try { CFG = Object.assign(CFG, window.REEL_CFG({ aw, ew, cw, cwe, S0, SEND, TEND, TOTAL, HOOK_END, WORDS })); }
 catch (e) { SCENES_OK = false; console.warn('scenes disabled: ' + e.message); window.CFG_ERR = String(e.message); }
+if (CFG.capTop) $('cap').style.top = CFG.capTop + 'px';  // capTop: subtitles lower than the default 1290 (hands-only clips with the cards over the table, 07.11.2026)
 
 const img = n => `<img src="assets/emoji/${n}.png" alt="">`;
 const ck = (txt, bad) => `<div class="box${bad ? ' bad' : ''}"><div class="fill"></div><svg width="52" height="52" viewBox="0 0 54 54"><path d="${bad ? 'M 15 15 L 39 39 M 39 15 L 15 39' : 'M 11 28 L 23 40 L 44 15'}" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" pathLength="${bad ? 2 : 1}" stroke-dasharray="${bad ? 2 : 1}" stroke-dashoffset="${bad ? 2 : 1}"/></svg></div><span>${txt}</span>`;

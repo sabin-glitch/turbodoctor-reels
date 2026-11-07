@@ -1,0 +1,63 @@
+{
+ "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+ "voice_name_hint": "George (premade) - schimbă cu vocea aleasă de Sabin",
+ "model_id": "eleven_multilingual_v2",
+ "language_code": "ro",
+ "output_format": "mp3_44100_128",
+ "voice_settings": {
+  "stability": 0.55,
+  "similarity_boost": 0.8,
+  "style": 0.15,
+  "use_speaker_boost": true
+ },
+ "lines": [
+  {
+   "id": "00",
+   "text": "Așa se asamblează o turbină, pas cu pas, în laboratorul Turbo Doctor."
+  },
+  {
+   "id": "01",
+   "text": "Întâi, geometria variabilă: paletele mobile trebuie să se miște liber."
+  },
+  {
+   "id": "02",
+   "text": "Urmează cartușul: axul cu rotorul de turbină și cel de compresor, în carcasa de lagăre."
+  },
+  {
+   "id": "03",
+   "text": "Apoi cartușul se fixează pe carcasa de turbină, cu rotorul perfect centrat."
+  },
+  {
+   "id": "04",
+   "text": "Urmează actuatorul: capsula care comandă paletele, montată pe suportul ei."
+  },
+  {
+   "id": "05",
+   "text": "Un control rapid: rotorul se învârte liber, fără frecare și fără joc."
+  },
+  {
+   "id": "06",
+   "text": "Acum, carcasa de compresor: se așază peste rotor, se orientează și se strânge uniform."
+  },
+  {
+   "id": "07",
+   "text": "Aici nu ne grăbim: jocul dintre rotor și carcasă trebuie să fie exact cel corect."
+  },
+  {
+   "id": "08",
+   "text": "Urmează tija actuatorului: se cuplează la pârghia geometriei și se reglează cu precizie."
+  },
+  {
+   "id": "09",
+   "text": "Iar la final, controlul: fiecare strângere, cursa paletelor, reglajul fin al tijei."
+  },
+  {
+   "id": "10",
+   "text": "Acum turbina este curată, strânsă corect și reglată: gata de predare."
+  },
+  {
+   "id": "11",
+   "text": "Așa lucrăm la Turbo Doctor."
+  }
+ ]
+}

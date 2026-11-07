@@ -1,0 +1,119 @@
+{
+ "voice_id": "JBFqnCBsd6RMkjVDRZzb",
+ "voice_name_hint": "George (premade) - schimbă cu vocea aleasă de Sabin",
+ "model_id": "eleven_multilingual_v2",
+ "language_code": "ro",
+ "output_format": "mp3_44100_128",
+ "voice_settings": {
+  "stability": 0.55,
+  "similarity_boost": 0.8,
+  "style": 0.15,
+  "use_speaker_boost": true
+ },
+ "lines": [
+  {
+   "id": "00",
+   "text": "Așa se asamblează o turbină, pas cu pas, în laboratorul Turbo Doctor."
+  },
+  {
+   "id": "01",
+   "text": "Avem în menghină carcasa de turbină, iar în interiorul ei, geometria variabilă: inelul cu paletele mobile."
+  },
+  {
+   "id": "02",
+   "text": "Înainte de montaj, paletele sunt verificate: trebuie să se miște liber, fără niciun punct de blocare."
+  },
+  {
+   "id": "03",
+   "text": "Urmează inima turbinei: cartușul, adică axul cu rotorul de turbină și rotorul de compresor, montat în carcasa de lagăre."
+  },
+  {
+   "id": "04",
+   "text": "Iar rotorul de turbină intră exact în centrul inelului cu palete, iar cartușul se așază pe carcasă."
+  },
+  {
+   "id": "05",
+   "text": "Aici cartușul se fixează pe carcasa de turbină. Elementele de prindere se strâng uniform, pe rând, ca rotorul să rămână perfect centrat."
+  },
+  {
+   "id": "06",
+   "text": "Orice abatere la centrare s-ar simți mai târziu, la turații de ordinul sutelor de mii de rotații pe minut."
+  },
+  {
+   "id": "07",
+   "text": "În turbină, toleranțele se măsoară în sutimi de milimetru. De aceea, fiecare pas se face fără grabă."
+  },
+  {
+   "id": "08",
+   "text": "Urmează actuatorul: capsula care comandă paletele geometriei variabile."
+  },
+  {
+   "id": "09",
+   "text": "El se montează pe suportul de pe carcasa de lagăre, iar tija lui va acționa pârghia care rotește paletele."
+  },
+  {
+   "id": "10",
+   "text": "Un actuator montat și reglat corect înseamnă răspuns prompt la accelerare și presiune de supraalimentare în parametri."
+  },
+  {
+   "id": "11",
+   "text": "Un control rapid: rotorul de compresor se învârte liber, fără frecare și fără joc."
+  },
+  {
+   "id": "12",
+   "text": "Acum vine carcasa de compresor. Ea se așază peste rotor și se orientează după poziția conductelor de pe mașină."
+  },
+  {
+   "id": "13",
+   "text": "Elementele de prindere se montează pe rând, apoi se strâng cu cheia, uniform, pe toată circumferința."
+  },
+  {
+   "id": "14",
+   "text": "Aici nu ne grăbim: fiecare strângere se verifică, pentru ca rotorul să rămână perfect centrat în carcasă, iar jocul dintre palete și carcasă să fie cel corect."
+  },
+  {
+   "id": "15",
+   "text": "Întotdeauna lucrăm cu mănuși și cu piese curate: orice impuritate ajunsă în turbină la montaj se transformă, în exploatare, într-o uzură prematură."
+  },
+  {
+   "id": "16",
+   "text": "Odată carcasa de compresor fixată, rotorul este protejat, iar turbina începe să arate ca un ansamblu complet."
+  },
+  {
+   "id": "17",
+   "text": "Urmează legătura dintre actuator și geometrie: tija actuatorului se cuplează la pârghia care rotește paletele."
+  },
+  {
+   "id": "18",
+   "text": "Iar lungimea tijei se reglează cu precizie: ea determină poziția de repaus a paletelor și răspunsul turbinei la turații mici."
+  },
+  {
+   "id": "19",
+   "text": "Apoi tija se asigură, ca reglajul să rămână fix în timp, la vibrații și la temperatură."
+  },
+  {
+   "id": "20",
+   "text": "Ultima etapă: controlul final."
+  },
+  {
+   "id": "21",
+   "text": "Aici, fiecare strângere este verificată din nou, iar mecanismul geometriei este acționat manual, ca să ne asigurăm că paletele răspund pe toată cursa."
+  },
+  {
+   "id": "22",
+   "text": "Iar reglajul fin se face cu răbdare: un milimetru în plus sau în minus la tijă se simte în comportamentul motorului."
+  },
+  {
+   "id": "23",
+   "text": "Iar la final, un ultim control vizual: turbina asamblată este curată, strânsă corect și reglată."
+  },
+  {
+   "id": "24",
+   "text": "Așa lucrăm la Turbo Doctor."
+  },
+  {
+   "id": "25",
+   "text": "Așadar, la montajul pe mașină: ulei și filtru noi, iar înainte de prima pornire, turbina se amorsează cu ulei."
+  }
+ ]
+}
