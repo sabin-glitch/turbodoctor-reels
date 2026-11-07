@@ -15,6 +15,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_sync3_s3",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/xk0mDXojQhZfgtTHeJdp/3k6ZudnQzVZKe5WBw6rw/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "denis_v1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Hmz5UcFT8Oe2DrgnOrl8/WaXNsOtLAfgzC809Scom/content.mp3",
   "downloader": "curl"
