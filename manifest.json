@@ -15,6 +15,11 @@
   "downloader": "curl"
  },
  {
+  "id": "denis_v1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Hmz5UcFT8Oe2DrgnOrl8/WaXNsOtLAfgzC809Scom/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_doctor",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/c1bc4356-3a11-443c-b5bd-80061193d7b3.mp3",
   "downloader": "curl"
