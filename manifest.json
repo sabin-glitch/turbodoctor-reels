@@ -30,6 +30,11 @@
   "downloader": "curl"
  },
  {
+  "id": "pov01_k4_d1cu",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/7Y791Zwnv7IfCgdqlSUC/iRVCeqSRLfoHfoWpCYKb/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "orig_suzuki_0172",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-15661420683362187083.mp4",
   "downloader": "curl"
