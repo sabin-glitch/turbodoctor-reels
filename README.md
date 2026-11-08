@@ -139,3 +139,11 @@ Dacă o ancoră lipsește, compozitorul dezactivează scenele și randează doar
 - Subtitrări Montserrat Black, cuvântul activ cu galben; culori semantice: roșu = problemă, verde = soluție, cyan = componentă, galben = cifre.
 - Elementele grafice stau în treimea de sus și nu acoperă fața prezentatorului.
 - Cardul de final (din 25.10.2026, fără CTA): TURBO DOCTOR, harta cu Galați, București, Iași și Piatra Neamț și „Diagnoză gratuită”. Fără „Distribuie acest video…”, fără 0739 065 065 și fără turbodoctor.ro — nici pe video, nici în textul postării (clipurile care arată a reclamă primesc mai puțin reach pe TikTok). Pe TikTok, postările nu se mai bifează ca „Commercial content”.
+
+## Povești AI (stil Workerr) — din 08.11.2026
+Povești cu personajele fixe Turbo Doctor (Doctorul, Clientul, Mecanicul de la „celălalt service”), făcute din chat.
+- Cadre: Kling 4 prin conectorul ElevenLabs, **un singur vorbitor pe cadru** (peste umăr), cu portretele ca `reference_images` și un cadru de scenă ca `reference_videos`.
+- Buze: Sync 3 (`sync-lipsync-v3`) pe replica exactă ElevenLabs; pistele audio stau pe branch-ul `povesti` (raw URL).
+- Clipurile din ElevenLabs/vidIQ vin în workspace prin `fetch-sources` (`nume=URL`).
+- Sursa reel-ului: `tools/povesti/build_poveste.py` (taie fiecare cadru în jurul replicii, îngheață 0,8 s unde vin cardurile de capitol, lipește tot la 1080×1920/30 fps); apoi fluxul obișnuit `new_reel.sh` → `transcribe` → `reel.js`.
+- Exemplu de scene: `pipeline/examples/reel_poveste01_oferta_ieftina.js` (titlu POV, bandă sus, capitole pe cadru înghețat, chip-uri la y 1190 pentru că fețele sunt în prim-plan, fără morală, card de final standard).
