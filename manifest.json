@@ -105,6 +105,21 @@
   "downloader": "curl"
  },
  {
+  "id": "ep2_vo_cli_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/FPGmtfj8qh8bIl6blqit/ohJEW8rDOkJUkk8dOCQd/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep2_vo_doc_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/5pgrt5788nkVPT6umWp0/ycNFas11qYlVeiloKuQC/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep2_vo_mec_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/FOvMKkq78FYAV6TbaY1k/Pitj0yZjDefErHILPnsz/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_s4",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/acf2c6b5-16b5-4950-9352-35cfe72a5eae_minimax-460833572913496_0e3c8ea0-2fe7-4e3b-9e68-19de4b3e5e40.mp4",
   "downloader": "curl"
@@ -185,6 +200,16 @@
   "downloader": "curl"
  },
  {
+  "id": "ep2_vo_doc_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/KoK1Lqm0JGy0UCWgpiDD/7bzOrf9Gre2Fos5LiBVr/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep2_vo_cli_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/nwlRIomrSTfYv9ZGMwXG/k7n2RYbpmDf3ByKPQUoG/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_mecanic_v2",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/f80889bd-10ae-440f-9de1-1916a4daa4a1.mp3",
   "downloader": "curl"
@@ -192,6 +217,11 @@
  {
   "id": "sabin_v2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/MN1BRomOCbxCtHv5wJAs/BqKgMrSn8K2wdGLAtyTY/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep2_vo_mec_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/5mwwjrHzNMr1cknAMm4G/hei2ipkAxSqOV66Qd7Ms/content.mp3",
   "downloader": "curl"
  },
  {
