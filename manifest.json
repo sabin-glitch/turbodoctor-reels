@@ -270,6 +270,11 @@
   "downloader": "curl"
  },
  {
+  "id": "ep3k_C02",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/SuIcrz5Kxs0VjZIyxaW3/1uB831bEpagNtpSf2XB9/content.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2k_S09",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/WFIFR0cfBLB9u3BWich7/q9OxMyH8bxFx7ppqodFK/content.mp4",
   "downloader": "curl"
