@@ -15,6 +15,11 @@
   "downloader": "curl"
  },
  {
+  "id": "ep3_sin_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/rRZjbUuKG97gJPOqMxfU/sAO76YHm3OphtyC8q9UP/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2k_S03",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/928TEqyn8SN59vcsiclj/ODQUQFiPqkJCr0ZGKDKP/content.mp4",
   "downloader": "curl"
@@ -37,6 +42,11 @@
  {
   "id": "pov01_sync3_s3",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/xk0mDXojQhZfgtTHeJdp/3k6ZudnQzVZKe5WBw6rw/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep3_sin_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/UaTWCUGnlpMjV11g6LYx/RLB4IXdjaQktph1NQpYa/content.mp3",
   "downloader": "curl"
  },
  {
@@ -75,8 +85,18 @@
   "downloader": "curl"
  },
  {
+  "id": "ep3_mec_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/vuapqFTmu96t8xjcAutc/JZ46R3pTuQyD1vi0PqKv/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "sabin_v1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/r4Uuhjbr7AYo46wGXS1u/RFNKwcQkpt7AiwnbLefc/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep3_doc_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/hD71CiNHZLTuWGJerRMv/doAyFxIEefpFQBcprmR0/content.mp3",
   "downloader": "curl"
  },
  {
@@ -152,6 +172,11 @@
  {
   "id": "ep2_vo_cli_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/FPGmtfj8qh8bIl6blqit/ohJEW8rDOkJUkk8dOCQd/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep3_portret_sincer_1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/EIAxgwWTJpvOutm25ihb/WK25S8SZHyj3TKgHOzRU/content.png",
   "downloader": "curl"
  },
  {
@@ -300,6 +325,11 @@
   "downloader": "curl"
  },
  {
+  "id": "ep3_cli_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/JPAy6rw8rkmIa1D9cD9A/1BZzHL5ZGG3Au7N8lG1W/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_mecanic_v2",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/f80889bd-10ae-440f-9de1-1916a4daa4a1.mp3",
   "downloader": "curl"
@@ -307,6 +337,11 @@
  {
   "id": "sabin_v2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/MN1BRomOCbxCtHv5wJAs/BqKgMrSn8K2wdGLAtyTY/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep3_cli_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/pEvSDsUZ0GjnSDIWe5Kl/cfohOG1rKDc0QB7bvQKf/content.mp3",
   "downloader": "curl"
  },
  {
@@ -330,8 +365,23 @@
   "downloader": "curl"
  },
  {
+  "id": "ep3_doc_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/b6qIZ2AsEij9jKgpjZc8/qY9UeN6SpO8CHmQvcMnP/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "bmw_n47_reparatia_corecta",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-7952154743821796800.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep3_mec_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/2ZlotwMs7t6mwRmlwAmc/bkB8AqoUhX8zhoC440sg/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "ep3_portret_sincer_2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/p8WoF8TO67mB750eCjcG/LaDQtxteT7Zx7gGnV5Wl/content.png",
   "downloader": "curl"
  },
  {
