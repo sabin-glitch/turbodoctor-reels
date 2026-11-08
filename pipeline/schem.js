@@ -1549,5 +1549,217 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+
+  // ---------- vlog „Pompa de înaltă a făcut pilitură” (08.11.2026) ----------
+  // shared: polyline sampler + pipe + metal flake + status badges
+  const PL = pts => { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; }
+    return k => { let d = cl(k) * tot; for (let i = 0; i < L.length; i++) { if (d <= L[i] || i === L.length - 1) { const q = L[i] ? d / L[i] : 0; return [lerp(pts[i][0], pts[i + 1][0], q), lerp(pts[i][1], pts[i + 1][1], q)]; } d -= L[i]; } }; };
+  const PIPE = (pts, edge, w = 12, core = C.body2) => { const d = pts.map((p, i) => (i ? 'L' : 'M') + p[0] + ' ' + p[1]).join(' ');
+    return `<path d="${d}" fill="none" stroke="${edge}" stroke-width="${w + 8}" stroke-linejoin="round" stroke-linecap="round"/><path d="${d}" fill="none" stroke="${core}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round"/>`; };
+  const FLAKE = (x, y, r, k, op = 1) => `<path d="M ${f(x)} ${f(y - r)} L ${f(x + r * .85)} ${f(y + r * .6)} L ${f(x - r * .7)} ${f(y + r * .75)} Z" fill="#E8EEF4" stroke="${C.red}" stroke-width="2" opacity="${f(op)}" transform="rotate(${f(k)} ${f(x)} ${f(y)})"/>`;
+  const BADGE = (x, y, kind) => kind === 'bad' ? `<circle cx="${f(x)}" cy="${f(y)}" r="16" fill="${C.red}"/>` + T(x, y + 7, '!', { s: 22, a: 'middle', c: '#fff' })
+    : kind === 'ok' ? `<circle cx="${f(x)}" cy="${f(y)}" r="16" fill="${C.grn}"/>` + check(x, y, 8, '#fff', 4)
+    : kind === 'q' ? `<circle cx="${f(x)}" cy="${f(y)}" r="16" fill="${C.yel}"/>` + T(x, y + 7, '?', { s: 22, a: 'middle', c: '#0B0F14' }) : '';
+  const stOf = (ph, P, def) => typeof ph === 'string' ? ph : ((P.states || [])[ph] || def);
+
+  // 47) filingsSpread: the whole fuel system (tank + low-pressure pump, filter, HP pump, rail + regulator, injectors);
+  // states: ok | pump (the HP pump makes filings) | rail | inj | hp (the whole HP system comes off) | reg (regulator: destroyed or saved?) |
+  //         lp (filings in the low-pressure side too) | hpnew (HP reconditioned, LP not cleaned) | again (filings from the tank destroy it again) | clean
+  function filingsSpread(tl, ph, pt, P) {
+    const st = stOf(ph, P, 'ok'); let s = '';
+    const A = [[100, 292], [100, 214], [270, 214]], B = [[300, 140], [300, 104], [450, 104], [450, 172]], Cc = [[510, 172], [510, 72], [580, 72]], R = [[580, 72], [866, 72]];
+    const pA = PL(A), pB = PL(B), pC = PL(Cc), pR = PL(R); const injX = [636, 706, 776, 846];
+    const again = st === 'again';
+    const pumpBad = ['pump', 'rail', 'inj', 'hp', 'reg', 'lp'].includes(st) || (again && pt > 1.5);
+    const railBad = ['rail', 'inj', 'hp', 'reg', 'lp'].includes(st) || (again && pt > 2.1);
+    const injBad = ['inj', 'hp', 'reg', 'lp'].includes(st) || (again && pt > 2.7);
+    const lpBad = ['lp', 'hpnew', 'again'].includes(st);
+    const fresh = st === 'clean' || st === 'hpnew' || again; const lpOk = st === 'clean';
+    const cHP = bad => bad ? C.red : fresh ? C.grn : C.cy;
+    const cLP = lpBad ? C.red : lpOk ? C.grn : C.cy;
+    const edge = c => c === C.red ? 'rgba(255,75,75,.55)' : c === C.grn ? 'rgba(74,222,128,.5)' : C.cyD;
+    const pulse = v => f(.55 + .45 * Math.sin(tl * 7 + v));
+    // zones (dashed): high pressure / low pressure
+    const zone = (x, y, w, h, col, op) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="22" fill="none" stroke="${col}" stroke-width="4" stroke-dasharray="14 10" opacity="${op}"/>`;
+    const hpZ = st === 'hp' ? [C.red, pulse(0)] : st === 'lp' ? [C.red, .4] : st === 'clean' || st === 'hpnew' ? [C.grn, .9] : again && pt > 2.7 ? [C.red, pulse(0)] : again ? [C.grn, .8] : null;
+    const lpZ = st === 'lp' || st === 'hpnew' || again ? [C.red, pulse(1)] : st === 'clean' ? [C.grn, .9] : null;
+    if (hpZ) s += zone(404, 24, 506, 330, hpZ[0], hpZ[1]);
+    if (lpZ) s += zone(16, 88, 336, 334, lpZ[0], lpZ[1]);
+    // pipes
+    s += PIPE(A, edge(cLP)) + PIPE(B, edge(cLP)) + PIPE(Cc, edge(cHP(pumpBad)));
+    // tank with the low-pressure pump inside
+    s += `<rect x="28" y="252" width="200" height="120" rx="16" fill="${C.body}" stroke="${cLP}" stroke-width="5"/><rect x="34" y="290" width="188" height="76" rx="11" fill="${C.oil}" opacity=".5"/>`;
+    s += `<rect x="74" y="284" width="52" height="64" rx="10" fill="${C.body2}" stroke="${cLP}" stroke-width="4"/>`;
+    for (let i = 0; i < 4; i++) { const a = tl * 7 + i * Math.PI / 2; const [x2, y2] = P2(100, 316, 17, a); s += `<line x1="100" y1="316" x2="${f(x2)}" y2="${f(y2)}" stroke="${cLP}" stroke-width="4" stroke-linecap="round"/>`; }
+    s += T(128, 394, 'REZERVOR', { s: 15, c: lpBad ? C.red : C.dim, a: 'middle' }) + T(128, 413, 'POMPA DE JOASĂ', { s: 15, c: lpBad ? C.red : C.dim, a: 'middle' });
+    // filter
+    s += `<rect x="270" y="140" width="60" height="142" rx="14" fill="${C.body}" stroke="${cLP}" stroke-width="5"/>`;
+    for (let i = 0; i < 5; i++) s += `<line x1="${282 + i * 9}" y1="158" x2="${282 + i * 9}" y2="264" stroke="${lpBad ? '#9A6B3A' : '#D9C79A'}" stroke-width="3"/>`;
+    s += T(300, 304, 'FILTRU', { s: 15, c: lpBad ? C.red : C.dim, a: 'middle' });
+    // HP pump (piston), shakes + sparks while it makes filings
+    const pc = cHP(pumpBad); const sh = pumpBad && (st === 'pump' || again) ? (rnd(Math.floor(tl * 22)) - .5) * 5 : 0;
+    s += `<g transform="translate(${f(sh)} 0)"><rect x="420" y="172" width="120" height="128" rx="14" fill="${C.body}" stroke="${pc}" stroke-width="5"/>`;
+    const py = 214 + 20 * Math.sin(tl * 7); s += `<rect x="458" y="${f(py)}" width="44" height="58" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="3"/><rect x="472" y="${f(py - 34)}" width="16" height="36" fill="${C.steelD}"/>`;
+    if (pumpBad && (st === 'pump' || again)) for (let i = 0; i < 3; i++) s += spark(458 + rnd(i * 3 + Math.floor(tl * 9)) * 44, py + rnd(i * 5 + Math.floor(tl * 9)) * 56, tl * 6 + i, C.yel, 6, 14);
+    s += '</g>' + T(480, 322, 'POMPA DE', { s: 15, c: pumpBad ? C.red : C.dim, a: 'middle' }) + T(480, 341, 'ÎNALTĂ PRESIUNE', { s: 15, c: pumpBad ? C.red : C.dim, a: 'middle' });
+    // rail + regulator
+    const rc = cHP(railBad); s += `<rect x="580" y="52" width="292" height="40" rx="20" fill="${C.body2}" stroke="${rc}" stroke-width="5"/>`;
+    s += T(726, 38, 'RAMPA COMUNĂ', { s: 15, c: railBad ? C.red : C.dim, a: 'middle' });
+    const regQ = st === 'reg'; const gc = regQ ? C.yel : rc;
+    s += `<rect x="872" y="56" width="34" height="32" rx="6" fill="${regQ ? 'rgba(255,210,31,.25)' : C.body}" stroke="${gc}" stroke-width="${regQ ? 5 : 4}"/>` + (regQ ? '' : T(889, 44, 'REG.', { s: 12, c: C.dim, a: 'middle' }));
+    // injectors (spray while healthy)
+    const ic = cHP(injBad);
+    injX.forEach((x, i) => { s += `<rect x="${x - 12}" y="92" width="24" height="84" rx="6" fill="${C.steelD}" stroke="${ic}" stroke-width="3"/><path d="M ${x - 7} 176 L ${x + 7} 176 L ${x} 192 Z" fill="${C.steel}"/>`;
+      if (injBad) s += xmark(x, 206, 9, C.red, 5);
+      else { const cyc = (tl * 2.4 + i * .25) % 1; if (cyc < .4) { const k = cyc / .4; for (let j = 0; j < 3; j++) s += `<circle cx="${f(x + (j - 1) * 9 * k)}" cy="${f(196 + 22 * k)}" r="${f(3.4 * (1 - k * .4))}" fill="#A5E9FF" opacity=".85"/>`; } } });
+    s += T(741, 236, 'INJECTOARE', { s: 15, c: injBad ? C.red : C.dim, a: 'middle' });
+    // fuel flow
+    const sp = again ? .8 : 1;
+    for (let i = 0; i < 5; i++) { const [x, y] = pA((tl * .55 * sp + i / 5) % 1); s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".8"/>`; }
+    for (let i = 0; i < 6; i++) { const [x, y] = pB((tl * .5 * sp + i / 6) % 1); s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".8"/>`; }
+    for (let i = 0; i < 6; i++) { const k = (tl * .7 * sp + i / 6) % 1; const [x, y] = k < .4 ? pC(k / .4) : pR((k - .4) / .6); s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".8"/>`; }
+    // filings
+    const inRail = n => { let o = ''; for (let i = 0; i < n; i++) o += FLAKE(596 + rnd(i + 40) * 262, 62 + rnd(i + 70) * 20, 6, rnd(i) * 360 + tl * 20 * (rnd(i + 5) - .5)); return o; };
+    const inInj = () => { let o = ''; injX.forEach((x, j) => { for (let i = 0; i < 2; i++) o += FLAKE(x + (i ? 4 : -4), 118 + i * 30 + rnd(j * 3 + i) * 10, 5, rnd(j + i * 7) * 360); }); return o; };
+    const inLP = () => { let o = ''; for (let i = 0; i < 9; i++) o += FLAKE(46 + rnd(i + 90) * 168, 352 + rnd(i + 120) * 12, 6, rnd(i + 3) * 360 + tl * 15);
+      [[100, 250], [100, 228], [160, 214], [220, 214], [300, 120], [370, 104], [420, 104], [450, 140]].forEach(([x, y], i) => { o += FLAKE(x + Math.sin(tl * 2 + i) * 2, y, 5.5, rnd(i + 11) * 360 + tl * 30); }); return o; };
+    if (st === 'pump') { for (let i = 0; i < 5; i++) s += FLAKE(452 + rnd(i * 7 + Math.floor(tl * 6)) * 56, 190 + rnd(i * 3 + Math.floor(tl * 6)) * 90, 6, tl * 200 + i * 60);
+      for (let i = 0; i < 4; i++) { const k = (tl * .6 + i / 4) % 1; const [x, y] = pC(k); s += FLAKE(x, y, 6.5, k * 540); } }
+    if (st === 'rail') { for (let i = 0; i < 6; i++) { const k = (tl * .6 + i / 6) % 1; const [x, y] = k < .4 ? pC(k / .4) : pR((k - .4) / .6 * (.3 + .7 * rnd(i))); s += FLAKE(x, y, 6.5, k * 540); }
+      s += inRail(Math.min(14, Math.floor(pt * 6))); }
+    if (st === 'inj') { s += inRail(14); for (let i = 0; i < 6; i++) { const k = (tl * .7 + i / 6) % 1; const x = injX[i % 4]; s += FLAKE(x, lerp(80, 186, k), 6, k * 400); } s += inInj(); }
+    if (['hp', 'reg', 'lp'].includes(st)) s += inRail(14) + inInj();
+    if (st === 'lp' || st === 'hpnew') s += inLP();
+    if (again) { let o = ''; for (let i = 0; i < 7; i++) { const k = (tl * .5 + i / 7) % 1; const [x, y] = k < .3 ? pA(k / .3) : k < .65 ? pB((k - .3) / .35) : (pt > 1.5 ? (k < .8 ? pC((k - .65) / .15) : pR((k - .8) / .2)) : pB(1)); o += FLAKE(x, y, 6.5, k * 600); }
+      s += o + inLP(); if (pt > 2.1) s += inRail(Math.min(14, Math.floor((pt - 2.1) * 8))); if (pt > 2.7) s += inInj(); }
+    // badges
+    if (st === 'clean') [[208, 262], [318, 150], [528, 182], [860, 52], [884, 142]].forEach(([x, y]) => { s += BADGE(x, y, 'ok'); });
+    if (st === 'hpnew' || (again && pt <= 1.5)) [[528, 182], [860, 52], [884, 142]].forEach(([x, y]) => { s += BADGE(x, y, 'ok'); });
+    if (pumpBad) s += BADGE(528, 182, 'bad'); if (railBad) s += BADGE(860, 52, 'bad'); if (injBad) s += BADGE(884, 142, 'bad');
+    if (lpBad) s += BADGE(208, 262, 'bad') + BADGE(318, 150, 'bad');
+    if (regQ) s += BADGE(889, 32, 'q') + tag(741, 270, P.regTxt || 'DISTRUS SAU SALVAT?', C.yel, 'middle', 16);
+    // zone tags + headline
+    if (hpZ) s += tag(657, 380, st === 'clean' || st === 'hpnew' || (again && pt <= 2.7) ? (P.hpOkTxt || 'ÎNALTĂ PRESIUNE · RECONDIȚIONAT') : (again ? (P.againTxt || 'DISTRUS DIN NOU!') : (P.hpTxt || 'TOT SISTEMUL DE ÎNALTĂ PRESIUNE')), hpZ[0], 'middle', 16);
+    if (lpZ) s += tag(184, 70, st === 'clean' ? (P.lpOkTxt || 'JOASĂ PRESIUNE · CURĂȚAT') : (P.lpTxt || 'JOASĂ PRESIUNE · PILITURĂ'), lpZ[0], 'middle', 16);
+    if (!P.noHead) { const H = Object.assign({ ok: ['CIRCUITUL DE MOTORINĂ', C.cy], pump: ['POMPA FACE PILITURĂ', C.red], rail: ['PILITURA PLEACĂ ÎN RAMPĂ', C.red], inj: ['PILITURA AJUNGE ÎN INJECTOARE', C.red],
+      hp: ['SE DEMONTEAZĂ TOT SISTEMUL', C.red], reg: ['REGULATORUL: DE VERIFICAT', C.yel], lp: ['PILITURĂ ȘI ÎN JOASĂ PRESIUNE', C.red], hpnew: ['JOASĂ PRESIUNE NECURĂȚATĂ', C.org],
+      again: [pt > 2.7 ? 'SISTEMUL, DISTRUS DIN NOU' : 'PILITURA PLEACĂ DIN REZERVOR', C.red], clean: ['TOT SISTEMUL CURĂȚAT', C.grn] }, P.heads || {})[st];
+      if (H && !lpZ) s += tag(16, 22, H[0], H[1], 'start', 17); }
+    return s;
+  }
+
+  // 48) pumpLube: HP pump element in section (piston in its barrel, fuel film between them) + zoom on the contact surface;
+  // states: ok | dry (insufficient lubrication) | air (no priming: seconds without fuel) | water (water in the fuel) | metal (metal on metal) | flakes | spread (filings to rail + injectors)
+  function pumpLube(tl, ph, pt, P) {
+    const st = stOf(ph, P, 'ok'); let s = '';
+    const metal = ['metal', 'flakes', 'spread'].includes(st);
+    const col = st === 'ok' ? C.grn : metal ? C.red : C.org;
+    const film = st === 'ok' ? 1 : st === 'dry' ? lerp(1, .32, eo(pt / 1.0)) : st === 'air' ? .55 : st === 'water' ? .75 : 0;
+    // inlet pipe (fuel + air / water) and outlet to the rail
+    const IN = [[30, 232], [392, 232]], OUT = [[460, 96], [460, 56], [662, 56]]; const pIn = PL(IN), pOut = PL(OUT);
+    s += PIPE(IN, C.cyD) + PIPE(OUT, metal ? 'rgba(255,75,75,.5)' : C.cyD);
+    s += T(120, 210, st === 'water' ? 'MOTORINĂ + APĂ' : st === 'air' ? 'AER, NU MOTORINĂ' : 'MOTORINĂ', { s: 15, c: st === 'water' ? '#62D8FF' : st === 'air' ? C.org : C.dim, a: 'middle' });
+    for (let i = 0; i < 7; i++) { const k = (tl * .5 + i / 7) % 1; const [x, y] = pIn(k);
+      if (st === 'air' && i % 3 !== 0) s += `<circle cx="${f(x)}" cy="${f(y)}" r="5.5" fill="none" stroke="#fff" stroke-width="2.5" opacity=".9"/>`;
+      else if (st === 'water' && i % 2 === 0) s += drop(x, y + 3, 6.5, '#3FA9F5', 1);
+      else s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".85"/>`; }
+    // housing + bore
+    s += `<rect x="300" y="72" width="300" height="290" rx="20" fill="${C.body}" stroke="${col}" stroke-width="5"/><rect x="392" y="96" width="136" height="256" rx="6" fill="#06101E" stroke="${C.steelD}" stroke-width="3"/>`;
+    // film in the two gaps (exaggerated)
+    const gap = (x0) => { let o = ''; const n = 16; for (let i = 0; i < n; i++) { const y0 = 100 + i * 15.6; const keep = film >= 1 || rnd(i + x0) < film; if (!keep) continue;
+        o += `<rect x="${x0}" y="${f(y0)}" width="14" height="14.6" fill="#7FD3FF" opacity="${f(.25 + .55 * film)}"/>`; }
+      if (st === 'air') for (let i = 0; i < 5; i++) { const y = 346 - ((tl * 60 + rnd(i + x0) * 250) % 248); o += `<circle cx="${x0 + 7}" cy="${f(y)}" r="${f(3 + rnd(i) * 2.5)}" fill="none" stroke="#fff" stroke-width="2"/>`; }
+      if (st === 'water') for (let i = 0; i < 4; i++) { const y = 110 + ((tl * 40 + rnd(i + x0 * 3) * 230) % 230); o += drop(x0 + 7, y, 5, '#3FA9F5', .95); }
+      return o; };
+    s += gap(394) + gap(512);
+    // piston (shakes when it runs dry)
+    const yt = 128 + 36 * (1 - Math.cos(tl * 5.5)) / 2; const sh = metal ? (rnd(Math.floor(tl * 24)) - .5) * 4 : 0;
+    s += `<g transform="translate(${f(sh)} 0)"><rect x="408" y="${f(yt)}" width="104" height="238" rx="6" fill="${C.steel}" stroke="${C.steelD}" stroke-width="3"/>`;
+    if (metal) for (let i = 0; i < 6; i++) { const y = yt + 18 + i * 34; s += `<line x1="${414 + (i % 2) * 40}" y1="${f(y)}" x2="${454 + (i % 2) * 40}" y2="${f(y + 10)}" stroke="#6B7C8F" stroke-width="2"/>`; }
+    s += '</g>';
+    // cam + roller under the piston
+    s += `<circle cx="460" cy="${f(yt + 246)}" r="11" fill="${C.steelD}"/>`;
+    const ca = tl * 5.5; s += `<ellipse cx="460" cy="404" rx="30" ry="22" fill="${C.body2}" stroke="${C.steelD}" stroke-width="3" transform="rotate(${f(ca * 57.3)} 460 404)"/>`;
+    s += T(250, 300, 'PISTON', { s: 14, c: C.dim, a: 'end' }) + `<line x1="256" y1="295" x2="404" y2="${f(yt + 60)}" stroke="${C.dim}" stroke-width="2"/>`;
+    s += T(250, 340, 'CILINDRU', { s: 14, c: C.dim, a: 'end' }) + `<line x1="256" y1="335" x2="392" y2="335" stroke="${C.dim}" stroke-width="2"/>`;
+    // contact sparks + flakes
+    if (metal) for (let i = 0; i < 3; i++) { const side = rnd(i + Math.floor(tl * 7)) < .5 ? 402 : 518; const y = 120 + rnd(i * 5 + Math.floor(tl * 7)) * 220; s += spark(side, y, tl * 6 + i, i % 2 ? C.yel : C.org, 6, 14); }
+    if (st === 'flakes' || st === 'spread') for (let i = 0; i < 6; i++) { const k = (tl * .45 + i / 6) % 1; const x = (i % 2 ? 401 : 519) + Math.sin(k * 9 + i) * 3; const y = lerp(330, 100, k);
+      s += FLAKE(x, y, 6, k * 500); if (k > .9 && st === 'spread') { /* leaving */ } }
+    // rail + injectors boxes (spread)
+    const sprd = st === 'spread'; const railRed = sprd && pt > .9, injRed = sprd && pt > 1.6;
+    s += `<rect x="662" y="34" width="150" height="44" rx="12" fill="${C.body2}" stroke="${railRed ? C.red : C.cy}" stroke-width="4"/>` + T(737, 63, 'RAMPĂ', { s: 17, c: railRed ? C.red : C.w, a: 'middle' });
+    s += PIPE([[737, 78], [737, 100]], railRed ? 'rgba(255,75,75,.5)' : C.cyD, 8);
+    s += `<rect x="662" y="100" width="150" height="44" rx="12" fill="${C.body2}" stroke="${injRed ? C.red : C.cy}" stroke-width="4"/>` + T(737, 129, 'INJECTOARE', { s: 17, c: injRed ? C.red : C.w, a: 'middle' });
+    if (railRed) s += BADGE(812, 34, 'bad'); if (injRed) s += BADGE(812, 100, 'bad');
+    if (sprd) for (let i = 0; i < 5; i++) { const k = (tl * .55 + i / 5) % 1; const [x, y] = k < .75 ? pOut(k / .75) : [737, lerp(78, 112, (k - .75) / .25)]; s += FLAKE(x, y, 6, k * 600); }
+    else for (let i = 0; i < 4; i++) { const [x, y] = pOut((tl * .5 + i / 4) % 1); s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".8"/>`; }
+    // zoom on the contact surface
+    const zx = 770, zy = 292, zr = 108;
+    s += `<defs><clipPath id="pzc"><circle cx="${zx}" cy="${zy}" r="${zr}"/></clipPath></defs><g clip-path="url(#pzc)"><rect x="${zx - zr}" y="${zy - zr}" width="${2 * zr}" height="${2 * zr}" fill="#06101E"/>`;
+    const g = metal ? 0 : 6 + 22 * film; // half gap
+    const surf = (up) => { let d = `M ${zx - zr} ${up ? zy - zr : zy + zr}`; for (let i = 0; i <= 24; i++) { const x = zx - zr + i * (2 * zr / 24); const asp = (rnd(i + (up ? 3 : 9)) - .5) * (metal ? 14 : 8); const y = up ? zy - g - (metal ? -2 : 0) + asp * (up ? -1 : 1) : zy + g + (metal ? -2 : 0) + asp * (up ? -1 : 1); d += ` L ${f(x)} ${f(up ? Math.min(y, zy + (metal ? 4 : 0)) : Math.max(y, zy - (metal ? 4 : 0)))}`; }
+      d += ` L ${zx + zr} ${up ? zy - zr : zy + zr} Z`; return `<path d="${d}" fill="${up ? '#B7C6D6' : '#8EA2B8'}" stroke="${C.steelD}" stroke-width="2"/>`; };
+    if (!metal) { s += `<rect x="${zx - zr}" y="${zy - g - 4}" width="${2 * zr}" height="${2 * g + 8}" fill="#7FD3FF" opacity="${f(.3 + .5 * film)}"/>`;
+      for (let i = 0; i < 5; i++) { const x = zx - zr + ((tl * 70 + i * 47) % (2 * zr)); s += `<line x1="${f(x)}" y1="${f(zy - g * .4 + (i % 3 - 1) * g * .4)}" x2="${f(x + 22)}" y2="${f(zy - g * .4 + (i % 3 - 1) * g * .4)}" stroke="#E6F7FF" stroke-width="2" opacity=".7"/>`; }
+      if (st === 'air') for (let i = 0; i < 6; i++) { const x = zx - zr + ((tl * 50 + i * 41) % (2 * zr)); s += `<circle cx="${f(x)}" cy="${f(zy + (rnd(i) - .5) * g)}" r="${f(4 + rnd(i + 2) * 5)}" fill="#06101E" stroke="#fff" stroke-width="2"/>`; }
+      if (st === 'water') for (let i = 0; i < 5; i++) { const x = zx - zr + ((tl * 45 + i * 53) % (2 * zr)); s += drop(x, zy + (rnd(i) - .5) * g * .8, 7, '#3FA9F5', 1); } }
+    s += surf(true) + surf(false);
+    if (metal) { for (let i = 0; i < 3; i++) { const x = zx - 70 + rnd(i + Math.floor(tl * 8)) * 140; s += glowC(x, zy, 18, C.red, .5) + spark(x, zy, tl * 7 + i, C.yel, 7, 18); }
+      if (st !== 'metal') for (let i = 0; i < 4; i++) { const k = (tl * .6 + i / 4) % 1; s += FLAKE(zx - 60 + i * 40, zy - k * 70, 7, k * 500, 1 - k * .5); } }
+    s += `</g><circle cx="${zx}" cy="${zy}" r="${zr}" fill="none" stroke="${col}" stroke-width="5"/>`;
+    s += T(zx, zy - zr - 12, 'ZOOM · PISTON / CILINDRU', { s: 14, c: C.dim, a: 'middle' });
+    if (!P.noHead) { const H = Object.assign({ ok: ['MOTORINA UNGE POMPA', C.grn], dry: ['LUBRIFIERE INSUFICIENTĂ', C.org], air: ['FĂRĂ AMORSARE: SECUNDE FĂRĂ UNGERE', C.org], water: ['APĂ ÎN MOTORINĂ: UNGERE INCORECTĂ', C.org],
+      metal: ['METAL PE METAL', C.red], flakes: ['BUCĂȚI DE METAL SE DESPRIND', C.red], spread: ['PILITURA AJUNGE ÎN TOT SISTEMUL', C.red] }, P.heads || {})[st];
+      if (H) s += tag(16, 22, H[0], H[1], 'start', 17); }
+    return s;
+  }
+
+  // 49) decanterFilter: tank -> diesel filter with water-separator bowl -> HP pump; states: ok | theory (the bowl keeps the water) |
+  //     practice (water + dirt get past the filter) | pump (they reach the pump) | condens (water that forms in the tank)
+  function decanterFilter(tl, ph, pt, P) {
+    const st = stOf(ph, P, 'ok'); let s = '';
+    const pass = ['practice', 'pump', 'condens'].includes(st); const theory = st === 'theory';
+    const A = [[190, 340], [190, 172], [372, 172]], B = [[432, 60], [432, 34], [700, 34], [700, 150]]; const pA = PL(A), pB = PL(B);
+    s += PIPE(A, C.cyD) + PIPE(B, pass ? 'rgba(255,75,75,.5)' : C.cyD);
+    // tank (+ condensation and water layer)
+    const cond = st === 'condens'; const water = cond ? lerp(.15, .5, eo(pt / 2.5)) : .12;
+    s += `<rect x="24" y="210" width="220" height="160" rx="18" fill="${C.body}" stroke="${cond ? C.org : C.cy}" stroke-width="5"/><rect x="30" y="250" width="208" height="114" rx="12" fill="${C.oil}" opacity=".5"/>`;
+    const wh = 46 * water; s += `<rect x="30" y="${f(364 - wh)}" width="208" height="${f(wh)}" rx="8" fill="#3FA9F5" opacity=".85"/>`;
+    if (cond) for (let i = 0; i < 8; i++) { const side = i % 2 ? 236 : 32; const k = (tl * .45 + rnd(i)) % 1; s += drop(side + (i % 2 ? -4 : 4), lerp(222, 250, k) + (i > 3 ? 0 : 0), 6, '#A5E9FF', .9); }
+    s += T(134, 394, 'REZERVOR', { s: 15, c: cond ? C.org : C.dim, a: 'middle' });
+    if (cond) s += tag(134, 364 - wh / 2 - 4, 'APĂ', '#62D8FF', 'middle', 15);
+    // filter housing + pleats + decanter bowl
+    const fcol = pass ? C.red : theory ? C.grn : C.cy;
+    s += `<rect x="372" y="60" width="120" height="190" rx="16" fill="${C.body}" stroke="${fcol}" stroke-width="5"/>`;
+    for (let i = 0; i < 9; i++) s += `<line x1="${386 + i * 11.5}" y1="80" x2="${386 + i * 11.5}" y2="232" stroke="#D9C79A" stroke-width="3"/>`;
+    s += `<path d="M 382 250 L 482 250 L 482 318 Q 482 352 432 352 Q 382 352 382 318 Z" fill="rgba(165,233,255,.12)" stroke="${fcol}" stroke-width="4"/>`;
+    const bowl = theory ? lerp(.15, .7, eo(pt / 2.5)) : pass ? .7 : .15; const by = 350 - 92 * bowl;
+    s += `<path d="M 384 ${f(by)} L 480 ${f(by)} L 480 318 Q 480 350 432 350 Q 384 350 384 318 Z" fill="#3FA9F5" opacity=".85"/>`;
+    s += `<rect x="426" y="352" width="12" height="12" rx="3" fill="${C.steelD}"/>`;
+    s += T(432, 386, 'FILTRU CU DECANTARE', { s: 15, c: pass ? C.red : C.dim, a: 'middle' });
+    // HP pump
+    const pumpRed = (st === 'practice' && pt > 1.2) || st === 'pump' || (cond && pt > 1.5); const sh = st === 'pump' ? (rnd(Math.floor(tl * 22)) - .5) * 5 : 0;
+    s += `<g transform="translate(${f(sh)} 0)"><rect x="640" y="150" width="120" height="140" rx="14" fill="${C.body}" stroke="${pumpRed ? C.red : theory ? C.grn : C.cy}" stroke-width="5"/>`;
+    const py = 196 + 20 * Math.sin(tl * 7); s += `<rect x="678" y="${f(py)}" width="44" height="60" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="3"/>`;
+    if (st === 'pump') for (let i = 0; i < 3; i++) s += spark(678 + rnd(i * 3 + Math.floor(tl * 9)) * 44, py + rnd(i * 5 + Math.floor(tl * 9)) * 56, tl * 6 + i, C.yel, 6, 14);
+    s += '</g>' + T(700, 314, 'POMPA DE', { s: 15, c: pumpRed ? C.red : C.dim, a: 'middle' }) + T(700, 333, 'ÎNALTĂ PRESIUNE', { s: 15, c: pumpRed ? C.red : C.dim, a: 'middle' });
+    if (pumpRed) s += BADGE(756, 150, 'bad'); if (theory && pt > 1.2) s += BADGE(756, 150, 'ok');
+    // particles: fuel (light), water (blue drops), dirt (brown squares)
+    const dirt = (x, y, k) => `<rect x="${f(x - 6)}" y="${f(y - 6)}" width="12" height="12" fill="#7A4A12" stroke="${C.org}" stroke-width="2" transform="rotate(${f(k * 360)} ${f(x)} ${f(y)})"/>`;
+    for (let i = 0; i < 8; i++) { const k = (tl * .45 + i / 8) % 1; const [x, y] = pA(k); const kind = i % 4 === 1 ? 'w' : i % 4 === 3 ? 'd' : 'f';
+      if (kind === 'f' || st === 'ok') s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".85"/>`;
+      else if (kind === 'w') s += drop(x, y + 3, 6.5, '#3FA9F5', 1); else s += dirt(x, y, k); }
+    for (let i = 0; i < 8; i++) { const k = (tl * .45 + i / 8) % 1; const [x, y] = pB(k); const kind = i % 4 === 1 ? 'w' : i % 4 === 3 ? 'd' : 'f';
+      if (kind === 'f' || !pass) s += `<circle cx="${f(x)}" cy="${f(y)}" r="4.5" fill="#A5E9FF" opacity=".85"/>`;
+      else if (kind === 'w') s += drop(x, y + 3, 6.5, '#3FA9F5', 1); else s += dirt(x, y, k); }
+    if (theory) for (let i = 0; i < 4; i++) { const k = (tl * .5 + i / 4) % 1; s += drop(404 + i * 18, lerp(176, by - 4, k), 6, '#3FA9F5', 1 - k * .3); }
+    if (st !== 'ok') for (let i = 0; i < 5; i++) s += dirt(386 + rnd(i + 3) * 90, 100 + rnd(i + 8) * 120, rnd(i));
+    if (!P.noHead) { const H = Object.assign({ ok: ['FILTRU DE MOTORINĂ CU DECANTARE', C.cy], theory: ['TEORIA: FILTRUL REȚINE APA', C.grn], practice: ['ÎN PRACTICĂ: POT TRECE DE FILTRU', C.red],
+      pump: ['APĂ ȘI IMPURITĂȚI LA POMPĂ', C.red], condens: ['APA CARE APARE ÎN REZERVOR', C.org] }, P.heads || {})[st];
+      if (H) s += tag(16, 22, H[0], H[1], 'start', 17); }
+    return s;
+  }
+
+  return { combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
 })();

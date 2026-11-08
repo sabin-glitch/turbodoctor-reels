@@ -215,6 +215,10 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 #endCard{width:1080px;height:1920px}
 #endCard .eWord{position:absolute;left:0;right:0;top:380px;text-align:center;font-family:Anton;font-size:104px;line-height:1;color:#fff;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
 #endCard .eWord .y{color:var(--yellow)}
+/* eSub (08.11.2026, vlog pompa de înaltă): slogan opțional sub TURBO DOCTOR, CFG.endSub = ['rând 1','rând 2'] */
+#endCard.hasSub .eWord{top:290px}
+#eSub{display:none;position:absolute;left:0;right:0;top:412px;text-align:center;font-family:Mont;font-weight:900;font-size:44px;line-height:1.16;letter-spacing:1px;color:#62D8FF;text-transform:uppercase;text-shadow:0 6px 18px rgba(0,0,0,.7)}
+#endCard.hasSub #eSub{display:block}
 #eMap{position:absolute;left:220px;top:540px;width:640px;height:447px}
 #eMapTitle{position:absolute;left:0;right:0;top:994px;text-align:center;font-weight:800;font-size:26px;letter-spacing:4px;color:#CBD5E1}
 #eFree{position:absolute;left:230px;width:620px;top:1046px;height:88px;border-radius:999px;background:#16A34A;border:5px solid #fff;color:#fff;font-weight:900;font-size:42px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 14px 34px rgba(0,0,0,.55);white-space:nowrap}
@@ -278,6 +282,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
  <!-- END CARD (din 25.10.2026: fără CTA) -->
  <div id="endCard" class="abs">
   <div class="eWord">TURBO <span class="y">DOCTOR</span></div>
+  <div id="eSub"></div>
   <div id="eMap"></div>
   <div id="eMapTitle">UNITĂȚILE NOASTRE</div>
   <div id="eFree"><img src="assets/emoji/stethoscope.png" alt="">DIAGNOZĂ GRATUITĂ</div>
@@ -864,7 +869,8 @@ function rItem(o, t) {
 function rEnd(t) {
   const el = $('endCard'); if (t < TEND || CFG.endCard === false) { hide(el); return; }  // endCard:false = promo final screen built from items (opis)
   const k = t - TEND; el.style.display = 'block'; el.style.opacity = clamp(k / .3); el.style.transform = 'none';
-  const seq = [['.eWord', .05], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1]];
+  if (CFG.endSub && !el.classList.contains('hasSub')) { el.classList.add('hasSub'); el.querySelector('#eSub').innerHTML = [].concat(CFG.endSub).join('<br>'); }
+  const seq = [['.eWord', .05], ['#eSub', .3], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1]];
   seq.forEach(([sel, d]) => { const c = el.querySelector(sel); const p = clamp((k - d) / .4);
     let tr = `translateY(${(1 - eOut(p)) * 40}px)`;
     if (sel === '#eFree') tr += ` scale(${p > 0 ? eBack(p, 2.0) : 0})`;
