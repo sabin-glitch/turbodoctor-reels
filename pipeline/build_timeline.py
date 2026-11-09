@@ -166,6 +166,8 @@ keep = [(a, b) for a, b in keep if b - a > 0.05]
 _V2 = json.load(open(f"{ROOT}/out/v2.json")) if os.path.exists(f"{ROOT}/out/v2.json") else {}
 if _V2.get("cuts", False) is False:  # default (Sabin, 18.10.2026): natural pace, pauses kept
     keep = [(0.0, SRC_DUR)]; removed_before = []
+if _V2.get("story_a"):  # out/v2.json "story_a": <s> = the story starts later in the clip (after a cold open): trims a lead-in that refers to an earlier part of a vlog (injector series, 09.11.2026)
+    keep = [(float(_V2["story_a"]), keep[-1][1])]; removed_before = []
 ZG = [0]
 for k in range(1, len(keep)):
     ZG.append(ZG[-1] + (1 if removed_before[k - 1] >= 0.55 else 0))
