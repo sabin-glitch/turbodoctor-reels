@@ -144,7 +144,7 @@ window.SCHEM = (() => {
     // injector
     s += `<rect x="${cx - 16}" y="0" width="32" height="98" rx="6" fill="${C.steelD}" stroke="${ph >= 1 ? C.red : C.cy}" stroke-width="3"/><path d="M ${cx - 9} 98 L ${cx + 9} 98 L ${cx} 116 Z" fill="${C.steel}"/>`;
     s += tag(cx + 120, 30, 'INJECTOR', ph >= 1 ? C.red : C.cy, 'middle', 18);
-    s += T(x0 - 14, 140, 'CILINDRUL 3', { s: 18, c: C.dim, a: 'end' });
+    if (!P || P.cyl !== '') s += T(x0 - 14, 140, (P && P.cyl) || 'CILINDRUL 3', { s: 18, c: C.dim, a: 'end' });
     // piston (slight motion)
     const py = 262 + 10 * Math.sin(tl * 3.2) * (ph >= 3 ? 0 : 1);
     const heat = ph >= 2 ? eo(pt / 1.2) : 0; const melted = ph >= 3;
@@ -1549,5 +1549,130 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
+
+  // 41) (injector series, 08.11.2026) two diesel injection systems: ph 0 = unit injector (pompă-duză: the cam drives a plunger inside the injector);
+  //     ph 1..6 = common rail: overview, high-pressure pump, rail under pressure (2000+ bar), one line per injector, ECU commands the injectors, injector types
+  function commonRail(tl, ph, pt, P) {
+    let s = '';
+    const line = (pts, col, w, extra = '') => `<path d="${pts.map((q, i) => (i ? 'L' : 'M') + q[0] + ' ' + q[1]).join(' ')}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linejoin="round" stroke-linecap="round" ${extra}/>`;
+    if (ph === 0) {
+      const cx = 457, cy = 70, a = tl * 4.2, lift = 22 * Math.pow(Math.max(0, Math.cos(a)), 3);
+      let d = ''; for (let i = 0; i <= 48; i++) { const th = i / 48 * Math.PI * 2; const r = 44 + 22 * Math.pow(Math.max(0, Math.cos(th)), 3); const [x, y] = P2(cx, cy, r, th + a + Math.PI / 2); d += (i ? 'L' : 'M') + f(x) + ' ' + f(y) + ' '; }
+      s += `<path d="${d}Z" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/><circle cx="${cx}" cy="${cy}" r="10" fill="${C.cy}"/>`;
+      s += T(cx - 90, cy + 8, 'ARBORE CU CAME', { s: 17, c: C.dim, a: 'end' });
+      const fy = cy + 44 + lift;  // follower / plunger top
+      s += `<rect x="${cx - 40}" y="140" width="80" height="196" rx="12" fill="${C.body}" stroke="${C.yel}" stroke-width="5"/>`;
+      s += `<rect x="${cx - 26}" y="${f(fy)}" width="52" height="16" rx="5" fill="${C.steel}"/><rect x="${cx - 12}" y="${f(fy + 16)}" width="24" height="${f(170 - fy + 40)}" fill="${C.steelD}"/>`;
+      for (let i = 0; i < 5; i++) { const y0 = fy + 18 + i * (150 - fy) / 5; s += `<line x1="${cx - 30}" y1="${f(y0)}" x2="${cx + 30}" y2="${f(y0 + (150 - fy) / 10)}" stroke="${C.dim}" stroke-width="3"/>`; }
+      const chamberTop = 226 + lift * 1.4; const pr = lift / 22;
+      s += `<rect x="${cx - 28}" y="${f(chamberTop)}" width="56" height="${f(300 - chamberTop)}" rx="6" fill="${C.yel}" opacity="${f(.15 + .5 * pr)}"/>`;
+      s += `<path d="M ${cx - 16} 336 L ${cx + 16} 336 L ${cx} 362 Z" fill="${C.steel}"/>`;
+      if (pr > .55) for (let j = -2; j <= 2; j++) for (let k = 1; k <= 3; k++) { const ang = rad(90 + j * 16); s += `<circle cx="${f(cx + Math.cos(ang) * 14 * k)}" cy="${f(362 + Math.sin(ang) * 12 * k)}" r="${f(4 - k * .7)}" fill="#A5E9FF"/>`; }
+      s += line([[cx + 52, 150], [cx + 66, 150], [cx + 66, 252], [cx + 52, 252]], C.yel, 4) + tag(cx + 82, 201, 'POMPĂ', C.yel, 'start', 19);
+      s += line([[cx + 52, 262], [cx + 66, 262], [cx + 66, 356], [cx + 52, 356]], C.cy, 4) + tag(cx + 82, 309, 'INJECTOR', C.cy, 'start', 19);
+      s += T(cx - 70, 250, 'O SINGURĂ', { s: 17, c: C.dim, a: 'end' }) + T(cx - 70, 272, 'PIESĂ', { s: 17, c: C.dim, a: 'end' });
+      return s;
+    }
+    const cur = k => ph === k;
+    const colP = cur(2) ? C.yel : C.cy, colR = cur(3) ? C.yel : C.cy, colE = cur(5) ? C.yel : C.cy, colI = cur(6) ? C.yel : C.cy;
+    const press = ph >= 3 ? (ph === 3 ? eo(pt / 1.6) : 1) : .3;
+    const IX = [290, 410, 530, 650], ex0 = 760, ey0 = 196, ex1 = 896, ey1 = 276;
+    // ECU wires (behind everything), pulses travel to the injector that fires
+    const bez = (p0, p1, p2, p3, k) => { const u = 1 - k; return [u * u * u * p0[0] + 3 * u * u * k * p1[0] + 3 * u * k * k * p2[0] + k * k * k * p3[0], u * u * u * p0[1] + 3 * u * u * k * p1[1] + 3 * u * k * k * p2[1] + k * k * k * p3[1]]; };
+    IX.forEach((x, i) => {
+      const p0 = [ex0, ey0 + 18 + i * 14], p1 = [ex0 - 60, ey0 + 18 + i * 14], p2 = [x + 70, 172], p3 = [x + 16, 172];
+      const wc = ph >= 5 ? (cur(5) ? C.yel : C.cy) : 'rgba(234,246,255,.22)';
+      s += `<path d="M ${p0[0]} ${p0[1]} C ${p1[0]} ${p1[1]} ${p2[0]} ${p2[1]} ${p3[0]} ${p3[1]}" fill="none" stroke="${wc}" stroke-width="${ph >= 5 ? 4 : 3}" stroke-dasharray="10 8"/>`;
+      if (ph >= 5) { const cyc = (tl * 1.4 + i * .25) % 1; if (cyc < .3) { const [x2, y2] = bez(p0, p1, p2, p3, cyc / .3); s += `<circle cx="${f(x2)}" cy="${f(y2)}" r="7" fill="${C.yel}"/><circle cx="${f(x2)}" cy="${f(y2)}" r="14" fill="${C.yel}" opacity=".25"/>`; } }
+    });
+    // high-pressure pump
+    s += `<rect x="40" y="196" width="132" height="134" rx="14" fill="${C.body}" stroke="${colP}" stroke-width="${cur(2) ? 6 : 5}"/>`;
+    const pst = 250 + 22 * Math.sin(tl * 7); s += `<rect x="84" y="${f(pst)}" width="44" height="58" rx="5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="3"/><rect x="98" y="${f(pst - 40)}" width="16" height="42" fill="${C.steelD}"/>`;
+    s += T(106, 356, 'POMPA DE', { s: 16, c: cur(2) ? C.yel : C.dim, a: 'middle' }) + T(106, 376, 'ÎNALTĂ PRESIUNE', { s: 16, c: cur(2) ? C.yel : C.dim, a: 'middle' });
+    const PL = [[106, 196], [106, 82], [214, 82]];
+    s += line(PL, C.cyD, 20) + line(PL, C.body2, 11);
+    // rail + pressure
+    s += `<rect x="214" y="58" width="500" height="48" rx="24" fill="${C.body2}" stroke="${colR}" stroke-width="${cur(3) ? 6 : 5}"/>`;
+    s += `<rect x="222" y="66" width="${f(484 * press)}" height="32" rx="16" fill="${C.yel}" opacity="${f(.12 + .3 * press)}"/>`;
+    s += T(464, 42, 'RAMPA COMUNĂ', { s: 17, c: cur(3) ? C.yel : C.dim, a: 'middle' });
+    const gx = 828, gy = 82, gr = 48; s += `<line x1="714" y1="82" x2="${gx - gr}" y2="82" stroke="${C.cy}" stroke-width="6"/><circle cx="${gx}" cy="${gy}" r="${gr}" fill="${C.body}" stroke="${ph >= 3 ? C.yel : C.cy}" stroke-width="5"/>`;
+    for (let i = 0; i <= 8; i++) { const a = rad(150 + i * 30); const [x1, y1] = P2(gx, gy, gr - 6, a), [x2, y2] = P2(gx, gy, gr - 15, a); s += `<line x1="${f(x1)}" y1="${f(y1)}" x2="${f(x2)}" y2="${f(y2)}" stroke="${C.dim}" stroke-width="3"/>`; }
+    const [nx, ny] = P2(gx, gy, gr - 12, rad(150 + 240 * (press * .92 + .008 * Math.sin(tl * 6)))); s += `<line x1="${gx}" y1="${gy}" x2="${f(nx)}" y2="${f(ny)}" stroke="${C.yel}" stroke-width="6" stroke-linecap="round"/><circle cx="${gx}" cy="${gy}" r="7" fill="${C.yel}"/>`;
+    s += T(gx, gy + gr + 26, ph >= 3 ? '2000+ BAR' : 'PRESIUNE', { s: 17, c: ph >= 3 ? C.yel : C.dim, a: 'middle' });
+    // fuel flow: pump -> rail, rail -> each injector
+    const plf = pts => { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; }
+      return k => { let d = cl(k) * tot; for (let i = 0; i < L.length; i++) { if (d <= L[i] || i === L.length - 1) { const q = L[i] ? d / L[i] : 0; return [lerp(pts[i][0], pts[i + 1][0], q), lerp(pts[i][1], pts[i + 1][1], q)]; } d -= L[i]; } }; };
+    const pP = plf(PL); for (let i = 0; i < 5; i++) { const k = (tl * .6 + i / 5) % 1; const [x, y] = pP(k); s += `<circle cx="${f(x)}" cy="${f(y)}" r="5" fill="#A5E9FF" opacity=".85"/>`; }
+    IX.forEach((x, i) => {
+      const lc = ph >= 4 ? (cur(4) ? C.yel : C.cy) : C.cyD;
+      s += line([[x, 106], [x, 150]], lc, cur(4) ? 9 : 7);
+      if (ph >= 4) { const k = (tl * 1.2 + i * .3) % 1; s += `<circle cx="${x}" cy="${f(108 + 40 * k)}" r="4.5" fill="${cur(4) ? C.yel : '#A5E9FF'}"/>`; }
+      s += `<rect x="${x - 15}" y="150" width="30" height="104" rx="7" fill="${C.steelD}" stroke="${colI}" stroke-width="${cur(6) ? 4 : 3}"/><rect x="${x + 10}" y="164" width="12" height="16" rx="3" fill="${C.body2}" stroke="${colI}" stroke-width="2"/><path d="M ${x - 8} 254 L ${x + 8} 254 L ${x} 272 Z" fill="${C.steel}"/>`;
+      const cyc = (tl * 1.4 + i * .25) % 1;
+      if (cyc > .3 && cyc < .5) { const q = (cyc - .3) / .2; for (let j = -2; j <= 2; j++) for (let k = 1; k <= 3; k++) { const ang = rad(90 + j * 15); s += `<circle cx="${f(x + Math.cos(ang) * 12 * k * (.4 + q))}" cy="${f(272 + Math.sin(ang) * 11 * k * (.4 + q))}" r="${f(3.6 - k * .7)}" fill="#A5E9FF" opacity="${f(1 - q * .6)}"/>`; } }
+    });
+    // ECU
+    s += `<rect x="${ex0}" y="${ey0}" width="${ex1 - ex0}" height="${ey1 - ey0}" rx="12" fill="${C.body}" stroke="${colE}" stroke-width="${cur(5) ? 6 : 5}"/>`;
+    for (let i = 0; i < 4; i++) s += `<rect x="${ex0 + 14 + i * 30}" y="${ey1 - 18}" width="16" height="8" rx="2" fill="${C.cyD}"/>`;
+    s += T((ex0 + ex1) / 2, ey0 + 40, 'ECU', { s: 24, c: cur(5) ? C.yel : C.w, a: 'middle' }) + T((ex0 + ex1) / 2, ey1 + 24, 'CALCULATOR', { s: 15, c: cur(5) ? C.yel : C.dim, a: 'middle' });
+    if (ph >= 6) { s += tag((IX[0] + IX[1]) / 2, 330, 'MAGNETICE', C.yel, 'middle', 18) + tag((IX[2] + IX[3]) / 2, 330, 'PIEZOELECTRICE', C.yel, 'middle', 18); }
+    else s += T((IX[0] + IX[3]) / 2, 336, 'INJECTOARE', { s: 16, c: cur(4) ? C.yel : C.dim, a: 'middle' });
+    return s;
+  }
+
+
+  // 42) (injector series, 08.11.2026) inside a common-rail injector, horizontal cut: connector, magnet coil (or piezo stack), control/return valve, needle, nozzle.
+  //     ph 0 overview, 1 control valve, 2 nozzle sprays into the chamber, 3 magnet (rarely faulty), 4 return valve + nozzle (most often faulty),
+  //     5 impurities + water in the fuel, 6 piezo injector (same valve + nozzle faults), 7 piezo element faulty too
+  function injectorParts(tl, ph, pt, P) {
+    let s = ''; const cy = 160, bh = 46; const piezo = ph >= 6;
+    const valveBad = ph >= 4, nozBad = valveBad, magHL = ph === 3, piezoBad = ph >= 7;
+    const vx = piezo ? 330 : 296, LS = 19, LY1 = cy + bh + 34, LY2 = cy + bh + 62;
+    const bang = (x, y) => `<circle cx="${x}" cy="${y}" r="19" fill="${C.red}"/>` + T(x, y + 9, '!', { s: 26, a: 'middle', c: '#fff' });
+    const pipe = (x, y0, y1, w) => `<path d="M ${x} ${y0} L ${x} ${y1}" stroke="${C.cyD}" stroke-width="${w + 10}" fill="none"/><path d="M ${x} ${y0} L ${x} ${y1}" stroke="${C.body2}" stroke-width="${w}" fill="none"/>`;
+    s += pipe(470, 40, cy - bh, 14) + T(470, 26, 'INTRARE MOTORINĂ', { s: 18, c: C.dim, a: 'middle' });
+    s += pipe(vx, cy - bh, 76, 10) + T(vx, 62, 'RETUR', { s: 18, c: valveBad ? C.red : C.dim, a: 'middle' });
+    s += `<rect x="122" y="${cy - bh}" width="652" height="${bh * 2}" rx="16" fill="${C.body}" stroke="${C.cy}" stroke-width="4"/>`;
+    s += `<rect x="30" y="${cy - bh - 12}" width="96" height="${bh * 2 + 24}" rx="12" fill="${C.body2}" stroke="${C.cy}" stroke-width="4"/><rect x="52" y="${cy - 28}" width="16" height="56" rx="3" fill="${C.steel}"/><rect x="88" y="${cy - 28}" width="16" height="56" rx="3" fill="${C.steel}"/>`;
+    if (!piezo) {
+      const col = magHL ? C.org : C.cy;
+      s += `<rect x="136" y="${cy - 36}" width="128" height="72" rx="9" fill="${C.body2}" stroke="${col}" stroke-width="${magHL ? 6 : 3}"/>`;
+      for (let i = 0; i < 9; i++) s += `<line x1="${148 + i * 13.2}" y1="${cy - 30}" x2="${148 + i * 13.2}" y2="${cy + 30}" stroke="#C97B2E" stroke-width="6"/>`;
+      s += T(186, LY1, 'MAGNET (BOBINĂ)', { s: LS, c: magHL ? C.org : C.dim, a: 'middle' });
+      if (magHL) s += tag(200, cy - bh - 30, 'FOARTE RAR', C.org, 'middle', 20);
+    } else {
+      const col = piezoBad ? C.red : C.yel; const ex = 1 + .025 * Math.sin(tl * 9);
+      s += `<rect x="136" y="${cy - 36}" width="162" height="72" rx="9" fill="${C.body2}" stroke="${col}" stroke-width="5"/>`;
+      for (let i = 0; i < 14; i++) s += `<rect x="${f(143 + i * 10.8 * ex)}" y="${cy - 30}" width="6" height="60" rx="1" fill="${piezoBad ? '#FF8A8A' : '#9FE3FF'}"/>`;
+      s += T(136, LY2, 'ELEMENT PIEZOELECTRIC', { s: LS, c: col, a: 'start' });
+      if (piezoBad) s += bang(268, cy - bh - 14);
+    }
+    // control / return valve (ball on a seat), opens with each injection
+    const cyc = (tl * 1.5) % 1; const open = cyc < .28; const vcol = valveBad ? C.red : ph === 1 ? C.yel : C.cy;
+    s += `<rect x="${vx - 28}" y="${cy - 34}" width="56" height="68" rx="9" fill="${C.body2}" stroke="${vcol}" stroke-width="${ph === 1 || valveBad ? 6 : 3}"/>`;
+    s += `<path d="M ${vx - 17} ${cy - 16} L ${vx + 17} ${cy - 16} L ${vx + 7} ${cy - 3} L ${vx - 7} ${cy - 3} Z" fill="${C.steelD}"/><circle cx="${vx}" cy="${f(cy + 10 + (open ? 8 : 0))}" r="11" fill="${C.steel}"/>`;
+    const VY = piezo ? LY1 : LY2; s += T(vx + (piezo ? 70 : 10), VY, ph >= 4 ? 'SUPAPA DE RETUR' : 'SUPAPA DE CONTROL', { s: LS, c: vcol === C.cy ? C.dim : vcol, a: 'middle' });
+    s += `<line x1="${vx}" y1="${cy + 38}" x2="${vx}" y2="${VY - 22}" stroke="${vcol === C.cy ? C.cyD : vcol}" stroke-width="2" stroke-dasharray="4 4"/>`;
+    if (valveBad) s += bang(vx + 30, cy - bh - 14);
+    if (open && !valveBad) for (let i = 0; i < 3; i++) { const k = (cyc / .28 + i / 3) % 1; s += `<circle cx="${vx}" cy="${f(cy - bh - k * 60)}" r="5" fill="#A5E9FF" opacity="${f(1 - k)}"/>`; }
+    // needle (lifts = moves left while injecting)
+    const lift = open ? 7 : 0; s += `<rect x="${f(vx + 38 - lift)}" y="${cy - 6}" width="${f(806 - vx - 38)}" height="12" rx="6" fill="${C.steel}"/>`;
+    // nozzle
+    const ncol = nozBad ? C.red : ph === 2 ? C.yel : C.cy;
+    s += `<path d="M 774 ${cy - 34} L 842 ${cy - 15} L 872 ${cy - 8} L 872 ${cy + 8} L 842 ${cy + 15} L 774 ${cy + 34} Z" fill="${C.body2}" stroke="${ncol}" stroke-width="${ph === 2 || nozBad ? 6 : 3}"/>`;
+    s += T(904, LY1, 'PULVERIZATOR', { s: LS, c: ncol === C.cy ? C.dim : ncol, a: 'end' });
+    if (nozBad) s += bang(852, cy - bh - 14);
+    if (open || ph === 2) { const q = ph === 2 && !open ? .6 : cyc / .28;
+      if (!nozBad) for (let j = -2; j <= 2; j++) for (let k = 1; k <= 3; k++) { const a = rad(j * 14); s += `<circle cx="${f(872 + Math.cos(a) * 13 * k * (.5 + q * .6))}" cy="${f(cy + Math.sin(a) * 13 * k * (.5 + q * .6))}" r="${f(4.2 - k * .9)}" fill="#A5E9FF"/>`; }
+      else s += drop(880, cy + 12 + q * 24, 8, '#A5E9FF', .9) + drop(874, cy + 5 + q * 10, 6, '#A5E9FF', .7); }
+    if (ph === 2) s += T(904, cy - bh - 20, 'ARDERE', { s: 18, c: C.yel, a: 'end' });
+    // impurities + water travelling in with the fuel
+    if (ph === 5) { for (let i = 0; i < 8; i++) { const k = (tl * .5 + i / 8) % 1; const water = i % 2 === 1; let x, y;
+        if (k < .3) { x = 470; y = lerp(44, cy - 24, k / .3); } else { const q = (k - .3) / .7; x = i % 4 < 2 ? lerp(470, vx + 12, q) : lerp(470, 826, q); y = cy - 20 + (i % 3) * 18; }
+        s += water ? drop(x, y + 4, 7, '#38BDF8', .95) : `<rect x="${f(x - 7)}" y="${f(y - 7)}" width="14" height="14" fill="#7A4A12" stroke="${C.org}" stroke-width="2" transform="rotate(${f(k * 360)} ${f(x)} ${f(y)})"/>`; }
+      s += tag(660, 40, 'IMPURITĂȚI', C.org, 'middle', 19) + tag(660, 84, 'APĂ', '#38BDF8', 'middle', 19); }
+    return s;
+  }
+
+  return { commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop };
 })();
