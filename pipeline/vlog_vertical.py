@@ -3,6 +3,9 @@
 # Masks: "t0-t1:x0,y0,x1,y1" (source px) inpainted inside a padded ROI;
 # "t0-t1:x0,y0,x1,y1@tref" fills the box from a clean frame of the same shot (tref), aligned by phase correlation, feathered;
 # "...@tref#cx0,cy0,cx1,cy1" sets the correlation region (default: strip below the box; use one above it for bottom labels)
+# Burned-in vlog banners fade/slide in ~5 frames before and out ~2 frames after their fully visible span: start the mask window
+# ~0.3 s earlier and end it ~0.2 s later than the visible span, and keep tref outside the extended window (09.11.2026, pump vlog).
+# Check: fraction of banner-blue pixels in the box, vlog vs output, over the 12 frames around each edge.
 import cv2, numpy as np, subprocess, sys
 src, out, T0, T1, Y = sys.argv[1], sys.argv[2], float(sys.argv[3]), float(sys.argv[4]), int(sys.argv[5])
 MS = []
@@ -40,7 +43,11 @@ while n < N:
         if a <= t < b:
             X0, Y0, X1, Y1 = max(0, x0 - P), max(0, y0 - P), min(1280, x1 + P), min(720, y1 + P)
             roi = fr[Y0:Y1, X0:X1]; mk = np.zeros(roi.shape[:2], np.uint8); mk[y0 - Y0:y1 - Y0, x0 - X0:x1 - X0] = 255
-            fr[Y0:Y1, X0:X1] = cv2.inpaint(roi, mk, 9, cv2.INPAINT_TELEA)
+            # fast: inpaint at 1/4 resolution, upscale, blend only inside the (feathered) mask
+            sm = cv2.inpaint(cv2.resize(roi, (roi.shape[1] // 4, roi.shape[0] // 4), interpolation=cv2.INTER_AREA), cv2.resize(mk, (roi.shape[1] // 4, roi.shape[0] // 4), interpolation=cv2.INTER_NEAREST), 3, cv2.INPAINT_TELEA)
+            up = cv2.GaussianBlur(cv2.resize(sm, (roi.shape[1], roi.shape[0]), interpolation=cv2.INTER_CUBIC), (0, 0), 2)
+            al = cv2.GaussianBlur(mk.astype(np.float32) / 255, (0, 0), 4)[..., None]
+            fr[Y0:Y1, X0:X1] = (roi * (1 - al) + up * al).astype(np.uint8)
     bg = cv2.resize(fr, (int(1920 * 1280 / 720), H)); x0 = (bg.shape[1] - W) // 2; bg = bg[:, x0:x0 + W]
     bg = cv2.GaussianBlur(cv2.resize(bg, (W // 8, H // 8)), (0, 0), 3); bg = (cv2.resize(bg, (W, H)) * 0.35).astype(np.uint8)
     bg[Y:Y + vh] = cv2.resize(fr, (W, vh), interpolation=cv2.INTER_LANCZOS4)
