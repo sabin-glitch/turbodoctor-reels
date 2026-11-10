@@ -10,7 +10,7 @@ direct în `frames_base/` și trece apoi prin compozitorul obișnuit (hook, bar�
 |---|---|
 | `index_src.html` | sursa paginii interactive publicate (artifact „Injecție diesel în 3D”): modelul injectorului, cilindrul, particulele |
 | `vo_script.json` | textul naratorului, pe rânduri (`{afișat|rostit}` pentru cifre și cuvinte străine) |
-| `make_vo.py` | `piper` = narator provizoriu (Piper RO); scrie `vo/vo_track.wav`, `vo/timeline.json` (format narator), `vo/cues.json` |
+| `make_vo.py` | `piper` = narator provizoriu (Piper RO); `take <t1> [t2]` = vocea reală (ElevenLabs): găsește fiecare rând în fiecare variantă (ASR + aliniere pe caractere), taie în punctul cel mai liniștit al pauzei și ia rândul mai clar. Scrie `vo/vo_track.wav`, `vo/timeline.json` (format narator), `vo/cues.json` |
 | `build_reel.py` | face `reel.html` (1080×1920) din `index_src.html` + `reel_tail.js` + `vo/cues.json` |
 | `reel_tail.js` | regia: segmente timp → ciclul motorului, camera, etichete, banda „momentul injecției”, postinjecția, linia de evacuare (DOC + DPF), temperatura |
 | `stills.js` | cadre de probă: `node stills.js st/x 13.4,62.7 4 "0.6&aa=0&guides=1"` (`guides=1` desenează zona subtitrărilor și a butoanelor din aplicații) |
@@ -22,7 +22,10 @@ direct în `frames_base/` și trece apoi prin compozitorul obișnuit (hook, bar�
 ## Pașii
 
 1. Folder de lucru cu `fonts/` (din `assets/fonts`) și `three.min.js` (three@0.128.0, `build/three.min.js` din npm) lângă aceste fișiere.
-2. `python3 make_vo.py piper` → voce + momente pe cuvinte. Toată regia din `reel_tail.js` se leagă de aceste momente (`W(linie, 'cuvânt')`),
+2. Vocea. Provizoriu: `python3 make_vo.py piper`. Vocea lui Sabin: ElevenLabs, modelul `eleven_v4`, vocea „Sabin”, tot textul într-o singură
+   generare (2 variante ≈ 2.300 de credite), scris normal („diesel”, „2.000 de bari”, „600 de grade”). Fișierele vin prin `fetch-sources`
+   (`nume=URL`, apar pe `sources` ca `<nume>.mp4`, cu MP3 înăuntru), apoi `VO_PICK='{"1":1,"3":1}' python3 make_vo.py take t1.mp3 t2.mp3`
+   (`VO_PICK` = rândurile luate din a doua variantă, alese după ce aude ASR-ul pe fiecare rând). → voce + momente pe cuvinte. Toată regia din `reel_tail.js` se leagă de aceste momente (`W(linie, 'cuvânt')`),
    deci **o voce nouă înseamnă randarea animației din nou**.
 3. `python3 build_reel.py && node --check reel_check.js`, apoi cadre de probă cu `stills.js` (cu `guides=1`).
 4. Folderul reel-ului: `new_reel.sh <slug> <un mp4 negru de durata poveștii>`, apoi `vo/vo_track.wav` → `audio/vo_track.wav`,

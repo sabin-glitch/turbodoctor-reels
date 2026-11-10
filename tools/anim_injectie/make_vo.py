@@ -95,8 +95,65 @@ if mode == "piper":
     t = 0.0
     for c in clips:
         c["start"] = t + c["line"].get("gap", 0.3); t = c["start"] + c["dur"]
+elif mode == "take":
+    # one or more takes of the WHOLE text (e.g. two ElevenLabs takes of the user's own voice). Every line is located in each take by
+    # ASR + character alignment, cut out at the quietest point of the pause on either side, and the clearer take is used line by line
+    # (the main take is kept unless the other one is clearly better, so the voice stays even). Lines are then paced with the script gaps.
+    def load(f):
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", f, "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+        return np.frombuffer(raw, np.float32).copy()
+    def rms_db(x, win=.02, hop=.005):
+        w, h = int(win * SR), int(hop * SR); c = np.cumsum(np.concatenate([[0.0], x.astype(np.float64) ** 2]))
+        idx = np.arange(0, len(x) - w, h); return 10 * np.log10((c[idx + w] - c[idx]) / w + 1e-12), hop
+    G = [parse(L["text"]) for L in script]
+    all_words = [w for g in G for _, s in g for w in s]; nline = [sum(len(s) for _, s in g) for g in G]
+    first = np.concatenate([[0], np.cumsum(nline)])           # index of each line's first say-word
+    takes = []
+    for f in sys.argv[2:]:
+        x = load(f); x /= max(1e-6, np.abs(x).max()) / .9; x16 = resample_poly(x, 1, 3).astype(np.float32)
+        db, hop = rms_db(x); thr = db.max() - 38
+        # ASR in chunks cut at pauses (the recognizer is most reliable on < 25 s)
+        quiet = db < thr; cuts = [0]; t = 0.0; D = len(x) / SR
+        while D - t > 24:
+            lo, hi = int((t + 12) / hop), int((t + 23) / hop); q = np.where(quiet[lo:hi])[0]
+            if len(q):   # middle of the longest quiet run in the window
+                runs = np.split(q, np.where(np.diff(q) > 1)[0] + 1); r = max(runs, key=len); k = lo + int(r[len(r) // 2])
+            else: k = lo + int(np.argmin(db[lo:hi]))
+            t = k * hop; cuts.append(t)
+        cuts.append(D); toks, ts = [], []
+        for a_, b_ in zip(cuts[:-1], cuts[1:]):
+            tk, tt, _ = heard(x16[int(a_ * 16000):int(b_ * 16000)]); toks += tk; ts += [a_ + v for v in tt]
+        st = word_starts(all_words, toks, ts, D)
+        # cut points: the quietest 60 ms between the last word of a line and the first word of the next
+        cp = [0.0]
+        for i in range(1, len(script)):
+            # the window reaches a little into the next line's first word: recognizer times can be ~0.1 s early, and the true pause is far quieter than any speech
+            a_ = st[first[i] - 1] + .12; b_ = st[first[i]] + .16; lo, hi = int(a_ / hop), max(int(a_ / hop) + 2, int(b_ / hop))
+            sm = np.convolve(db[lo:hi], np.ones(12) / 12, mode="same"); cp.append((lo + int(np.argmin(sm))) * hop)
+        cp.append(D); segs = []
+        for i in range(len(script)):
+            a_, b_ = int(cp[i] / hop), int(cp[i + 1] / hop); loud = np.where(db[a_:b_] > thr)[0]
+            s0 = max(cp[i], (a_ + loud[0]) * hop - .05); s1 = min(cp[i + 1], (a_ + loud[-1]) * hop + .02 + .10)
+            y = x[int(s0 * SR):int(s1 * SR)].copy(); fi, fo = int(.008 * SR), int(.03 * SR); y[:fi] *= np.linspace(0, 1, fi); y[-fo:] *= np.linspace(1, 0, fo)
+            say = re.sub(r"\s+([,.;:!?])", r"\1", " ".join(" ".join(s_) for _, s_ in G[i]))
+            tk, tt, txt = heard(resample_poly(y, 1, 3).astype(np.float32))
+            segs.append(dict(audio=y, toks=tk, ts=tt, txt=txt, sim=difflib.SequenceMatcher(None, norm(say), norm(txt)).ratio(), src=(round(s0, 2), round(s1, 2))))
+        takes.append(dict(f=os.path.basename(f), segs=segs, dur=D, mean=float(np.mean([q["sim"] for q in segs]))))
+        print(f"take {os.path.basename(f)}: {D:.1f} s, mean match {takes[-1]['mean']:.3f}")
+    main = int(np.argmax([t_["mean"] for t_ in takes])); FORCE = json.loads(os.environ.get("VO_PICK", "{}"))   # {"7": 1} forces a take for a line
+    for i, L in enumerate(script):
+        pick = main
+        for k, t_ in enumerate(takes):
+            if t_["segs"][i]["sim"] > takes[pick]["segs"][i]["sim"] + .05: pick = k
+        if str(i) in FORCE: pick = int(FORCE[str(i)])
+        q = takes[pick]["segs"][i]
+        clips.append(dict(i=i, g=G[i], audio=q["audio"], dur=len(q["audio"]) / SR, toks=q["toks"], ts=q["ts"], line=L))
+        print(f"[{i:2d}] take {pick + 1} {len(q['audio']) / SR:5.2f}s " + " ".join(f"{t_['segs'][i]['sim']:.2f}" for t_ in takes) + f" | {q['txt']}")
+    GAPK = float(os.environ.get("VO_GAPK", "1")); t = 0.0
+    for c in clips:
+        c["start"] = t + c["line"].get("gap", 0.3) * (GAPK if c["i"] else 1); t = c["start"] + c["dur"]
 else:
-    raise SystemExit("take mode is added when the real voice arrives")
+    raise SystemExit("usage: make_vo.py piper | take <take1> [take2 ...]")
 
 story_end = round((clips[-1]["start"] + clips[-1]["dur"] + TAIL) * 30) / 30
 words = []
