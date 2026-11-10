@@ -260,6 +260,11 @@
   "downloader": "curl"
  },
  {
+  "id": "vo_dpf_cenusa_a",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Z6ebOmuwcZLPqg6WuVGj/hxxEP0RVxSg1gqgDlbuZ/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_s5",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/774e6752-0d6d-4830-a983-a4c061d90621_minimax-460831855223206_3071789a-d173-447b-8317-0e9d542b7df5.mp4",
   "downloader": "curl"
@@ -412,6 +417,11 @@
  {
   "id": "ep3_cli_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/pEvSDsUZ0GjnSDIWe5Kl/cfohOG1rKDc0QB7bvQKf/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "vo_dpf_cenusa_b",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/FriPyYHT73EBvKBkGCDE/CkxNDC121PlRfTRx0TkZ/content.mp3",
   "downloader": "curl"
  },
  {
