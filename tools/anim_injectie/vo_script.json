@@ -1,0 +1,116 @@
+[
+ {
+  "text": "Știai că un injector {diesel|dizel} poate injecta de trei ori la o singură ardere?",
+  "gap": 0.35,
+  "speed": 1.06
+ },
+ {
+  "text": "Fiecare injecție are alt rol.",
+  "gap": 0.3,
+  "speed": 1.06
+ },
+ {
+  "text": "Prima este preinjecția.",
+  "gap": 0.85,
+  "cue": "ch1",
+  "speed": 1.06
+ },
+ {
+  "text": "Chiar înainte ca pistonul să ajungă sus, injectorul trimite o cantitate foarte mică de motorină.",
+  "gap": 0.45,
+  "speed": 1.06
+ },
+ {
+  "text": "Ea se aprinde prima și încălzește camera de ardere.",
+  "gap": 0.32,
+  "speed": 1.06
+ },
+ {
+  "text": "Așa, injecția principală arde lin, nu ca o explozie.",
+  "gap": 0.32,
+  "speed": 1.06
+ },
+ {
+  "text": "Motorul e mai silențios și poluează mai puțin.",
+  "gap": 0.3,
+  "speed": 1.06
+ },
+ {
+  "text": "Când preinjecția nu mai e dozată corect, motorul bate, mai ales la rece.",
+  "gap": 0.4,
+  "speed": 1.06
+ },
+ {
+  "text": "A doua este injecția principală.",
+  "gap": 0.85,
+  "cue": "ch2",
+  "speed": 1.06
+ },
+ {
+  "text": "Ea dă puterea.",
+  "gap": 0.3,
+  "speed": 1.06
+ },
+ {
+  "text": "Motorina iese la aproape {2.000|două mii} de bari și se sparge în picături de câțiva microni.",
+  "gap": 0.35,
+  "speed": 1.06
+ },
+ {
+  "text": "Arde, iar gazele împing pistonul în jos.",
+  "gap": 0.35,
+  "speed": 1.06
+ },
+ {
+  "text": "A treia este postinjecția.",
+  "gap": 0.85,
+  "cue": "ch3",
+  "speed": 1.06
+ },
+ {
+  "text": "Apare doar când filtrul de particule trebuie curățat.",
+  "gap": 0.35,
+  "speed": 1.06
+ },
+ {
+  "text": "Injectorul mai pulverizează o dată, târziu, când pistonul e deja jos.",
+  "gap": 0.4,
+  "speed": 1.06
+ },
+ {
+  "text": "Motorina asta nu mai arde în cilindru.",
+  "gap": 0.35,
+  "speed": 1.06
+ },
+ {
+  "text": "Pleacă pe evacuare și arde în catalizator.",
+  "gap": 0.3,
+  "speed": 1.06
+ },
+ {
+  "text": "Acolo ridică temperatura la peste {600|șase sute} de grade, iar funinginea din filtru arde.",
+  "gap": 0.32,
+  "speed": 1.06
+ },
+ {
+  "text": "Asta este regenerarea.",
+  "gap": 0.4,
+  "speed": 1.06
+ },
+ {
+  "text": "De asta un injector uzat nu înseamnă doar consum mai mare.",
+  "gap": 0.9,
+  "cue": "end",
+  "speed": 1.06
+ },
+ {
+  "text": "Fără o preinjecție corectă, motorul bate.",
+  "gap": 0.35,
+  "speed": 1.06
+ },
+ {
+  "text": "Fără o postinjecție corectă, filtrul de particule nu se mai regenerează și se înfundă.",
+  "gap": 0.35,
+  "speed": 1.06
+ }
+]
