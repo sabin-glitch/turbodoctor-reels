@@ -1,4 +1,4 @@
-// v2 – „Am tăiat prețurile la Turbo Doctor!” (11.11.2026) – 6 clipuri selfie lipite în ordinea filmării, fără tăieturi
+// v2 – „Am tăiat prețurile la Turbo Doctor!” (11.11.2026, aprobat și programat) – 6 clipuri selfie lipite în ordinea filmării, fără tăieturi
 // clipuri: 0 IMG_2333 (hook) · 3.267 IMG_2336 (Volkswagen 1.9) · 16.433 IMG_2337 (BMW N47/M47) · 27.733 IMG_2338 (Logan 1.5 + condiții)
 //          · 52.067 IMG_2340 (transport Cargus) · 64.5 IMG_2341 (mulțumiri)
 // Cerut de Sabin: hook foarte puternic pe „am tăiat prețurile” + câte o mașină tăiată deasupra capului când vorbește de fiecare mașină
