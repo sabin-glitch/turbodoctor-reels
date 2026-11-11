@@ -217,7 +217,16 @@ def chime():  # dashboard warning gong when a lamp lights up (promo DPF hook, 28
     t = T(1.2); x = np.zeros(len(t))
     for f0, a, d in [(740, 1.0, 4.6), (1480, .38, 7.5), (2220, .14, 11), (370, .3, 3.6)]: x += a * np.sin(2 * np.pi * f0 * t) * env(len(t), .004, d)
     return np.stack([x, np.roll(x, 90)], 1) * .2
-GEN = dict(chime=chime, boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
+def cash():  # cash-register "ka-ching" when a reduced price lands (promo reducere DPF, 11.11.2026): drawer clack + bright bell + coin shimmer
+    t = T(1.1); n = len(t)
+    clack = bp(rng.standard_normal(n), 900, 4200) * env(n, .0004, 70) * 1.1
+    o = int(.07 * SR); bell = np.zeros(n)
+    for f0, a, d in [(2093, 1.0, 5.0), (3136, .55, 6.5), (4186, .35, 8.0), (5274, .18, 10.0)]:
+        bell[o:] += a * np.sin(2 * np.pi * f0 * t[:n - o]) * env(n - o, .002, d)
+    sh = shimmer()[:, 0] * 1.4; sh = np.pad(sh, (0, max(0, n - len(sh))))[:n]
+    x = clack + bell * .5 + sh
+    return np.stack([x, np.roll(x, 140)], 1) * .32
+GEN = dict(cash=cash, chime=chime, boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
            tick=tick, tick2=tick2, ding=ding, confetti=confetti, type=typing, scan=scan, lock=lock, glitch=glitch, data=data)
 fx = np.zeros((n_total, 2), np.float32)
 for c in json.load(open(f"{ROOT}/out/sfx.json")):

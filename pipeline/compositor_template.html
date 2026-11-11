@@ -196,6 +196,16 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* stamp */
 .stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
+/* price (11.11.2026, promo reducere DPF): prețul vechi apare și e tăiat cu o linie roșie, prețul nou bubuie, eticheta cu reducerea */
+.price{width:1080px;height:520px}
+.price > div{position:absolute;left:540px;white-space:nowrap;opacity:0;transform-origin:50% 50%}
+.price .pK{top:0;display:flex;align-items:center;gap:14px;padding:8px 30px 8px 14px;border-radius:999px;background:rgba(6,10,18,.9);border:3px solid #fff;font-family:JB;font-weight:800;font-size:34px;letter-spacing:2px;color:#fff}
+.price .pK img{width:56px;height:56px}
+.price .pO{font-family:Anton;font-size:140px;line-height:1;color:#fff;-webkit-text-stroke:13px #000;paint-order:stroke fill;letter-spacing:3px;text-shadow:0 9px 0 #000}
+.price .pO svg{position:absolute;left:0;top:0;overflow:visible}
+.price .u{font-size:.5em;margin-left:.14em;letter-spacing:2px}
+.price .pN{font-family:Anton;font-size:236px;line-height:1;color:#FFD21F;-webkit-text-stroke:18px #000;paint-order:stroke fill;letter-spacing:4px}
+.price .pB{left:0;top:0;font-family:Anton;font-size:72px;line-height:1;color:#fff;background:#E11D2E;border:6px solid #fff;border-radius:22px;padding:12px 24px 4px;box-shadow:0 14px 30px rgba(0,0,0,.5)}
 /* band (29.10.2026, promo compilație): bară opacă peste bara de etape arsă în reel-urile deja editate, cu cazul curent */
 .band{display:none;align-items:center;gap:16px;padding:0 30px;border-radius:999px;background:#070B12;border:2px solid rgba(255,255,255,.18);box-shadow:0 10px 26px rgba(0,0,0,.5);font-family:JB;font-weight:800;font-size:25px;letter-spacing:1.6px;color:#fff;white-space:nowrap;overflow:hidden}
 .band .bDot{width:16px;height:16px;border-radius:50%;background:#FF3B30;box-shadow:0 0 0 5px rgba(255,59,48,.25);flex:none}
@@ -626,6 +636,12 @@ function buildItems() {
     if (o.k === 'lbl') { o.el = mk('abs lbl', '<div class="lK"></div><div class="lT"></div>', 'overlays'); o.el.dataset.disp = 'flex';
       o.el.style.width = (o.w || 660) + 'px'; o.el.style.height = (o.h || 168) + 'px'; }
     if (o.k === 'chap') { o.el = mk('abs chap', `<div class="cK">${o.kicker || 'CAZ REAL'}</div><div class="cT">${o.title}</div>${o.sub ? `<div class="cS">${o.sub}</div>` : ''}`, 'overlays'); o.el.dataset.disp = 'flex'; }
+    if (o.k === 'price') {  // {k:'price', t0, t1, top, kicker, kIco, old, neu, unit, oldAt, cutAt, newAt, badge, badgeAt, col, glow, oldY, newY}
+      const u = o.unit ?? 'LEI', us = u ? `<span class="u">${u}</span>` : '';
+      o.el = mk('abs price', (o.kicker ? `<div class="pK">${img(o.kIco || 'label')}<span>${o.kicker}</span></div>` : '') +
+        `<div class="pO"><span>${o.old}</span>${us}<svg><line class="a" stroke="#000" stroke-width="30" stroke-linecap="round"/><line class="b" stroke="#FF2D2D" stroke-width="17" stroke-linecap="round"/></svg></div>` +
+        `<div class="pN"><span>${o.neu}</span>${us}</div>` + (o.badge ? `<div class="pB">${o.badge}</div>` : ''), 'overlays');
+      const N = o.el.querySelector('.pN'); if (o.col) N.style.color = o.col; }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
     if (o.k === 'boom') { o.el = mk('abs boom', o.txt, 'overlays'); o.el.style.color = o.col || '#FFD21F'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
@@ -670,6 +686,9 @@ function itemCues() {
     if (o.k === 'chap') { sfx(o.t0 - .07, 'whoosh', .75); sfx(o.t0, 'hit', .45); }
     if (o.k === 'lbl') o.ph.slice(1).forEach(p => sfx(p[0], p[3] === 'g' ? 'ding' : 'tick2', .4));
     if (o.k === 'band') o.ph.slice(1).forEach(p => sfx(p[0] + .12, 'tick2', .35));
+    if (o.k === 'price') { if (o.kicker) sfx(o.t0, 'pop', .45); sfx(o.oldAt - .02, 'impact', .55); sfx(o.cutAt - .04, 'whoosh', .35); sfx(o.cutAt + .1, 'crack', .6); sfx(o.cutAt + .12, 'stamp', .4);
+      if (o.riser !== false) sfx(o.newAt - .62, 'rise', .5); sfx(o.newAt - .03, 'boom', o.bg ?? .9); sfx(o.newAt, 'crack', .45); sfx(o.newAt + .12, 'cash', o.cg ?? .9);
+      if (o.badge) { sfx(o.badgeAt, 'stamp', .7); sfx(o.badgeAt + .02, 'impact', .35); } }
     if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
     if (o.k === 'kin') { sfx(o.t - .02, 'impact', .7); sfx(o.t, 'glitch', .35); }
     if (o.k === 'boom') { if (o.riser !== false) sfx(o.t - .62, 'rise', o.rg ?? .6); sfx(o.t - .03, 'boom', o.bg ?? 1); sfx(o.t, 'crack', o.cg ?? .55); sfx(o.t + .01, 'glitch', .35); }
@@ -700,7 +719,7 @@ function rItem(o, t) {
     const key = ph[1] + ph[2] + ph[3];
     if (el.dataset.k !== key) { el.dataset.k = key; el.querySelector('img').src = `assets/emoji/${ph[1]}.png`; el.querySelector('span').textContent = ph[2]; el.className = 'chip abs ' + (ph[3] || ''); el.style.display = 'flex'; }
     const sw = ph === o.ph[0] ? 1 : lerp(.75, 1, eBack(clamp((t - ph[0]) / .25), 2.4));
-    setT(el, o.x || 540, o.y || 330, L.s * sw, -2, L.o); return;
+    setT(el, o.x || 540, o.y || 330, L.s * sw * (o.s || 1), -2, L.o); return;  // o.s: optional chip scale (promo reducere DPF, 11.11.2026)
   }
   if (o.k === 'band') {  // {k:'band', t0, t1, y, w, h, kicker, ph: [[t, text, sub?]]}: opaque from its first frame (covers burned-in graphics), only the text animates
     if (t < o.t0 || t >= o.t1) { hide(el); return; }
@@ -739,6 +758,40 @@ function rItem(o, t) {
     el.style.textShadow = `${(-ca).toFixed(1)}px 0 0 rgba(255,40,90,.85), ${ca.toFixed(1)}px 0 0 rgba(0,220,255,.85), 0 14px 0 #000, 0 0 ${(34 + 22 * gl).toFixed(0)}px ${o.glow || 'rgba(255,210,31,.6)'}`;
     el.style.filter = k < .12 ? `blur(${(9 * (1 - pin)).toFixed(1)}px)` : 'none';
     setT(el, (o.x || 540) + sh * Math.sin(k * 97), (o.y || 900) + sh * Math.cos(k * 83), s, o.rot ?? -3, (k < 0 ? 0 : clamp(pin * 3)) * (1 - pout)); return;
+  }
+  if (o.k === 'price') {  // old price slams in, a red line strikes it (dims), the new price booms in below, then the discount badge
+    if (t < o.t0 - .02 || t > o.t1 + .3) { hide(el); return; }
+    setTop(el, 540, o.top ?? 168, 1, 1 - eIn(clamp((t - o.t1) / .3)));
+    const K = el.querySelector('.pK'), O = el.querySelector('.pO'), N = el.querySelector('.pN'), B = el.querySelector('.pB');
+    const oY = o.oldY ?? (o.kicker ? 84 : 0), nY = o.newY ?? oY + 128;
+    if (!o._m && O.offsetWidth) {  // measure once (layout size, before transforms): strike line + badge position
+      o._m = 1; const w = O.offsetWidth, h = O.offsetHeight, sv = O.querySelector('svg');
+      sv.setAttribute('width', w); sv.setAttribute('height', h); sv.setAttribute('viewBox', `0 0 ${w} ${h}`);
+      o._ln = [-.06 * w, .8 * h, 1.06 * w, .24 * h]; O.style.top = oY + 'px'; N.style.top = nY + 'px';
+      if (B) { const nw = N.offsetWidth; B.style.left = (540 + nw / 2 - 18) + 'px'; B.style.top = (nY + 34) + 'px'; } }
+    if (K) { const p = clamp((t - o.t0) / .3); K.style.opacity = eOut(p).toFixed(3); K.style.transform = `translateX(-50%) scale(${p > 0 ? eBack(p, 2).toFixed(4) : 0})`; }
+    const ko = t - o.oldAt;
+    if (ko < -.02) O.style.opacity = 0; else {
+      const p = clamp(ko / .13), dim = eOut(clamp((t - o.cutAt - .08) / .3));
+      const s = (ko < .13 ? lerp(2.3, 1, eIn(p)) : 1 + .05 * Math.exp(-(ko - .13) * 9) * Math.sin((ko - .13) * 38)) * lerp(1, .9, dim);
+      O.style.opacity = clamp(p * 3).toFixed(3); O.style.color = mixC('#FFFFFF', '#AEB6C1', dim);
+      O.style.transform = `translateX(-50%) scale(${s.toFixed(4)}) rotate(-2deg)`;
+      if (o._ln) { const [x1, y1, x2, y2] = o._ln, q = eOut(clamp((t - o.cutAt) / .18));
+        O.querySelectorAll('line').forEach(l => { l.setAttribute('x1', x1.toFixed(1)); l.setAttribute('y1', y1.toFixed(1));
+          l.setAttribute('x2', lerp(x1, x2, q).toFixed(1)); l.setAttribute('y2', lerp(y1, y2, q).toFixed(1)); l.style.opacity = q > 0 ? 1 : 0; }); }
+    }
+    const kn = t - o.newAt;
+    if (kn < -.02) N.style.opacity = 0; else {
+      const pin = clamp(kn / .14), s = kn < .14 ? lerp(o.from || 3.2, 1, eIn(pin)) : 1 + .07 * Math.exp(-(kn - .14) * 7) * Math.sin((kn - .14) * 32);
+      const sh = (o.sh ?? 24) * Math.exp(-Math.max(0, kn) * 6.5), ca = (o.ca ?? 26) * Math.exp(-Math.max(0, kn) * 8), gl = .5 + .5 * Math.sin(kn * 6);
+      N.style.textShadow = `${(-ca).toFixed(1)}px 0 0 rgba(255,40,90,.85), ${ca.toFixed(1)}px 0 0 rgba(0,220,255,.85), 0 14px 0 #000, 0 0 ${(34 + 22 * gl).toFixed(0)}px ${o.glow || 'rgba(255,210,31,.6)'}`;
+      N.style.filter = kn < .12 ? `blur(${(9 * (1 - pin)).toFixed(1)}px)` : 'none'; N.style.opacity = clamp(pin * 3).toFixed(3);
+      N.style.transform = `translate(calc(-50% + ${(sh * Math.sin(kn * 97)).toFixed(1)}px), ${(sh * Math.cos(kn * 83)).toFixed(1)}px) scale(${s.toFixed(4)}) rotate(-3deg)`;
+    }
+    if (B) { const kb = t - o.badgeAt;
+      if (kb < -.02) B.style.opacity = 0; else { const p = clamp(kb / .16), s = kb < .16 ? lerp(2.4, 1, eIn(p)) : 1 + .05 * Math.exp(-(kb - .16) * 10) * Math.sin((kb - .16) * 40);
+        B.style.opacity = clamp(p * 3).toFixed(3); B.style.transform = `translate(-50%,-50%) scale(${s.toFixed(4)}) rotate(${o.bRot ?? 10}deg)`; } }
+    return;
   }
   if (o.k === 'kin') {
     const d = o.dur || 1.0; if (t < o.t - .02 || t > o.t + d) { hide(el); return; }
