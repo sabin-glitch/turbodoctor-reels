@@ -30,6 +30,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq2_b7",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_k4_G",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/snde2QOiuMIZpkd5vfLJ/q8DEwbdvOkn8dsC9Pp12/content.mp4",
   "downloader": "curl"
@@ -47,6 +52,11 @@
  {
   "id": "ep3k_C06b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/GJpK3GXEFTu1hMcgPqVD/L4CdNqAWDq2ywX5gKOif/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_lgC",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Dacia_Logan_rd_l.jpg/960px-Dacia_Logan_rd_l.jpg",
   "downloader": "curl"
  },
  {
@@ -100,8 +110,18 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq2_b8",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2s_S08",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/8IQIXLnjMAzRBqHwYPhQ/ZGJI0gfIR1QSz0LG4MOb/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmG",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7a/BMW_320d_E90_%286777409271%29.jpg/960px-BMW_320d_E90_%286777409271%29.jpg",
   "downloader": "curl"
  },
  {
@@ -165,6 +185,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmt2_bmF",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/BMW_320d_E90_%286554795727%29.jpg/960px-BMW_320d_E90_%286554795727%29.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_client",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/0cca20f0-7734-4599-b93c-1c005d46aeeb.mp3",
   "downloader": "curl"
@@ -172,6 +197,11 @@
  {
   "id": "pov01_sync_A",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/XpVcosu6ZryGuE6uF9m3/pbHBfwx6dguDWuY8IGe6/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq2_b10",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -202,6 +232,11 @@
  {
   "id": "ep2k_S13",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/IMy2zWSi352hmafX9DZF/fIZaHsPGMajJijlN33dF/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_lgB",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/Renault_Logan_side_view_near_SPIIRAS.JPG/960px-Renault_Logan_side_view_near_SPIIRAS.JPG",
   "downloader": "curl"
  },
  {
@@ -260,8 +295,18 @@
   "downloader": "curl"
  },
  {
+  "id": "wmt2_lgE",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/DaciaLogan.jpg/960px-DaciaLogan.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2s_S10",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/PaGostEGM0KRdDkkHawT/H1g1nacIXscD2BcQayVx/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmJ",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/BMW_E90_320d_Titanium_Silver_%281%29.jpg/960px-BMW_E90_320d_Titanium_Silver_%281%29.jpg",
   "downloader": "curl"
  },
  {
@@ -282,6 +327,11 @@
  {
   "id": "vo_dpf_cenusa_a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Z6ebOmuwcZLPqg6WuVGj/hxxEP0RVxSg1gqgDlbuZ/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmM",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/BMW_320d_%285828157884%29.jpg/960px-BMW_320d_%285828157884%29.jpg",
   "downloader": "curl"
  },
  {
@@ -327,6 +377,11 @@
  {
   "id": "ai_flote_drona_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/9765448e-dc13-4bb3-b9e2-4c181cddb52f_2102189100362491046.mp4_effc9921-5ec5-42a4-824b-fae161c2018c.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmL",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/BMW_320d_%284585059318%29.jpg/960px-BMW_320d_%284585059318%29.jpg",
   "downloader": "curl"
  },
  {
@@ -390,6 +445,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmt2_bmB",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/BMW_320d_%284%29.jpg/960px-BMW_320d_%284%29.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "ai_flote_dube_pornesc_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/27720c3a-3aac-42c8-802b-c9b38c678e44_1351381141957795982.mp4_70da3121-5dcf-4d8e-b92f-d8c31cabe0f2.mp4",
   "downloader": "curl"
@@ -410,6 +470,16 @@
   "downloader": "curl"
  },
  {
+  "id": "wmt2_bmD",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/BMW_E90_320d.jpg/960px-BMW_E90_320d.jpg",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_lgD",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Dacia_Logan.jpg/960px-Dacia_Logan.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "vo_injectie3_sabin_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/n9dK9UOFhb3i2IDKacAC/A7zrwf6YRQQnB0LOtl1h/content.mp3",
   "downloader": "curl"
@@ -420,8 +490,23 @@
   "downloader": "curl"
  },
  {
+  "id": "wmt2_bmI",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/BMW_320d_EDE_E90_%286928952968crop%29.jpg/960px-BMW_320d_EDE_E90_%286928952968crop%29.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3_cli_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/JPAy6rw8rkmIa1D9cD9A/1BZzHL5ZGG3Au7N8lG1W/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmK",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/BMW_E90_Kirrinsannassa_2.jpg/960px-BMW_E90_Kirrinsannassa_2.jpg",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmE",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e6/BMW_320d_E90_%286013097770%29.jpg/960px-BMW_320d_E90_%286013097770%29.jpg",
   "downloader": "curl"
  },
  {
@@ -515,6 +600,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq2_b9",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3_doc_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/b6qIZ2AsEij9jKgpjZc8/qY9UeN6SpO8CHmQvcMnP/content.mp3",
   "downloader": "curl"
@@ -522,6 +612,11 @@
  {
   "id": "car_bmw1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/wly8WOu7QBg0hBIUK5qZ/ne4i5ZmBN7Nvi2RhV1qY/content.png",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmH",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/BMW_320d_E90_%286777417697%29.jpg/960px-BMW_320d_E90_%286777417697%29.jpg",
   "downloader": "curl"
  },
  {
@@ -545,6 +640,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq2_b5",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "wmq_lg6",
   "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
@@ -560,6 +660,16 @@
   "downloader": "curl"
  },
  {
+  "id": "wmt2_bmA",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d7/BMW_320d_%283%29.jpg/960px-BMW_320d_%283%29.jpg",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_bmC",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/BMW_320d_Efficient_Dynamics.jpg/960px-BMW_320d_Efficient_Dynamics.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "car_logan1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/h8ercyn69yfc3c1RLpdD/qYGV1CZGXFo5yaJr9qp6/content.png",
   "downloader": "curl"
@@ -567,6 +677,11 @@
  {
   "id": "ep3_portret_sincer_2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/p8WoF8TO67mB750eCjcG/LaDQtxteT7Zx7gGnV5Wl/content.png",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq2_b6",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -587,6 +702,11 @@
  {
   "id": "pov01_k4_I",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/BEIZSnAwjYPiikKwbill/PPHeSZTCWXZcLY6aKcte/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmt2_lgA",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/2011_Renault_Logan_Silverline_side.jpg/960px-2011_Renault_Logan_Silverline_side.jpg",
   "downloader": "curl"
  },
  {
