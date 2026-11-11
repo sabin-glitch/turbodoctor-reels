@@ -130,6 +130,11 @@
   "downloader": "curl"
  },
  {
+  "id": "car_logan2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/h9RrwYaSgA2QqBteWOZT/pDt9sa5dCenfjmCG1Wa2/content.png",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2k_S06",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/3qWgtHzGigirHvMrOeLs/slQ48TG1OCNfXcBRESy1/content.mp4",
   "downloader": "curl"
@@ -167,6 +172,11 @@
  {
   "id": "ep2s_S07",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/1uTSL5Pi5VepP26xZ3mZ/Qa6ZeBrznuq4wcTJObZC/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "car_vw2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/8mRFhEdVHinp0PL4pPe2/Jd5vc68goTaO2s92vuji/content.png",
   "downloader": "curl"
  },
  {
@@ -430,6 +440,11 @@
   "downloader": "curl"
  },
  {
+  "id": "car_vw1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/1qxRP70x5gohuxjLinBR/KUfJsd8WGQVerAfbO3IL/content.png",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2_vo_mec_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/5mwwjrHzNMr1cknAMm4G/hei2ipkAxSqOV66Qd7Ms/content.mp3",
   "downloader": "curl"
@@ -470,6 +485,11 @@
   "downloader": "curl"
  },
  {
+  "id": "car_bmw1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/wly8WOu7QBg0hBIUK5qZ/ne4i5ZmBN7Nvi2RhV1qY/content.png",
+  "downloader": "curl"
+ },
+ {
   "id": "bmw_n47_reparatia_corecta",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-7952154743821796800.mp4",
   "downloader": "curl"
@@ -487,6 +507,11 @@
  {
   "id": "ep3k_C07",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/3ZCEPByUBsioIBlKNLio/YPtdFhGW91eU0do4Oxxh/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "car_logan1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/h8ercyn69yfc3c1RLpdD/qYGV1CZGXFo5yaJr9qp6/content.png",
   "downloader": "curl"
  },
  {
@@ -522,6 +547,11 @@
  {
   "id": "ep2k_S04",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/AzdVlEAbxfSvrE7sjIQl/f7ngY8IsrVNbVA0YSPwp/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "car_bmw2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/VIbIovRQhil9Wx8yC7BZ/9a3DT37TZDUuvkR9AtE0/content.png",
   "downloader": "curl"
  },
  {
