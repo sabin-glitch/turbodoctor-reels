@@ -2,7 +2,10 @@
 // clipuri: 0 IMG_2333 (hook) · 3.267 IMG_2336 (Volkswagen 1.9) · 16.433 IMG_2337 (BMW N47/M47) · 27.733 IMG_2338 (Logan 1.5 + condiții)
 //          · 52.067 IMG_2340 (transport Cargus) · 64.5 IMG_2341 (mulțumiri)
 // Cerut de Sabin: hook foarte puternic pe „am tăiat prețurile” + câte o mașină tăiată deasupra capului când vorbește de fiecare mașină
-// (Volkswagen 1.9, BMW, Logan 1.5). Mașinile sunt imagini AI generice, fără sigle (tools/cut_cars), tăiate de piesa `cut`.
+// (Volkswagen 1.9, BMW, Logan 1.5), tăiate de piesa `cut` (tools/cut_cars). VW = imagine AI generică, fără sigle. BMW și Logan = poze reale cerute de
+// Sabin pe 11.11 („exact un Seria 3 E90 și un Logan”), luate de pe Wikimedia Commons doar cu licență liberă:
+//   BMW   „2005-2008 BMW 320i (E90) sedan (2011-07-17) 01.jpg”, autor OSX, domeniu public (întoarsă spre stânga, plăcuța de înmatriculare acoperită)
+//   Logan „2011 Renault Logan Silverline side.jpg”, autor Throwawayacc222, CC0 (Logan I, vedere laterală)
 // Selfie filmat de aproape: toată grafica stă deasupra capului (y < ~390; chip-uri la y 236 unde capul urcă în cadru), fără bara de etape și fără `kin`
 // sub bărbie (gura e la y 1060–1250, bărbia ajunge la y 1400) – de aceea și subtitrările sunt cu 50 px mai jos (capTop).
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
@@ -47,13 +50,13 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
         price: [A.n900 - .03, '900–1000'], note: [[A.functie0 - .1, 'ÎN FUNCȚIE DE CODUL TURBINEI'], [A.ansamblu0 - .05, '✓ ANSAMBLU CENTRAL NOU', 'g'], [A.garantie0 - .05, '✓ GARANȚIE 24 DE LUNI', 'g']] },
 
       // ---- IMG_2337: BMW, motoare N47 și M47
-      { k: 'cut', car: 'bmw', t0: BM0, t1: CLIP[3] - .25, cutAt: BM0 + .5, y: CY, w: 740, s2: .54,
+      { k: 'cut', car: 'bmw', t0: BM0, t1: CLIP[3] - .25, cutAt: BM0 + .5, y: CY - 12, w: 520, s2: .62, dy2: 32,
         name: [[BM0, 'BMW']], sub: [[A.n47 - .05, 'COD MOTOR: N47'], [A.m47 - .05, 'COD MOTOR: N47 · M47']],
         price: [A.n1000b - .03, '1000–1300'], note: [[A.functie1 - .1, 'ÎN FUNCȚIE DE MODEL']] },
 
       // ---- IMG_2338: Logan 1.5 Euro 3, apoi condițiile
       { k: 'chip', t0: A.cea - .05, t1: LG0 - .3, y: 330, ph: [[A.cea - .05, 'money_bag', 'CEA MAI IEFTINĂ REPARAȚIE', 'green']] },
-      { k: 'cut', car: 'logan', t0: LG0, t1: A.toate - .22, cutAt: LG0 + .5, y: CY, w: 700, s2: .56,
+      { k: 'cut', car: 'logan', t0: LG0, t1: A.toate - .22, cutAt: LG0 + .5, y: CY, w: 640, s2: .58,
         name: [[LG0, 'LOGAN'], [A.n15 - .03, 'LOGAN 1.5']], sub: [[A.euro - .05, 'EURO 3']],
         price: [A.n700 - .03, '700'], prSize: 172, pry: -50, unDy: 114, note: [[A.n700 + .45, 'CEA MAI IEFTINĂ REPARAȚIE', 'y']] },
       { k: 'chip', t0: A.toate - .05, t1: A.tineti - .3, y: 236, ph: [[A.toate - .05, 'check_mark_button', 'TOATE PREȚURILE INCLUD:', 'blue'],
