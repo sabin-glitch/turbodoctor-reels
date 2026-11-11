@@ -140,6 +140,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmo2_lgA",
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/b/bb/2011_Renault_Logan_Silverline_side.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "sabin_v1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/r4Uuhjbr7AYo46wGXS1u/RFNKwcQkpt7AiwnbLefc/content.mp3",
   "downloader": "curl"
@@ -337,6 +342,11 @@
  {
   "id": "pov01_sync_E",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/TMyGjscGzAGjXPJg7IZn/cbymyxkI58tJzNQySMKi/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmo2_lgB",
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Renault_Logan_side_view_near_SPIIRAS.JPG",
   "downloader": "curl"
  },
  {
