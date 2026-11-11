@@ -217,7 +217,14 @@ def chime():  # dashboard warning gong when a lamp lights up (promo DPF hook, 28
     t = T(1.2); x = np.zeros(len(t))
     for f0, a, d in [(740, 1.0, 4.6), (1480, .38, 7.5), (2220, .14, 11), (370, .3, 3.6)]: x += a * np.sin(2 * np.pi * f0 * t) * env(len(t), .004, d)
     return np.stack([x, np.roll(x, 90)], 1) * .2
-GEN = dict(chime=chime, boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
+def slash():  # blade cut for a sliced title / a car cut in two ("Am tăiat prețurile", 11.11.2026): fast air swish + short metallic ring
+    t = T(.55); n = len(t); nz = rng.standard_normal(n); out = np.zeros(n); seg = 512
+    for i in range(0, n, seg):
+        c = 900 + 7500 * np.exp(-(i / SR) * 11); out[i:i + seg] = bp(nz[max(0, i - 2048):i + seg], c * .6, min(c * 1.7, 20000))[-len(out[i:i + seg]):]
+    sw = out * np.exp(-t * 15) * np.minimum(1, t / .006)
+    ring = sum(a * np.sin(2 * np.pi * f * t) * np.exp(-t * d) for f, a, d in [(3140, 1.0, 13), (4710, .6, 17), (6890, .35, 22), (2210, .45, 10)]) * np.minimum(1, t / .003)
+    x = sw + ring * .2; x = x / (np.abs(x).max() + 1e-9); return np.stack([x, np.roll(x, 70)], 1) * .5
+GEN = dict(slash=slash, chime=chime, boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
            tick=tick, tick2=tick2, ding=ding, confetti=confetti, type=typing, scan=scan, lock=lock, glitch=glitch, data=data)
 fx = np.zeros((n_total, 2), np.float32)
 for c in json.load(open(f"{ROOT}/out/sfx.json")):

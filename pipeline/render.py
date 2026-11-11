@@ -15,6 +15,7 @@ def write_data():
     import glob
     for f in glob.glob("out/track_*.json"): tl[os.path.basename(f)[:-5]] = json.load(open(f))
     if os.path.exists("out/broll_resolved.json"): tl["broll"] = json.load(open("out/broll_resolved.json"))
+    if os.path.exists("assets/cars/cars.json"): tl["cars"] = json.load(open("assets/cars/cars.json"))  # `cut` piece: sliced car stickers (tools/cut_cars)
     open("data.js", "w").write("window.TL = " + json.dumps(tl, ensure_ascii=False) + ";\n")
 
 

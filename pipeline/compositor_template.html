@@ -193,6 +193,19 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .kin{font-family:Anton;font-size:210px;line-height:1;white-space:nowrap;-webkit-text-stroke:16px #000;paint-order:stroke fill;text-shadow:0 12px 0 #000,0 22px 40px rgba(0,0,0,.6);letter-spacing:2px}
 /* boom: hook title that slams in (Euro 7, 26.10.2026): huge, chromatic aberration, blur-in, shake */
 .boom{font-family:Anton;font-size:300px;line-height:1;white-space:nowrap;-webkit-text-stroke:18px #000;paint-order:stroke fill;letter-spacing:3px;color:#FFD21F}
+/* boom with `cut` (11.11.2026, „Am tăiat prețurile”): the title is drawn twice, each copy clipped to one side of the cut line */
+.boom .bcA{display:block}.boom .bcB{display:block;position:absolute;left:0;top:0}
+/* cut (11.11.2026): car sticker sliced in two above the presenter's head + its name plate + the price that slams in */
+.cutCar{transform-origin:50% 50%}
+.cutCar img{position:absolute;left:0;top:0;width:100%;height:100%;display:block}
+.cutPill{padding:8px 22px 9px 18px;border-radius:18px;background:rgba(6,10,18,.9);border:3px solid rgba(98,216,255,.75);color:#fff;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.5);transform-origin:0 0}
+.cutPill .n{font-weight:900;font-size:38px;letter-spacing:.5px;line-height:1.1}
+.cutPill .s{font-family:JB;font-weight:800;font-size:22px;letter-spacing:1.5px;color:var(--cyan);line-height:1.2;margin-top:2px}
+.cutPrice{font-family:Anton;font-size:126px;line-height:1;white-space:nowrap;color:#FFD21F;-webkit-text-stroke:15px #000;paint-order:stroke fill;text-shadow:0 10px 0 #000,0 18px 34px rgba(0,0,0,.6);letter-spacing:2px}
+.cutUnit{align-items:center;gap:14px;white-space:nowrap}
+.cutUnit .u{font-family:Anton;font-size:66px;line-height:1;color:#fff;-webkit-text-stroke:11px #000;paint-order:stroke fill;text-shadow:0 7px 0 #000;letter-spacing:2px}
+.cutUnit .nt{display:none;font-family:JB;font-weight:800;font-size:23px;letter-spacing:1px;color:#fff;background:rgba(6,10,18,.9);border:2px solid rgba(255,255,255,.55);border-radius:12px;padding:7px 14px 8px}
+.cutUnit .nt.g{background:#15803D;border-color:#fff}.cutUnit .nt.y{background:var(--yellow);color:var(--ink);border-color:#fff}
 /* stamp */
 .stamp{font-family:Anton;font-size:96px;letter-spacing:4px;line-height:1;padding:10px 30px 4px;border:10px solid;border-radius:18px;background:rgba(255,255,255,.88);white-space:nowrap;box-shadow:0 14px 30px rgba(0,0,0,.45)}
 .stamp.red{color:#D3172A;border-color:#D3172A}.stamp.green{color:#15803D;border-color:#15803D}.stamp.blue{color:#0369A1;border-color:#0369A1}
@@ -277,6 +290,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
  <img id="hookStk1" class="abs emo" alt="" style="width:120px;height:120px">
  <div id="items"></div>
  <div id="overlays"></div>
+ <svg id="ovl2" class="abs" viewBox="0 0 1080 1920" width="1080" height="1920" style="display:block;overflow:visible"></svg>
  <div id="sparks"></div>
  <div id="cap"></div>
  <!-- END CARD (din 25.10.2026: fără CTA) -->
@@ -413,7 +427,9 @@ function buildChunks() {
 }
 let capCur = -1;
 function renderCaptions(t) {
-  const cap = $('cap'); const hidden = HIDE_CAP.some(([a, b]) => t >= a && t < b);
+  // capTop (11.11.2026): selfie filmat de aproape, bărbia ajunge la rândul de subtitrări -> reel.js le coboară (implicit top 1290)
+  const cap = $('cap'); if (CFG.capTop && !cap.dataset.top) { cap.style.top = CFG.capTop + 'px'; cap.dataset.top = 1; }
+  const hidden = HIDE_CAP.some(([a, b]) => t >= a && t < b);
   const idx = CHUNKS.findIndex(c => t >= c.t0 && t < c.t1 && (c.win < 0 ? !(CFG.intro && CFG.intro.cap === false) : !hidden));
   if (idx !== capCur) { capCur = idx; if (idx < 0) { cap.innerHTML = ''; return; }
     cap.innerHTML = CHUNKS[idx].words.map(w => `<span class="${capClass(w)}">${w.text.replace(/[.,?!:]$/, '')}</span>`).join(''); }
@@ -627,7 +643,21 @@ function buildItems() {
       o.el.style.width = (o.w || 660) + 'px'; o.el.style.height = (o.h || 168) + 'px'; }
     if (o.k === 'chap') { o.el = mk('abs chap', `<div class="cK">${o.kicker || 'CAZ REAL'}</div><div class="cT">${o.title}</div>${o.sub ? `<div class="cS">${o.sub}</div>` : ''}`, 'overlays'); o.el.dataset.disp = 'flex'; }
     if (o.k === 'stamp') o.el = mk('abs stamp ' + (o.col || 'red'), o.txt, 'overlays');
-    if (o.k === 'boom') { o.el = mk('abs boom', o.txt, 'overlays'); o.el.style.color = o.col || '#FFD21F'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
+    if (o.k === 'boom') { o.el = mk('abs boom', o.cut ? `<span class="bcA">${o.txt}</span><span class="bcB">${o.txt}</span>` : o.txt, 'overlays'); o.el.style.color = o.col || '#FFD21F'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
+    if (o.k === 'cut') {  // {k:'cut', t0, t1, car, cutAt, x, y, w, name: [[t, text]], sub: [[t, text]], price: [t, text], unit, note: [[t, text, cls]], x2, s2, dy2, prx, pry, prW}
+      const C = (TL.cars || {})[o.car]; if (!C) throw new Error('cut: no car asset ' + o.car + ' (tools/cut_cars/prep_cut_cars.py)');
+      o.C = C; o.S0 = (o.w || 680) / C.carw; o.W = C.cw * o.S0; o.H = C.ch * o.S0;
+      o.el = mk('abs cutCar', `<img class="cw" src="assets/cars/${o.car}_w.png" alt=""><img class="ca" src="assets/cars/${o.car}_a.png" alt=""><img class="cb" src="assets/cars/${o.car}_b.png" alt="">`, 'overlays');
+      o.el.style.width = o.W.toFixed(1) + 'px'; o.el.style.height = o.H.toFixed(1) + 'px';
+      o.iw = o.el.querySelector('.cw'); o.ia = o.el.querySelector('.ca'); o.ib = o.el.querySelector('.cb');
+      o.ia.style.transformOrigin = `${C.ax}% ${C.ay}%`; o.ib.style.transformOrigin = `${C.bx}% ${C.by}%`;
+      o.pill = mk('abs cutPill', '<div class="n"></div><div class="s"></div>', 'overlays');
+      if (o.price) { o.pr = mk('abs cutPrice', o.price[1], 'overlays'); if (o.prSize) o.pr.style.fontSize = o.prSize + 'px'; o.un = mk('abs cutUnit', `<span class="u">${o.unit ?? 'LEI'}</span><span class="nt"></span>`, 'overlays'); o.un.dataset.disp = 'flex'; }
+      // the blade: a streak along the cut line (the car is still centred when it is cut) + sparks
+      const a = C.ang * Math.PI / 180, hl = C.ch * o.S0 * .5 + 70, x0 = o.x || 540, y0 = o.y || 272;
+      (CFG.fx = CFG.fx || []).push({ k: 'slash', t: o.cutAt - .07, x1: x0 + Math.sin(a) * hl, y1: y0 - Math.cos(a) * hl, x2: x0 - Math.sin(a) * hl, y2: y0 + Math.cos(a) * hl, w: 15, d: .07 });
+      (CFG.bursts = CFG.bursts || []).push([o.cutAt + .01, x0, y0, 4, 200, .8]);
+    }
     if (o.k === 'kin') { o.el = mk('abs kin', o.txt, 'overlays'); o.el.style.color = o.col || '#FF3B30'; if (o.size) o.el.style.fontSize = o.size + 'px'; }
     if (o.k === 'stk') { const im = document.createElement('img'); im.className = 'abs emo'; im.src = `assets/emoji/${o.ico}.png`; im.style.width = im.style.height = (o.size || 130) + 'px'; $('overlays').appendChild(im); o.el = im; }
     if (o.k === 'call') { o.el = mk('abs cl ' + (o.col || ''), `<div class="h">${o.h || ''}</div><div class="v"></div>`, 'overlays');
@@ -672,7 +702,12 @@ function itemCues() {
     if (o.k === 'band') o.ph.slice(1).forEach(p => sfx(p[0] + .12, 'tick2', .35));
     if (o.k === 'stamp') { sfx(o.t, 'stamp', .8); sfx(o.t, 'impact', .45); }
     if (o.k === 'kin') { sfx(o.t - .02, 'impact', .7); sfx(o.t, 'glitch', .35); }
-    if (o.k === 'boom') { if (o.riser !== false) sfx(o.t - .62, 'rise', o.rg ?? .6); sfx(o.t - .03, 'boom', o.bg ?? 1); sfx(o.t, 'crack', o.cg ?? .55); sfx(o.t + .01, 'glitch', .35); }
+    if (o.k === 'boom') { if (o.riser !== false) sfx(o.t - .62, 'rise', o.rg ?? .6); sfx(o.t - .03, 'boom', o.bg ?? 1); sfx(o.t, 'crack', o.cg ?? .55); sfx(o.t + .01, 'glitch', .35);
+      if (o.cut) { sfx(o.cut[0] - .06, 'slash', 1); sfx(o.cut[0], 'crack', .4); } }
+    if (o.k === 'cut') { sfx(o.t0 - .04, 'whoosh', .45); sfx(o.t0 + .06, 'pop', .5); sfx(o.cutAt - .07, 'slash', .95); sfx(o.cutAt, 'crack', .4);
+      o.name.slice(1).forEach(n => sfx(n[0], 'tick2', .45)); (o.sub || []).forEach(n => sfx(n[0], 'type', .4));
+      if (o.price) { sfx(o.price[0] - .32, 'whoosh', .35); sfx(o.price[0] - .02, 'impact', .8); sfx(o.price[0], 'stamp', .5); sfx(o.price[0] + .06, 'ding', .4); }
+      (o.note || []).forEach(n => sfx(n[0], n[2] === 'g' ? 'ding' : 'tick2', .42)); }
     if (o.k === 'stk') sfx(o.t0, 'pop', .4);
     if (o.k === 'call') { sfx(o.t0, 'lock', .45); sfx(o.t0 + .38, 'type', .4); }
     if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, 'alarm', .3); } }
@@ -738,7 +773,51 @@ function rItem(o, t) {
     const sh = (o.sh ?? 20) * Math.exp(-Math.max(0, k) * 6.5), ca = (o.ca ?? 26) * Math.exp(-Math.max(0, k) * 8), gl = .5 + .5 * Math.sin(k * 6);
     el.style.textShadow = `${(-ca).toFixed(1)}px 0 0 rgba(255,40,90,.85), ${ca.toFixed(1)}px 0 0 rgba(0,220,255,.85), 0 14px 0 #000, 0 0 ${(34 + 22 * gl).toFixed(0)}px ${o.glow || 'rgba(255,210,31,.6)'}`;
     el.style.filter = k < .12 ? `blur(${(9 * (1 - pin)).toFixed(1)}px)` : 'none';
-    setT(el, (o.x || 540) + sh * Math.sin(k * 97), (o.y || 900) + sh * Math.cos(k * 83), s, o.rot ?? -3, (k < 0 ? 0 : clamp(pin * 3)) * (1 - pout)); return;
+    setT(el, (o.x || 540) + sh * Math.sin(k * 97), (o.y || 900) + sh * Math.cos(k * 83), s, o.rot ?? -3, (k < 0 ? 0 : clamp(pin * 3)) * (1 - pout));
+    if (o.cut) {  // cut: [t, angle (deg, negative = rising to the right), slide px, gap px] -> the two halves slide apart along the cut
+      const A = el.querySelector('.bcA'), B = el.querySelector('.bcB'), an = (o.cut[1] ?? -8) * Math.PI / 180, tn = Math.tan(an);
+      if (!o.cp && el.offsetWidth) { const w = el.offsetWidth, h = el.offsetHeight, m = 400, yl = h * (o.cut[4] ?? .5) + (-m - w / 2) * tn, yr = h * (o.cut[4] ?? .5) + (w + m - w / 2) * tn; o.cp = 1;
+        A.style.clipPath = `polygon(${-m}px ${-m}px, ${w + m}px ${-m}px, ${w + m}px ${yr.toFixed(1)}px, ${-m}px ${yl.toFixed(1)}px)`;
+        B.style.clipPath = `polygon(${-m}px ${yl.toFixed(1)}px, ${w + m}px ${yr.toFixed(1)}px, ${w + m}px ${h + m}px, ${-m}px ${h + m}px)`; }
+      const kc = t - o.cut[0], cp = kc < 0 ? 0 : eBack(clamp(kc / .2), 2.6), sl = (o.cut[2] ?? 34) * cp, gp = (o.cut[3] ?? 7) * cp;
+      const dx = sl * Math.cos(an) - gp * Math.sin(an), dy = sl * Math.sin(an) - gp * Math.cos(an);   // upper half: along the line to the right, and away from it
+      A.style.transform = `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px)`; B.style.transform = `translate(${(-dx).toFixed(1)}px,${(-dy).toFixed(1)}px)`;
+      if (kc >= 0 && kc < .22) el.style.filter = `brightness(${(1 + 1.3 * Math.exp(-kc * 16)).toFixed(2)})`;
+    }
+    return;
+  }
+  if (o.k === 'cut') {
+    const L = life(t, o.t0, o.t1, .3, .2, 2.0);
+    if (!L) { hide(el); hide(o.pill); if (o.pr) { hide(o.pr); hide(o.un); } return; }
+    const X = o.x || 540, Y = o.y || 272, pt = o.price ? o.price[0] : 1e9, sp = eInOut(clamp((t - (pt - .36)) / .3));   // sp: the car moves left and shrinks, the price lands on the right
+    const cx = lerp(X, o.x2 || 232, sp), cy = lerp(Y, Y + (o.dy2 ?? 26), sp), sc = lerp(1, o.s2 || .58, sp);
+    const k = t - o.cutAt, cut = k >= 0, cp = cut ? eBack(clamp(k / .26), 2.4) : 0, G = o.gap ?? 21;
+    o.iw.style.opacity = cut ? 0 : 1; o.ia.style.opacity = o.ib.style.opacity = cut ? 1 : 0;
+    const b1 = Math.sin(L.k * 2.2) * 1.8 * cp, b2 = Math.sin(L.k * 2.2 + 1.9) * 1.8 * cp;
+    o.ia.style.transform = `translate(${(-G * cp).toFixed(1)}px,${(8 * cp + b1).toFixed(1)}px) rotate(${(-3.6 * cp).toFixed(2)}deg)`;
+    o.ib.style.transform = `translate(${(G * cp).toFixed(1)}px,${(-6 * cp + b2).toFixed(1)}px) rotate(${(2.9 * cp).toFixed(2)}deg)`;
+    const fl = cut ? Math.exp(-k * 15) : 0; el.style.filter = fl > .02 ? `brightness(${(1 + 1.5 * fl).toFixed(2)})` : 'none';
+    const shk = cut ? 8 * Math.exp(-k * 9) : 0;
+    setT(el, cx + shk * Math.sin(k * 80), cy + shk * Math.cos(k * 67) + bob(L.k, 1, 2) * (1 - cp), L.s * sc, cut ? 0 : -1.5 * Math.sin(L.k * 3) * Math.exp(-L.k * 2), L.o);
+    // name plate, top-left over the bonnet
+    let nm = o.name[0]; for (const p of o.name) if (t >= p[0]) nm = p; let sb = null; for (const p of (o.sub || [])) if (t >= p[0]) sb = p;
+    const key = nm[1] + '|' + (sb ? sb[1] : '');
+    if (o.pill.dataset.k !== key) { o.pill.dataset.k = key; o.pill.querySelector('.n').innerHTML = nm[1]; const se = o.pill.querySelector('.s'); se.innerHTML = sb ? sb[1] : ''; se.style.display = sb ? 'block' : 'none'; }
+    const lastCh = Math.max(nm[0], sb ? sb[0] : -9), pu = 1 + .1 * Math.exp(-Math.max(0, t - lastCh) * 9) * (t - lastCh < .5 && lastCh > o.t0 + .05 ? 1 : 0);
+    const pl = clamp((t - o.t0 - .1) / .22), px = lerp(o.px ?? 58, o.px2 ?? 30, sp), py = Y - (o.pillDy ?? 132);
+    if (pl <= 0) hide(o.pill); else { o.pill.style.display = 'block'; o.pill.style.opacity = (eOut(pl) * L.o).toFixed(3);
+      o.pill.style.transform = `translate(${px.toFixed(1)}px,${(py + (1 - eOut(pl)) * -18).toFixed(1)}px) scale(${(pu * (t > o.t1 ? L.s : 1)).toFixed(4)})`; }
+    // price: slams in on the right once the car has moved over
+    if (o.pr) { const kp = t - pt; if (kp < -.02) { hide(o.pr); hide(o.un); } else {
+      if (!o.fit) { o.pr.style.display = 'block'; o.pr.style.visibility = 'hidden'; const w = o.pr.offsetWidth, mw = o.prW || 560; if (w > mw) o.pr.style.fontSize = ((o.prSize || 126) * mw / w).toFixed(1) + 'px'; o.pr.style.visibility = ''; o.fit = 1; }
+      const p = clamp(kp / .13), s = kp < .13 ? lerp(2.1, 1, eIn(p)) : 1 + .06 * Math.exp(-(kp - .13) * 9) * Math.sin((kp - .13) * 36), sh = 12 * Math.exp(-Math.max(0, kp) * 8);
+      const prx = o.prx || 752, pry = Y + (o.pry ?? -44), lo = t > o.t1 ? L.o : 1;
+      setT(o.pr, prx + sh * Math.sin(kp * 90), pry + sh * Math.cos(kp * 70), s * (t > o.t1 ? L.s : 1), o.prRot ?? -2.5, clamp(p * 3) * lo);
+      let nt = null; for (const q of (o.note || [])) if (t >= q[0]) nt = q; const ne = o.un.querySelector('.nt'), nk = nt ? nt[1] + '|' + (nt[2] || '') : '';
+      if (o.un.dataset.k !== nk) { o.un.dataset.k = nk; ne.innerHTML = nt ? nt[1] : ''; ne.className = 'nt ' + (nt ? nt[2] || '' : ''); ne.style.display = nt ? 'inline-block' : 'none'; }
+      if (nt) { const q = clamp((t - nt[0]) / .22); ne.style.transform = `scale(${eBack(q, 2.2).toFixed(4)})`; ne.style.opacity = clamp(q * 3).toFixed(3); }
+      const pu2 = clamp((kp - .1) / .2); setT(o.un, prx, pry + (o.unDy ?? 98), eBack(pu2, 1.8) * (t > o.t1 ? L.s : 1), 0, clamp(pu2 * 3) * lo); } }
+    return;
   }
   if (o.k === 'kin') {
     const d = o.dur || 1.0; if (t < o.t - .02 || t > o.t + d) { hide(el); return; }
@@ -894,8 +973,23 @@ function renderShock(t) {  // fx {k:'shock', t, x, y, r, n, col, col2, w}: expan
       h += `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}" fill="none" stroke="${j ? (f.col2 || '#62D8FF') : (f.col || '#FFFFFF')}" stroke-width="${w.toFixed(1)}" opacity="${(.9 * (1 - p)).toFixed(3)}"/>`; } }
   SHOCK_G.innerHTML = h;
 }
+let SLASH_G = null;
+function renderSlash(t) {  // fx {k:'slash', t, x1, y1, x2, y2, w, d, hold, col, lin (constant speed, to follow a hand)}: a blade streak drawn from (x1,y1) to (x2,y2) in d seconds; it then thins out and fades (11.11.2026)
+  const F = fxOf('slash'); if (!F.length) return;
+  if (!SLASH_G) { SLASH_G = document.createElementNS(SVGNS, 'g'); $('ovl2').appendChild(SLASH_G); }
+  let h = '';
+  for (const f of F) { const k = t - f.t, d = f.d || .07, hold = f.hold ?? .28; if (k < 0 || k > d + hold) continue;
+    const p = f.lin ? clamp(k / d) : eOut(clamp(k / d)), q = clamp((k - d) / hold), tp = eIn(clamp((k - d * .5) / (hold * .9)));
+    const hx = lerp(f.x1, f.x2, p), hy = lerp(f.y1, f.y2, p), tx = lerp(f.x1, f.x2, tp * .85), ty = lerp(f.y1, f.y2, tp * .85);
+    const len = Math.hypot(hx - tx, hy - ty); if (len < 2) continue;
+    const nx = -(hy - ty) / len, ny = (hx - tx) / len, w = (f.w || 14) * (1 - .8 * q), mx = lerp(tx, hx, .62), my = lerp(ty, hy, .62), op = 1 - q;
+    const blade = ww => `M ${tx.toFixed(1)} ${ty.toFixed(1)} L ${(mx + nx * ww).toFixed(1)} ${(my + ny * ww).toFixed(1)} L ${hx.toFixed(1)} ${hy.toFixed(1)} L ${(mx - nx * ww).toFixed(1)} ${(my - ny * ww).toFixed(1)} Z`;
+    h += `<path d="${blade(w * 2.6)}" fill="${f.col || '#62D8FF'}" opacity="${(.55 * op).toFixed(3)}" style="filter:blur(${(9 * (1 - .5 * q)).toFixed(1)}px)"/>` +
+      `<path d="${blade(w)}" fill="#fff" opacity="${op.toFixed(3)}"/>`; }
+  SLASH_G.innerHTML = h;
+}
 function render(t, n) {
-  renderBg(t); renderShock(t);
+  renderBg(t); renderShock(t); renderSlash(t);
   if (SCENES_OK) { if (INTRO && window.INTRO_FX) INTRO_FX.render(t); rHook(t); rStages(t); for (const o of ITEMS) rItem(o, t); }
   rEnd(t); renderSparks(t); renderCaptions(t);
 }
