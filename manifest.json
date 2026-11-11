@@ -160,6 +160,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq_bmw1",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_vo_client",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/0cca20f0-7734-4599-b93c-1c005d46aeeb.mp3",
   "downloader": "curl"
@@ -177,6 +182,11 @@
  {
   "id": "car_vw2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/8mRFhEdVHinp0PL4pPe2/Jd5vc68goTaO2s92vuji/content.png",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq_lg1",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -425,6 +435,16 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq_bmw3",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq_lg4",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3_cli_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/pEvSDsUZ0GjnSDIWe5Kl/cfohOG1rKDc0QB7bvQKf/content.mp3",
   "downloader": "curl"
@@ -435,8 +455,18 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq_lg2",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3k_C09",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/G5MrxuFnCtmhPHh75cR4/4udQqs6w8zGjZdIwIZok/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq_lg3",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -475,6 +505,11 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq_bmw4",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3k_C01",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/x4b4TWnh7wYUNBtfI4qp/QFDhGMGyJCDGUVQ06YfB/content.mp4",
   "downloader": "curl"
@@ -487,6 +522,11 @@
  {
   "id": "car_bmw1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/wly8WOu7QBg0hBIUK5qZ/ne4i5ZmBN7Nvi2RhV1qY/content.png",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq_bmw2",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -505,8 +545,18 @@
   "downloader": "curl"
  },
  {
+  "id": "wmq_lg6",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3k_C07",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/3ZCEPByUBsioIBlKNLio/YPtdFhGW91eU0do4Oxxh/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "wmq_lg5",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
