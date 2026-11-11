@@ -1,0 +1,50 @@
+[
+ {
+  "text": "Nu schimba turbina defectă până nu vezi asta!",
+  "gap": 0.3
+ },
+ {
+  "text": "Riști să ți se strice din nou.",
+  "gap": 0.3
+ },
+ {
+  "text": "Turbina este învârtită de gazele de evacuare și ridică presiunea pe admisie.",
+  "gap": 0.6
+ },
+ {
+  "text": "Axul ei se învârte cu peste {100.000|o sută de mii} de rotații pe minut.",
+  "gap": 0.3
+ },
+ {
+  "text": "Și nu atinge metalul: plutește pe un film de ulei.",
+  "gap": 0.3
+ },
+ {
+  "text": "De aceea, turbina are nevoie de o presiune corectă și de un debit suficient de ulei.",
+  "gap": 0.3
+ },
+ {
+  "text": "Când sistemul de ungere are o problemă, o pompă de ulei slăbită sau depuneri care blochează uleiul pe turul turbinei, lagărele rămân fără ulei.",
+  "gap": 0.6
+ },
+ {
+  "text": "Se încing, se gripează, iar axul se rupe.",
+  "gap": 0.3
+ },
+ {
+  "text": "Turbina este distrusă.",
+  "gap": 0.3
+ },
+ {
+  "text": "Foarte important: când demontezi turbina și o trimiți la recondiționat, sau o schimbi cu alta, elimină și cauza lipsei de ungere.",
+  "gap": 0.7
+ },
+ {
+  "text": "Altfel, orice turbină vei pune, vei avea exact aceeași problemă.",
+  "gap": 0.35
+ },
+ {
+  "text": "Întâi rezolvi ungerea, abia apoi montezi turbina.",
+  "gap": 0.4
+ }
+]
