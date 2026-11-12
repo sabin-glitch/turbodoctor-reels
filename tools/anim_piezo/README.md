@@ -18,3 +18,8 @@ Cifrele din partea „Bosch spune așa” sunt din fișa Bosch CRS3-27 (forță 
 Tensiunile (48 V, ~150 V) sunt valori tipice, nu din fișă.
 
 Așezare: zona 3D y 250–950 când sunt grafice (958–1278), 250–1270 fără; în hook 560–1280 (titlurile boom deasupra); subtitrările de la 1290.
+
+## Hook cu pistonul și injectorul
+
+Cadrele 0..HK (primele ~6,3 s) vin din animația de injecție (`tools/anim_injectie`): pistonul urcă, injectorul injectează, arderea, apoi trecere prin negru spre comparație.
+`python3 build_hook.py` construiește `hook/reel.html`, apoi `cd hook && node render_frames.js <reel>/frames_base 0 190`. Cadrele 191..197 ale comparației se amestecă din negru (fade-in).
