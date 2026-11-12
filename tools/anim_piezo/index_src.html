@@ -1,0 +1,625 @@
+<title>Injector piezo vs. magnetic</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+/* Layout: scenă 9:16 (1080×1920): WebGL (modele 3D) + canvas 2D suprapus (text, grafice); bară de control dedesubt; în #reel controalele dispar. Aspect unic, întunecat (grafit). */
+:root{
+  --bg:#111417; --panel:#1b1f24; --line:#2c333b; --fg:#e8ecef; --muted:#8b96a2;
+  --mag:#f39237; --piezo:#b98cff; --fuel:#4aa3ff;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif; --body:Barlow,Arial,sans-serif;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;box-sizing:border-box;overflow:hidden}
+#stage{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;width:100%}
+#wrap{position:relative;height:100%;aspect-ratio:9/16;max-width:100%;background:var(--bg);border-radius:6px;overflow:hidden}
+#wrap canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#ctl{display:flex;align-items:center;gap:12px;width:min(100%,560px);flex:0 0 auto}
+#ctl button{font:600 15px var(--display);letter-spacing:.06em;text-transform:uppercase;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:8px 14px;cursor:pointer;min-width:92px}
+#ctl button:focus-visible,#scrub:focus-visible{outline:2px solid var(--piezo);outline-offset:2px}
+#scrub{flex:1;min-width:0;accent-color:var(--piezo)}
+#tm{font:500 14px var(--body);color:var(--muted);font-variant-numeric:tabular-nums;min-width:74px;text-align:right}
+body.reel{padding:0}
+body.reel #ctl{display:none}
+body.reel #wrap{border-radius:0}
+</style>
+<div id="stage"><div id="wrap">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <canvas id="cv" width="1080" height="1920" aria-label="Animație 3D: injector Bosch magnetic comparat cu injector Bosch piezo"></canvas>
+</div></div>
+<div id="ctl">
+  <button id="play" type="button">Pauză</button>
+  <input id="scrub" type="range" min="0" max="75" step="0.01" value="0" aria-label="Poziție în animație">
+  <span id="tm">0:00</span>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(()=>{
+const cv=document.getElementById('cv'),g=cv.getContext('2d');
+const W=1080,H=1920,TOTAL=75;
+const C={bg:'#111417',panel:'#1b1f24',panel2:'#22272e',line:'#2c333b',fg:'#e8ecef',muted:'#8b96a2',dim:'#5d6772',
+  mag:'#f39237',piezo:'#b98cff',fuel:'#4aa3ff',ret:'#f2c94c'};
+const FD='"Barlow Condensed","Arial Narrow",Arial,sans-serif',FB='Barlow,Arial,sans-serif';
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const ease=x=>{x=clamp(x);return x*x*(3-2*x)};
+const fade=(t,a,b,f=0.5)=>ease((t-a)/f)*(1-ease((t-(b-f))/f));
+const lerp=(a,b,k)=>a+(b-a)*k;
+
+/* ================= Simulare (timp motor în ms) ================= */
+const P={
+  mag:{arm:0.07,dOpen:0.18,dClose:0.10,kP:0.07,up:0.30,down:0.24},
+  piezo:{arm:0.02,dOpen:0.05,dClose:0.03,kP:0.025,up:0.12,down:0.09}
+};
+const PULSES={
+  single:{mag:[[0.2,1.2]],piezo:[[0.2,1.2]],max:2.0},
+  multi:{mag:[[0.25,0.55],[1.35,2.35],[3.05,3.35]],piezo:[[0.2,0.33],[0.55,0.68],[1.3,2.2],[2.55,2.68],[3.05,3.18]],max:4.0}
+};
+const DT=0.002;
+function simulate(pul,p,max){
+  const n=Math.ceil(max/DT)+1,v=new Float32Array(n),pc=new Float32Array(n),lift=new Float32Array(n);
+  let a=0,pr=1,l=0;
+  for(let i=0;i<n;i++){
+    const ms=i*DT;let tgt=0;
+    for(const [s,e] of pul){if(ms>=s+p.dOpen&&ms<e+p.dClose)tgt=1;}
+    a+=Math.sign(tgt-a)*Math.min(Math.abs(tgt-a),DT/p.arm);
+    pr+=((1-a)-pr)*Math.min(1,DT/p.kP);
+    if(pr<0.55)l=Math.min(1,l+DT/p.up);else if(pr>0.62)l=Math.max(0,l-DT/p.down);
+    v[i]=a;pc[i]=pr;lift[i]=l;
+  }
+  return {v,pc,lift,max};
+}
+const SIM={};
+for(const k of ['single','multi'])SIM[k]={mag:simulate(PULSES[k].mag,P.mag,PULSES[k].max),piezo:simulate(PULSES[k].piezo,P.piezo,PULSES[k].max)};
+function at(arr,ms){const i=clamp(Math.round(ms/DT),0,arr.length-1);return arr[i]}
+function sigMag(pul,ms){
+  let V=0,I=0;
+  for(const [s,e] of pul){
+    if(ms>=s&&ms<e){const u=ms-s;
+      if(u<0.11){V=48;I=20*(1-Math.exp(-u/0.035));}
+      else{V=((u/0.03)%1<0.45)?14:0;I=12+1.1*Math.sin(u/0.03*Math.PI*2)+8*Math.exp(-(u-0.11)/0.03);}
+    } else if(ms>=e&&ms<e+0.1){const u=ms-e;const I0=(e-s<0.11)?20*(1-Math.exp(-(e-s)/0.035)):12;I=Math.max(I,I0*Math.exp(-u/0.025));}
+  }
+  return [V,I];
+}
+function sigPiezo(pul,ms){
+  let V=0,I=0;const r=0.07;
+  for(const [s,e] of pul){
+    if(ms>=s&&ms<e+r){
+      if(ms<s+r){const u=(ms-s)/r;V=150*ease(u);I=10*Math.sin(Math.PI*u);}
+      else if(ms<e)V=150;
+      else{const u=(ms-e)/r;V=150*(1-ease(u));I=-10*Math.sin(Math.PI*u);}
+    }
+  }
+  return [V,I];
+}
+
+/* ================= Timeline ================= */
+const SC=[
+  {a:0,b:4.5,name:'Titlu'},{a:4.5,b:16.8,name:'Construcție'},{a:16.8,b:33,name:'O injecție'},
+  {a:33,b:46,name:'Injecții multiple'},{a:46,b:69,name:'De ce piezo'},{a:69,b:75,name:'Final'}];
+const PA={a:18.6,b:24.3},PB={a:26.2,b:31.9},S3={a:34.5,b:44.5};
+function engineState(t){
+  if(t>=16.8&&t<25.2){return {pat:'single',ms:clamp((t-PA.a)/(PA.b-PA.a))*2,show:t>=PA.a};}
+  if(t>=25.2&&t<33){return {pat:'single',ms:clamp((t-PB.a)/(PB.b-PB.a))*2,show:t>=PB.a};}
+  if(t>=33&&t<46){return {pat:'multi',ms:clamp((t-S3.a)/(S3.b-S3.a))*4,show:t>=S3.a};}
+  if(t>=46&&t<75){const ms=((t-46)*0.45)%5;return {pat:'multi',ms:Math.min(ms,4),show:true,loop:true};}
+  return {pat:'single',ms:0,show:false};
+}
+function injState(kind,es){
+  const sim=SIM[es.pat][kind],pul=PULSES[es.pat][kind];
+  if(!es.show)return {v:0,pr:1,lift:0,on:0,ex:0};
+  const ms=es.ms;const v=at(sim.v,ms),pr=at(sim.pc,ms),lift=at(sim.lift,ms);
+  let on=0,ex=0;
+  if(kind==='mag'){on=clamp(sigMag(pul,ms)[1]/20);}else{ex=sigPiezo(pul,ms)[0]/150;on=ex;}
+  return {v,pr,lift,on,ex};
+}
+
+/* ================= Scena 3D ================= */
+const T=THREE;
+const renderer=new T.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true});
+renderer.setPixelRatio(1);renderer.setSize(W,H,false);renderer.setClearColor(0x111417,1);
+renderer.outputEncoding=T.sRGBEncoding;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=0.82;
+const scene=new T.Scene();
+const FOV=16;const cam=new T.PerspectiveCamera(FOV,W/H,50,6000);
+// mediu pentru reflexii pe metal
+(function(){
+  const es=new T.Scene();
+  es.add(new T.Mesh(new T.SphereGeometry(500,32,16),new T.MeshBasicMaterial({color:0x1b1f25,side:T.BackSide})));
+  const pan=(x,y,z,w,h,c)=>{const m=new T.Mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({color:c,side:T.DoubleSide}));m.position.set(x,y,z);m.lookAt(0,0,0);es.add(m)};
+  pan(-250,260,260,200,300,0xdddddd);pan(300,120,200,90,380,0xa8b4cc);pan(0,420,-60,380,120,0xbfb6a8);pan(-320,-40,-200,200,300,0x8fa4c0);pan(260,60,-300,240,260,0x9aa3b0);pan(0,-380,100,500,300,0x30353c);
+  const pm=new T.PMREMGenerator(renderer);scene.environment=pm.fromScene(es,0.02).texture;pm.dispose();
+})();
+scene.add(new T.HemisphereLight(0xdfe8ff,0x20242a,0.18));
+const key=new T.DirectionalLight(0xffffff,0.55);key.position.set(-120,260,300);scene.add(key);
+const rim=new T.DirectionalLight(0xbcd0ff,0.5);rim.position.set(200,120,-260);scene.add(rim);
+
+function tex(w,h,fn,rx=1,ry=1){const c=document.createElement('canvas');c.width=w;c.height=h;fn(c.getContext('2d'),w,h);const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(rx,ry);t.encoding=T.sRGBEncoding;t.anisotropy=4;return t}
+const std=(o)=>new T.MeshStandardMaterial(Object.assign({side:T.DoubleSide},o));
+const M={
+  steel:std({color:0xb9bfc7,metalness:1,roughness:0.3}),
+  steelCut:std({color:0x5d656e,metalness:0.2,roughness:0.9,envMapIntensity:0.3}),
+  nozzle:std({color:0x74797f,metalness:1,roughness:0.38}),
+  nozzleCut:std({color:0x3f444a,metalness:0.2,roughness:0.9,envMapIntensity:0.3}),
+  nut:std({color:0xd0d5db,metalness:1,roughness:0.22}),
+  nutCut:std({color:0x8a9199,metalness:0.2,roughness:0.9,envMapIntensity:0.3}),
+  housing:std({color:0x8a8f96,metalness:1,roughness:0.42}),
+  housingCut:std({color:0x474c53,metalness:0.2,roughness:0.9,envMapIntensity:0.3}),
+  chrome:std({color:0xe9edf1,metalness:1,roughness:0.12}),
+  spring:std({color:0xcfd5db,metalness:1,roughness:0.25}),
+  plastic:std({color:0x16181b,metalness:0,roughness:0.5}),
+  rubber:std({color:0x0e0f11,metalness:0,roughness:0.85}),
+  alu:std({color:0x596069,metalness:0.9,roughness:0.5}),
+  pipe:std({color:0xaeb5bd,metalness:1,roughness:0.28}),
+  fuelHi:new T.MeshStandardMaterial({color:0x1670ff,emissive:0x0a4fd8,emissiveIntensity:0.55,metalness:0,roughness:0.5,envMapIntensity:0.25}),
+  fuel:new T.MeshStandardMaterial({color:0x1670ff,emissive:0x0a4fd8,emissiveIntensity:0.6,transparent:true,opacity:0.55,metalness:0,roughness:0.4,depthWrite:false,envMapIntensity:0.25}),
+  thread:std({color:0xb9bfc7,metalness:1,roughness:0.35,bumpScale:0.07}),
+};
+M.thread.bumpMap=tex(8,64,(c,w,h)=>{for(let y=0;y<h;y++){const v=128+110*Math.sin(y/h*Math.PI*2*8);c.fillStyle=`rgb(${v},${v},${v})`;c.fillRect(0,y,w,1)}},1,1);
+const coilTex=tex(64,64,(c,w,h)=>{c.fillStyle='#b4622a';c.fillRect(0,0,w,h);for(let y=0;y<h;y+=4){const gr=c.createLinearGradient(0,y,0,y+4);gr.addColorStop(0,'#7a3d14');gr.addColorStop(.5,'#e59350');gr.addColorStop(1,'#7a3d14');c.fillStyle=gr;c.fillRect(0,y,w,4)}},1,2.2);
+const coilCutTex=tex(32,32,(c,w,h)=>{c.fillStyle='#5a2d10';c.fillRect(0,0,w,h);c.fillStyle='#e9a366';c.beginPath();c.arc(16,16,12,0,7);c.fill();},1.6,1.6);
+const stackTex=tex(8,64,(c,w,h)=>{for(let i=0;i<16;i++){c.fillStyle=i%2?'#d8c8a4':'#a8946c';c.fillRect(0,i*4,w,3);c.fillStyle='#5b4c30';c.fillRect(0,i*4+3,w,1)}},1,5);
+M.coil=std({color:0xffffff,map:coilTex,metalness:0.85,roughness:0.4,emissive:0xff7a1a,emissiveIntensity:0});
+M.coilCut=std({color:0xffffff,map:coilCutTex,metalness:0.6,roughness:0.5,emissive:0xff7a1a,emissiveIntensity:0});
+M.stack=std({color:0xffffff,map:stackTex,metalness:0.15,roughness:0.55,emissive:0x9a5cff,emissiveIntensity:0});
+M.wireM=std({color:0x2a2d31,metalness:0,roughness:0.6,emissive:0xff8a2a,emissiveIntensity:0});
+M.wireP=std({color:0x2a2d31,metalness:0,roughness:0.6,emissive:0xa066ff,emissiveIntensity:0});
+M.arm=std({color:0xc4cad1,metalness:1,roughness:0.28,emissive:0xff8a2a,emissiveIntensity:0});
+M.valveP=std({color:0xe9edf1,metalness:1,roughness:0.15,emissive:0xa066ff,emissiveIntensity:0});
+const ctrlMat=()=>new T.MeshStandardMaterial({color:0x1670ff,emissive:0x0a4fd8,emissiveIntensity:0.55,metalness:0,roughness:0.5,envMapIntensity:0.25});
+
+const V2=(r,y)=>new T.Vector2(Math.max(r,0.0001),y);
+// corp de revoluție din contur închis [r,y]; half => jumătatea din spate + fețe de secțiune în planul z=0
+function rev(poly,mat,cutMat,half=true,seg=40){
+  const grp=new T.Group();
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i],b=poly[(i+1)%poly.length];
+    if(a[0]<1e-4&&b[0]<1e-4)continue;
+    const geo=new T.LatheGeometry([V2(a[0],a[1]),V2(b[0],b[1])],half?seg/2:seg,half?Math.PI/2:0,half?Math.PI:Math.PI*2);
+    grp.add(new T.Mesh(geo,mat));
+  }
+  if(half){
+    const sh=new T.Shape();poly.forEach(([r,y],i)=>i?sh.lineTo(r,y):sh.moveTo(r,y));sh.closePath();
+    const sg=new T.ShapeGeometry(sh);
+    const m1=new T.Mesh(sg,cutMat),m2=new T.Mesh(sg,cutMat);m2.scale.x=-1;grp.add(m1,m2);
+  }
+  return grp;
+}
+const UP=new T.Vector3(0,1,0);
+function cyl(a,b,r,mat,seg=24,r2){const d=new T.Vector3().subVectors(b,a);const m=new T.Mesh(new T.CylinderGeometry(r2??r,r,d.length(),seg),mat);m.position.copy(a).addScaledVector(d,0.5);m.quaternion.setFromUnitVectors(UP,d.clone().normalize());return m}
+function tube(pts,r,mat,seg=48,curved=true){
+  let c;if(curved)c=new T.CatmullRomCurve3(pts,false,'catmullrom',0.5);else{c=new T.CurvePath();for(let i=0;i<pts.length-1;i++)c.add(new T.LineCurve3(pts[i],pts[i+1]));}
+  const m=new T.Mesh(new T.TubeGeometry(c,seg,r,10,false),mat);m.userData.curve=c;return m}
+class Helix extends T.Curve{constructor(r,L,n){super();this.r=r;this.L=L;this.n=n}getPoint(t,o=new T.Vector3()){const a=t*this.n*Math.PI*2;return o.set(this.r*Math.cos(a),-this.L*t,this.r*Math.sin(a))}}
+function spring(r,L,n,wire,topY){const m=new T.Mesh(new T.TubeGeometry(new Helix(r,L,n),n*20,wire,8,false),M.spring);m.position.y=topY;m.userData.L=L;return m}
+const v3=(x,y,z=0)=>new T.Vector3(x,y,z);
+
+const LIFT=2.2,ARM=1.5,EXT=1.5;
+const NOZ=[[0,0],[2.2,0.5],[3.3,1.8],[3.5,3.5],[3.5,24],[7.2,28],[7.2,44],[2.05,44],[2.05,36.2],[3.6,35],[3.6,28.6],[2.05,27],[2.05,5.2],[0.5,2.6],[0,2.6]];
+const NUT=[[7.35,27.2],[8.7,28.2],[8.7,58.5],[7.35,60],[7.35,27.2]].slice(0,4);
+function needleAssembly(plTop,plBot){
+  const grp=new T.Group();
+  // ac: vârf conic, tijă subțire, ghidaj
+  grp.add(rev([[0,2.7],[1.5,5.6],[1.5,35.5],[2.0,36.3],[2.0,44],[1.2,44.4],[1.2,plBot],[2.15,plBot+0.4],[2.15,plTop],[0,plTop]],M.chrome,null,false,32));
+  grp.add(rev([[1.2,46.2],[3.6,46.2],[3.6,47.6],[1.2,47.6]],M.steel,null,false,32));
+  return grp;
+}
+function sprayPoints(n,size,col){
+  const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(new Float32Array(n*3),3));geo.setAttribute('color',new T.BufferAttribute(new Float32Array(n*3),3));
+  const sp=tex(32,32,(c)=>{const gr=c.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=gr;c.fillRect(0,0,32,32)});
+  const p=new T.Points(geo,new T.PointsMaterial({size,map:sp,vertexColors:true,transparent:true,depthWrite:false,blending:T.AdditiveBlending,sizeAttenuation:true,color:col}));p.frustumCulled=false;return p}
+const rnd=i=>{const x=Math.sin(i*127.1+311.7)*43758.5453;return x-Math.floor(x)};
+function updateSpray(p,lift,t,fine){
+  const pos=p.geometry.attributes.position,col=p.geometry.attributes.color,n=pos.count,J=6,per=n/J;
+  for(let i=0;i<n;i++){
+    const j=Math.floor(i/per),az=j/J*Math.PI*2+0.5;
+    const ph=(t*(fine?2.6:2.0)+rnd(i))%1;
+    const len=ph*(8+26*lift);const sp=(fine?0.10:0.17)*len;
+    const dx=Math.cos(az),dz=Math.sin(az),down=-0.27;
+    const x=dx*(1+len)+ (rnd(i+7)-.5)*sp, z=dz*(1+len)+(rnd(i+13)-.5)*sp, y=1.2+down*len+(rnd(i+29)-.5)*sp;
+    pos.setXYZ(i,x,y,z);const b=lift<0.04?0:(1-ph*0.8)*Math.min(1,lift*2.5)*0.55;col.setXYZ(i,b,b,b);
+  }
+  pos.needsUpdate=true;col.needsUpdate=true;
+}
+function retPoints(){const geo=new T.BufferGeometry();geo.setAttribute('position',new T.BufferAttribute(new Float32Array(8*3),3));const p=new T.Points(geo,new T.PointsMaterial({size:3.2,color:0xf2c94c,transparent:true,depthTest:false,depthWrite:false,sizeAttenuation:true,map:tex(32,32,(c)=>{const gr=c.createRadialGradient(16,16,0,16,16,16);gr.addColorStop(0,'rgba(255,255,255,1)');gr.addColorStop(1,'rgba(255,255,255,0)');c.fillStyle=gr;c.fillRect(0,0,32,32)})}));p.frustumCulled=false;return p}
+
+const RAIL={y:128,z:-44};
+function fitting(grp,s,y,injX,xr){
+  const B=v3(s*5.5,y,-7.5),D=v3(s*0.45,0.55,-0.7).normalize();
+  const at_=k=>B.clone().addScaledVector(D,k);
+  grp.add(cyl(at_(0),at_(9),3.3,M.steel));
+  grp.add(cyl(at_(9),at_(19),3.7,M.thread));
+  grp.add(cyl(at_(15),at_(23),4.9,M.nut,6));
+  // conductă de înaltă presiune spre rail (în coordonate lume)
+  const w=p=>p.clone().add(v3(injX,0,0));
+  const pts=[w(at_(22)),w(at_(34)),v3(xr,RAIL.y+ (y>RAIL.y?16:-2),RAIL.z+22),v3(xr,RAIL.y,RAIL.z+12),v3(xr,RAIL.y,RAIL.z+5)];
+  scene.add(tube(pts,1.6,M.pipe,64));
+  scene.add(cyl(v3(xr,RAIL.y,RAIL.z+4),v3(xr,RAIL.y,RAIL.z+11),3.6,M.nut,6));
+}
+function connector(grp,s,y0){
+  grp.add(cyl(v3(0,y0,0),v3(0,y0+6,0),6,M.plastic,24,5));
+  const box=new T.Mesh(new T.BoxGeometry(11,17,9),M.plastic);box.position.set(-s*6.5,y0+11,0);box.rotation.z=s*0.55;grp.add(box);
+  const end=v3(-s*6.5,y0+11,0).add(v3(-Math.sin(s*0.55)*9.5,Math.cos(s*0.55)*9.5,0));
+  return end;
+}
+
+/* ---------- Injector magnetic (Bosch CRI 2) ---------- */
+const MAGX=-50,PIEX=50;
+const mag=new T.Group();mag.position.x=MAGX;scene.add(mag);
+const R={};
+(function(){
+  const s=1;
+  mag.add(rev(NOZ,M.nozzle,M.nozzleCut));mag.add(rev(NUT,M.nut,M.nutCut));
+  mag.add(rev([[4.2,44],[7.2,44],[7.2,60],[9.5,60],[9.5,111.5],[11,113],[11,124],[1.5,124],[0.5,122.6],[0.5,119.6],[2.6,119.6],[2.6,116.4],[2.2,115.8],[2.2,60],[4.2,60]],M.steel,M.steelCut));
+  mag.add(rev([[11.2,124],[13,124],[13,163],[11.5,166],[0,166],[0,152.5],[1.8,152.5],[1.8,131],[4.6,131],[4.6,152.5],[10.6,152.5],[10.6,131],[11.2,131]],M.housing,M.housingCut));
+  mag.add(rev([[4.85,132],[10.35,132],[10.35,151.5],[4.85,151.5]],M.coil,M.coilCut));
+  // armătură + tijă + bilă
+  const arm=new T.Group();
+  arm.add(rev([[0,126.5],[9.6,126.5],[9.6,128.5],[0,128.5]],M.arm,null,false,40));
+  arm.add(rev([[0,124.7],[1.3,124.7],[1.3,126.5],[0,126.5]],M.arm,null,false,20));
+  const ball=new T.Mesh(new T.SphereGeometry(1.15,24,16),M.chrome);ball.position.y=123.75;arm.add(ball);
+  mag.add(arm);R.arm=arm;
+  R.vSpring=spring(1.25,23.5,9,0.28,152);mag.add(R.vSpring);
+  // ac + piston de comandă
+  R.mNeedle=needleAssembly(116,62);mag.add(R.mNeedle);
+  R.mSpring=spring(3.1,11.2,5,0.5,59.4);mag.add(R.mSpring);
+  // motorină: camera duzei, camera de comandă, canale
+  mag.add(rev([[1.55,5.6],[2.0,5.3],[2.0,27],[3.55,28.7],[3.55,34.9],[2.0,36],[1.55,36]],M.fuel,null,false,32));
+  R.mCtrlMat=ctrlMat();R.mCtrl=new T.Mesh(new T.CylinderGeometry(2.55,2.55,1,24),R.mCtrlMat);mag.add(R.mCtrl);
+  const z=0.35;
+  mag.add(tube([v3(s*5.8,112,z),v3(s*5.8,46,z),v3(s*5.4,42,z),v3(s*3.5,32.5,z)],0.75,M.fuelHi,40,false));
+  mag.add(tube([v3(s*5.8,104,z),v3(s*5.8,118,z),v3(s*2.5,118,z)],0.42,M.fuelHi,20,false));
+  mag.add(tube([v3(s*9.3,106,z),v3(s*5.8,104,z)],0.75,M.fuelHi,8,false));
+  fitting(mag,s,103,MAGX,-30);
+  // capac, conector, retur
+  R.mConn=connector(mag,s,166).add(v3(MAGX,0,0));
+  mag.add(cyl(v3(s*6,165,-5),v3(s*6,173,-5),1.9,M.steel));
+  const hose=tube([v3(s*6,172,-5),v3(s*6,180,-8),v3(s*14,178,-24),v3(s*20,160,-44)],2.3,M.rubber,40);mag.add(hose);R.mRetCurve=hose.userData.curve;
+  R.mRet=retPoints();mag.add(R.mRet);
+  R.mSpray=sprayPoints(900,7.5,0x9cc8ff);mag.add(R.mSpray);
+})();
+
+/* ---------- Injector piezo (Bosch CRI 3) ---------- */
+const pie=new T.Group();pie.position.x=PIEX;scene.add(pie);
+(function(){
+  const s=-1;
+  pie.add(rev(NOZ,M.nozzle,M.nozzleCut));pie.add(rev(NUT,M.nut,M.nutCut));
+  pie.add(rev([[4.2,44],[7.2,44],[7.2,60],[9.5,60],[9.5,174],[8.5,176],[0,176],[0,171],[6.3,171],[6.3,97],[4.5,96],[4.5,84.6],[1.3,84.6],[1.3,83],[3.0,83],[3.0,76.5],[0.5,76],[0.5,73.6],[2.6,73.6],[2.6,70.4],[2.2,69.8],[2.2,56],[4.2,56]],M.steel,M.steelCut));
+  // stivă piezo (fixă sus, se lungește în jos)
+  R.stack=new T.Mesh(new T.CylinderGeometry(5.3,5.3,73,32),M.stack);R.stack.geometry.translate(0,-36.5,0);R.stack.position.y=169;pie.add(R.stack);
+  // cuplor hidraulic: piston sus, lichid, piston jos + tijă + supapă ciupercă
+  R.cUp=rev([[0,90.4],[4.3,90.4],[4.3,96],[0,96]],M.chrome,null,false,28);pie.add(R.cUp);
+  const cf=new T.Mesh(new T.CylinderGeometry(4.3,4.3,1.8,24),M.fuelHi);cf.position.y=89.5;R.cFluid=cf;pie.add(cf);
+  const low=new T.Group();
+  low.add(rev([[0,85.4],[4.3,85.4],[4.3,88.6],[0,88.6]],M.chrome,null,false,28));
+  low.add(rev([[0,82.6],[0.85,82.6],[0.85,85.4],[0,85.4]],M.valveP,null,false,16));
+  low.add(rev([[0,81.2],[2.0,81.2],[2.5,82.2],[1.3,83],[0,83]],M.valveP,null,false,24));
+  pie.add(low);R.pValve=low;
+  R.pNeedle=needleAssembly(70,56);pie.add(R.pNeedle);
+  R.pSpring=spring(3.1,7.4,4,0.5,55.6);pie.add(R.pSpring);
+  pie.add(rev([[1.55,5.6],[2.0,5.3],[2.0,27],[3.55,28.7],[3.55,34.9],[2.0,36],[1.55,36]],M.fuel,null,false,32));
+  R.pCtrlMat=ctrlMat();R.pCtrl=new T.Mesh(new T.CylinderGeometry(2.55,2.55,1,24),R.pCtrlMat);pie.add(R.pCtrl);
+  const z=0.35;
+  pie.add(tube([v3(s*7.9,152,z),v3(s*7.9,62,z),v3(s*5.8,58,z),v3(s*5.8,46,z),v3(s*5.4,42,z),v3(s*3.5,32.5,z)],0.7,M.fuelHi,48,false));
+  pie.add(tube([v3(s*7.9,72,z),v3(s*2.5,72,z)],0.42,M.fuelHi,8,false));
+  fitting(pie,s,151,PIEX,30);
+  pie.add(cyl(v3(0,176,0),v3(0,179,0),8,M.plastic,24,7));
+  R.pConn=connector(pie,s,178).add(v3(PIEX,0,0));
+  pie.add(cyl(v3(s*4,158,-8),v3(s*6,160,-13),1.9,M.steel));
+  const hose=tube([v3(s*6,160,-13),v3(s*9,162,-22),v3(s*16,156,-34),v3(s*22,140,-48)],2.3,M.rubber,40);pie.add(hose);R.pRetCurve=hose.userData.curve;
+  R.pRet=retPoints();pie.add(R.pRet);
+  R.pSpray=sprayPoints(1500,5,0xa8d0ff);pie.add(R.pSpray);
+})();
+
+/* ---------- Rail, ECU, cabluri ---------- */
+(function(){
+  scene.add(cyl(v3(-66,RAIL.y,RAIL.z),v3(66,RAIL.y,RAIL.z),6.2,std({color:0x3a3f45,metalness:0.9,roughness:0.55}),32));
+  scene.add(cyl(v3(-70,RAIL.y,RAIL.z),v3(-66,RAIL.y,RAIL.z),4.6,M.nut,6));
+  scene.add(cyl(v3(66,RAIL.y,RAIL.z),v3(74,RAIL.y,RAIL.z),4.2,M.nut,6));
+  scene.add(cyl(v3(74,RAIL.y,RAIL.z),v3(82,RAIL.y,RAIL.z),3.2,M.plastic));
+  const ecu=new T.Group();ecu.position.set(0,214,-4);
+  ecu.add(new T.Mesh(new T.BoxGeometry(70,17,30),M.alu));
+  for(let i=-5;i<=5;i++){const f=new T.Mesh(new T.BoxGeometry(1.4,2.2,30),M.alu);f.position.set(i*6,9.5,0);ecu.add(f)}
+  for(const sx of [-1,1]){const c=new T.Mesh(new T.BoxGeometry(12,5,12),M.plastic);c.position.set(sx*24,-10.5,2);ecu.add(c)}
+  scene.add(ecu);
+  const wire=(sx,end,mat)=>scene.add(tube([v3(sx*24,201.5,-2),v3(sx*25,198,-1),end.clone().add(v3(sx*-1,4,0)),end],1.0,mat,32));
+  wire(-1,R.mConn,M.wireM);wire(1,R.pConn,M.wireP);
+})();
+
+/* ---------- Camera ---------- */
+const FULL={lo:-32,hi:202,x:0};
+const SHOTS=[
+  {t:0,lo:-32,hi:202,x:0,yaw:2.75,pitch:0.10},
+  {t:3.6,lo:-32,hi:202,x:0,yaw:0.22,pitch:0.06},
+  {t:4.4,lo:-32,hi:202,x:0,yaw:0.22,pitch:0.06},
+  {t:5.6,lo:99,hi:191,x:MAGX,yaw:0.30,pitch:0.08},
+  {t:10.3,lo:99,hi:191,x:MAGX,yaw:0.12,pitch:0.08},
+  {t:11.6,lo:50,hi:190,x:PIEX,yaw:-0.30,pitch:0.07},
+  {t:16.4,lo:50,hi:190,x:PIEX,yaw:-0.12,pitch:0.07},
+  {t:17.7,lo:52,hi:196,x:0,yaw:0.16,pitch:0.07},
+  {t:24.6,lo:52,hi:196,x:0,yaw:0.06,pitch:0.07},
+  {t:25.9,lo:-34,hi:100,x:0,yaw:-0.10,pitch:0.10},
+  {t:32.4,lo:-34,hi:100,x:0,yaw:0.06,pitch:0.10},
+  {t:33.6,lo:-32,hi:202,x:0,yaw:0.16,pitch:0.06},
+  {t:46,lo:-32,hi:202,x:0,yaw:-0.10,pitch:0.06},
+  {t:60,lo:-32,hi:202,x:0,yaw:0.28,pitch:0.06},
+  {t:75,lo:-32,hi:202,x:0,yaw:-0.18,pitch:0.06},
+];
+function shotAt(t){
+  let i=0;while(i<SHOTS.length-2&&t>=SHOTS[i+1].t)i++;
+  const a=SHOTS[i],b=SHOTS[i+1],k=ease((t-a.t)/(b.t-a.t));const o={};
+  for(const key of ['lo','hi','x','yaw','pitch'])o[key]=lerp(a[key],b[key],k);return o;
+}
+const camT=new T.Vector3();
+function setCamera(t){
+  const s=shotAt(t);const span=s.hi-s.lo;const h=span*1920/900;const yc=s.hi-660/900*span;
+  const d=h/2/Math.tan(FOV*Math.PI/360);
+  cam.position.set(s.x+d*Math.sin(s.yaw)*Math.cos(s.pitch),yc+d*Math.sin(s.pitch)+ (s.hi+s.lo)/2*0 ,d*Math.cos(s.yaw)*Math.cos(s.pitch));
+  camT.set(s.x,yc,0);cam.lookAt(camT);cam.updateMatrixWorld();cam.updateProjectionMatrix();
+  return s;
+}
+const _p=new T.Vector3();
+function proj(x,y,z=0){_p.set(x,y,z).project(cam);return [(_p.x+1)/2*W,(1-_p.y)/2*H]}
+
+const cHi=new T.Color(0x1670ff),cLo=new T.Color(0x9fd8ff),cTmp=new T.Color();
+function update3D(t,sm,sp){
+  // magnetic
+  R.arm.position.y=sm.v*ARM;
+  R.vSpring.scale.y=(23.5-sm.v*ARM)/23.5;
+  R.mNeedle.position.y=sm.lift*LIFT;R.mSpring.scale.y=(11.2-sm.lift*LIFT)/11.2;
+  let top=116+sm.lift*LIFT,hgt=119.6-top;R.mCtrl.scale.y=hgt;R.mCtrl.position.y=top+hgt/2;
+  R.mCtrlMat.color.copy(cTmp.copy(cLo).lerp(cHi,sm.pr));R.mCtrlMat.emissiveIntensity=0.25+0.3*sm.pr;
+  M.coil.emissiveIntensity=sm.on*0.9;M.coilCut.emissiveIntensity=sm.on*0.9;M.arm.emissiveIntensity=sm.on*0.25;M.wireM.emissiveIntensity=sm.on*1.6;
+  updateSpray(R.mSpray,sm.lift,t,false);
+  // piezo
+  const e=sp.ex*EXT;R.stack.scale.y=(73+e)/73;M.stack.emissiveIntensity=sp.on*0.75;M.wireP.emissiveIntensity=sp.on*1.6;M.valveP.emissiveIntensity=sp.on*0.3;
+  R.cUp.position.y=-e;R.cFluid.position.y=89.5-e;R.pValve.position.y=-Math.max(e*0.2,sp.v*EXT);
+  R.pNeedle.position.y=sp.lift*LIFT;R.pSpring.scale.y=(7.4-sp.lift*LIFT)/7.4;
+  top=70+sp.lift*LIFT;hgt=73.6-top;R.pCtrl.scale.y=hgt;R.pCtrl.position.y=top+hgt/2;
+  R.pCtrlMat.color.copy(cTmp.copy(cLo).lerp(cHi,sp.pr));R.pCtrlMat.emissiveIntensity=0.25+0.3*sp.pr;
+  updateSpray(R.pSpray,sp.lift,t,true);
+  for(const [pts,curve,v] of [[R.mRet,R.mRetCurve,sm.v],[R.pRet,R.pRetCurve,sp.v]]){
+    pts.visible=v>0.15;if(!pts.visible)continue;const pos=pts.geometry.attributes.position;
+    for(let i=0;i<pos.count;i++){const q=curve.getPoint((t*1.3+i/pos.count)%1);pos.setXYZ(i,q.x,q.y,q.z)}pos.needsUpdate=true;pts.material.opacity=v;
+  }
+}
+
+/* ================= HUD 2D ================= */
+function font(w,s,f){g.font=`${w} ${s}px ${f}`}
+function txt(s,x,y,col,al='left',bl='alphabetic'){g.fillStyle=col;g.textAlign=al;g.textBaseline=bl;g.fillText(s,x,y)}
+function rr(x,y,w,h,r){g.beginPath();g.roundRect(x,y,w,h,r)}
+function wrap(s,maxW){const out=[];for(const para of s.split('\n')){let line='';for(const w of para.split(' ')){const tryL=line?line+' '+w:w;if(g.measureText(tryL).width>maxW&&line){out.push(line);line=w}else line=tryL}out.push(line)}return out}
+function shadowTxt(fn){g.save();g.shadowColor='rgba(8,10,12,.95)';g.shadowBlur=10;fn();fn();g.restore()}
+
+// etichete: [text, x local, y, parte (-1 stânga, 1 dreapta)]
+const LBL_M=[
+  ['Conector electric',-9,180,-1],['Bobină (electromagnet)',-7.6,143,-1],['Armătură',-7,127.5,-1],['Piston de comandă',-2.1,106,-1],
+  ['Arc supapă',1.2,140,1],['Bilă supapă',1.1,123.7,1],['Cameră de comandă',2.4,118,1],['Motorină din rail',5.8,109,1]];
+const LBL_P=[
+  ['Actuator piezo\n~300 plăcuțe ceramice',-5.2,135,-1],['Motorină din rail',-7.9,110,-1],['Cuplor hidraulic',-4.2,90,-1],['Piston de comandă',-2.1,63,-1],
+  ['Conector electric',9,190,1],['Supapă servo',2.3,82,1],['Cameră de comandă',2.5,72,1],['Arc ac',3.2,51,1],['Ac injector',1.6,20,1]];
+function labels(list,ox,t,t0,t1,col){
+  const k0=fade(t,t0,t1,0.5);if(k0<=0)return;
+  font(600,28,FD);
+  for(const side of [-1,1]){
+    const items=list.map((l,i)=>({l,i,p:proj(ox+l[1],l[2],0.4)})).filter(o=>o.l[3]===side).sort((a,b)=>a.p[1]-b.p[1]);
+    let prev=-1e9;
+    for(const o of items){
+      const lines=o.l[0].split('\n');const hh=lines.length*30;
+      let ty=Math.max(o.p[1],prev+hh/2+8);prev=ty+hh/2;
+      const a=k0*ease((t-(t0+0.5+o.i*0.35))/0.45);if(a<=0)continue;
+      const lx=side<0?318:762;
+      g.globalAlpha=a;g.strokeStyle=col;g.lineWidth=2;g.beginPath();g.moveTo(o.p[0],o.p[1]);g.lineTo(o.p[0]+side*22,ty);g.lineTo(lx,ty);g.stroke();
+      g.fillStyle=col;g.beginPath();g.arc(o.p[0],o.p[1],4.5,0,7);g.fill();
+      shadowTxt(()=>lines.forEach((ln,j)=>txt(ln,lx+side*10,ty-(lines.length-1)*15+j*30,C.fg,side<0?'right':'left','middle')));
+      g.globalAlpha=1;
+    }
+  }
+}
+function fieldLines(t,on){
+  if(on<0.05)return;g.save();g.beginPath();g.rect(0,215,W,1000);g.clip();g.strokeStyle=C.mag;g.lineWidth=2;g.setLineDash([7,7]);g.lineDashOffset=-t*40;g.globalAlpha=on*0.75;
+  for(const sx of [-1,1])for(const r of [1,1.45]){g.beginPath();for(let i=0;i<=40;i++){const a=i/40*Math.PI*2;const p=proj(MAGX+sx*7.6+Math.cos(a)*4.6*r,139+Math.sin(a)*13.5*r,0.5);i?g.lineTo(p[0],p[1]):g.moveTo(p[0],p[1])}g.stroke();}
+  g.restore();
+}
+function tags(t,s){
+  // etichete de coloană în cadrele largi
+  const wide=clamp(((s.hi-s.lo)-150)/60)*ease((t-3.3)/0.8);
+  if(wide>0){
+    g.globalAlpha=wide;
+    const a=proj(MAGX-17,178),b=proj(PIEX+17,178);
+    shadowTxt(()=>{font(700,34,FD);txt('MAGNETIC',a[0],a[1],C.mag,'right');txt('PIEZO',b[0],b[1],C.piezo,'left');
+      font(500,21,FB);txt('Bosch CRI 2 · solenoid',a[0],a[1]+28,C.muted,'right');txt('Bosch CRI 3',b[0],b[1]+28,C.muted,'left');});
+    const kv=ease((t-33.6)/0.6);
+    if(kv>0){g.globalAlpha=wide*kv;shadowTxt(()=>{font(700,30,FD);txt('48 V → 12 V',a[0],a[1]+66,C.mag,'right');txt('~150 V',b[0],b[1]+66,C.piezo,'left');});}
+    const e=proj(0,214,12);g.globalAlpha=wide;
+    shadowTxt(()=>{font(700,27,FD);txt('CALCULATOR INJECȚIE · ECU',e[0],e[1]+4,C.fg,'center','middle');});
+    const r=proj(0,RAIL.y,RAIL.z+7);
+    shadowTxt(()=>{font(600,22,FD);txt('RAIL · până la ~2000 bar',r[0],r[1],'#9fd0ff','center','middle');});
+    g.globalAlpha=1;
+  }
+  // titlu în cadrele apropiate
+  for(const [a,b,name,sub,col] of [[5.0,10.4,'MAGNETIC','Bosch CRI 2 · cu solenoid',C.mag],[11.0,16.5,'PIEZO','Bosch CRI 3 · piezoelectric',C.piezo]]){
+    const k=fade(t,a,b,0.5);if(k<=0)continue;g.globalAlpha=k;font(700,52,FD);txt(name,60,262,col);font(500,26,FB);txt(sub,60,300,C.muted);g.globalAlpha=1;}
+  const kv2=fade(t,17.9,24.6,0.5);
+  if(kv2>0){g.globalAlpha=kv2;shadowTxt(()=>{font(700,44,FD);txt('48 V → 12 V',50,330,C.mag,'left');txt('~150 V',1030,330,C.piezo,'right');});g.globalAlpha=1;}
+}
+
+function scope(x,y,w,h,kind,pat,ms,alpha,ann){
+  if(alpha<=0)return;
+  g.save();g.globalAlpha=alpha;
+  const col=kind==='mag'?C.mag:C.piezo;
+  g.fillStyle=C.panel;rr(x,y,w,h,12);g.fill();g.strokeStyle=C.line;g.lineWidth=1.5;g.stroke();
+  font(700,24,FD);txt(kind==='mag'?'MAGNETIC · semnal ECU':'PIEZO · semnal ECU',x+16,y+30,col);
+  const max=PULSES[pat].max,pul=PULSES[pat][kind],sim=SIM[pat][kind];
+  const px0=x+64,pw=w-80;
+  const rows=[{n:'U (V)',y:y+48,h:92,lo:0,hi:160,ticks:[0,50,150]},{n:'I (A)',y:y+156,h:66,lo:-12,hi:22,ticks:[-10,0,20]},{n:'ac',y:y+238,h:52,lo:0,hi:1,ticks:[]}];
+  const X=m=>px0+m/max*pw;
+  for(const r of rows){
+    const Y=v=>r.y+r.h-(v-r.lo)/(r.hi-r.lo)*r.h;
+    g.strokeStyle=C.line;g.lineWidth=1;g.beginPath();g.moveTo(px0,r.y);g.lineTo(px0,r.y+r.h);g.lineTo(px0+pw,r.y+r.h);g.stroke();
+    font(500,17,FB);
+    for(const tk of r.ticks){txt(String(tk),px0-8,Y(tk),C.dim,'right','middle');g.strokeStyle='rgba(255,255,255,.05)';g.beginPath();g.moveTo(px0,Y(tk));g.lineTo(px0+pw,Y(tk));g.stroke();}
+    font(600,18,FD);txt(r.n,x+14,r.y+r.h/2,C.muted,'left','middle');
+    r.Y=Y;
+  }
+  font(500,16,FB);for(let m=0;m<=max;m+=(max>2?1:0.5))txt(m.toString().replace('.',',')+' ms',X(m),y+h-8,C.dim,'center');
+  const N=Math.max(2,Math.floor(ms/max*360));
+  const tr=(row,fn,c,lw)=>{g.strokeStyle=c;g.lineWidth=lw;g.beginPath();for(let i=0;i<=N;i++){const m=i/N*ms;const v=fn(m);i?g.lineTo(X(m),row.Y(v)):g.moveTo(X(m),row.Y(v));}g.stroke();};
+  if(ms>0){
+    const sig=kind==='mag'?sigMag:sigPiezo;
+    for(const [s,e] of pul){if(s<ms){g.fillStyle=col;g.globalAlpha=alpha*0.08;g.fillRect(X(s),rows[0].y,X(Math.min(e,ms))-X(s),rows[2].y+rows[2].h-rows[0].y);g.globalAlpha=alpha;}}
+    tr(rows[0],m=>sig(pul,m)[0],col,2.5);
+    tr(rows[1],m=>sig(pul,m)[1],'#e8ecef',2);
+    tr(rows[2],m=>at(sim.lift,m),C.fuel,3);
+    g.strokeStyle='rgba(255,255,255,.5)';g.lineWidth=1.5;g.beginPath();g.moveTo(X(ms),y+44);g.lineTo(X(ms),rows[2].y+rows[2].h);g.stroke();
+  }
+  if(ann)for(const a of ann){if(ms<a.ms)continue;const k=ease((ms-a.ms)/0.12);g.globalAlpha=alpha*k;font(700,21,FD);
+    const row=rows[a.row];txt(a.s,X(a.x),row.Y(a.y),a.c||col,a.al||'left','middle');g.globalAlpha=alpha;}
+  g.restore();
+}
+const ANN_M=[{ms:0.26,row:0,x:0.0,y:95,s:'48 V deschidere'},{ms:0.7,row:0,x:0.62,y:62,s:'~12 V menținere'},
+  {ms:0.3,row:1,x:0.33,y:20,s:'20 A',c:'#e8ecef'},{ms:0.75,row:1,x:0.8,y:2,s:'12 A',c:'#e8ecef'},
+  {ms:0.7,row:2,x:0.24,y:0.55,s:'acul pornește târziu',c:C.fuel}];
+const ANN_P=[{ms:0.3,row:0,x:0.02,y:140,s:'~150 V'},{ms:0.75,row:0,x:0.5,y:118,s:'tensiunea rămâne',c:C.piezo},
+  {ms:0.3,row:1,x:0.3,y:16,s:'+ încarcă',c:'#e8ecef'},{ms:1.3,row:1,x:1.32,y:-9,s:'− descarcă',c:'#e8ecef'},
+  {ms:0.5,row:2,x:0.42,y:0.55,s:'acul pornește imediat',c:C.fuel}];
+
+const CAP=[
+  [4.9,10.6,'Injectorul magnetic: bobina atrage o armătură de oțel, care ridică bila supapei de pe scaun. Camera de comandă se golește spre retur.'],
+  [10.9,16.7,'Injectorul piezo: o stivă de ~300 de plăcuțe ceramice se lungește sub tensiune și împinge supapa servo printr-un cuplor hidraulic.'],
+  [17,25,'Aceeași comandă de 1 ms. Magneticul primește 48 V ca să atragă armătura, apoi ~12 V ca s-o țină. Piezo primește ~150 V și stiva se lungește pe loc.'],
+  [25.3,33,'Când supapa golește camera de comandă, acul se ridică. La magnetic pornește târziu și se închide lent. La piezo răspunde aproape instant.'],
+  [33.2,39.5,'Într-un ciclu motor, calculatorul împarte doza în mai multe injecții: pre-injecții, injecția principală și post-injecții.'],
+  [39.5,46,'În aceeași fereastră de timp, magneticul reușește 3 injecții. Piezo face 5, scurte și precise, cu pauze mult mai mici între ele.'],
+];
+const WHY=[
+  {h:'Răspunde de ~3 ori mai repede',b:'Acul pornește după ~0,1 ms, față de ~0,3 ms la magnetic. Începutul și sfârșitul injecției sunt exact cum le cere calculatorul.',vis:'speed'},
+  {h:'Masă în mișcare mult mai mică',b:'Fără armătură grea și arc puternic: stiva piezo mișcă supapa printr-un cuplor hidraulic. Bosch indică cu ~75% mai puțină masă în mișcare.',vis:'mass'},
+  {h:'Mai multe injecții pe ciclu',b:'Piezo poate face până la 7–8 injecții pe ciclu. Magneticul face de regulă până la 5, cu pauze mai mari între ele.',vis:'count'},
+  {h:'Doze mici, foarte precise',b:'Pre-injecții de ~1 mm³ încălzesc cilindrul înainte de injecția principală. Arderea pornește lin, iar motorul bate mai puțin.',vis:'noise'},
+  {h:'Ardere mai curată',b:'Pulverizare fină la presiune mare: mai puțină funingine, DPF-ul se încarcă mai încet, consum și emisii mai mici.',vis:'clean'},
+];
+function caption(t){
+  for(const [a,b,s] of CAP){const k=fade(t,a,b,0.45);if(k<=0)continue;
+    g.globalAlpha=k;font(500,33,FB);const lines=wrap(s,960);
+    const y0=t<16.8?1330:1625;
+    lines.forEach((ln,i)=>txt(ln,60,y0+i*44,C.fg));g.globalAlpha=1;}
+}
+function header(t){
+  font(700,26,FD);g.letterSpacing='4px';txt('TURBO DOCTOR',60,82,C.muted);g.letterSpacing='0px';
+  const sc=SC.find(s=>t>=s.a&&t<s.b)||SC[SC.length-1];
+  font(600,24,FD);txt(sc.name.toUpperCase(),1020,82,C.dim,'right');
+  font(700,66,FD);txt('Injector Bosch',60,155,C.fg);
+  const w=g.measureText('Injector Bosch ').width;
+  txt('magnetic',60+w,155,C.mag);const w2=g.measureText('magnetic ').width;
+  txt('vs.',60+w+w2,155,C.muted);const w3=g.measureText('vs. ').width;txt('piezo',60+w+w2+w3,155,C.piezo);
+}
+function progress(t){
+  const x=60,w=960,y=1858;
+  g.fillStyle=C.line;rr(x,y,w,6,3);g.fill();
+  g.fillStyle=C.fg;rr(x,y,w*clamp(t/TOTAL),6,3);g.fill();
+  for(const s of SC){const xx=x+w*s.a/TOTAL;g.fillStyle=C.bg;g.fillRect(xx-1,y,3,6);}
+}
+function counter(t,es){
+  if(es.pat!=='multi'||!es.show||es.loop)return;
+  const k=fade(t,34,46,0.5);if(k<=0)return;
+  const cnt=(arr)=>arr.filter(([s])=>s<es.ms).length;
+  g.globalAlpha=k;
+  font(700,84,FD);txt(String(cnt(PULSES.multi.mag)),120,860,C.mag,'center');txt(String(cnt(PULSES.multi.piezo)),960,860,C.piezo,'center');
+  font(500,24,FB);txt('injecții',120,894,C.muted,'center');txt('injecții',960,894,C.muted,'center');
+  g.globalAlpha=1;
+}
+function bar(x,y,w,h,v,col,label,val){
+  g.fillStyle=C.panel2;rr(x,y,w,h,6);g.fill();g.fillStyle=col;rr(x,y,Math.max(8,w*v),h,6);g.fill();
+  font(600,24,FD);txt(label,x,y-10,C.muted);txt(val,x+w,y-10,col,'right');
+}
+function vis(kind,x,y,w,h,lt){
+  const p=ease(lt/1.4);
+  if(kind==='speed'){bar(x,y+50,w,30,p*0.35/0.4,C.mag,'Magnetic · întârziere ac','~0,3 ms');bar(x,y+140,w,30,p*0.12/0.4,C.piezo,'Piezo · întârziere ac','~0,1 ms');}
+  if(kind==='mass'){bar(x,y+50,w,30,p,C.mag,'Magnetic · armătură + bilă + arc','100%');bar(x,y+140,w,30,p*0.25,C.piezo,'Piezo · supapă servo','~25%');}
+  if(kind==='count'){
+    for(const [row,n,col,lab] of [[0,5,C.mag,'Magnetic · până la 5'],[1,8,C.piezo,'Piezo · până la 7–8']]){
+      font(600,24,FD);txt(lab,x,y+40+row*95,C.muted);
+      for(let j=0;j<8;j++){const on=j<n&&p*8>j;g.fillStyle=on?col:C.panel2;rr(x+j*(w/8),y+56+row*95,w/8-14,26,6);g.fill();}
+    }
+  }
+  if(kind==='noise'){
+    for(const [row,amp,col,lab] of [[0,1,C.mag,'Presiune în cilindru · fără pre-injecție'],[1,0.3,C.piezo,'Presiune în cilindru · cu pre-injecții piezo']]){
+      const yy=y+70+row*100;font(600,24,FD);txt(lab,x,yy-34,C.muted);
+      g.strokeStyle=col;g.lineWidth=3;g.beginPath();
+      for(let i=0;i<=200;i++){const u=i/200;if(u>p)break;const base=Math.exp(-(((u-0.5)/0.17)**2));const kn=amp*Math.sin(u*90)*Math.exp(-(((u-0.52)/0.06)**2));const v=base*0.8+kn*0.25;i?g.lineTo(x+u*w,yy+40-v*55):g.moveTo(x+u*w,yy+40-v*55);}
+      g.stroke();
+    }
+  }
+  if(kind==='clean'){bar(x,y+50,w,30,p*1,C.mag,'Funingine (relativ)','mai multă');bar(x,y+140,w,30,p*0.6,C.piezo,'Funingine (relativ)','mai puțină');}
+}
+function whyCard(t){
+  const t0=49,dur=4;
+  if(fade(t,46,69.2,0.5)<=0)return;
+  const kt=fade(t,46,49.2,0.4);
+  if(kt>0){g.globalAlpha=kt;font(700,76,FD);txt('De ce e superior',540,1450,C.fg,'center');txt('injectorul piezo?',540,1530,C.piezo,'center');g.globalAlpha=1;}
+  const i=Math.floor((t-t0)/dur);if(i<0||i>=WHY.length)return;
+  const lt=t-(t0+i*dur);const k=ease(lt/0.45)*(i===WHY.length-1?1-ease((t-68.7)/0.5):1-ease((lt-(dur-0.35))/0.35));
+  const it=WHY[i];const x=60,y=1240,w=960,h=560;
+  g.save();g.globalAlpha=k;g.translate(0,(1-k)*30);
+  g.fillStyle=C.panel;rr(x,y,w,h,16);g.fill();g.strokeStyle=C.line;g.lineWidth=1.5;g.stroke();
+  font(600,26,FD);g.letterSpacing='3px';txt(`MOTIVUL ${i+1} DIN ${WHY.length}`,x+36,y+56,C.piezo);g.letterSpacing='0px';
+  font(700,58,FD);txt(it.h,x+36,y+122,C.fg);
+  font(500,31,FB);wrap(it.b,w-72).forEach((ln,j)=>txt(ln,x+36,y+178+j*42,'#c9d1d9'));
+  vis(it.vis,x+36,y+330,w-72,190,lt);
+  g.restore();
+}
+function endCard(t){
+  const k=ease((t-69.2)/0.6);if(k<=0)return;
+  g.globalAlpha=k;
+  g.fillStyle=C.panel;rr(60,1240,960,560,16);g.fill();g.strokeStyle=C.line;g.lineWidth=1.5;g.stroke();
+  font(700,60,FD);txt('Piezo: mai rapid, mai precis,',540,1350,C.fg,'center');txt('mai silențios.',540,1418,C.piezo,'center');
+  font(500,31,FB);wrap('Dar e mai pretențios: are nevoie de motorină curată și filtru de motorină schimbat la timp.',860).forEach((ln,j)=>txt(ln,540,1500+j*42,'#c9d1d9','center'));
+  font(700,44,FD);g.letterSpacing='5px';txt('TURBO DOCTOR',540,1680,C.fg,'center');g.letterSpacing='0px';
+  font(500,26,FB);txt('Galați · București · Iași · Piatra Neamț',540,1730,C.muted,'center');
+  g.globalAlpha=1;
+}
+
+function draw(t){
+  t=clamp(t,0,TOTAL);
+  const es=engineState(t);const sm=injState('mag',es),sp=injState('piezo',es);
+  const shot=setCamera(t);update3D(t,sm,sp);renderer.render(scene,cam);
+  g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,W,H);
+  // fond pentru zona de text de jos și antet
+  const gr=g.createLinearGradient(0,1150,0,1260);gr.addColorStop(0,'rgba(17,20,23,0)');gr.addColorStop(1,'rgba(17,20,23,1)');g.fillStyle=gr;g.fillRect(0,1150,W,H-1150);
+  const g2=g.createLinearGradient(0,0,0,210);g2.addColorStop(0,'rgba(17,20,23,1)');g2.addColorStop(.75,'rgba(17,20,23,.85)');g2.addColorStop(1,'rgba(17,20,23,0)');g.fillStyle=g2;g.fillRect(0,0,W,210);
+  header(t);
+  tags(t,shot);
+  fieldLines(t,sm.on);
+  labels(LBL_M,MAGX,t,5.2,10.3,C.mag);labels(LBL_P,PIEX,t,11.2,16.4,C.piezo);
+  if(t>=53&&t<57){const k=fade(t,53,57,0.4);g.save();g.globalAlpha=k;g.strokeStyle=C.ret;g.lineWidth=3;g.setLineDash([8,6]);
+    for(const p of [proj(MAGX,127,0.5),proj(PIEX,84,0.5)]){g.beginPath();g.arc(p[0],p[1],46,0,7);g.stroke();}g.restore();}
+  counter(t,es);
+  const ks=fade(t,16.6,46.2,0.6);
+  if(t<33)[['mag',30,ANN_M],['piezo',550,ANN_P]].forEach(([k,x,a])=>scope(x,1240,500,330,k,'single',es.ms,ks,a));
+  else if(t<46.5)[['mag',30],['piezo',550]].forEach(([k,x])=>scope(x,1240,500,330,k,'multi',es.ms,ks,null));
+  const kt=fade(t,0,4.4,0.6);
+  if(kt>0){g.globalAlpha=kt;font(500,34,FB);wrap('Aceeași comandă de la calculator, două tehnologii. Urmărește cum se mișcă acul la fiecare.',900).forEach((ln,i)=>txt(ln,540,1400+i*46,'#c9d1d9','center'));g.globalAlpha=1;}
+  caption(t);whyCard(t);endCard(t);progress(t);
+}
+
+/* ================= Redare ================= */
+let t=0,playing=true,last=null;
+const reel=location.hash==='#reel';
+if(reel)document.body.classList.add('reel');
+const btn=document.getElementById('play'),scrub=document.getElementById('scrub'),tm=document.getElementById('tm');
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function fmt(s){s=Math.floor(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+function ui(){scrub.value=t;tm.textContent=fmt(t)+' / '+fmt(TOTAL);btn.textContent=playing?'Pauză':(t>=TOTAL?'Reia':'Pornește')}
+function loop(ts){
+  if(playing&&!window.__manual){if(last!=null)t+=Math.min(0.1,(ts-last)/1000);if(t>=TOTAL){t=TOTAL;playing=false;}draw(t);ui();}
+  last=ts;requestAnimationFrame(loop);
+}
+btn.addEventListener('click',()=>{if(t>=TOTAL)t=0;playing=!playing;ui()});
+scrub.addEventListener('input',()=>{t=+scrub.value;draw(t);ui()});
+window.__seek=s=>{window.__manual=true;t=s;draw(t);};
+window.__TOTAL=TOTAL;
+const go=()=>{if(reduce&&!reel){playing=false;t=22;}draw(t);ui();requestAnimationFrame(loop);window.__ready=true;};
+Promise.all(['700 66px "Barlow Condensed"','600 24px "Barlow Condensed"','500 33px Barlow','700 30px Barlow'].map(f=>document.fonts.load(f,'ăîșțâ'))).then(go,go);
+})();
+</script>
