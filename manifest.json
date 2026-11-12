@@ -375,6 +375,11 @@
   "downloader": "curl"
  },
  {
+  "id": "vo_piezo_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/h1dTm3NyGZ7u29h9TKUN/qMKzz6jYWB2KViDhTZAn/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "pov01_k4_B",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Bhlntqa3KWF7Vuc9w0hb/P9pag3IX67Cbfv3Id4AA/content.mp4",
   "downloader": "curl"
@@ -527,6 +532,11 @@
  {
   "id": "wmt2_lgD",
   "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/Dacia_Logan.jpg/960px-Dacia_Logan.jpg",
+  "downloader": "curl"
+ },
+ {
+  "id": "vo_piezo_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/UinwJzHz5LUU9JdKhsNz/4GCi5BcXsNdvxYde6xwQ/content.mp3",
   "downloader": "curl"
  },
  {
