@@ -415,6 +415,11 @@
   "downloader": "curl"
  },
  {
+  "id": "egr_vo_t1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/qGjTgZjWGXD6dVzK5E1z/IQl2nz17QURbJJ1Zw8OB/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "ai_flote_drona_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/9765448e-dc13-4bb3-b9e2-4c181cddb52f_2102189100362491046.mp4_effc9921-5ec5-42a4-824b-fae161c2018c.mp4",
   "downloader": "curl"
@@ -732,6 +737,11 @@
  {
   "id": "wmq_lg5",
   "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "egr_vo_t2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Es2G26A0Nm71nkavnDlO/tQQQXl4sAuQ7wuxh6a73/content.mp3",
   "downloader": "curl"
  },
  {
