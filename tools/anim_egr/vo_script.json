@@ -1,0 +1,18 @@
+[
+ {"text": "Tu știai că admisia plină de depuneri îți poate distruge turbina sau chiar motorul?", "gap": 0.3, "u": [45.9, 49.4]},
+ {"text": "Hai să vedem tot traseul.", "gap": 0.6, "u": [0.0, 1.2]},
+ {"text": "Acesta este motorul.", "gap": 0.25, "u": [1.2, 3.4]},
+ {"text": "Aceasta este turbina. Gazele de evacuare o învârt, iar compresorul trimite aer sub presiune spre motor.", "gap": 0.4, "u": [3.4, 6.6]},
+ {"text": "Acesta este EGR-ul. Ia o parte din gazele de evacuare și le trimite înapoi în admisie.", "gap": 0.4, "u": [6.6, 9.8]},
+ {"text": "Iar aceasta este galeria de admisie, ca la BMW N47, cu câte un canal pentru fiecare cilindru.", "gap": 0.4, "u": [9.8, 13.0]},
+ {"text": "Gazele recirculate scad emisiile, dar aduc cu ele funingine.", "gap": 0.4, "u": [13.0, 18.0]},
+ {"text": "Funinginea se amestecă cu vaporii de ulei și se lipește de pereții galeriei. Kilometru după kilometru, se formează o crustă neagră și tare, care înfundă admisia.", "gap": 0.4, "u": [18.0, 29.0]},
+ {"text": "Până într-o zi, când crusta se desprinde.", "gap": 0.5, "u": [29.0, 30.6]},
+ {"text": "În cazurile extreme, o bucată mare intră în cilindru, rămâne prinsă între piston și chiulasă, și motorul se poate distruge.", "gap": 0.3, "u": [30.6, 35.0]},
+ {"text": "Dar de cele mai multe ori se rup bucăți mici. Intră în cilindru, nu ard complet și sunt aruncate cu viteză pe evacuare, direct spre turbină.", "gap": 0.5, "u": [35.0, 43.4]},
+ {"text": "Acolo sunt paletele geometriei variabile, care reglează presiunea turbinei.", "gap": 0.4, "u": [43.4, 46.0]},
+ {"text": "Bucățile de calamină, întărite de căldura din motor, lovesc paletele și se înțepenesc între ele.", "gap": 0.3, "u": [46.0, 49.7]},
+ {"text": "Geometria se blochează, turbina nu mai reglează presiunea, iar motorul intră în avarie.", "gap": 0.6, "u": [49.7, 52.2]},
+ {"text": "De aceea, curățarea galeriei de admisie la timp este foarte importantă.", "gap": 0.5, "u": [52.2, 55.6]},
+ {"text": "Fără calamină, paletele se mișcă liber și turbina lucrează corect.", "gap": 0.3, "u": [55.6, 59.5]}
+]
