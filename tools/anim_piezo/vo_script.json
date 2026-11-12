@@ -1,0 +1,19 @@
+[
+ {"text": "Injectorul piezo versus injectorul magnetic.", "gap": 0.3},
+ {"text": "Pariu că nu știai asta despre aceste injectoare!", "gap": 0.3},
+ {"text": "Amândouă primesc motorina din același rail și ridică acul la fel: o supapă mică golește camera de comandă de deasupra acului.", "gap": 0.6},
+ {"text": "Diferența este cine mișcă supapa.", "gap": 0.3},
+ {"text": "La injectorul magnetic, calculatorul trimite {48|patruzeci și opt} de volți într-o bobină.", "gap": 0.5},
+ {"text": "Bobina atrage o armătură de oțel, care ridică bila supapei.", "gap": 0.3},
+ {"text": "La injectorul piezo, calculatorul trimite în jur de {150|o sută cincizeci} de volți într-o stivă de câteva sute de plăcuțe ceramice.", "gap": 0.5},
+ {"text": "Plăcuțele se lungesc pe loc și împing supapa.", "gap": 0.3},
+ {"text": "La aceeași comandă, acul injectorului piezo se deschide și se închide mult mai repede.", "gap": 0.5},
+ {"text": "De ce este superior injectorul piezo? Bosch spune așa.", "gap": 0.7},
+ {"text": "Actuatorul piezo dezvoltă de aproximativ zece ori forța unui solenoid.", "gap": 0.4},
+ {"text": "Pauza dintre două injecții poate coborî la {100|o sută} de microsecunde.", "gap": 0.35},
+ {"text": "Așa ajunge la până la zece injecții pe un singur ciclu, cu preinjecții foarte mici, la presiuni de până la {2.700|două mii șapte sute} de bari.", "gap": 0.35},
+ {"text": "Rezultatul: consum mai mic, emisii mai mici și zgomot de ardere redus.", "gap": 0.35},
+ {"text": "Mai simplu, pe înțelesul tuturor: injectorul magnetic toarnă motorina în două, trei reprize.", "gap": 0.7},
+ {"text": "Injectorul piezo o împarte în până la zece doze mici, puse exact când trebuie.", "gap": 0.3},
+ {"text": "De aceea motorul merge mai lin, mai silențios și consumă mai puțin.", "gap": 0.35}
+]
