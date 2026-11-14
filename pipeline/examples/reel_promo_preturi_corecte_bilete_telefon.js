@@ -1,4 +1,4 @@
-// v2 – „Recondiționări perfecte la prețuri corecte” (14.11.2026) – promo prețuri recondiționare turbine, 2 clipuri lipite în ordinea filmării, fără tăieturi
+// v2 – „Recondiționări perfecte la prețuri corecte” (14.11.2026, aprobat și publicat pe toate brandurile din Metricool) – promo prețuri recondiționare turbine, 2 clipuri lipite în ordinea filmării, fără tăieturi
 // clipuri: 0 IMG_2481 (hook: turbinele recondiționate, vocea lui din spatele camerei) · 4.767 IMG_2482 (selfie, explicațiile)
 // Cerut de Sabin: hook puternic din primul clip cu „Recondiționări perfecte la prețuri corecte”; cât explică, prețurile pe ecran
 // (Volkswagen 1.9: 900–1000 lei · BMW 2.0: 1000–1300 lei · Mercedes 2.2 biturbo: 1000–1200 lei pe turbină · Logan Euro 3, Euro 4: doar 700 lei);
