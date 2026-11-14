@@ -1,6 +1,7 @@
 // v2 – Range Rover Velar 3.0 biturbo, „revizia de 80.000 km” (14.11.2026), IMG_2487 (motorul coborât de sub mașină, fără față)
-// Sursa (src/cfr.mp4): 0–5.2 cadru AI „omul care plânge” (Veo 3.1 Fast, ElevenLabs, cu suspinele lui în audio/hook_bed.wav) peste
-// „Range Rover, 3.0, Velar, biturbo” · 5.2 IMG_2487 de la „Venit la revizie” (imaginea în ordinea filmată, vocea neatinsă).
+// Sursa (src/cfr.mp4): IMG_2487 întreg, din prima secundă (ecranul lui de început se vede), cu cadrul AI „omul care plânge” (Veo 3.1 Fast,
+// ElevenLabs; suspinele în audio/hook_bed.wav) într-o fereastră PiP sus-dreapta până la „Venit la revizie” (5.2 s) — cerut de Sabin pe 14.11:
+// „vreau omul care plânge să fie pus doar într-o parte, să se vadă și ecranul meu de început”. Titlul hook-ului stă în stânga ferestrei.
 // Cerut de Sabin: hook puternic „mașina a venit la revizia de 80.000 km” + un om care plânge; părți interesante când vorbește de
 // Range Rover; la final ecranul de diagnoză gratuită cu pictogramele serviciilor (turbine, injectoare, DPF, motoare) → endIcons.
 // Reel organic: fără CTA grafic; îndemnul lui vorbit de la final („Vă așteptăm… la o diagnoză gratuită”) rămâne doar cu subtitrări.
@@ -15,7 +16,7 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
     corecta: aw(3, 'corectă'), atentie: aw(3, 'Atenție'), motorizari: aw(3, 'motorizări'), mainile: aw(3, 'mâinile'), habar: aw(3, 'habarniștilor'),
     devin: aw(4, 'devin'), daune1: aw(4, 'daune'), mii1: aw(4, 'mii'), zeci: aw(4, 'zeci'), euro2: aw(4, 'euro', 1), va4: aw(4, 'Vă'),
   };
-  const CUT = 156 / 30;                                  // cadrul AI → IMG_2487 (chiar înainte de „Venit”)
+  const CUT = 156 / 30;                                  // fereastra PiP iese chiar înainte de „Venit”
   const T1 = .10, T2 = .46, T3 = .86;                     // impacturile titlului din hook
   const HD = CUT - .06;                                   // titlul hook-ului stă până la tăietură
   const BOOM2_END = A.va4 + .3;
@@ -32,11 +33,11 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       4: { daune: 'r', mii: 'y', euro: 'y', zeci: 'r', diagnoza: 'g', gratuita: 'g', admisie: 'c', injectie: 'c', evacuare: 'c', motor: 'c' },
     },
     items: [
-      // HOOK (cadru AI: omul plânge cu factura în mână; fața sus, titlul jos peste geacă)
-      { k: 'boom', t: T1, dur: HD - T1, txt: 'A VENIT LA', y: 1185, size: 90, col: '#FFFFFF', from: 3.0, sh: 14, ca: 18, riser: false, bg: .7, glow: 'rgba(98,216,255,.5)' },
-      { k: 'boom', t: T2, dur: HD - T2, txt: 'REVIZIA', y: 1318, size: 190, col: '#FFD21F', from: 3.6, sh: 28, ca: 30, riser: false, bg: 1 },
-      { k: 'boom', t: T3, dur: HD - T3, txt: 'DE 80.000 KM', y: 1462, size: 120, col: '#FF4B4B', from: 3.4, sh: 22, ca: 26, riser: false, bg: .85, glow: 'rgba(255,75,75,.55)' },
-      { k: 'stk', t0: T3 + .22, t1: HD - .04, ico: 'loudly_crying_face', x: 232, y: 1180, size: 118, rot: -10 },
+      // HOOK (filmarea lui + fereastra PiP cu omul care plânge, sus-dreapta 548–1040 × 236–856; titlul în stânga ei)
+      { k: 'boom', t: T1, dur: HD - T1, txt: 'A VENIT LA', x: 290, y: 412, size: 76, col: '#FFFFFF', from: 3.0, sh: 14, ca: 18, riser: false, bg: .7, glow: 'rgba(98,216,255,.5)' },
+      { k: 'boom', t: T2, dur: HD - T2, txt: 'REVIZIA', x: 290, y: 540, size: 150, col: '#FFD21F', from: 3.6, sh: 28, ca: 30, riser: false, bg: 1 },
+      { k: 'boom', t: T3, dur: HD - T3, txt: 'DE 80.000 KM', x: 290, y: 676, size: 82, col: '#FF4B4B', from: 3.4, sh: 22, ca: 26, riser: false, bg: .85, glow: 'rgba(255,75,75,.55)' },
+      { k: 'stk', t0: T3 + .22, t1: HD - .04, ico: 'loudly_crying_face', x: 556, y: 848, size: 118, rot: -10 },
       { k: 'chip', t0: A.range0 - .05, t1: HD, y: 186, ph: [[A.range0 - .05, 'automobile', 'RANGE ROVER', 'blue'], [A.three - .04, 'automobile', 'RANGE ROVER 3.0', 'blue'],
         [A.velar - .04, 'automobile', 'RANGE ROVER VELAR 3.0', 'blue'], [A.biturbo - .04, 'automobile', 'RANGE ROVER VELAR 3.0 BITURBO', 'blue']] },
 
@@ -91,10 +92,10 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       // hook
       { k: 'punch', t: T1, a: .06, sh: 12 }, { k: 'glitch', t: T1, d: .12 },
       { k: 'flash', t: T2 - .11, a: .7 }, { k: 'punch', t: T2, a: .15, sh: 32 }, { k: 'glitch', t: T2, d: .16 },
-      { k: 'shock', t: T2 + .01, x: 540, y: 1318, r: 700, n: 2, col: '#FFD21F', col2: '#FFFFFF' },
-      { k: 'punch', t: T3, a: .1, sh: 22 }, { k: 'shock', t: T3 + .01, x: 540, y: 1462, r: 620, n: 1, col: '#FF4B4B' },
+      { k: 'shock', t: T2 + .01, x: 290, y: 540, r: 700, n: 2, col: '#FFD21F', col2: '#FFFFFF' },
+      { k: 'punch', t: T3, a: .1, sh: 22 }, { k: 'shock', t: T3 + .01, x: 290, y: 676, r: 520, n: 1, col: '#FF4B4B' },
       // intrarea în filmarea lui
-      { k: 'glitch', t: CUT - .03, d: .12 },
+      { k: 'glitch', t: CUT - .06, d: .1 },
       { k: 'punch', t: A.n80, a: .05, sh: 10 }, { k: 'punch', t: A.turbinelor, a: .05, sh: 10 }, { k: 'punch', t: A.motor1, a: .05, sh: 12 },
       { k: 'punch', t: A.pretentioase, a: .05, sh: 10 }, { k: 'punch', t: A.atentie, a: .06, sh: 14 },
       // daunele
@@ -103,6 +104,6 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND, TOTAL }) => {
       { k: 'shock', t: A.zeci + .01, x: 540, y: 780, r: 640, n: 2, col: '#FF4B4B', col2: '#FFFFFF' },
     ],
     sfx: [[CUT - .12, 'whoosh', .5]],
-    bursts: [[T2 + .04, 540, 1318, 8, 460, 1.3], [T3 + .04, 540, 1462, 6, 380, 1.1], [A.zeci + .04, 540, 780, 7, 420, 1.2]],
+    bursts: [[T2 + .04, 290, 540, 8, 380, 1.3], [T3 + .04, 290, 676, 6, 320, 1.1], [A.zeci + .04, 540, 780, 7, 420, 1.2]],
   };
 };
