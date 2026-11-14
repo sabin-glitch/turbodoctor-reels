@@ -236,6 +236,14 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 #eMapTitle{position:absolute;left:0;right:0;top:994px;text-align:center;font-weight:800;font-size:26px;letter-spacing:4px;color:#CBD5E1}
 #eFree{position:absolute;left:230px;width:620px;top:1046px;height:88px;border-radius:999px;background:#16A34A;border:5px solid #fff;color:#fff;font-weight:900;font-size:42px;display:flex;align-items:center;justify-content:center;gap:14px;box-shadow:0 14px 34px rgba(0,0,0,.55);white-space:nowrap}
 #eFree img{width:54px;height:54px}
+/* eSvc (14.11.2026, Range Rover 80.000 km): pictogramele serviciilor sub „Diagnoză gratuită”, cerute de Sabin — CFG.endIcons = true (turbine, injectoare, DPF, motoare) sau [[icon, text], ...] */
+#eSvc{display:none;position:absolute;left:141px;top:1166px;width:798px;grid-template-columns:390px 390px;gap:18px}
+#endCard.hasSvc #eSvc{display:grid}
+#eSvc .svc{height:128px;border-radius:28px;background:rgba(12,16,22,.88);border:4px solid rgba(255,255,255,.92);display:flex;align-items:center;gap:14px;padding:0 14px 0 12px;box-shadow:0 14px 32px rgba(0,0,0,.5);opacity:0}
+#eSvc .svcI{width:98px;height:98px;border-radius:50%;background:#FFD21F;flex:none;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18)}
+#eSvc .svcI svg{width:76px;height:76px}
+#eSvc .svcT .a{font-family:JB;font-weight:800;font-size:21px;letter-spacing:3px;color:#FFD21F;line-height:1.1;margin-bottom:7px}
+#eSvc .svcT .b{font-family:Anton;font-size:48px;line-height:1;color:#fff;letter-spacing:1px;white-space:nowrap}
 .cityLbl{font-family:Mont;font-weight:900;font-size:34px;fill:#fff;paint-order:stroke;stroke:#0B0F14;stroke-width:9px;stroke-linejoin:round;letter-spacing:1px}
 .spark{width:90px;height:90px}
 /* dashboard warning lamps (promo DPF, 28.10.2026): instrument cluster whose lamps light up when he names them */
@@ -300,6 +308,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
   <div id="eMap"></div>
   <div id="eMapTitle">UNITĂȚILE NOASTRE</div>
   <div id="eFree"><img src="assets/emoji/stethoscope.png" alt="">DIAGNOZĂ GRATUITĂ</div>
+  <div id="eSvc"></div>
  </div>
  <div id="flash"></div>
 </div>
@@ -945,10 +954,37 @@ function rItem(o, t) {
   if (o.k === 'tip') { const rs = el.querySelectorAll('.tRow'); o.rows.forEach((r, i) => rowIn(rs[i], t, r[0])); }
 }
 
+// Turbo Doctor service pictograms (eSvc, 14.11.2026): ink line icons on a yellow badge, viewBox 0 0 100 100
+const SVC_ICONS = (() => {
+  const S = 'fill="none" stroke="#0F1216" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"';
+  const F = 'fill="#0F1216"';
+  const P = (cx, cy, r, a) => [cx + r * Math.cos(a * Math.PI / 180), cy + r * Math.sin(a * Math.PI / 180)].map(v => v.toFixed(1)).join(' ');
+  let blades = ''; for (let k = 0; k < 6; k++) { const a = k * 60; blades += `<path d="M ${P(48, 57, 5, a)} Q ${P(48, 57, 13, a + 28)} ${P(48, 57, 16.5, a + 58)}" ${S} stroke-width="4.5"/>`; }
+  const turbo = `<path d="M 48 25 H 89 V 41 H 76.1 A 32 32 0 1 1 48 25 Z" ${S}/><circle cx="48" cy="57" r="18.5" ${S} stroke-width="5"/>${blades}<circle cx="48" cy="57" r="4.5" ${F}/><path d="M 89 22 V 44" ${S}/>`;
+  const injector = `<rect x="41" y="7" width="18" height="13" rx="3" ${S} stroke-width="5.5"/><path d="M 59 11 H 69 V 17 H 59" ${S} stroke-width="5"/>` +
+    `<rect x="34" y="20" width="32" height="35" rx="6" ${S}/><path d="M 34 38 H 66" ${S} stroke-width="4.5"/><path d="M 34 29 H 21" ${S}/>` +
+    `<path d="M 39 55 L 45.5 74 H 54.5 L 61 55" ${S}/><path d="M 47 74 V 82 H 53 V 74" ${S} stroke-width="5"/>` +
+    `<circle cx="50" cy="90" r="2.8" ${F}/><circle cx="43.5" cy="92.5" r="2.6" ${F}/><circle cx="56.5" cy="92.5" r="2.6" ${F}/><circle cx="37.5" cy="97" r="2.4" ${F}/><circle cx="50" cy="97.5" r="2.6" ${F}/><circle cx="62.5" cy="97" r="2.4" ${F}/>`;
+  let cells = ''; for (let i = 0; i < 4; i++) for (let j = 0; j < 3; j++) cells += `<rect x="${33 + i * 9}" y="${40 + j * 9}" width="6" height="6" rx="1" ${F}/>`;
+  const dpf = `<rect x="25" y="31" width="50" height="42" rx="8" ${S}/><path d="M 25 39 L 14 46 V 58 L 25 65 M 75 39 L 86 46 V 58 L 75 65" ${S}/>` +
+    `<path d="M 14 49 H 5 M 14 55 H 5 M 86 49 H 95 M 86 55 H 95" ${S} stroke-width="5"/>${cells}` ;
+  const motor = `<path d="M 21 45 H 30 V 37 H 41 V 31 H 65 V 37 H 72 L 78 43 H 86 V 67 H 78 L 72 73 H 36 L 30 67 H 21 Z" ${S}/>` +
+    `<path d="M 47 31 V 22 H 59 V 31" ${S} stroke-width="5.5"/><path d="M 21 50 H 10 V 62 H 21" ${S} stroke-width="5.5"/><path d="M 86 52 H 94 V 60 H 86" ${S} stroke-width="5"/>` +
+    `<path d="M 38 52 H 70" ${S} stroke-width="4.5"/>`;
+  const wrap = b => `<svg viewBox="0 0 100 100" width="100%" height="100%">${b}</svg>`;
+  return { turbo: wrap(turbo), injector: wrap(injector), dpf: wrap(dpf), motor: wrap(motor) };
+})();
+const SVC_DEF = [['turbo', 'TURBINE'], ['injector', 'INJECTOARE'], ['dpf', 'DPF'], ['motor', 'MOTOARE']];
+const SVC_AT = 2.5, SVC_DT = .18;  // after „Diagnoză gratuită” (2.1 s)
 function rEnd(t) {
   const el = $('endCard'); if (t < TEND || CFG.endCard === false) { hide(el); return; }  // endCard:false = promo final screen built from items (opis)
   const k = t - TEND; el.style.display = 'block'; el.style.opacity = clamp(k / .3); el.style.transform = 'none';
   if (CFG.endSub && !el.classList.contains('hasSub')) { el.classList.add('hasSub'); el.querySelector('#eSub').innerHTML = [].concat(CFG.endSub).join('<br>'); }
+  const SVC = CFG.endIcons === true ? SVC_DEF : CFG.endIcons;
+  if (SVC && !el.classList.contains('hasSvc')) { el.classList.add('hasSvc');
+    el.querySelector('#eSvc').innerHTML = SVC.map(([ic, tx, kk]) => `<div class="svc"><div class="svcI">${SVC_ICONS[ic] || ''}</div><div class="svcT"><div class="a">${kk || 'REPARAȚII'}</div><div class="b">${tx}</div></div></div>`).join(''); }
+  if (SVC) el.querySelectorAll('#eSvc .svc').forEach((c, i) => { const p = clamp((k - SVC_AT - i * SVC_DT) / .32); c.style.opacity = eOut(p).toFixed(3);
+    c.style.transform = `translateY(${((1 - eOut(p)) * 26).toFixed(1)}px) scale(${p > 0 ? eBack(p, 2.0).toFixed(4) : 0})`; });
   const seq = [['.eWord', .05], ['#eSub', .3], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1]];
   seq.forEach(([sel, d]) => { const c = el.querySelector(sel); const p = clamp((k - d) / .4);
     let tr = `translateY(${(1 - eOut(p)) * 40}px)`;
@@ -960,7 +996,8 @@ function rEnd(t) {
     const h = document.getElementById('halo' + i); const hk = ((k - d - .2) % 1.6 + 1.6) % 1.6; h.setAttribute('r', 10 + hk * 34); h.setAttribute('opacity', p >= 1 ? Math.max(0, .9 - hk / 1.6) : 0); });
 }
 function endCues() { sfx(TEND - .5, 'riser', .5); sfx(TEND - .08, 'whoosh', .8); sfx(TEND, 'hit', .55); if (CFG.endCard === false) return; sfx(TEND + .3, 'ding', .55);
-  [0, 1, 2, 3].forEach(i => sfx(TEND + 1.1 + i * .26, 'pop', .45)); sfx(TEND + 2.1, 'ding', .45); }
+  [0, 1, 2, 3].forEach(i => sfx(TEND + 1.1 + i * .26, 'pop', .45)); sfx(TEND + 2.1, 'ding', .45);
+  const SVC = CFG.endIcons === true ? SVC_DEF : CFG.endIcons; if (SVC) SVC.forEach((_, i) => sfx(TEND + SVC_AT + i * SVC_DT, 'pop', .45)); }
 
 let SHOCK_G = null;
 function renderShock(t) {  // fx {k:'shock', t, x, y, r, n, col, col2, w}: expanding rings from the impact point
