@@ -1,0 +1,22 @@
+[
+ {"text": "Știai că un banal schimb de filtru de motorină te poate costa peste {2.000|două mii} de euro?", "gap": 0.3, "u": [69.3, 74.6]},
+ {"text": "Hai să-ți explic cum eviți distrugerea pompei de înaltă presiune și a sistemului de injecție, de la un simplu schimb de filtru de combustibil.", "gap": 0.6, "u": [0.0, 5.0]},
+ {"text": "Acesta este sistemul de alimentare cu motorină, cu tur și retur.", "gap": 0.4, "u": [5.0, 10.0]},
+ {"text": "În rezervor, la majoritatea mașinilor, o pompă electrică auxiliară trimite motorina pe tur, spre motor.", "gap": 0.4, "u": [10.0, 15.4]},
+ {"text": "Pe drum, motorina trece prin filtru, montat între rezervor și pompa de înaltă presiune.", "gap": 0.4, "u": [15.5, 21.0]},
+ {"text": "Pompa de înaltă presiune ridică presiunea până la circa {2.000|două mii} de bari și împinge motorina în rampa comună, apoi la injectoare.", "gap": 0.4, "u": [21.0, 26.4]},
+ {"text": "Ce nu se injectează se întoarce pe retur, înapoi în rezervor.", "gap": 0.4, "u": [26.5, 31.3]},
+ {"text": "Acum schimbăm filtrul. Filtrul nou vine gol, iar în el și în conducta spre pompă intră aer.", "gap": 0.5, "u": [31.5, 40.0]},
+ {"text": "Corect este să faci amorsarea din diagnoză. Testerul pornește pompa din rezervor în cicluri și umple filtrul cu motorină.", "gap": 0.4, "u": [40.0, 45.6]},
+ {"text": "Aerul este împins prin pompă și iese pe retur, înapoi în rezervor. Abia când circuitul e plin, fără aer, pornești motorul.", "gap": 0.4, "u": [45.6, 54.4]},
+ {"text": "Dar ce se întâmplă dacă sari peste amorsare și dai direct la cheie? Aerul ajunge primul în pompa de înaltă presiune.", "gap": 0.6, "u": [54.5, 60.2]},
+ {"text": "Aceasta este o pompă Bosch {CP4|ce pe patru}, în secțiune. Cama împinge tachetul cu rolă, iar tachetul împinge pistonul. Totul este uns doar de motorină.", "gap": 0.4, "u": [60.4, 64.9]},
+ {"text": "Cu aer în loc de motorină, filmul de ungere dispare. Rola nu se mai rostogolește. Se blochează și freacă pe camă.", "gap": 0.4, "u": [65.0, 69.1]},
+ {"text": "Tachetul se rotește în alezaj, rola ajunge de-a curmezișul camei și începe să o taie.", "gap": 0.4, "u": [69.2, 73.7]},
+ {"text": "Rezultă pilitură metalică, iar pompa practic se autodistruge.", "gap": 0.4, "u": [73.8, 78.6]},
+ {"text": "Pilitura pleacă în rampa comună și în injectoare, iar pe retur ajunge înapoi în rezervor.", "gap": 0.5, "u": [79.0, 84.7]},
+ {"text": "Tot sistemul este contaminat. Nu mai schimbi doar pompa, ci și injectoarele, rampa, conductele, și cureți rezervorul. De aici vine nota de peste {2.000|două mii} de euro.", "gap": 0.4, "u": [84.8, 90.0]},
+ {"text": "Așa că, după orice schimb de filtru de motorină, cere amorsarea corectă, din diagnoză.", "gap": 0.5, "u": [90.0, 93.0]},
+ {"text": "Acum știi ce trebuie să faci ca să nu creezi pilitură fără sens.", "gap": 0.5, "u": [93.0, 95.0]},
+ {"text": "Totuși, dacă ai orice problemă pe sistemele de injecție, Turbo Doctor este locul ideal unde te putem ajuta în rezolvarea problemei tale.", "gap": 0.45, "u": [95.0, 97.0]}
+]
