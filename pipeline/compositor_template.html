@@ -241,6 +241,52 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* dashboard warning lamps (promo DPF, 28.10.2026): instrument cluster whose lamps light up when he names them */
 .dashC{filter:drop-shadow(0 18px 34px rgba(0,0,0,.6))}
 .dashC svg{display:block}
+/* ptag (14.11.2026, „Recondiționări perfecte la prețuri corecte”): bilet de preț deasupra capului – turbina desenată (rotorul se învârte), mașina pe două rânduri, prețul pe galben; biletele se întorc unul după altul */
+.ptag{width:1000px;height:200px;filter:drop-shadow(0 16px 26px rgba(0,0,0,.55))}
+.ptag .tk{position:absolute;inset:0;clip-path:path('M 30 0 H 548 A 18 18 0 0 0 584 0 H 970 A 30 30 0 0 1 1000 30 V 170 A 30 30 0 0 1 970 200 H 584 A 18 18 0 0 0 548 200 H 30 A 30 30 0 0 1 0 170 V 30 A 30 30 0 0 1 30 0 Z')}
+.ptag .tkL{position:absolute;left:0;top:0;width:566px;height:200px;background:linear-gradient(120deg,#081120 0%,#12264A 100%);border-radius:30px 0 0 30px;box-shadow:inset 0 0 0 3px rgba(98,216,255,.55)}
+.ptag .tkI{position:absolute;left:18px;top:26px;width:140px;height:113px}
+.ptag .tkI svg{width:140px;height:113px;display:block}
+.ptag .tkT{position:absolute;left:170px;top:21px;width:384px}
+.ptag .tkT .k{font-family:JB;font-weight:800;font-size:19px;letter-spacing:2.1px;color:var(--cyan);white-space:nowrap}
+.ptag .tkT .b,.ptag .tkT .e{display:block;width:max-content;font-family:Anton;white-space:nowrap;transform-origin:0 50%}
+.ptag .tkT .b{font-size:62px;line-height:1.1;color:#fff;letter-spacing:1px;margin-top:1px}
+.ptag .tkT .e{font-size:40px;line-height:1.12;color:var(--yellow);letter-spacing:1.5px}
+.ptag .tkD{position:absolute;left:44px;bottom:19px;display:flex;gap:9px}
+.ptag .tkD i{width:13px;height:13px;border-radius:50%;background:rgba(255,255,255,.26)}
+.ptag .tkD i.on{background:var(--yellow);box-shadow:0 0 8px rgba(255,210,31,.8)}
+.ptag .tkR{position:absolute;left:566px;top:0;width:434px;height:200px;background:linear-gradient(135deg,#FFE55C 0%,#FFC61A 100%);color:#0B1220;border-radius:0 30px 30px 0;display:flex;flex-direction:column;align-items:center}
+.ptag .tkR:before{content:'';position:absolute;left:-2px;top:26px;bottom:26px;border-left:4px dashed rgba(11,18,32,.5)}
+.ptag .tkR .tl{margin-top:15px;font-family:JB;font-weight:800;font-size:19px;letter-spacing:3px;white-space:nowrap}
+.ptag .tkP{position:absolute;left:566px;top:34px;width:434px;display:flex;flex-direction:column;align-items:center;color:#0B1220}
+.ptag .tkP .pr{font-family:Anton;font-size:98px;line-height:1.04;letter-spacing:1px;white-space:nowrap;transform-origin:50% 56%}
+.ptag .tkP .un{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-top:-9px;white-space:nowrap}
+.ptag .tkP .un .u{font-family:Anton;font-size:37px;letter-spacing:2px}
+.ptag .tkP .un .sf{font-weight:900;font-size:25px;letter-spacing:.5px}
+/* phone (14.11.2026): telefon care „se deschide” și rulează o înregistrare de ecran re-temporizată (assets/phone, tools/phone), cu cameră virtuală, atingeri, evidențieri și eticheta de sus care urmează ce spune */
+.phW{width:1320px;height:2868px;transform-origin:0 0}
+.phW .phR{position:absolute;inset:0;transform-origin:50% 50%}
+.phW .phB{position:absolute;left:-44px;top:-44px;width:1408px;height:2956px;border-radius:234px;background:#07080A;box-shadow:0 0 0 7px #2A2D33,0 0 0 11px #7C828C,0 0 0 14px #17191D,0 80px 170px rgba(0,0,0,.75)}
+.phW .phK{position:absolute;width:10px;border-radius:5px;background:#666B74}
+.phW .phS{position:absolute;left:0;top:0;width:1320px;height:2868px;border-radius:190px;overflow:hidden;background:#000}
+.phW .phI{position:absolute;left:0;top:0;width:1320px;height:2868px;display:block}
+.phW .phO{position:absolute;left:0;top:0;width:1320px;height:2868px}
+.phW .phOff{position:absolute;inset:0;background:#000}
+.phW .phGl{position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,0) 30%,rgba(255,255,255,0) 66%,rgba(255,255,255,.12) 100%)}
+.phLab{display:none;flex-direction:column;align-items:center;justify-content:center;min-width:520px;padding:13px 36px 15px;border-radius:26px;background:rgba(5,9,16,.95);border:3px solid rgba(98,216,255,.6);box-shadow:0 14px 34px rgba(0,0,0,.6);text-align:center}
+.phLab .lK{font-family:JB;font-weight:800;font-size:23px;letter-spacing:4px;color:var(--yellow);white-space:nowrap}
+.phLab .lT{font-family:Anton;font-size:72px;line-height:1.06;color:#fff;letter-spacing:1px;white-space:nowrap;display:inline-block}
+.phLab .lT.g{color:#4ADE80}.phLab .lT.y{color:var(--yellow)}.phLab .lT.c{color:var(--cyan)}
+.phLab .lN{display:none;margin-top:7px;font-family:JB;font-weight:800;font-size:23px;letter-spacing:1px;color:#fff;background:#15803D;border:2px solid #fff;border-radius:12px;padding:6px 16px 7px;white-space:nowrap}
+/* prices (14.11.2026): lista de prețuri compactă, pe cardul de final sub „Diagnoză gratuită” (nume în stânga, prețul galben în dreapta) */
+.plist{width:940px;padding:15px 30px 10px;background:rgba(6,12,22,.95);border:3px solid rgba(98,216,255,.5);border-radius:26px;box-shadow:0 18px 44px rgba(0,0,0,.55);color:#fff}
+.plist .pH{display:flex;align-items:center;justify-content:space-between;font-family:JB;font-weight:800;font-size:22px;letter-spacing:2px;color:var(--cyan);white-space:nowrap;padding-bottom:9px}
+.plist .pH img{width:36px;height:36px;vertical-align:-9px;margin-right:8px}
+.plist .pH .t2{color:var(--yellow)}
+.plist .pRow{display:flex;align-items:center;justify-content:space-between;gap:12px;height:68px;border-top:2px solid rgba(255,255,255,.16);opacity:0;white-space:nowrap}
+.plist .pRow .n{font-weight:900;font-size:34px;letter-spacing:.2px}
+.plist .pRow .p{font-family:Anton;font-size:48px;color:var(--yellow);letter-spacing:1px}
+.plist .pRow .p small{font-family:Mont;font-weight:900;font-size:22px;color:#fff;margin-left:9px;letter-spacing:.3px}
 /* opis (promo mentenanță, 28.10.2026): final screen = recommended works + phone + locations, all on one frame (CFG.endCard = false hides the standard end card) */
 .opis{width:960px;color:#fff;text-align:center}
 .opis .oT{font-family:Anton;font-size:92px;line-height:1;letter-spacing:2px;text-shadow:0 10px 30px rgba(0,0,0,.6)}
@@ -491,7 +537,7 @@ function renderBg(t) {
   if (xr > 0.01) filt = `grayscale(${xr.toFixed(2)}) invert(${(xr * .92).toFixed(2)}) sepia(${(xr * .6).toFixed(2)}) hue-rotate(${(xr * 165).toFixed(0)}deg) saturate(${(1 + xr * 1.6).toFixed(2)}) contrast(${(1 + xr * .25).toFixed(2)})`;
   else if (bw > 0.01) filt = `grayscale(${bw.toFixed(2)}) contrast(${(1 + .18 * bw).toFixed(2)}) brightness(${(1 - .06 * bw).toFixed(2)})`;
   // veil (29.10.2026): fundal estompat și întunecat sub cardul de capitol (chap), plin din primul cadru
-  let ve = 0; for (const f of fxOf('veil')) ve = Math.max(ve, win01(t, f.t0, f.t1, .001, f.out ?? .16));
+  let ve = 0; for (const f of fxOf('veil')) ve = Math.max(ve, (f.a ?? 1) * win01(t, f.t0, f.t1, f.in ?? .001, f.out ?? .16));  // in / a (14.11.2026): intrare lină și tărie, pentru telefonul din piesa `phone`
   if (ve > 0.01) filt = `blur(${(24 * ve).toFixed(1)}px) brightness(${(1 - .6 * ve).toFixed(3)}) saturate(${(1 + .2 * ve).toFixed(2)})`;
   if (INTRO && t < HS) { const p = clamp((HS - t) / .35); filt = `blur(${(22 * p).toFixed(1)}px) brightness(${(1 - .62 * p).toFixed(3)}) saturate(${(1 + .25 * p).toFixed(2)})`; }
   if (bg.dataset.f !== filt) { bg.style.filter = filt; bg.dataset.f = filt; }
@@ -555,7 +601,7 @@ function rHook(t) {
 
 // ---------- ITEMS ----------
 const SLOT = ['chip', 'file', 'list', 'ecg', 'stat', 'cmp', 'art', 'schem', 'chain', 'pipe', 'gauge', 'def', 'bars', 'eq', 'tip'];
-const ITEMS = [];
+const ITEMS = [], PEND = [];  // PEND: images a piece swaps per frame (phone screen) – renderFrame waits for them to decode
 const mk = (cls, html, parent = 'items') => { const d = document.createElement('div'); d.className = cls; d.innerHTML = html; $(parent).appendChild(d); return d; };
 const SVGNS = 'http://www.w3.org/2000/svg';
 const ARROW_DOWN = '<svg width="40" height="36" viewBox="0 0 40 36"><path class="ad" d="M 20 2 L 20 28 M 9 18 L 20 30 L 31 18" fill="none" stroke="#EAF6FF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>';
@@ -675,6 +721,23 @@ function buildItems() {
         o.rows.map(r => r[1] ? `<div class="oR">${img(r[1])}<span>${r[2]}</span>${o.checks ? OK : ''}</div>` : `<div class="oR sec"><span>${r[2]}</span></div>`).join('') + '</div>' +
         `<div class="oP"><small>${o.phoneLab || 'PROGRAMĂRI'}</small>${o.phone || '0739 065 065'}</div><div class="oW">${o.site || ''}</div>` +
         `<div class="oL">${(o.cities || []).map(c => `<span>${img('round_pushpin')}${c}</span>`).join('')}</div>`, 'overlays'); }
+    if (o.k === 'prices') {  // {k:'prices', t0, t1, top, ico, title, sub, rows: [[t, 'VOLKSWAGEN 1.9', '900–1000', 'LEI']]}
+      o.el = mk('abs plist', `<div class="pH"><span>${img(o.ico || 'stethoscope')}${o.title || 'REȚETA TURBO DOCTOR'}</span><span class="t2">${o.sub || ''}</span></div>` +
+        o.rows.map(r => `<div class="pRow"><span class="n">${r[1]}</span><span class="p">${r[2]}<small>${r[3] ?? 'LEI'}</small></span></div>`).join(''), 'overlays'); }
+    if (o.k === 'ptag') {  // {k:'ptag', t0, t1, y, kicker, pd, tags: [[t, 'VOLKSWAGEN', 'MOTOR 1.9', '900–1000', '/ TURBINĂ' (după LEI), 'PREȚ CORECT' (sus), mărimea prețului (98)]]}: bilete de preț care se întorc unul după altul
+      o.uid = 'pt' + ITEMS.length; o.t0 = o.t0 ?? o.tags[0][0];
+      o.el = mk('abs ptag', `<div class="tk"><div class="tkL"><div class="tkI">${ART.turbo(o.uid)}</div><div class="tkT"><div class="k">${o.kicker || 'RECONDIȚIONARE TURBINĂ'}</div><div class="b"></div><div class="e"></div></div>` +
+        `<div class="tkD">${o.tags.map(() => '<i></i>').join('')}</div></div><div class="tkR"><div class="tl"></div></div></div><div class="tkP"><div class="pr"></div><div class="un"><span class="u">${o.unit ?? 'LEI'}</span><span class="sf"></span></div></div>`, 'overlays');
+      o.bl = [...o.el.querySelectorAll('.tkI svg g')].find(g => !g.hasAttribute('transform'));  // the compressor wheel: it spins
+    }
+    if (o.k === 'phone') {  // {k:'phone', t0, t1, dir, f0, n, cam: [[t, w, top, dur]], taps: [[t, x, y]], hl: [{t0, t1, box: [x, y, w, h], dim, col, r, sw}], lab: [[t, kicker, text, cls, font size]], note: [[t, text]], labY}
+      const P = TL.phone || {}; o.n = o.n ?? P.n; o.f0 = o.f0 ?? P.f0 ?? o.t0; o.dir = o.dir || 'assets/phone';
+      if (!o.n) throw new Error('phone: no frames (tools/phone/build_phone_frames.py)');
+      o.el = mk('abs phW', `<div class="phR"><div class="phB"></div><div class="phK" style="left:-58px;top:560px;height:150px"></div><div class="phK" style="left:-58px;top:790px;height:250px"></div><div class="phK" style="left:-58px;top:1090px;height:250px"></div><div class="phK" style="left:1368px;top:930px;height:400px"></div>` +
+        `<div class="phS"><img class="phI" alt=""><svg class="phO" viewBox="0 0 1320 2868"></svg><div class="phOff"></div><div class="phGl"></div></div></div>`, 'overlays');
+      o.im = o.el.querySelector('.phI'); o.sv = o.el.querySelector('.phO'); o.rot = o.el.querySelector('.phR');
+      o.lb = mk('abs phLab', '<div class="lK"></div><div class="lT"></div><div class="lN"></div>', 'overlays'); o.lb.dataset.disp = 'flex';
+    }
     ITEMS.push(o);
   }
 }
@@ -712,6 +775,10 @@ function itemCues() {
     if (o.k === 'call') { sfx(o.t0, 'lock', .45); sfx(o.t0 + .38, 'type', .4); }
     if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, 'alarm', .3); } }
     if (o.k === 'opis') { sfx(o.t0, 'whoosh', .5); o.rows.forEach(r => sfx(r[0], 'tick2', .55)); sfx(o.phoneAt, 'impact', .45); sfx(o.phoneAt + .02, 'ding', .4); sfx(o.citiesAt, 'pop', .5); }
+    if (o.k === 'prices') { sfx(o.t0 - .08, 'whoosh', .5); o.rows.forEach(r => { sfx(r[0], 'impact', .4); sfx(r[0] + .02, 'tick2', .5); }); }
+    if (o.k === 'ptag') { const pd = o.pd ?? .42; o.tags.forEach((g, i) => { sfx(g[0] - .12, 'whoosh', i ? .4 : .5); sfx(g[0] + .04, 'pop', .45); sfx(g[0] + pd - .02, 'impact', .8); sfx(g[0] + pd, 'stamp', .5); sfx(g[0] + pd + .06, 'ding', .4); }); sfx(o.t1 - .02, 'whoosh', .4); }
+    if (o.k === 'phone') { sfx(o.t0 - .06, 'whoosh', .85); sfx(o.t0 + .34, 'lock', .7); (o.taps || []).forEach(p => sfx(p[0], 'tick', .75)); (o.lab || []).forEach((p, i) => sfx(p[0], i ? 'tick2' : 'pop', .5));
+      (o.hl || []).forEach(h => { if (!h.silent) { sfx(h.t0, 'lock', .6); sfx(h.t0 + .05, 'ding', .45); } }); (o.note || []).forEach(p => sfx(p[0], 'ding', .42)); sfx(o.t1 - .05, 'whoosh', .7); }
     if (o.k === 'dash') { sfx(o.t0, 'whoosh', .35); o.lamps.forEach(l => { sfx(l[0], 'tick', .7); sfx(l[0] + .01, 'chime', o.chime ?? .9); }); (o.pulse || []).forEach(p => sfx(p, 'impact', .3)); if (o.focus) { sfx(o.focus[0], 'lock', .6); sfx(o.focus[0] + .02, 'scan', .35); } }
   }
   for (const f of (CFG.fx || [])) {
@@ -831,6 +898,68 @@ function rItem(o, t) {
   if (o.k === 'dash') { const L = life(t, o.t0, o.t1, .34, .22, 1.7); if (!L) { hide(el); return; }
     const sp = o.shrink ? eInOut(clamp((t - o.shrink[0]) / .5)) : 0; el.innerHTML = dashSvg(o, t);
     setT(el, o.x || 540, (o.y || 336) + (o.shrink ? o.shrink[2] || 0 : 0) * sp + bob(L.k, 2, 2), L.s * lerp(o.s || 1, o.shrink ? o.shrink[1] : (o.s || 1), sp), 0, L.o); return; }
+  if (o.k === 'prices') { const L = life(t, o.t0, o.t1, .36, .22, 1.5); if (!L) { hide(el); return; }
+    setTop(el, o.x || 540, o.top || 1170, L.s, L.o); el.querySelectorAll('.pRow').forEach((r, i) => rowIn(r, t, o.rows[i][0])); return; }
+  if (o.k === 'ptag') {
+    const G = o.tags, FO = .15, FI = .26, pd = o.pd ?? .42;
+    if (t < G[0][0] - .02 || t > o.t1 + .22) { hide(el); return; }
+    let i = 0; G.forEach((g, j) => { if (t >= g[0]) i = j; });
+    const g = G[i], nx = G[i + 1], k = t - g[0];
+    if (el.dataset.i !== String(i)) { el.dataset.i = i; el.style.display = 'block';
+      const b = el.querySelector('.b'), e = el.querySelector('.e'), pr = el.querySelector('.pr');
+      b.textContent = g[1]; e.textContent = g[2] || ''; pr.textContent = g[3]; el.querySelector('.sf').textContent = g[4] || ''; el.querySelector('.tl').textContent = g[5] || o.top || 'PREȚ CORECT';
+      [[b, 62, 380], [e, 40, 380], [pr, g[6] || 98, 398]].forEach(([n, fs, mw]) => { n.style.fontSize = fs + 'px'; const w = n.scrollWidth; if (w > mw) n.style.fontSize = (fs * mw / w).toFixed(1) + 'px'; });
+      el.querySelectorAll('.tkD i').forEach((d, j) => d.classList.toggle('on', j === i)); }
+    // flip: the ticket turns in around its horizontal axis; the next one pushes it out the same way
+    let rx = k < FI ? -92 * (1 - eBack(clamp(k / FI), 1.5)) : 0, op = clamp(k / .08), dy = !i && k < FI ? -70 * (1 - eOut(clamp(k / FI))) : 0;
+    const tout = nx ? nx[0] : o.t1 + FO; if (t > tout - FO) { const q = eIn(clamp((t - (tout - FO)) / FO)); rx = 92 * q; if (!nx) { op *= 1 - q; dy = -50 * q; } }
+    const pk = k - pd, pr = el.querySelector('.pr'), un = el.querySelector('.un');
+    if (pk < -.02) { pr.style.opacity = 0; un.style.opacity = 0; }
+    else { const p = clamp(pk / .13), sc = pk < .13 ? lerp(2.2, 1, eIn(p)) : 1 + .07 * Math.exp(-(pk - .13) * 9) * Math.sin((pk - .13) * 36);
+      pr.style.opacity = clamp(p * 3).toFixed(3); pr.style.transform = `scale(${sc.toFixed(4)})`; const u = clamp((pk - .1) / .2); un.style.opacity = u.toFixed(3); un.style.transform = `translateY(${((1 - eOut(u)) * 14).toFixed(1)}px)`; }
+    const shk = pk >= 0 ? 7 * Math.exp(-pk * 9) : 0;
+    if (o.bl) o.bl.setAttribute('transform', `rotate(${((t - o.t0) * 150 + 520 * (1 - Math.exp(-Math.max(0, k) * 3))).toFixed(1)})`);
+    el.style.display = 'block'; el.style.opacity = op.toFixed(3);
+    el.style.transform = `translate(${((o.x || 540) + shk * Math.sin(pk * 85)).toFixed(1)}px,${((o.y || 236) + dy + shk * Math.cos(pk * 70) + bob(t - o.t0, 1, 2)).toFixed(1)}px) translate(-50%,-50%) perspective(1100px) rotateX(${rx.toFixed(2)}deg)`;
+    return;
+  }
+  if (o.k === 'phone') {
+    const IN = o.inD ?? .55, OUT = o.outD ?? .42, k = t - o.t0;
+    if (k < 0 || t > o.t1 + OUT) { hide(el); hide(o.lb); return; }
+    const fi = Math.max(0, Math.min(o.n - 1, Math.round((t - o.f0) * FPS))), src = `${o.dir}/${String(fi).padStart(5, '0')}.jpg`;
+    if (o.im.dataset.src !== src) { o.im.dataset.src = src; o.im.src = src; PEND.push(o.im.decode().catch(() => { })); }
+    // virtual camera: cam = [[t, screen width px, y of the screen's top edge, move duration]] – each key is reached at its t
+    const C = o.cam; let w = C[0][1], top = C[0][2];
+    for (let i = 1; i < C.length; i++) { const d = C[i][3] ?? .5, p = eInOut(clamp((t - (C[i][0] - d)) / d)); w = lerp(w, C[i][1], p); top = lerp(top, C[i][2], p); }
+    const pin = clamp(k / IN), e = eOut(pin), q = eIn(clamp((t - o.t1) / OUT));
+    const yOff = (1 - eBack(pin, 1.1)) * 1650 + q * 1900, ry = (1 - e) * -40 + q * 16, rxx = (1 - e) * 18, rz = (1 - e) * -10 + q * 8;
+    el.style.display = 'block'; el.style.opacity = 1;
+    el.style.transform = `translate(${(540 - w / 2).toFixed(1)}px,${(top + yOff).toFixed(1)}px) scale(${(w / 1320).toFixed(5)})`;
+    o.rot.style.transform = `perspective(7000px) rotateX(${rxx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) rotateZ(${rz.toFixed(2)}deg)`;
+    // the screen wakes up ("se deschide"): black -> a short white bloom -> the page
+    const wk = clamp((k - .3) / .28); el.querySelector('.phOff').style.opacity = (1 - wk).toFixed(3);
+    o.im.style.transform = `scale(${lerp(1.07, 1, eOut(wk)).toFixed(4)})`; o.im.style.filter = wk < 1 ? `brightness(${(1 + 1.1 * Math.sin(wk * Math.PI)).toFixed(3)})` : 'none';
+    el.querySelector('.phGl').style.opacity = clamp(.9 * (1 - e) + .1 + .5 * q).toFixed(3);
+    let h = '';
+    for (const H of (o.hl || [])) { if (t < H.t0 || t > H.t1 + .25) continue; const a = clamp((t - H.t0) / .25) * (1 - clamp((t - H.t1) / .25)), [bx, by, bw, bh] = H.box, r = H.r ?? 30, gr = 26 * (1 - eOut(clamp((t - H.t0) / .3)));
+      const rr = (x, y, ww, hh, rad) => `M ${x + rad} ${y} h ${ww - 2 * rad} a ${rad} ${rad} 0 0 1 ${rad} ${rad} v ${hh - 2 * rad} a ${rad} ${rad} 0 0 1 ${-rad} ${rad} h ${-(ww - 2 * rad)} a ${rad} ${rad} 0 0 1 ${-rad} ${-rad} v ${-(hh - 2 * rad)} a ${rad} ${rad} 0 0 1 ${rad} ${-rad} Z`;
+      if (H.dim) h += `<path fill-rule="evenodd" fill="rgba(3,7,14,${(H.dim * a).toFixed(3)})" d="M 0 0 H 1320 V 2868 H 0 Z ${rr(bx, by, bw, bh, r)}"/>`;
+      h += `<path d="${rr(bx - gr, by - gr, bw + 2 * gr, bh + 2 * gr, r + gr)}" fill="none" stroke="${H.col || '#FFD21F'}" stroke-width="${H.sw ?? 13}" opacity="${(a * (.82 + .18 * Math.sin((t - H.t0) * 8))).toFixed(3)}"/>`; }
+    for (const [tt, x, y] of (o.taps || [])) { const d = t - tt; if (d < -.14 || d > .5) continue;
+      const a = d < 0 ? clamp((d + .14) / .1) : 1 - clamp(d / .5), r = d < 0 ? 64 - 14 * clamp((d + .14) / .14) : 50 + 120 * eOut(clamp(d / .5));
+      h += `<circle cx="${x}" cy="${y}" r="${r.toFixed(1)}" fill="rgba(98,216,255,${(.30 * a).toFixed(3)})" stroke="rgba(255,255,255,${(.95 * a).toFixed(3)})" stroke-width="7"/>` +
+        (d < .16 ? `<circle cx="${x}" cy="${y}" r="26" fill="rgba(255,255,255,${(.9 * (d < 0 ? a : 1 - clamp(d / .16))).toFixed(3)})"/>` : ''); }
+    if (o.sv.dataset.h !== h) { o.sv.innerHTML = h; o.sv.dataset.h = h; }
+    // label above the phone: it follows the voice
+    let ph = null; for (const p of (o.lab || [])) if (t >= p[0]) ph = p; let nt = null; for (const p of (o.note || [])) if (t >= p[0] && (p[2] === undefined || t < p[2])) nt = p;
+    if (!ph || t > o.t1 + .05) hide(o.lb);
+    else { const key = ph[1] + '|' + ph[2] + '|' + (ph[3] || '') + '|' + (nt ? nt[1] : ''), tx = o.lb.querySelector('.lT'), ne = o.lb.querySelector('.lN');
+      if (o.lb.dataset.k !== key) { o.lb.dataset.k = key; o.lb.querySelector('.lK').innerHTML = ph[1] || ''; tx.innerHTML = ph[2]; tx.className = 'lT ' + (ph[3] || ''); tx.style.fontSize = (ph[4] || 72) + 'px'; ne.innerHTML = nt ? nt[1] : ''; ne.style.display = nt ? 'block' : 'none'; }
+      const p = clamp((t - ph[0]) / .24), pop = lerp(.8, 1, eBack(p, 2.2));
+      if (nt) { const u = clamp((t - nt[0]) / .22); ne.style.transform = `scale(${eBack(u, 2.2).toFixed(4)})`; ne.style.opacity = clamp(u * 3).toFixed(3); }
+      setT(o.lb, 540, o.labY || 232, pop, 0, clamp(p * 3) * (1 - clamp((t - (o.t1 - .2)) / .2))); }
+    return;
+  }
   if (o.k === 'ring') {
     if (t < o.t0 || t > o.t1 + .2) { o.g.style.display = 'none'; return; } o.g.style.display = 'block';
     const [px, py] = trackAt(o, n); const [x, y] = mapBg(px, py); const op = clamp((t - o.t0) / .12) * (1 - clamp((t - o.t1) / .2));
@@ -997,7 +1126,7 @@ const bg = $('bg');
 window.renderFrame = async (n) => {
   const t = n / FPS; const src = t >= TEND ? 'assets/end_bg.jpg' : `frames_base/${String(n).padStart(5, '0')}.jpg`;
   if (bg.dataset.src !== src) { bg.src = src; bg.dataset.src = src; curBgSrc = src; try { await bg.decode(); } catch (e) { } }
-  render(t, n); return true;
+  render(t, n); if (PEND.length) await Promise.all(PEND.splice(0)); return true;
 };
 window.READY = false;
 (async () => {
