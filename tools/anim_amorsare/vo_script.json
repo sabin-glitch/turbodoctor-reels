@@ -12,7 +12,7 @@
  {"text": "Dar ce se întâmplă dacă sari peste amorsare și dai direct la cheie? Aerul ajunge primul în pompa de înaltă presiune.", "gap": 0.6, "u": [54.5, 60.2]},
  {"text": "Aceasta este o pompă Bosch {CP4|ce pe patru}, în secțiune. Cama împinge tachetul cu rolă, iar tachetul împinge pistonul. Totul este uns doar de motorină.", "gap": 0.4, "u": [60.4, 64.9]},
  {"text": "Cu aer în loc de motorină, filmul de ungere dispare. Rola nu se mai rostogolește. Se blochează și freacă pe camă.", "gap": 0.4, "u": [65.0, 69.1]},
- {"text": "Tachetul se rotește în alezaj, rola ajunge de-a curmezișul camei și începe să o taie.", "gap": 0.4, "u": [69.2, 73.7]},
+ {"text": "{Tachetul|Taketul} se rotește în alezaj, rola ajunge de-a curmezișul camei și începe să o taie.", "gap": 0.4, "u": [69.2, 73.7]},
  {"text": "Rezultă pilitură metalică, iar pompa practic se autodistruge.", "gap": 0.4, "u": [73.8, 78.6]},
  {"text": "Pilitura pleacă în rampa comună și în injectoare, iar pe retur ajunge înapoi în rezervor.", "gap": 0.5, "u": [79.0, 84.7]},
  {"text": "Tot sistemul este contaminat. Nu mai schimbi doar pompa, ci și injectoarele, rampa, conductele, și cureți rezervorul. De aici vine nota de peste {2.000|două mii} de euro.", "gap": 0.4, "u": [84.8, 90.0]},

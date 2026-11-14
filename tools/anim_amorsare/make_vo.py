@@ -1,6 +1,7 @@
 """Voice track for the injection explainer reel.
   python3 make_vo.py piper            -> stand-in narrator (Piper ro_RO-mihai, deepened like vo_narrator.py), lines placed one after another
   python3 make_vo.py take <file.mp3>  -> a real recording / ElevenLabs take of the same text: lines are found in it by ASR + char alignment
+  python3 make_vo.py lines <dir>      -> every line generated on its own (<dir>/*L<NN><x>.* = take x of line NN); the pick per line is measured
 Writes vo/vo_track.wav (48 kHz), vo/timeline.json (pipeline narrator format, story_end = END), vo/cues.json for the animation director."""
 import os, sys, json, re, glob, difflib, unicodedata, subprocess
 import numpy as np, soundfile as sf, sherpa_onnx
@@ -67,6 +68,16 @@ def word_starts(say_words, toks, ts, dur):
     return st
 
 
+def load(f):
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", f, "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+    return np.frombuffer(raw, np.float32).copy()
+
+
+def rms_db(x, win=.02, hop=.005):
+    w, h = int(win * SR), int(hop * SR); c = np.cumsum(np.concatenate([[0.0], x.astype(np.float64) ** 2]))
+    idx = np.arange(0, len(x) - w, h); return 10 * np.log10((c[idx + w] - c[idx]) / w + 1e-12), hop
+
+
 mode = sys.argv[1]
 clips = []
 if mode == "piper":
@@ -99,12 +110,6 @@ elif mode == "take":
     # one or more takes of the WHOLE text (e.g. two ElevenLabs takes of the user's own voice). Every line is located in each take by
     # ASR + character alignment, cut out at the quietest point of the pause on either side, and the clearer take is used line by line
     # (the main take is kept unless the other one is clearly better, so the voice stays even). Lines are then paced with the script gaps.
-    def load(f):
-        raw = subprocess.run(["ffmpeg", "-v", "error", "-i", f, "-ac", "1", "-ar", str(SR), "-f", "f32le", "-"], capture_output=True, check=True).stdout
-        return np.frombuffer(raw, np.float32).copy()
-    def rms_db(x, win=.02, hop=.005):
-        w, h = int(win * SR), int(hop * SR); c = np.cumsum(np.concatenate([[0.0], x.astype(np.float64) ** 2]))
-        idx = np.arange(0, len(x) - w, h); return 10 * np.log10((c[idx + w] - c[idx]) / w + 1e-12), hop
     G = [parse(L["text"]) for L in script]
     all_words = [w for g in G for _, s in g for w in s]; nline = [sum(len(s) for _, s in g) for g in G]
     first = np.concatenate([[0], np.cumsum(nline)])           # index of each line's first say-word
@@ -152,8 +157,59 @@ elif mode == "take":
     GAPK = float(os.environ.get("VO_GAPK", "1")); t = 0.0
     for c in clips:
         c["start"] = t + c["line"].get("gap", 0.3) * (GAPK if c["i"] else 1); t = c["start"] + c["dur"]
+elif mode == "lines":
+    # Every line generated on its own. ElevenLabs v4 holds a calm register only at the start of a generation (the tone tags wear off in
+    # ~10 s), so each line is its own generation that starts with the tags: <dir>/*L<NN><x>.* = take x of line NN. Each take is trimmed,
+    # checked by ASR and measured (vo_qc.metrics). The pick per line: the clearest text first (ASR match), then no long pause and the tone
+    # closest to the speaker's natural one (VO_F0, Hz). The picked lines are level-matched (gated RMS), so separately generated lines sit at one
+    # volume, and paced with the script gaps. VO_PICK='{"7": "b"}' forces a take. vo/picks.json keeps what was picked and why.
+    from vo_qc import metrics
+    F0T = float(os.environ.get("VO_F0", "168")); LVL = -20.0; FORCE = json.loads(os.environ.get("VO_PICK", "{}"))
+    G = [parse(L["text"]) for L in script]; files = sorted(glob.glob(sys.argv[2].rstrip("/") + "/*")); picks = []
+    def gated(y):
+        f = int(.02 * SR); k = len(y) // f; p = (y[:k * f].astype(np.float64).reshape(k, f) ** 2).mean(1); return 10 * np.log10(p[p > p.max() * 1e-3].mean() + 1e-12)
+    def calm_pauses(y, ref, thr=-32.0, knee=8.0, rng=14.0):
+        # v4 leaves a faint room tone in the pauses inside a line (40-45 dB under the speech). A gentle downward expander takes it another
+        # 14 dB down, only where nothing louder than ref+thr comes within 40 ms, so consonants, word tails and breaths are left alone.
+        from scipy.ndimage import maximum_filter1d
+        db, hop = rms_db(y); Lh = maximum_filter1d(db - ref, size=17, mode="nearest"); g = -rng * np.clip((thr - Lh) / knee, 0, 1)
+        out = np.empty_like(g); cur = 0.0
+        for k, v in enumerate(g):
+            cur += (.6 if v > cur else .2) * (v - cur); out[k] = cur      # opens in ~10 ms, closes in ~25 ms
+        gs = np.interp(np.arange(len(y)), np.arange(len(out)) * int(hop * SR) + int(.01 * SR), out)
+        return (y * 10 ** (gs / 20)).astype(np.float32)
+    def tilt(y):   # timbre check: 2-5 kHz against 150-800 Hz, dB (a take that sounds muffled or thin stands out here)
+        f = np.fft.rfftfreq(4096, 1 / SR); k = (len(y) - 4096) // 2048; w = np.hanning(4096)
+        P = np.mean([np.abs(np.fft.rfft(y[j * 2048:j * 2048 + 4096] * w)) ** 2 for j in range(max(1, k))], 0)
+        return float(10 * np.log10(P[(f > 2000) & (f < 5000)].sum() / P[(f > 150) & (f < 800)].sum()))
+    for i, L in enumerate(script):
+        say = re.sub(r"\s+([,.;:!?])", r"\1", " ".join(" ".join(s_) for _, s_ in G[i])); cands = []
+        for f in files:
+            m = re.search(r"L(\d\d)([a-z])\.[^.]+$", os.path.basename(f))
+            if not m or int(m.group(1)) != i: continue
+            x = load(f); x /= max(1e-6, np.abs(x).max()) / .9; db, hop = rms_db(x); thr = db.max() - 38; loud = np.where(db > thr)[0]
+            s0 = max(0.0, loud[0] * hop - .05); s1 = min(len(x) / SR, loud[-1] * hop + .02 + .10)
+            y = x[int(s0 * SR):int(s1 * SR)].copy(); fi, fo = int(.008 * SR), int(.03 * SR); y[:fi] *= np.linspace(0, 1, fi); y[-fo:] *= np.linspace(1, 0, fo)
+            tk, tt, txt = heard(resample_poly(y, 1, 3).astype(np.float32)); q = metrics(y, len(norm(say)))
+            sim = difflib.SequenceMatcher(None, norm(say), norm(txt)).ratio()
+            cost = abs(12 * np.log2(max(60.0, q["f0"]) / F0T)) + .5 * max(0.0, q["rng"] - 13.5) + 6 * max(0.0, q["p_max"] - .35)
+            cands.append(dict(take=m.group(2), audio=y, toks=tk, ts=tt, txt=txt, sim=sim, q=q, cost=float(cost), tilt=tilt(y), lead=s0, tail=len(x) / SR - s1))
+        if not cands: raise SystemExit(f"no take for line {i}")
+        pick = min(cands, key=lambda c: (-round(c["sim"], 2), c["cost"]))   # the clearest text first; equally clear -> the closest tone
+        if str(i) in FORCE: pick = next(c for c in cands if c["take"] == FORCE[str(i)])
+        pick["audio"] = calm_pauses((pick["audio"] * 10 ** ((LVL - gated(pick["audio"])) / 20)).astype(np.float32), LVL)
+        clips.append(dict(i=i, g=G[i], audio=pick["audio"], dur=len(pick["audio"]) / SR, toks=pick["toks"], ts=pick["ts"], line=L))
+        for c in cands:
+            q = c["q"]; print(f"[{i:2d}{c['take']}]{'*' if c is pick else ' '} {q['dur']:5.2f}s sim {c['sim']:.2f} | F0 {q['f0']:3.0f} p90 {q['f90']:3.0f} p98 {q['f98']:3.0f} int {q['rng']:4.1f} st | "
+                               f"{q['rate']:4.1f} lit/s | pauze {q['n_p']} max {q['p_max']:.2f} | timbru {c['tilt']:5.1f} dB | cost {c['cost']:.1f} | {c['txt'][:60]}")
+        picks.append(dict(i=i, take=pick["take"], sim=round(pick["sim"], 3), cands=[dict(take=c["take"], sim=round(c["sim"], 3), cost=round(c["cost"], 2), tilt=round(c["tilt"], 1),
+                          **{k: round(float(v), 2) for k, v in c["q"].items()}) for c in cands]))
+    json.dump(picks, open(f"{HERE}/vo/picks.json", "w"), ensure_ascii=False, indent=1)
+    GAPK = float(os.environ.get("VO_GAPK", "1")); t = 0.0
+    for c in clips:
+        c["start"] = t + c["line"].get("gap", 0.3) * (GAPK if c["i"] else 1); t = c["start"] + c["dur"]
 else:
-    raise SystemExit("usage: make_vo.py piper | take <take1> [take2 ...]")
+    raise SystemExit("usage: make_vo.py piper | take <take1> [take2 ...] | lines <dir>")
 
 story_end = round((clips[-1]["start"] + clips[-1]["dur"] + TAIL) * 30) / 30
 words = []
