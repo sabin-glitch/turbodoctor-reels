@@ -110,6 +110,11 @@
   "downloader": "curl"
  },
  {
+  "id": "vo_amorsare_c1",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/ek1kS6ESqiTu1TvVxubK/zlwjWX0iDpALrJRuF7q9/content.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "orig_suzuki_0172",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-15661420683362187083.mp4",
   "downloader": "curl"
@@ -167,6 +172,11 @@
  {
   "id": "car_logan2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/h9RrwYaSgA2QqBteWOZT/pDt9sa5dCenfjmCG1Wa2/content.png",
+  "downloader": "curl"
+ },
+ {
+  "id": "vo_amorsare_c2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/YcxqtHla9Cboz0op1hrX/33RYlbDQK79ByyAwKDsR/content.mp3",
   "downloader": "curl"
  },
  {
