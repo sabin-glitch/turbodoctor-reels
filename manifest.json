@@ -250,6 +250,16 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114_s63b44_search",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114_m5engine_search",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3k_C05b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/9yZDzUhmfJuNHiczZTiy/xktRGGuLMfPSPUTYUJ7V/content.mp4",
   "downloader": "curl"
@@ -435,6 +445,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114_s63_search",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "ai_flote_drona_v1",
   "source_url": "https://videogen.vidiq.com/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/9765448e-dc13-4bb3-b9e2-4c181cddb52f_2102189100362491046.mp4_effc9921-5ec5-42a4-824b-fae161c2018c.mp4",
   "downloader": "curl"
@@ -547,6 +562,11 @@
  {
   "id": "ep2_vo_cli_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/nwlRIomrSTfYv9ZGMwXG/k7n2RYbpmDf3ByKPQUoG/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114_s63_cat",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -725,6 +745,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114_s63_catsearch",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "wmq_bmw2",
   "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
@@ -775,6 +800,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114_s63_subcats",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "wmo_b8",
   "source_url": "https://upload.wikimedia.org/wikipedia/commons/9/9e/BMW_E46_%26_E90_Sedans.JPG",
   "downloader": "curl"
@@ -782,6 +812,11 @@
  {
   "id": "wmt2_bmC",
   "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/BMW_320d_Efficient_Dynamics.jpg/960px-BMW_320d_Efficient_Dynamics.jpg",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114_m_v8_motor_search",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
