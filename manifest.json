@@ -60,6 +60,16 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114c_free_m8",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114c_x5m_meta",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "wmt2_lgC",
   "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Dacia_Logan_rd_l.jpg/960px-Dacia_Logan_rd_l.jpg",
   "downloader": "curl"
@@ -122,6 +132,11 @@
  {
   "id": "orig_suzuki_0172",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-15661420683362187083.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114c_free_x6m",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -400,6 +415,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114c_free_motorraum",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "cm1114b_cat_n63engine",
   "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
@@ -465,6 +485,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114c_free_s63engine",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "vo_injectie3_sabin_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/vq1sIR794WMEGyF9OrNe/sSlRpRBWLUBh1F1wUZf1/content.mp3",
   "downloader": "curl"
@@ -507,6 +532,11 @@
  {
   "id": "vo_amorsare_e2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/DZL8h6F4mumb2kwkx0VP/YrkaIIO9FSlqRu32YrA2/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114c_free_twinturbo",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -707,6 +737,16 @@
  {
   "id": "ep2_vo_mec_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/5mwwjrHzNMr1cknAMm4G/hei2ipkAxSqOV66Qd7Ms/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114c_free_mpower",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114c_free_enginebay",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
