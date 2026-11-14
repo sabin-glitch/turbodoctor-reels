@@ -1885,5 +1885,150 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
+  // ---------- photo panel overlays (14.11.2026, „Produs în România”: motorul 4.4 BMW M pus deasupra exact când îl pomenește) ----------
+  // The schem item carries `img` (a real photo with a free licence, as a persistent <img> under this SVG - see the compositor); this function
+  // draws only the vector layer: the photo "develops" behind a scan bar, corner brackets, a big spec that slams in, a typed code plate and a
+  // bracket on the zone the parts come from. All times are absolute reel seconds.
+  // P = { big: [t, '4.4', 'LITRI · V8 BITURBO'], code: [t, 'COD MOTOR', 'S63'], zone: [t, x, y, w, h, 'DE AICI VIN TURBINELE', 'r'|'l'] }
+  function photoId(tl, ph, pt, P, t, o) {
+    const W = 914, H = (o && o.h) || 430; let s = '';
+    s += `<defs><linearGradient id="pidV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#071425" stop-opacity=".5"/><stop offset=".2" stop-color="#071425" stop-opacity="0"/><stop offset=".58" stop-color="#071425" stop-opacity="0"/><stop offset="1" stop-color="#071425" stop-opacity=".82"/></linearGradient>` +
+      `<linearGradient id="pidS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#62D8FF" stop-opacity="0"/><stop offset="1" stop-color="#62D8FF" stop-opacity=".6"/></linearGradient></defs>`;
+    s += `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#pidV)"/>`;  // seats the photo into the dark panel and keeps the labels readable
+    // 1) reveal, left to right
+    const rv = eio(tl / .62), sx = W * rv;
+    if (rv < 1) { s += `<rect x="${f(sx)}" y="0" width="${f(W - sx)}" height="${H}" fill="${C.bg}"/>`;
+      for (let x = Math.ceil(sx / 40) * 40; x < W; x += 40) s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="${C.cy}" stroke-width="1" opacity=".12"/>`;
+      for (let y = 40; y < H; y += 40) s += `<line x1="${f(sx)}" y1="${y}" x2="${W}" y2="${y}" stroke="${C.cy}" stroke-width="1" opacity=".12"/>`;
+      s += `<rect x="${f(sx - 110)}" y="0" width="110" height="${H}" fill="url(#pidS)"/><rect x="${f(sx - 4)}" y="0" width="8" height="${H}" fill="#E6FAFF"/>`; }
+    // 2) corner brackets
+    const bk = eo((tl - .4) / .3), a = 36, m = 16 + 22 * (1 - bk);
+    if (bk > 0) s += `<path d="M ${f(m)} ${f(m + a)} V ${f(m)} H ${f(m + a)} M ${f(W - m - a)} ${f(m)} H ${f(W - m)} V ${f(m + a)} M ${f(W - m)} ${f(H - m - a)} V ${f(H - m)} H ${f(W - m - a)} M ${f(m + a)} ${f(H - m)} H ${f(m)} V ${f(H - m - a)}" fill="none" stroke="${C.cy}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="${f(bk * .95)}"/>`;
+    // 3) zone the parts come from (bracket + soft fill + label with a leader)
+    if (P.zone && t >= P.zone[0]) { const [tz, zx, zy, zw, zh, zl, side] = P.zone; const k = t - tz, ap = eo(k / .3), pu = .5 + .5 * Math.sin(k * 6.5), g = 26 * (1 - ap);
+      const x0 = zx - g, y0 = zy - g, x1 = zx + zw + g, y1 = zy + zh + g, L = 28;
+      s += `<rect x="${f(zx)}" y="${f(zy)}" width="${f(zw)}" height="${f(zh)}" rx="10" fill="${C.yel}" opacity="${f((.02 + .04 * pu) * ap)}"/>`;
+      s += `<path d="M ${f(x0)} ${f(y0 + L)} V ${f(y0)} H ${f(x0 + L)} M ${f(x1 - L)} ${f(y0)} H ${f(x1)} V ${f(y0 + L)} M ${f(x1)} ${f(y1 - L)} V ${f(y1)} H ${f(x1 - L)} M ${f(x0 + L)} ${f(y1)} H ${f(x0)} V ${f(y1 - L)}" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity="${f(ap)}"/>` +
+        `<path d="M ${f(x0)} ${f(y0 + L)} V ${f(y0)} H ${f(x0 + L)} M ${f(x1 - L)} ${f(y0)} H ${f(x1)} V ${f(y0 + L)} M ${f(x1)} ${f(y1 - L)} V ${f(y1)} H ${f(x1 - L)} M ${f(x0 + L)} ${f(y1)} H ${f(x0)} V ${f(y1 - L)}" fill="none" stroke="${C.yel}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="${f(ap)}"/>`;
+      if (zl) { const lp = eo((k - .18) / .28), right = side !== 'l', lx = right ? zx + zw + 34 : zx - 34, ly = zy + 34;
+        if (lp > 0) s += `<line x1="${f(right ? zx + zw + 4 : zx - 4)}" y1="${f(ly)}" x2="${f(right ? lx + 2 : lx - 2)}" y2="${f(ly)}" stroke="${C.yel}" stroke-width="4" opacity="${f(lp)}"/>` +
+          `<g transform="translate(${f((1 - lp) * (right ? -18 : 18))} 0)">${tag(lx, ly, zl, C.yel, right ? 'start' : 'end', 23, f(lp))}</g>`; } }
+    // 4) big spec, bottom left: slams in on the word
+    if (P.big && t >= P.big[0] - .02) { const k = t - P.big[0], p = cl(k / .13), sc = k < .13 ? lerp(2.5, 1, p * p * p) : 1 + .07 * Math.exp(-(k - .13) * 9) * Math.sin((k - .13) * 36);
+      const cx = P.bigX || 146, cy = H - (P.bigDy || 108), fs = P.bigSize || 160;
+      s += `<g transform="translate(${cx} ${cy}) scale(${sc.toFixed(4)})" opacity="${f(cl(p * 3))}"><text x="0" y="${f(fs * .37)}" font-family="Anton" font-size="${fs}" text-anchor="middle" fill="${C.yel}" stroke="#000" stroke-width="16" stroke-linejoin="round" paint-order="stroke" letter-spacing="3">${P.big[1]}</text></g>`;
+      const q = eo((k - .2) / .26); if (q > 0 && P.big[2]) s += `<g transform="translate(${f((1 - q) * -16)} 0)">${tag(cx + (P.bigTagDx ?? 142), cy + (P.bigTagDy ?? 10), P.big[2], C.w, 'start', 25, f(q))}</g>`; }
+    // 5) code plate, bottom right: typed
+    if (P.code && t >= P.code[0]) { const k = t - P.code[0], lab = P.code[1] + ' · ', full = lab + P.code[2], n = Math.min(full.length, Math.floor(k * 30)), size = 25;
+      const w = full.length * (size * .6 + 1.5) + 30, h = size * 1.7, x0 = W - 30 - w, yc = H - 46, ap = eo(k / .2);
+      s += `<g opacity="${f(ap)}"><rect x="${f(x0)}" y="${f(yc - h / 2)}" width="${f(w)}" height="${f(h)}" rx="9" fill="rgba(7,20,37,.95)" stroke="${C.cy}" stroke-width="2.5"/>` +
+        `<text x="${f(x0 + 15)}" y="${f(yc + size * .36)}" font-family="JB" font-weight="800" font-size="${size}" letter-spacing="1.5" fill="${C.cy}">${full.slice(0, Math.min(n, lab.length))}<tspan fill="${C.yel}">${n > lab.length ? full.slice(lab.length, n) : ''}</tspan>${n < full.length && Math.floor(t * 6) % 2 ? '▌' : ''}</text></g>`; }
+    return s;
+  }
+
+  // ---------- pops & bangs -> probleme pe zona de wastegate (14.11.2026, turbine BMW M 4.4) ----------
+  // Compact panel (914 x 330, so the real wastegate he films below stays visible): exhaust gas from the engine drives the turbine; with a
+  // pops & bangs map the mixture also fires in the exhaust (bursts along the gas path), and the hits land on the wastegate flap and its linkage.
+  // states: 'flow' = normal gas flow · 'pops' = bursts in the exhaust · 'wg' = wastegate zone marked as the place where problems appear
+  function popsBangs(tl, ph, pt, P) {
+    const st = stOf(ph, P, ['pops', 'wg'][ph] || 'pops'); const pops = st !== 'flow', wg = st === 'wg'; let s = '';
+    const wc = [255, 152], R = 104;
+    // turbine housing + inlet duct from the engine
+    s += `<path d="M 255 48 A ${R} ${R} 0 1 1 175.3 218.8" fill="none" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    s += `<path d="M 24 270 L 175.3 218.8 M 24 320 L 211 246.3" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    const kick = pops ? 1 + .5 * Math.max(0, Math.sin(tl * 9.7)) : 1, ang = tl * 380 * kick;
+    s += `<circle cx="${wc[0]}" cy="${wc[1]}" r="60" fill="${C.body}" stroke="${C.cy}" stroke-width="4"/>`;
+    for (let i = 0; i < 9; i++) { const a = rad(ang + i * 40); const [x0, y0] = P2(wc[0], wc[1], 16, a), [x1, y1] = P2(wc[0], wc[1], 55, a + .5);
+      s += `<path d="M ${f(x0)} ${f(y0)} Q ${f(wc[0] + Math.cos(a + .2) * 41)} ${f(wc[1] + Math.sin(a + .2) * 41)} ${f(x1)} ${f(y1)}" fill="none" stroke="${C.cy}" stroke-width="4"/>`; }
+    s += T(wc[0], 30, 'TURBINĂ', { s: 19, c: C.dim, a: 'middle' }) + T(24, 252, 'DE LA MOTOR', { s: 17, c: C.dim });
+    // outlet pipe, with the wastegate port in its lower wall
+    s += `<path d="M 356 114 L 890 114 M 356 190 L 470 190 M 536 190 L 890 190" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    s += T(888, 100, 'SPRE EVACUARE', { s: 17, c: C.dim, a: 'end' });
+    const open = !pops ? 0 : (wg ? 7 + 9 * Math.abs(Math.sin(tl * 27)) : 3 + 5 * Math.abs(Math.sin(tl * 24)));
+    const wcol = wg ? C.red : C.steel;
+    s += `<rect x="470" y="190" width="66" height="13" fill="${C.body2}" stroke="${C.cy}" stroke-width="3"/>`;
+    s += `<line x1="548" y1="212" x2="662" y2="268" stroke="${wcol}" stroke-width="6" stroke-linecap="round"/>`;
+    s += `<rect x="652" y="246" width="130" height="62" rx="14" fill="${C.body}" stroke="${wg ? C.red : C.cyD}" stroke-width="3"/>` + T(717, 284, 'ACTUATOR', { s: 17, c: wg ? '#FF8A8A' : C.dim, a: 'middle' });
+    s += `<g transform="rotate(${f(-open)} 468 197)"><rect x="468" y="183" width="78" height="13" rx="5" fill="${wg ? C.red : (pops ? C.org : C.steel)}"/><circle cx="468" cy="197" r="7" fill="${C.w}"/></g>`;
+    // exhaust gas
+    const path = k => { if (k < .4) { const q = k / .4; return [lerp(40, 190, q), lerp(296, 234, q)]; }
+      if (k < .7) { const a = rad(lerp(150, 330, (k - .4) / .3)); return [wc[0] + Math.cos(a) * 82, wc[1] + Math.sin(a) * 82]; }
+      const q = (k - .7) / .3; return [lerp(352, 884, q), 152]; };
+    for (let i = 0; i < 14; i++) { const k = (tl * (.7 + .1 * (i % 3)) + i / 14) % 1; const [x, y] = path(k);
+      s += `<circle cx="${f(x)}" cy="${f(y + (k >= .7 ? (rnd(i) - .5) * 44 : 0))}" r="6.5" fill="${pops && i % 3 === 0 ? C.org : C.smoke}" opacity=".85"/>`; }
+    // pops & bangs: the mixture fires in the exhaust; one burst in three lands at the wastegate
+    if (pops) { const SPOTS = [[118, 268], [222, 86], [498, 172], [330, 150], [160, 252], [508, 168]];
+      for (let j = 0; j < 3; j++) { const u = tl * 1.75 + j / 3, ci = Math.floor(u), q = u - ci; if (q > .62) continue;
+        const sp = SPOTS[(ci * 2 + j * 3 + (wg && j === 0 ? 2 : 0)) % SPOTS.length], [bx, by] = (wg && j === 0) ? SPOTS[2 + 3 * (ci % 2)] : sp;
+        const sc = eo(q / .1) * (1 - cl((q - .34) / .28)), rr = 16 + 86 * eo(q / .6);
+        s += `<circle cx="${bx}" cy="${by}" r="${f(rr)}" fill="none" stroke="${C.org}" stroke-width="${f(7 * (1 - q / .62) + 1)}" opacity="${f(.85 * (1 - q / .62))}"/>`;
+        s += glowC(bx, by, 30 * sc, '#FFE08A', .5 * sc) + emoji(bx, by, 78 * sc, 'collision'); } }
+    // labels
+    if (wg) { const pu = .5 + .5 * Math.sin(pt * 8), ap = eo(pt / .3);
+      s += `<circle cx="506" cy="197" r="${f(64 + 6 * pu + 30 * (1 - ap))}" fill="none" stroke="${C.red}" stroke-width="5" stroke-dasharray="14 10" opacity="${f(ap * (.65 + .35 * pu))}" transform="rotate(${f(pt * 40)} 506 197)"/>`;
+      s += `<g transform="translate(0 ${f((1 - ap) * 10)})">${tag(630, 58, 'APAR PROBLEME · ZONA DE WASTEGATE', C.red, 'middle', 21, f(ap))}</g>`; }
+    else if (pops) { const ap = eo(tl / .3); s += tag(630, 58, 'POPS &amp; BANGS · POCNITURI PE EVACUARE', C.org, 'middle', 19, f(ap)); }
+    else s += tag(630, 58, 'GAZELE ROTESC TURBINA', C.grn, 'middle', 19);
+    s += tag(452, 242, 'WASTEGATE', wg ? C.red : C.cy, 'middle', 20);
+    return s;
+  }
+
+  // ---------- „ingineria din spatele motorizărilor M are o rădăcină și în România” (14.11.2026) ----------
+  // Left: a V8 seen from above (two banks, the two turbos in the V), cylinders firing in order. Right: the map of Romania (TL.map, the same
+  // outline as the end card) in the flag colours. A root grows from the turbos in the V to the pin; then turbos travel along it to the engine.
+  // P = { m: t (the label switches to P.mLab), root: t (the root starts growing, the map appears), pin: t (the pin drops), pinLab, go: t (turbos travel) }; canvas 914 x 360
+  function madeInRo(tl, ph, pt, P, t) {
+    let s = ''; const M = (window.TL || {}).map, ms = .5, mx = 474, my = 44;
+    const vx = 180, T1 = [vx, 138], T2 = [vx, 226];
+    const kR = P.root != null ? t - P.root : -1, kP = P.pin != null ? t - P.pin : -1, kG = P.go != null ? t - P.go : -1;
+    // the engine starts large in the middle of the panel and moves to the left when the root starts
+    const q = kR < 0 ? 0 : eio(kR / .45), sc = lerp(1.15, 1, q), ecx = lerp(457, 180, q), ecy = lerp(200, 182, q);
+    // ---- engine, top view
+    let e = `<rect x="70" y="64" width="220" height="236" rx="22" fill="${C.body}" stroke="${C.cy}" stroke-width="4"/>`;
+    e += `<rect x="160" y="78" width="40" height="208" rx="8" fill="#06101E" stroke="${C.cyD}" stroke-width="2"/>`;
+    const ORDER = [0, 4, 3, 7, 5, 2, 6, 1], beat = (tl * 9) % 8;
+    for (let b = 0; b < 2; b++) { const cx = b ? 241 : 119;
+      e += `<rect x="${cx - 35}" y="78" width="70" height="208" rx="12" fill="${C.body2}" stroke="${C.cyD}" stroke-width="3"/>`;
+      for (let i = 0; i < 4; i++) { const idx = b * 4 + i, d = (beat - ORDER.indexOf(idx) + 8) % 8, fire = d < 1.6 ? 1 - d / 1.6 : 0;
+        e += `<circle cx="${cx}" cy="${108 + i * 50}" r="17" fill="${C.org}" fill-opacity="${f(.12 + .7 * fire)}" stroke="${fire > .05 ? C.org : C.cy}" stroke-width="3.5"/>`; } }
+    const hot = kG >= 0 ? C.grn : C.yel, pul = .5 + .5 * Math.sin(tl * 6);
+    [T1, T2].forEach(([x, y], i) => { e += glowC(x, y, 24 + 5 * pul, hot, .18 + .14 * pul) + `<circle cx="${x}" cy="${y}" r="15" fill="${C.bg}" stroke="${hot}" stroke-width="4"/>`;
+      for (let j = 0; j < 3; j++) { const a = rad(tl * 420 + j * 120 + i * 40), [x1, y1] = P2(x, y, 11, a); e += `<line x1="${x}" y1="${y}" x2="${f(x1)}" y2="${f(y1)}" stroke="${hot}" stroke-width="3" stroke-linecap="round"/>`; } });
+    const sw = P.m != null ? t - P.m : -1, lab = sw >= 0 ? (P.mLab || 'MOTORIZĂRILE M') : (P.lab || 'INGINERIE COMPLEXĂ'), pop = sw >= 0 && sw < .3 ? 1 + .22 * Math.sin(cl(sw / .3) * Math.PI) : 1;
+    e += `<g transform="translate(180 34) scale(${pop.toFixed(3)}) translate(-180 -34)">${tag(180, 34, lab, sw >= 0 ? C.yel : C.cy, 'middle', 21, f(eo(tl / .3)))}</g>`;
+    if (q > 0) e += T(180, 332, 'V8 · 2 TURBINE ÎN V', { s: 17, c: C.dim, a: 'middle', op: f(q) });
+    s += `<g transform="translate(${f(ecx - 180 * sc)} ${f(ecy - 182 * sc)}) scale(${sc.toFixed(4)})">${e}</g>`;
+    // side labels while the engine is alone on the panel
+    if (q < 1) { const o1 = eo((tl - .55) / .3) * (1 - q), o2 = eo((tl - 1.5) / .3) * (1 - q);
+      if (o1 > 0) s += `<line x1="306" y1="150" x2="352" y2="150" stroke="${C.cy}" stroke-width="3" opacity="${f(o1)}"/>` + tag(300, 150, 'MOTOR V8', C.cy, 'end', 22, f(o1));
+      if (o2 > 0) s += `<line x1="476" y1="200" x2="608" y2="200" stroke="${C.yel}" stroke-width="3" opacity="${f(o2)}"/>` + tag(614, 200, '2 TURBINE ÎN V', C.yel, 'start', 22, f(o2)); }
+    // ---- Romania
+    const mp = eo((kR - .2) / .6);
+    if (M && mp > 0) { const tr = `transform="translate(${mx} ${my}) scale(${ms})"`, W3 = M.w * ms / 3;
+      s += `<defs><clipPath id="mroC"><path d="${M.path}" ${tr}/></clipPath></defs>`;
+      s += `<g clip-path="url(#mroC)" opacity="${f(.42 * mp)}"><rect x="${mx}" y="${my}" width="${f(W3)}" height="${f(M.h * ms)}" fill="#2F6BFF"/><rect x="${f(mx + W3)}" y="${my}" width="${f(W3)}" height="${f(M.h * ms)}" fill="${C.yel}"/><rect x="${f(mx + 2 * W3)}" y="${my}" width="${f(W3 + 2)}" height="${f(M.h * ms)}" fill="#FF3B30"/></g>`;
+      s += `<path d="${M.path}" ${tr} fill="none" stroke="#EAF6FF" stroke-width="5" stroke-linejoin="round" opacity="${f(mp)}"/>`;
+      s += T(mx + M.w * ms * .47, my + M.h * ms * .46, 'ROMÂNIA', { s: 36, c: '#fff', a: 'middle', ls: 4, op: f(.95 * mp) }); }
+    const buc = M ? (M.cities.find(c => c.name === 'BUCUREȘTI') || M.cities[0]) : { x: 508, y: 478 }, PX = mx + buc.x * ms, PY = my + buc.y * ms;
+    // ---- the root: from the turbos in the V to the pin (starts once the engine has moved over)
+    const A0 = [202, 222], A1 = [300, 222], A2 = [326, 322], A3 = [446, 322], B1 = [566, 322], B2 = [640, PY + 16], B3 = [PX, PY];
+    const bz = (p0, c1, c2, p1, u) => { const v = 1 - u; return [v * v * v * p0[0] + 3 * v * v * u * c1[0] + 3 * v * u * u * c2[0] + u * u * u * p1[0], v * v * v * p0[1] + 3 * v * v * u * c1[1] + 3 * v * u * u * c2[1] + u * u * u * p1[1]]; };
+    const rootPt = u => u < .5 ? bz(A0, A1, A2, A3, u * 2) : bz(A3, B1, B2, B3, (u - .5) * 2);
+    if (kR >= .4) { const g = eio((kR - .4) / 1.0), d = `M ${A0} C ${A1} ${A2} ${A3} C ${B1} ${B2} ${f(PX)} ${f(PY)}`, rc = kG >= 0 ? C.grn : C.yel;
+      s += `<path d="${d}" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="13" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - g).toFixed(4)}"/>` +
+        `<path d="${d}" fill="none" stroke="${rc}" stroke-width="7" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - g).toFixed(4)}"/>`;
+      [[.2, -26, 34], [.42, 30, 30], [.63, -24, 32], [.8, 22, 26]].forEach(([u, dx, dy]) => { const r = eo((g - u) / .22); if (r <= 0) return; const [x, y] = rootPt(u);
+        s += `<path d="M ${f(x)} ${f(y)} q ${f(dx * .2)} ${f(dy * .7)} ${f(dx * r)} ${f(dy * r)}" fill="none" stroke="${rc}" stroke-width="4" stroke-linecap="round" opacity=".85"/>`; }); }
+    // ---- the pin
+    if (kP >= 0) { const pp = eo(kP / .32), hk = (kP % 1.4) / 1.4, dy = -(1 - pp) * 70;
+      s += `<circle cx="${f(PX)}" cy="${f(PY)}" r="${f(8 + hk * 40)}" fill="none" stroke="${C.yel}" stroke-width="4" opacity="${f(pp * (.9 - .9 * hk))}"/>`;
+      s += `<g transform="translate(${f(PX)} ${f(PY + dy)}) scale(.62)" opacity="${f(cl(pp * 3))}"><path d="M 0 0 C -7 -16 -26 -28 -26 -46 A 26 26 0 1 1 26 -46 C 26 -28 7 -16 0 0 Z" fill="#E11D2E" stroke="#fff" stroke-width="5"/><circle cx="0" cy="-46" r="9" fill="#fff"/></g>`;
+      if (P.pinLab) s += tag(PX, PY + 34, P.pinLab, C.yel, 'middle', 21, f(eo((kP - .15) / .3))); }
+    // ---- turbos made here travel along the root to the engine
+    if (kG >= 0) for (let j = 0; j < 3; j++) { const u = 1 - ((kG * .42 + j / 3) % 1), [x, y] = rootPt(u), op = cl(u / .08) * cl((1 - u) / .08);
+      s += `<g opacity="${f(op)}"><circle cx="${f(x)}" cy="${f(y)}" r="15" fill="${C.bg}" stroke="${C.grn}" stroke-width="4"/><circle cx="${f(x)}" cy="${f(y)}" r="5.5" fill="${C.grn}"/></g>`; }
+    return s;
+  }
+
+  return { photoId, popsBangs, madeInRo, commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
 })();

@@ -120,6 +120,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .bpH{display:flex;align-items:center;justify-content:space-between;padding:13px 22px;background:rgba(98,216,255,.13);border-bottom:2px solid rgba(98,216,255,.35);font-family:JB;font-weight:800;font-size:22px;letter-spacing:2px;color:#62D8FF;white-space:nowrap}
 .bpH .t2{color:#FFD21F}
 .bpS{display:block;background-color:#071425;background-image:linear-gradient(rgba(98,216,255,.09) 1px,transparent 1px),linear-gradient(90deg,rgba(98,216,255,.09) 1px,transparent 1px),linear-gradient(rgba(98,216,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(98,216,255,.04) 1px,transparent 1px);background-size:80px 80px,80px 80px,20px 20px,20px 20px}
+.bpP{position:relative;overflow:hidden;background:#071425}.bpI{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:cover;display:block}
 .bpF{display:flex;align-items:center;gap:14px;padding:14px 22px 16px;border-top:2px solid rgba(98,216,255,.25);font-weight:900;font-size:30px;line-height:1.12;min-height:78px}
 .bpF .n{flex:none;font-family:JB;font-weight:800;font-size:20px;color:#071425;background:#62D8FF;border-radius:8px;padding:4px 10px;letter-spacing:1px}
 .bpF.r .n{background:#FF4B4B;color:#fff}.bpF.g .n{background:#4ADE80}.bpF.y .n{background:#FFD21F}
@@ -188,7 +189,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 .cl .v{font-family:JB;font-weight:800;font-size:31px;letter-spacing:.5px;text-transform:uppercase;margin-top:2px}
 .cl.red{border-color:#FF4B4B}.cl.red .h{color:#FF8A8A}.cl.yellow{border-color:#FFD21F}.cl.yellow .h{color:#FFE88A}.cl.green{border-color:#4ADE80}.cl.green .h{color:#86EFAC}
 .scanLab{display:none;padding:9px 20px;border-radius:12px;background:rgba(6,12,22,.9);font-family:JB;font-weight:800;font-size:30px;letter-spacing:2px;color:#62D8FF;white-space:nowrap;border:2px solid rgba(98,216,255,.6)}
-.scanLab.red{color:#FF8A8A;border-color:#FF4B4B}
+.scanLab.red{color:#FF8A8A;border-color:#FF4B4B}.scanLab.ok{color:#86EFAC;border-color:#4ADE80}
 /* kinetic word */
 .kin{font-family:Anton;font-size:210px;line-height:1;white-space:nowrap;-webkit-text-stroke:16px #000;paint-order:stroke fill;text-shadow:0 12px 0 #000,0 22px 40px rgba(0,0,0,.6);letter-spacing:2px}
 /* boom: hook title that slams in (Euro 7, 26.10.2026): huge, chromatic aberration, blur-in, shake */
@@ -668,7 +669,10 @@ function buildItems() {
     if (o.k === 'stat') { o.el = mk('abs card', `<div class="cTitle">${img(o.ico || 'counter')}${o.title}</div><div class="odo"><span class="dg"></span><span class="un">${o.unit || ''}</span></div>${o.sub ? `<div class="sub">${o.subIco ? img(o.subIco) : ''}${o.sub}</div>` : ''}`); o.el.style.width = (o.w || 660) + 'px'; o.el.style.padding = '22px 26px 20px'; }
     if (o.k === 'cmp') { o.el = mk('abs card', `<div class="cTitle">${img(o.ico || 'magnifying_glass_tilted_left')}${o.title}</div><div class="mCols"><div class="mCol ${o.aCls || 'bad'}"><div class="h">${img(o.a[1])}${o.a[2]}</div><div class="v${o.big ? ' big' : ''}">${o.a[3]}</div></div><div class="mCol ${o.bCls || 'ok'}"><div class="h">${img(o.b[1])}${o.b[2]}</div><div class="v${o.big ? ' big' : ''}">${o.b[3]}</div></div></div>`); o.el.style.width = (o.w || 700) + 'px'; o.el.style.padding = '22px 22px 22px'; }
     if (o.k === 'art') { o.el = mk('abs card', `<div class="cTitle">${img(o.ico || 'gear')}${o.title}</div><div class="artWrap">${ART[o.art]('a' + ITEMS.length)}${o.cross ? `<img class="artX" src="assets/emoji/${o.cross[1] || 'cross_mark'}.png" alt="">` : ''}</div><div class="status"></div>`); o.el.style.width = (o.w || 640) + 'px'; o.el.style.padding = '22px 26px 16px'; }
-    if (o.k === 'schem') { o.el = mk('abs bp', `<div class="bpH"><span>${o.title || 'SCHEMĂ TEHNICĂ'}</span><span class="t2">${o.sub || ''}</span></div><svg class="bpS" width="914" height="${o.h || 430}" viewBox="0 0 914 ${o.h || 430}"></svg><div class="bpF"><span class="n"></span><span class="tx"></span></div>`);
+    if (o.k === 'schem') {  // img (14.11.2026): a real photo under the vector layer, as a persistent <img> (decoded before the first frame; an <image> re-created in the SVG every frame could miss a frame)
+      const sv = `<svg class="bpS" width="914" height="${o.h || 430}" viewBox="0 0 914 ${o.h || 430}"${o.img ? ' style="position:absolute;left:0;top:0;background:none"' : ''}></svg>`;
+      o.el = mk('abs bp', `<div class="bpH"><span>${o.title || 'SCHEMĂ TEHNICĂ'}</span><span class="t2">${o.sub || ''}</span></div>` +
+        (o.img ? `<div class="bpP" style="height:${o.h || 430}px"><img class="bpI" src="${o.img}" alt="">${sv}</div>` : sv) + `<div class="bpF"><span class="n"></span><span class="tx"></span></div>`);
       o.steps = (o.steps || []).slice().sort((a, b) => a[0] - b[0]); }
     if (o.k === 'chain') { o.el = mk('abs dk chainV', `<div class="kTitle"><span>${img(o.ico || 'magnifying_glass_tilted_left')}${o.title || 'ANALIZA CAUZEI'}</span><span class="t2">${o.sub || 'CAUZĂ › EFECT'}</span></div>` +
         o.nodes.map((n, i) => (i ? `<div class="carr">${ARROW_DOWN}</div>` : '<div style="height:14px"></div>') + `<div class="cn ${n[4] || 'c'}">${img(n[1])}<div><div class="k">${n[2]}</div><div class="v">${n[3]}</div></div></div>`).join('')); }
@@ -773,7 +777,7 @@ function itemCues() {
       (o.note || []).forEach(n => sfx(n[0], n[2] === 'g' ? 'ding' : 'tick2', .42)); }
     if (o.k === 'stk') sfx(o.t0, 'pop', .4);
     if (o.k === 'call') { sfx(o.t0, 'lock', .45); sfx(o.t0 + .38, 'type', .4); }
-    if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, 'alarm', .3); } }
+    if (o.k === 'scan') { sfx(o.t0, 'scan', .55); if (o.at2) { sfx(o.at2, 'lock', .55); sfx(o.at2 + .02, o.col2 ? 'ding' : 'alarm', o.col2 ? .45 : .3); } }
     if (o.k === 'opis') { sfx(o.t0, 'whoosh', .5); o.rows.forEach(r => sfx(r[0], 'tick2', .55)); sfx(o.phoneAt, 'impact', .45); sfx(o.phoneAt + .02, 'ding', .4); sfx(o.citiesAt, 'pop', .5); }
     if (o.k === 'prices') { sfx(o.t0 - .08, 'whoosh', .5); o.rows.forEach(r => { sfx(r[0], 'impact', .4); sfx(r[0] + .02, 'tick2', .5); }); }
     if (o.k === 'ptag') { const pd = o.pd ?? .42; o.tags.forEach((g, i) => { sfx(g[0] - .12, 'whoosh', i ? .4 : .5); sfx(g[0] + .04, 'pop', .45); sfx(g[0] + pd - .02, 'impact', .8); sfx(g[0] + pd, 'stamp', .5); sfx(g[0] + pd + .06, 'ding', .4); }); sfx(o.t1 - .02, 'whoosh', .4); }
@@ -1000,13 +1004,13 @@ function rItem(o, t) {
     let [bx, by, bw, bh] = o.box; if (o.track && TL[o.track]) { const c = trackAt(o, n); bx = c[0] - bw / 2 + o.box[0]; by = c[1] - bh / 2 + o.box[1]; } const [x0, y0] = mapBg(bx, by); const [x1, y1] = mapBg(bx + bw, by + bh);
     const ap = eBack(clamp(k / .3), 1.8); const cxm = (x0 + x1) / 2, cym = (y0 + y1) / 2;
     const X0 = cxm + (x0 - cxm) * (2 - ap), X1 = cxm + (x1 - cxm) * (2 - ap), Y0 = cym + (y0 - cym) * (2 - ap), Y1 = cym + (y1 - cym) * (2 - ap);
-    const hit = o.at2 && t >= o.at2; const col = hit ? '#FF4B4B' : '#62D8FF'; const a = 46;
+    const hit = o.at2 && t >= o.at2; const col = hit ? (o.col2 || '#FF4B4B') : '#62D8FF'; const a = 46;  // col2 (14.11.2026): positive hit (e.g. „MADE IN ROMANIA” read on the part), green instead of the red defect lock
     const cr = `M ${X0} ${Y0 + a} L ${X0} ${Y0} L ${X0 + a} ${Y0} M ${X1 - a} ${Y0} L ${X1} ${Y0} L ${X1} ${Y0 + a} M ${X1} ${Y1 - a} L ${X1} ${Y1} L ${X1 - a} ${Y1} M ${X0 + a} ${Y1} L ${X0} ${Y1} L ${X0} ${Y1 - a}`;
     const c = o.g.querySelector('.cr'); c.setAttribute('d', cr); c.setAttribute('stroke', col);
     const sl = o.g.querySelector('.sl'); if (!hit) { const q = (k % .9) / .9; sl.setAttribute('x', X0 + 8); sl.setAttribute('width', Math.max(1, X1 - X0 - 16)); sl.setAttribute('y', lerp(Y0 + 8, Y1 - 14, q)); sl.setAttribute('fill', 'rgba(98,216,255,.85)'); sl.style.display = 'block'; } else sl.style.display = 'none';
     const xh = o.g.querySelector('.xh'); const mx = cxm, my = cym, hs = hit ? 34 : 0; xh.setAttribute('d', hit ? `M ${mx - hs} ${my} L ${mx + hs} ${my} M ${mx} ${my - hs} L ${mx} ${my + hs}` : ''); xh.setAttribute('stroke', col);
     const flashB = hit ? (1 + .5 * Math.max(0, Math.sin((t - o.at2) * 18)) * Math.exp(-(t - o.at2) * 3)) : 1; o.g.style.opacity = (op * Math.min(1, flashB)).toFixed(3);
-    const lab = hit ? (o.lab2 || 'DEFECT DETECTAT') : (o.lab || 'SCANARE...'); el.className = 'abs scanLab' + (hit ? ' red' : '');
+    const lab = hit ? (o.lab2 || 'DEFECT DETECTAT') : (o.lab || 'SCANARE...'); el.className = 'abs scanLab' + (hit ? (o.col2 ? ' ok' : ' red') : '');
     if (el.dataset.s !== lab) { el.textContent = lab; el.dataset.s = lab; }
     setT(el, cxm, ((o.labBelow ?? (o.t0 < HOOK_END)) ? Y1 + 40 : Y0 - 40), hit ? eBack(clamp((t - o.at2) / .25), 2.4) : 1, 0, op * clamp(k / .25)); return;
   }
