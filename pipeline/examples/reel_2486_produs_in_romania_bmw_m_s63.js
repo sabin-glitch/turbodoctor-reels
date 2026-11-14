@@ -1,4 +1,5 @@
 // v2 – Reel „Produs în România: turbinele de pe motorul 4.4 BMW M” (IMG_2486, un singur clip, fără tăieturi, ritm natural)
+// Aprobat de Sabin pe 14.11.2026 și programat pe 15.11 dimineață (TikTok 9:00, YouTube 10:00, Facebook și Instagram 11:00).
 // Cerut de Sabin pe 14.11.2026: hook puternic pe prima frază („Unde sunteți, mă, ăia care spuneți că nu se mai produce nimic în România?”)
 // și, când pomenește motorul 4.4 de BMW M (S63), motorul pus efectiv deasupra, sugestiv: fotografie reală cu licență liberă
 // (Wikimedia Commons „BMW X5M Engine.JPG”, domeniu public, PD-user) într-un panou sus (`schem` cu `img` + `photoId`), cu zona din care vin turbinele marcată.
