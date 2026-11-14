@@ -115,6 +115,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114b_free_s63",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "orig_suzuki_0172",
   "source_url": "https://static.metricool.com/planner/202610/7482169-file-15661420683362187083.mp4",
   "downloader": "curl"
@@ -210,6 +215,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114b_free_x5mengine",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "wmt2_bmF",
   "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/14/BMW_320d_E90_%286554795727%29.jpg/960px-BMW_320d_E90_%286554795727%29.jpg",
   "downloader": "curl"
@@ -222,6 +232,11 @@
  {
   "id": "pov01_sync_A",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/XpVcosu6ZryGuE6uF9m3/pbHBfwx6dguDWuY8IGe6/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114b_free_m5engine",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -282,6 +297,11 @@
  {
   "id": "wmo_b3",
   "source_url": "https://upload.wikimedia.org/wikipedia/commons/c/c1/2005-2008_BMW_320i_%28E90%29_sedan_01.jpg",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114b_thumb_bmw_s63",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/BMW-S63.jpg/1920px-BMW-S63.jpg",
   "downloader": "curl"
  },
  {
@@ -370,8 +390,18 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114b_img_x5m_engine_pd",
+  "source_url": "https://upload.wikimedia.org/wikipedia/commons/8/87/BMW_X5M_Engine.JPG",
+  "downloader": "curl"
+ },
+ {
   "id": "wmo2_lgB",
   "source_url": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Renault_Logan_side_view_near_SPIIRAS.JPG",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114b_cat_n63engine",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -575,6 +605,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114b_free_m6engine",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
   "id": "wmo_b7",
   "source_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/2008-2009_BMW_320i_%28E90%29_sedan_01.jpg",
   "downloader": "curl"
@@ -690,6 +725,11 @@
   "downloader": "curl"
  },
  {
+  "id": "cm1114b_thumb_s63_techno",
+  "source_url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/BMW_S63%2C_Techno-Classica_2018%2C_Essen_%28IMG_0053%29.jpg/1920px-BMW_S63%2C_Techno-Classica_2018%2C_Essen_%28IMG_0053%29.jpg",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2s_S11",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/25Pjbba1sPSSpfkEkX9t/QfF2R8rAo8QbSN1y3o4b/content.mp4",
   "downloader": "curl"
@@ -792,6 +832,11 @@
  {
   "id": "egr_vo_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Es2G26A0Nm71nkavnDlO/tQQQXl4sAuQ7wuxh6a73/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114b_cat_s63engine",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
@@ -907,6 +952,11 @@
  {
   "id": "ep2k_S02",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/lqbVeCakPk7TZ8p9fk7T/kx7sXAlO8fNuVGdSYUAs/content.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "cm1114b_free_v8biturbo",
+  "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
  },
  {
