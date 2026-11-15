@@ -36,8 +36,8 @@ while IFS= read -r URL; do
   if [ "$DIRECT" = 1 ]; then
     if curl -sSL --max-time 300 -o "$OUT" "$URL" && [ -s "$OUT" ]; then
       ok=1
-      # pagini Freesound (nume „fsq_…”): pe branch ajunge doar lista sunetelor (JSON), nu pagina cu scripturile și cheile site-ului
-      case "$NAME" in fsq_*) python3 sources/fs_extract.py "$OUT" || ok=0 ;; esac
+      # pagini de catalog (nume „fsq_…” = Freesound, „webq_…” = alt site): pe branch ajunge doar lista sunetelor (JSON), nu pagina cu scripturile și cheile site-ului
+      case "$NAME" in fsq_*) python3 sources/fs_extract.py "$OUT" || ok=0 ;; webq_*) python3 sources/web_extract.py "$OUT" || ok=0 ;; esac
       python3 -c 'import json,sys; json.dump({"id":sys.argv[1],"source_url":sys.argv[2],"downloader":"curl"},open(sys.argv[3],"w"),indent=1)' "$ID" "$BARE" "$META"
     fi
   # a) yt-dlp: varianta fără watermark cu cea mai mare rezoluție și bitrate (H.264 doar la egalitate)
@@ -77,7 +77,7 @@ json.dump({"id":d.get("id"),"title":d.get("title"),"description":d.get("title"),
     ffmpeg -hide_banner -loglevel error -y -i "$OUT" -c:v libx264 -preset medium -crf 21 -maxrate 5M -bufsize 10M \
       -pix_fmt yuv420p -c:a aac -b:a 160k -movflags +faststart "$DL/$ID.small.mp4" && mv "$DL/$ID.small.mp4" "$OUT"
   fi
-  case "$NAME" in fsq_*) ;; *) ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of compact "$OUT" || true ;; esac
+  case "$NAME" in fsq_*|webq_*) ;; *) ffprobe -v error -show_entries format=duration:stream=codec_name,width,height -of compact "$OUT" || true ;; esac
   mv "$OUT" "$META" "$SRC/" && NEW=$((NEW+1))
 done <<< "$LIST"
 
