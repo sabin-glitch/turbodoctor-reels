@@ -21,6 +21,12 @@ Scena este cea din `tools/anim_turbo` (`index_src.html`, three.js r128, cu strat
 | `mk_reeljs.py` | scrie `reel.js` pentru fiecare episod (titlurile boom din hook pe cuvinte, `endPhone`, `endIcons`, culorile cuvintelor) |
 | `epN/vo_script.json`, `epN/map/` | textul vocii și momentele pe cuvinte cu care a fost randat episodul |
 
+Marcajul din fundal (cerut de Sabin pe 15.11.2026, ca imaginile să nu poată fi preluate de alții): în spatele scenei, pe toată durata fiecărui film,
+alunecă încet rânduri estompate „TURBO DOCTOR”. Este un strat DOM `#wm` pus în `#stage` înaintea canvasului (canvasul este transparent, deci marcajul
+se vede doar unde nu sunt piese; grila rămâne). CSS-ul este în `build_reel.py` (Anton 58 px, −20°, alb 8,5% + galben 11,5%; tăria se schimbă cu
+variabilele de mediu `WM_W` și `WM_Y`, de exemplu `WM_W=.12 WM_Y=.16 python3 build_reel.py ep1`), iar mișcarea (9 px/s, rânduri decalate) în `placeWM`
+din `dir_post.js`. Fiind în animație, nu la montaj, orice schimbare a lui cere randarea din nou a cadrelor.
+
 Pașii pentru un episod nou: text în `epN/vo_script.json` (rândul 0 = formula seriei, rândul 1 = „Vezi toate cauzele…”, ultimele 3 = încheierea comună,
 care se refolosesc: `sdt2_s1_b`, `sdt2_o1_a`, `sdt2_o2_a`, `sdt2_o3_a` pe ramura `sources`), vocea, `epN.js`, `build_reel.py`, `stills.js`, randare,
 apoi folderul reel-ului ca la `tools/anim_injectie` (pasul 4) și `finish.sh`.

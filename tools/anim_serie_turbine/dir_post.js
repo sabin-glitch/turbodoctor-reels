@@ -15,6 +15,12 @@ function spinAfter(snapT,s){const w=TAU*revs(16)*trk('spn',snapT),k=2.6;return a
   b.innerHTML='<i>SERIA „DE CE SE STRICĂ TURBINELE”</i><b>CAUZA '+EP_N+' DIN '+SERIES_TOTAL+'</b><u>'+EP_NAME+'</u>';
   document.getElementById('stage').appendChild(b);})();
 const badgeEl=$('badge');
+/* brand watermark: rows of TURBO DOCTOR behind the scene, drifting slowly along their own direction */
+const wmEl=$('wm'),wmRows=[];let wmUnit=0;
+(function(){for(let i=0;i<17;i++){const r=document.createElement('div');r.className='r';r.style.top=(i*176)+'px';
+  let h='';for(let k=0;k<9;k++)h+='<span>TURBO <b>DOCTOR</b></span>';r.innerHTML=h;wmEl.appendChild(r);wmRows.push(r);}})();
+function placeWM(t){if(!wmUnit)wmUnit=wmRows[0].firstChild.offsetWidth||640;
+  wmRows.forEach((r,i)=>{const off=((t*9+(i%2?wmUnit*0.5:0))%wmUnit+wmUnit)%wmUnit;r.style.transform='translateX('+(off-wmUnit).toFixed(1)+'px)';});}
 
 const CAMK=CAM.slice().sort((a,b)=>a[0]-b[0]);
 const VW=1080,VH=1920,PADBOT=VH-1280,LABBOT=1250;let padTop=560,pxPerMm=1;
@@ -94,11 +100,12 @@ function frame(t){
   let dp=0;for(const c of DIPS)dp=Math.max(dp,1-Math.abs(t-c)/0.22);dipEl.style.opacity=clamp(dp,0,1);
   let fl=0;for(const c of FLASHES){const q=t-c;if(q>=-0.03&&q<0.5)fl=Math.max(fl,q<0?1+q/0.03:Math.exp(-q*7));}flashEl.style.opacity=(0.85*fl).toFixed(3);
   badgeEl.style.opacity=sst(0.5,1.0,t).toFixed(3);
+  placeWM(t);
   renderer.render(scene,camera);
 }
 renderer.setSize(VW,VH,false);camera.aspect=VW/VH;camera.updateProjectionMatrix();svg.setAttribute('viewBox','0 0 '+VW+' '+VH);
 window.__frame=frame;window.__end=END;
 window.__info={snaps:SNAPS,dips:DIPS,flashes:FLASHES,hookEnd:HOOK_END,end:END};
 frame(0);
-const boot=()=>{frame(0);window.__ready=true;};
+const boot=()=>{wmUnit=0;frame(0);window.__ready=true;};
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(boot);else boot();

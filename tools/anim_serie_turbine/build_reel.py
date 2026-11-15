@@ -79,12 +79,17 @@ css += """
 #badge i{display:block;font:700 22px/1 JB;font-style:normal;letter-spacing:.06em;color:#b6c2cf}
 #badge b{display:block;font:400 58px/1.05 Anton;letter-spacing:1.5px;color:#FFD21F;margin-top:8px}
 #badge u{display:block;text-decoration:none;font:800 30px/1.1 Mont;letter-spacing:.03em;text-transform:uppercase;color:#fff;margin-top:6px}
+/* brand watermark behind the scene (asked by Sabin, 15.11.2026): faded TURBO DOCTOR wordmarks on the background, on screen all the time */
+#wm{position:absolute;left:-700px;top:-500px;width:2480px;height:2920px;transform:rotate(-20deg);transform-origin:50% 50%;overflow:hidden;pointer-events:none}
+#wm .r{position:absolute;left:0;white-space:nowrap;font:400 58px/1 Anton;letter-spacing:5px;color:rgba(232,237,243,VAR_WM_W)}
+#wm .r b{font-weight:400;color:rgba(255,210,31,VAR_WM_Y)}
+#wm .r span{display:inline-block;padding-right:150px}
 #flash{position:absolute;left:0;top:0;width:1080px;height:1920px;background:radial-gradient(60% 40% at 50% 52%,#fff6d8 0%,#ffb35a 40%,rgba(255,90,20,0) 100%);opacity:0;mix-blend-mode:screen}
 """
 html = """<!DOCTYPE html>
 <html lang="ro"><head><meta charset="utf-8"><title>Reel turbo</title><style>%s</style></head>
 <body>
-<div id="stage"><canvas id="gl"></canvas><svg id="leaders"></svg><div id="labels"></div></div>
+<div id="stage"><div id="wm"></div><canvas id="gl"></canvas><svg id="leaders"></svg><div id="labels"></div></div>
 <div id="flash"></div>
 <div id="dip"></div>
 <script src="../three.min.js"></script>
@@ -100,7 +105,7 @@ const fail=()=>{document.body.style.background='red';};
 })();
 </script>
 </body></html>
-""" % (css, head.split("const fail=()=>document.body.classList.add('fail');\nif(!T){fail();return;}",1)[1], tail)
+""" % (css.replace('VAR_WM_W', os.environ.get('WM_W', '.085')).replace('VAR_WM_Y', os.environ.get('WM_Y', '.115')), head.split("const fail=()=>document.body.classList.add('fail');\nif(!T){fail();return;}",1)[1], tail)
 open(os.path.join(HERE, EP, 'reel.html'), 'w', encoding='utf-8').write(html)
 open(os.path.join(HERE, EP, 'reel_check.js'), 'w', encoding='utf-8').write(head + tail)
 print('reel.html', len(html))
