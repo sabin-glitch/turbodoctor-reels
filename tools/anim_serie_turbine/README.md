@@ -23,8 +23,8 @@ Scena este cea din `tools/anim_turbo` (`index_src.html`, three.js r128, cu strat
 
 Marcajul din fundal (cerut de Sabin pe 15.11.2026, ca imaginile să nu poată fi preluate de alții): în spatele scenei, pe toată durata fiecărui film,
 alunecă încet rânduri estompate „TURBO DOCTOR”. Este un strat DOM `#wm` pus în `#stage` înaintea canvasului (canvasul este transparent, deci marcajul
-se vede doar unde nu sunt piese; grila rămâne). CSS-ul este în `build_reel.py` (Anton 58 px, −20°, alb 8,5% + galben 11,5%; tăria se schimbă cu
-variabilele de mediu `WM_W` și `WM_Y`, de exemplu `WM_W=.12 WM_Y=.16 python3 build_reel.py ep1`), iar mișcarea (9 px/s, rânduri decalate) în `placeWM`
+se vede doar unde nu sunt piese; grila rămâne). CSS-ul este în `build_reel.py` (Anton 58 px, −20°, alb 4% + galben 5,2%, după ce prima probă, la 8,5% + 11,5%, i s-a părut lui Sabin prea vizibilă; tăria se schimbă cu
+variabilele de mediu `WM_W` și `WM_Y`, de exemplu `WM_W=.06 WM_Y=.08 python3 build_reel.py ep1`), iar mișcarea (9 px/s, rânduri decalate) în `placeWM`
 din `dir_post.js`. Fiind în animație, nu la montaj, orice schimbare a lui cere randarea din nou a cadrelor.
 
 Pașii pentru un episod nou: text în `epN/vo_script.json` (rândul 0 = formula seriei, rândul 1 = „Vezi toate cauzele…”, ultimele 3 = încheierea comună,

@@ -105,7 +105,7 @@ const fail=()=>{document.body.style.background='red';};
 })();
 </script>
 </body></html>
-""" % (css.replace('VAR_WM_W', os.environ.get('WM_W', '.085')).replace('VAR_WM_Y', os.environ.get('WM_Y', '.115')), head.split("const fail=()=>document.body.classList.add('fail');\nif(!T){fail();return;}",1)[1], tail)
+""" % (css.replace('VAR_WM_W', os.environ.get('WM_W', '.04')).replace('VAR_WM_Y', os.environ.get('WM_Y', '.052')), head.split("const fail=()=>document.body.classList.add('fail');\nif(!T){fail();return;}",1)[1], tail)
 open(os.path.join(HERE, EP, 'reel.html'), 'w', encoding='utf-8').write(html)
 open(os.path.join(HERE, EP, 'reel_check.js'), 'w', encoding='utf-8').write(head + tail)
 print('reel.html', len(html))
