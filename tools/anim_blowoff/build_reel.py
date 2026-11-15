@@ -1,7 +1,8 @@
 # Builds blow-off-reel.html: the blow-off animation re-directed on the voice-over of the reel
-# „Dacă ai diesel și auzi sunetul ăsta” (15.11.2026). Same scene as the film (base/: turbo.html + b_parts/b_vgt/b_streams,
-# unchanged copies of /mnt/project-files/animatii/sursa/blow-off/), but timeline, camera, labels and HUD (r_*.js) run in
-# voice time: every event is anchored on a word of vo/cues.json (written by make_vo.py).
+# „Dacă ai diesel și auzi sunetul ăsta” (15.11.2026, v2). Same scene as the film (base/: turbo.html + b_parts/b_vgt/b_streams,
+# unchanged copies of /mnt/project-files/animatii/sursa/blow-off/), plus the parts of the reel (r_parts.js: MAF sensor and
+# factory recirculation valve; r_s1.js / r_streams.js: the recirculation loop). Timeline, camera, labels and HUD (r_*.js) run
+# in voice time: every event is anchored on a word of vo/cues.json (written by make_vo.py).
 #   python3 build_reel.py            -> blow-off-reel.html + vo/anchors.json
 import os, json, re, unicodedata
 D = os.path.dirname(os.path.abspath(__file__))
@@ -22,24 +23,32 @@ E = lambda i: C['lines'][i]['end']
 SEND = C['end']; TU = round(SEND + 7.5 + 0.04, 2)
 # hook sound: envelope of audio/hook_bed.wav (vo/hook_sfx.json, written by make_hook_sfx.py); the red bursts of the hook follow it
 hp = os.path.join(D, VO, 'hook_sfx.json')
+HFL = None
 if os.path.exists(hp):
-    h = json.load(open(hp)); HE = dict(t0=h['t0'], tb=h['tb'], v=h['env'])
+    h = json.load(open(hp)); HE = dict(t0=h['t0'], tb=h['tb'], v=h['env']); HFL = h.get('flutter')
 else:
     HE = dict(t0=round(E(0) + .15, 3), tb=round(E(0) + .2, 3), v=[round(min(1, k / 3) * 2.718 ** (-max(0, k - 3) / 28), 3) for k in range(80)])
-T_S = (E(13) + S(14)) / 2; T_W = (E(14) + S(15)) / 2; SP_C2 = W(14, 'supapă') - .25
-K = dict(HZ=1.2, SEND=SEND, HE=HE,
+T_S = (E(11) + S(12)) / 2; T_W = (E(12) + S(13)) / 2; SP_C2 = W(12, 'supapă') - .25
+K = dict(HZ=1.2, SEND=SEND, HE=HE, HFL=HFL,
     H_LIFT=HE['tb'] - .1, H_SLOW=S(1) - .15, H_DMG=W(1, 'semnul') - .15, H_SPK=W(1, 'distruge') - .15,
-    T_P=(E(1) + S(2)) / 2 + .02, P_IN=S(3) - .1, P_C=W(3, 'clapeta') - .1, P_L=W(3, 'eliberează') - .1,
-    T_D=(E(3) + S(4)) / 2, D_LIFT=W(4, 'Clapeta') - .3, D_AIR=W(4, 'aerul') - .1, D_NOBOV=W(4, 'nici') - .3, D_ACC=S(5) - .1, D_TURBO=W(5, 'Din') - .1,
-    G_IN=W(5, 'geometria') - .1, G_RING=W(6, 'inel') - .1, G_ACT=W(6, 'actuator') - .5, G_SWEEP=W(6, 'mișcate') - .1,
-    G_LOW=S(7) - .1, G_CLOSE=W(7, 'paletele'), G_HIGH=W(7, 'La', 1) - .1, G_OPEN=W(7, 'deschid') - .25,
-    C_LOW=S(8) - .1, C_DEP=W(8, 'calamina'), C_STUCK=W(8, 'blochează'), C_TRY=W(8, 'Actuatorul'),
-    O_0=S(9), O_HIT=W(9, 'lovesc') - .1, O_R0=S(9) + .6, O_R1=W(9, 'maximă') + .5, O_P0=W(9, 'Turbina'), O_P1=W(9, 'limită') + .4,
-    O_OUT=W(9, 'Turbina') - .4, O_PRES=W(9, 'presiunea') - .1,
-    L_LIFT=W(10, 'ridici'), L_ENG=W(10, 'Motorul') - .1, L_COMP=W(10, 'compresorul') - .1, S_ON=W(11, 'întoarce') - .15,
-    X_STR=W(12, 'tensiune') - .1, X_AX=W(12, 'împinge'), X_BRG0=W(12, 'lagărul'), X_BRG=W(13, 'Lagărul'), X_JOC=W(13, 'axul'), X_PAL=W(13, 'iar'), X_SPK=W(13, 'atingă'),
-    T_S=T_S, SP_C1=T_S + .75, SP_R1=SP_C2 - 1.45, SP_C2=SP_C2, SP_A0=W(14, 'Pe') - .2, SP_B0=W(14, 'Pe', 1) - .2,
-    T_W=T_W, W_LIFT=T_W + .5, W_ACC=W(15, 'Verifică') - .5, W_DG=W(15, 'Verifică') - .3)
+    # petrol, as it leaves the factory: recirculation (diverter) valve and MAF (rows 2-4)
+    T_P=(E(1) + S(2)) / 2 + .02, P_IN=S(3) - .1, P_DV=W(3, 'supapă') - .15, P_LIFT=W(3, 'Când') - .1, P_C=W(3, 'clapeta') - .1,
+    P_TRAP=W(3, 'aerul') - .1, P_L=W(3, 'Supapa', 1) - .1, P_BACK=W(3, 'înapoi') - .2, P_MAF=S(4) - .1, P_MAF1=W(4, 'aerul') - .1,
+    P_CAP=W(4, 'captiv') - .1, P_OK=W(4, 'iar') - .1,
+    # tuned petrol: blow-off (row 5)
+    T_B=(E(4) + S(5)) / 2, B_TUN=W(5, 'mașinile') - .2, B_PROT=W(5, 'protejeze') - .2, B_ACC=W(5, 'accelerează') - .3, P2_C=W(5, 'adună') - .15,
+    P2_NEED=W(5, 'motorul') - .1, P2_L=W(5, 'eliberat') - .25, B_SND=W(5, 'De', 1) - .1,
+    # diesel (rows 6-11)
+    T_D=(E(5) + S(6)) / 2, D_LIFT=W(6, 'Clapeta') - .3, D_AIR=W(6, 'aerul') - .1, D_NOBOV=W(6, 'De') - .2, D_NODV=W(6, 'nici') - .2, D_NOBO=W(6, 'nici', 1) - .2,
+    D_ACC=S(7) - .1, D_TURBO=W(7, 'Din') - .1, O_R0=W(7, 'Când') - .1, O_R1=W(7, 'pe') + .3, O_P0=W(7, 'pe') - .1, O_P1=W(7, 'decât') + .3,
+    O_AIR=W(7, 'mai') - .1, O_PRES=W(7, 'presiune') - .1,
+    L_LIFT=W(8, 'ridici'), L_ENG=W(8, 'Motorul') - .1, L_COMP=W(8, 'compresorul') - .1, S_ON=W(9, 'întoarce') - .15,
+    X_STR=W(10, 'tensiune') - .1, X_AX=W(10, 'împinge'), X_BRG0=W(10, 'lagărul'), X_BRG=W(11, 'Lagărul'), X_JOC=W(11, 'axul'), X_PAL=W(11, 'iar'), X_SPK=W(11, 'atingă'),
+    # split screen (row 12)
+    T_S=T_S, SP_C1=T_S + .75, SP_R1=SP_C2 - 1.45, SP_C2=SP_C2, SP_A0=W(12, 'Pe') - .2, SP_B0=W(12, 'Pe', 1) - .2,
+    # closing: the causes (row 13), then lift-off and surge once more (row 14)
+    T_W=T_W, W_Q=S(13) + .3, W_DG=W(13, 'geometria') - .5, W_ACT=W(13, 'problemă') - .15, W_OTH=W(13, 'sau') - .2, W_PRES=W(13, 'presiunea') - .2,
+    W_LIFT=W(14, 'suflă') - .25, W_FIND=W(14, 'Găsește') - .2)
 K = {k: (round(v, 3) if isinstance(v, float) else v) for k, v in K.items()}
 json.dump(dict(TU=TU, K=K), open(os.path.join(D, VO, 'anchors.json'), 'w'), indent=1)
 
@@ -118,8 +127,17 @@ rep("ft.repeat.set(1,22);", "ft.repeat.set(1,14);")
 rep("const face=new T.Mesh(new T.PlaneGeometry(46,120),new T.MeshBasicMaterial({map:ft,color:col(0xb8c2cc),toneMapped:false,side:T.DoubleSide}));face.position.set(-266,160,0.05);",
     "const face=new T.Mesh(new T.PlaneGeometry(46,74),new T.MeshBasicMaterial({map:ft,color:col(0xb8c2cc),toneMapped:false,side:T.DoubleSide}));face.position.set(-266,190,0.05);")
 rep("edges(scene,new T.PlaneGeometry(46,120),0.06).position.set(-266,160,0.06);", "edges(scene,new T.PlaneGeometry(46,74),0.06).position.set(-266,190,0.06);")
-rep('const FEED=curvePath(', rd('base/b_parts.js') + '\n' + rd('base/b_vgt.js') + '\nconst FEED=curvePath(')
-between('/* --- air: filter -> inducer', '/* --- gas inside the cylinder --- */', rd('base/b_streams.js') + '\n')
+rep('const FEED=curvePath(', rd('base/b_parts.js') + '\n' + rd('base/b_vgt.js') + '\n' + rd('r_parts.js') + '\nconst FEED=curvePath(')
+# the air filter is shorter: the MAF tube sits between it and the compressor inlet
+rep("g.add(new T.Mesh(axGeo([[-232,0],[-232,30],[-190,30],[-190,24]],{full:true,seg:40,closed:false}),M.filter));",
+    "g.add(new T.Mesh(axGeo([[-232,0],[-232,30],[-208,30],[-208,26.5]],{full:true,seg:40,closed:false}),M.filter));")
+rep("for(let k=0;k<12;k++){const r=new T.Mesh(axGeo([[-229+k*3.2,30.4],[-227.4+k*3.2,30.4]]", "for(let k=0;k<7;k++){const r=new T.Mesh(axGeo([[-229+k*3.2,30.4],[-227.4+k*3.2,30.4]]")
+between('/* --- air: filter -> inducer', '/* --- gas inside the cylinder --- */', rd('base/b_streams.js') + '\n' + rd('r_streams.js') + '\n')
+# the inlet stream starts inside the filter and passes the MAF; chevrons after the MAF; stream 1 with loop mask and x-ray copy
+rep("s1.forEach(p=>{p.L1=100;", "s1.forEach(p=>{p.L1=112;")
+rep("turboPt(-200+k*100,p.ri,p.psi+0.2*k,out)", "turboPt(-212+k*112,p.ri,p.psi+0.2*k,out)")
+rep("const CH_X0=-196,CH_L=78;", "const CH_X0=-186,CH_L=70;")
+between('function drawS1(G,S){', 'const N2=420,s2=[]', rd('r_s1.js'))
 rep("  for(const q of cyl){", "  if(!FUEL){colA=c<180||c>=705?AIR_C:new T.Color().copy(AIR_C).lerp(AIR_W,0.4);al=0.3;}\n  al*=CYLA;\n  for(const q of cyl){")
 between('/* establishing */', '/* ================= camera ================= */', rd('r_labels.js') + '\n')
 rep('const pv=(a0,a1,b0,b1)=>U=>pulse(U,a0,a0+0.4,b1-0.4,b1);\n', '')

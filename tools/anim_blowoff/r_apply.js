@@ -1,13 +1,15 @@
 const vEl=[0];
 let FUEL=1,CYLA=1;
 sparkFlash.material.map=glowTex;sparkFlash.material.needsUpdate=true;
+mafGlow.material.map=glowTex;mafGlow.material.needsUpdate=true;
+const MAF0=col(0x5a3410),MAF1=col(0xffc860);
 M.wheelC.emissive=new T.Color(0,0,0);M.bronzeT.emissive=new T.Color(0,0,0);
 const surgeGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,color:0xff3a20,blending:T.AdditiveBlending,depthWrite:false,transparent:true,opacity:0,toneMapped:false}));
 surgeGlow.position.set(-86,TY,-6);surgeGlow.scale.set(90,90,1);scene.add(surgeGlow);
 const BRZ=col(0xc9945a),BRR=col(0xff3b1f);
 const WC_E=new T.Color(1,0.12,0.06),BR_E=new T.Color(1,0.28,0.06),VAC_E=new T.Color(0.15,0.55,1);
-/* enlarged variable-geometry view: when it is on screen (main take only) */
-const dgScale=U=>Math.max(sst(K.G_IN+0.1,K.G_IN+0.9,U)*(1-sst(K.O_OUT+0.3,K.O_OUT+1.1,U)),sst(K.W_DG,K.W_DG+0.8,U));
+/* enlarged variable-geometry view: only in the closing, while the voice names it as one of the causes (main take only) */
+const dgScale=U=>pulse(U,K.W_DG,K.W_DG+0.8,K.W_OTH+0.1,K.W_OTH+0.9);
 function apply(U,variant){
   variant=variant||'main';
   const S=stateAt(U,variant),L=LV[variant];
@@ -39,9 +41,13 @@ function apply(U,variant){
   BV.visible=!!S.bovOn;vacHose.visible=vacNip.visible=!!S.bovOn;
   setBov(S.bovOn?S.lift:0);
   M.hoseV.emissive.copy(VAC_E).multiplyScalar(0.55*clamp(-S.map/0.7,0,1)*(S.bovOn?1:0));
+  /* recirculation valve and MAF */
+  DVG.visible=dvHose.visible=dvTap.visible=!!S.dvOn;
+  setDv(S.dvOn?S.dvLift:0);
+  mafEl.material.color.copy(MAF0).lerp(MAF1,clamp(S.maf,0,1));mafGlow.material.opacity=0.6*clamp(S.maf,0,1);
   const GX=lut(L.gex,U),G1=lut(L.g1,U);
   drawExhaust(GX,variant);
-  drawS1(G1,S);drawS2(lut(L.g2,U));drawS3(lut(L.g3,U),S);drawSparks(U,S);drawChev(G1,S);
+  drawS1(G1,S);drawS2(lut(L.g2,U));drawS3(lut(L.g3,U),S);drawS4(lut(L.g4,U),S);drawSparks(U,S);drawChev(G1,S);
   /* enlarged variable-geometry view */
   const sc=variant==='main'?dgScale(U):0;
   DG.visible=sc>0.01;conn.visible=DG.visible;
@@ -56,13 +62,13 @@ function apply(U,variant){
     dgLever.position.set(dgLeverPiv.x+12*Math.cos(lam),dgLeverPiv.y+12*Math.sin(lam),2);dgLever.rotation.z=lam;
     const dx=dgActPos.x-ex,dy=dgActPos.y-ey,Lr=Math.hypot(dx,dy);
     dgRod.position.set((ex+dgActPos.x)/2,(ey+dgActPos.y)/2,3);dgRod.scale.set(1,Lr,1);dgRod.rotation.z=Math.atan2(dy,dx)-Math.PI/2;
-    conn.material.opacity=0.85*Math.max(pulse(U,K.G_IN+0.2,K.G_IN+0.6,K.G_IN+2.2,K.G_IN+2.8),pulse(U,K.O_OUT,K.O_OUT+0.3,K.O_OUT+0.8,K.O_OUT+1.1));
+    conn.material.opacity=0.85*pulse(U,K.W_DG+0.2,K.W_DG+0.6,K.W_OTH-0.1,K.W_OTH+0.5);
   }
   drawEmbers(GX,sc,S);
   const O=lut(LUT.oil,U);
   oilMats.forEach(m=>{m.uniforms.uHi.value=0;m.uniforms.uPhase.value=O*(m.uniforms.uLen.value>1.5?1.6:1.0);});
   drawDrops(U,0,1e5);
   const tr=t=>pulse(U,t-0.4,t-0.04,t+0.04,t+0.42);
-  $('fade').style.opacity=Math.max(tr(T_P),tr(T_D),tr(T_S),tr(T_W)).toFixed(3);
+  $('fade').style.opacity=Math.max(tr(T_P),tr(T_B),tr(T_D),tr(T_S),tr(T_W)).toFixed(3);
   return {th,st,S};
 }

@@ -160,7 +160,7 @@ body.vo .hud{background:rgba(8,12,17,.66);padding:9px 11px 9px 14px;border-radiu
   <div class="rail">
     <div class="segs" id="segs"></div>
     <div class="names" id="names"></div>
-    <input type="range" id="scrub" min="0" max="132.31" step="0.01" value="0" aria-label="Poziția în animație">
+    <input type="range" id="scrub" min="0" max="148.27" step="0.01" value="0" aria-label="Poziția în animație">
   </div>
   <div class="ctrl">
     <button id="play" type="button">Pauză</button>
@@ -199,7 +199,7 @@ function pchip(xs,ys){
 const rnd=(function(){let s=97531;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};})();
 
 /* ================= layout (mm, schematic) ================= */
-const TU=132.31;
+const TU=148.27;
 const EX=-150;                 /* cylinder axis */
 const TY=175;                  /* turbo shaft axis height */
 const R=41, CRK=40, ROD=128, CLEAR=1.6, COMP_H=36, HEAD_H=48, BLOCK_BOT=-146, HALF_W=64, DEPTH=64;
@@ -212,25 +212,27 @@ const CV={a0:-84, r:p=>50+12*p/TAU, rho:p=>6+12*p/TAU, outlet:80};
 
 /* ================= timeline (reel, in voice time) ================= */
 /* K = anchors computed by build_reel.py from vo/cues.json (word starts of the voice-over), all in seconds of the reel.
-   Phases:
-   H  hook: diesel without blow-off, vanes stuck -> lift-off at K.H_LIFT, the surge bursts follow the hook sound (K.HE),
-      then slow-motion pulses and the damage look
-   P  petrol engine with blow-off: throttle closes at K.P_C, the valve lifts at K.P_L
-   N  the diesel story, one continuous take: healthy lift-off (D_LIFT..D_ACC) -> how the vanes work (G_*) ->
-      soot blocks them closed (C_*) -> overspeed and overboost (O_*) -> lift-off (L_LIFT) -> surge (S_ON) -> damage (X_*)
-   S  split screen: top = petrol + blow-off, bottom = diesel in surge; both lift off at SP_C1 and SP_C2
-   W  closing: surge once more, then the enlarged variable-geometry view */
-const K={"HZ": 1.2, "SEND": 124.767, "HE": {"t0": 3.15, "tb": 3.181, "v": [0.757, 0.911, 0.992, 0.864, 0.889, 0.87, 0.764, 0.605, 0.488, 0.488, 0.486, 0.489, 0.49, 0.49, 0.466, 0.463, 0.437, 0.453, 0.448, 0.467, 0.454, 0.449, 0.432, 0.423, 0.399, 0.388, 0.397, 0.412, 0.414, 0.402, 0.393, 0.402, 0.43, 0.426, 0.416, 0.386, 0.379, 0.361, 0.355, 0.348, 0.35, 0.336, 0.344, 0.362, 0.366, 0.356, 0.313, 0.302, 0.324, 0.354, 0.347, 0.292, 0.284, 0.279, 0.281, 0.297, 0.301, 0.3, 0.274, 0.259, 0.306, 0.257, 0.299, 0.224, 0.301, 0.232, 0.319, 0.244, 0.287, 0.226, 0.313, 0.274, 0.265, 0.178, 0.19, 0.143, 0.13, 0.099, 0.111, 0.069, 0.064, 0.028, 0.013, 0.01]}, "H_LIFT": 3.081, "H_SLOW": 4.75, "H_DMG": 7.51, "H_SPK": 9.05, "T_P": 10.22, "P_IN": 14.25, "P_C": 19.75, "P_L": 22.31, "T_D": 24.81, "D_LIFT": 26.47, "D_AIR": 28.43, "D_NOBOV": 32.63, "D_ACC": 34.97, "D_TURBO": 37.19, "G_IN": 39.35, "G_RING": 42.82, "G_ACT": 45.46, "G_SWEEP": 45.06, "G_LOW": 46.955, "G_CLOSE": 48.235, "G_HIGH": 52.055, "G_OPEN": 53.105, "C_LOW": 56.245, "C_DEP": 56.965, "C_STUCK": 59.045, "C_TRY": 60.805, "O_0": 63.415, "O_HIT": 63.775, "O_R0": 64.015, "O_R1": 69.655, "O_P0": 67.315, "O_P1": 71.635, "O_OUT": 66.915, "O_PRES": 69.775, "L_LIFT": 74.5, "L_ENG": 76.48, "L_COMP": 78.72, "S_ON": 83.98, "X_STR": 92.74, "X_AX": 95.24, "X_BRG0": 96.52, "X_BRG": 98.11, "X_JOC": 99.53, "X_PAL": 100.97, "X_SPK": 102.25, "T_S": 105.425, "SP_C1": 106.175, "SP_R1": 108.455, "SP_C2": 109.905, "SP_A0": 108.915, "SP_B0": 111.555, "T_W": 114.66, "W_LIFT": 115.16, "W_ACC": 119.08, "W_DG": 119.28};
-const T_P=K.T_P,T_D=K.T_D,T_S=K.T_S,T_W=K.T_W;
+   Phases (reel v2, 15.11.2026):
+   H   hook: diesel in overspeed -> lift-off at K.H_LIFT, the surge bursts follow the hook sound (K.HE),
+       then slow-motion pulses and the damage look
+   P1  petrol engine as it leaves the factory: recirculation (diverter) valve + MAF. Throttle closes at K.P_C, the valve
+       opens at K.P_L and the air already measured runs in a loop; the throttle opens again at K.P_OK
+   P2  tuned petrol engine with a blow-off: the turbo spins faster (B_ACC), throttle closes at K.P2_C, the valve vents at K.P2_L
+   N   the diesel story, one continuous take: healthy lift-off (D_LIFT..D_ACC) -> overspeed and overboost (O_*) ->
+       lift-off (L_LIFT) -> surge (S_ON) -> damage (X_*)
+   S   split screen: top = petrol + blow-off, bottom = diesel in surge; both lift off at SP_C1 and SP_C2
+   W   closing: why there is too much air (enlarged variable-geometry view between W_DG and W_OTH), then lift-off and surge */
+const K={"HZ": 1.2, "SEND": 140.733, "HE": {"t0": 3.25, "tb": 3.775, "v": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.021, 0.247, 0.461, 0.724, 0.944, 0.924, 0.936, 0.978, 0.965, 0.855, 0.691, 0.675, 0.676, 0.817, 0.813, 0.793, 0.64, 0.627, 0.625, 0.56, 0.553, 0.527, 0.534, 0.531, 0.528, 0.405, 0.401, 0.426, 0.432, 0.517, 0.609, 0.688, 0.726, 0.741, 0.757, 0.757, 0.708, 0.656, 0.614, 0.587, 0.531, 0.48, 0.44, 0.424, 0.405, 0.384, 0.36, 0.323, 0.275, 0.219, 0.184, 0.139, 0.105, 0.062, 0.036, 0.015]}, "HFL": [0.0, 0.375], "H_LIFT": 3.675, "H_SLOW": 4.75, "H_DMG": 7.51, "H_SPK": 9.05, "T_P": 10.22, "P_IN": 14.25, "P_DV": 16.98, "P_LIFT": 19.75, "P_C": 21.83, "P_TRAP": 23.27, "P_L": 25.75, "P_BACK": 28.13, "P_MAF": 30.52, "P_MAF1": 31.54, "P_CAP": 33.38, "P_OK": 35.22, "T_B": 37.735, "B_TUN": 40.215, "B_PROT": 43.095, "B_ACC": 44.755, "P2_C": 47.225, "P2_NEED": 48.715, "P2_L": 51.605, "B_SND": 53.515, "T_D": 55.205, "D_LIFT": 56.865, "D_AIR": 58.905, "D_NOBOV": 61.125, "D_NODV": 63.605, "D_NOBO": 65.205, "D_ACC": 66.785, "D_TURBO": 69.005, "O_R0": 70.045, "O_R1": 72.205, "O_P0": 71.805, "O_P1": 75.245, "O_AIR": 72.925, "O_PRES": 74.365, "L_LIFT": 77.49, "L_ENG": 79.47, "L_COMP": 81.71, "S_ON": 86.97, "X_STR": 95.73, "X_AX": 98.23, "X_BRG0": 99.51, "X_BRG": 101.1, "X_JOC": 102.52, "X_PAL": 103.96, "X_SPK": 105.24, "T_S": 108.415, "SP_C1": 109.165, "SP_R1": 111.445, "SP_C2": 112.895, "SP_A0": 111.905, "SP_B0": 114.545, "T_W": 117.65, "W_Q": 118.25, "W_DG": 121.51, "W_ACT": 123.86, "W_OTH": 126.21, "W_PRES": 128.37, "W_LIFT": 133.09, "W_FIND": 136.02};
+const T_P=K.T_P,T_B=K.T_B,T_D=K.T_D,T_S=K.T_S,T_W=K.T_W;
 const NS=Math.ceil(TU*240);
 const kf=(t,a)=>{if(t<=a[0][0])return a[0][1];for(let i=1;i<a.length;i++){if(t<a[i][0]){const p=a[i-1],q=a[i];return lerp(p[1],q[1],sst(p[0],q[0],t));}}return a[a.length-1][1];};
 function vLift(th,open,close){const x=((th-open)%720+720)%720,dur=((close-open)%720+720)%720;if(x>dur)return 0;const s=Math.sin(Math.PI*x/dur);return LIFT_V*s*s;}
-function phaseOf(U,variant){if(variant==='top')return 'P';if(variant==='bot')return 'B';return U<T_P?'H':U<T_D?'P':U<T_S?'N':U<T_W?'S':'W';}
+function phaseOf(U,variant){if(variant==='top')return 'PT';if(variant==='bot')return 'B';return U<T_P?'H':U<T_B?'P1':U<T_D?'P2':U<T_S?'N':U<T_W?'S':'W';}
 /* petrol: throttle closes at c, opens again at r; B = boost, ld = delay until the blow-off lifts */
-function petrolEvent(s,t,c,r,B,ld){
+function petrolEvent(s,t,c,r,B,ld,Rb){
   const k=sst(c,c+0.3,t)*(1-sst(r,r+0.45,t));               /* throttle closed amount */
   const L=sst(c+ld,c+ld+0.4,t)*(1-sst(r-0.15,r+0.25,t));     /* blow-off lift */
-  const Rb=150000;
+  Rb=Rb||150000;
   s.thr=1-k;s.lift=L;
   if(t<c){s.p=B;s.map=B;s.rpm=Rb;}
   else if(t<r+0.2){
@@ -245,6 +247,27 @@ function petrolEvent(s,t,c,r,B,ld){
   s.v3=k*L*lerp(150,330,clamp(s.p/B+0.25,0,1));
   s.vent=k*L*(1-0.8*sst(c+ld+1.8,c+ld+3.4,t));               /* the trapped air runs out */
   /* overrun: no fuel, the engine slows down and breathes almost nothing past the closed throttle */
+  s.fuelOn=k>0.5?0:1;s.eng=lerp(1,0.62,k);s.exh=lerp(1,0.22,k);s.cylA=lerp(1,0.35,k);
+}
+/* petrol, factory recirculation (diverter) valve: the throttle closes at c, the valve opens at l and sends the trapped air
+   back in front of the compressor (it never passes the MAF again), the throttle opens again at r */
+function petrolDV(s,t,c,l,r){
+  const B=1.2,Rb=150000;
+  const k=sst(c,c+0.3,t)*(1-sst(r,r+0.45,t));
+  const L=sst(l,l+0.35,t)*(1-sst(r-0.25,r+0.15,t));
+  s.bovOn=0;s.dvOn=1;s.thr=1-k;s.dvLift=L;
+  if(t<c){s.p=B;s.map=B;s.rpm=Rb;}
+  else if(t<r+0.2){
+    const spike=0.32*sst(c,c+0.5,t)*(1-sst(l,l+0.5,t));
+    s.p=lerp(B+spike,0.3,sst(l,l+1.8,t));s.map=lerp(B,-0.7,sst(c,c+0.5,t));
+    s.rpm=Rb*(1-0.05*sst(c,l,t))*lerp(1,0.86,sst(l,l+7,t));     /* the loop unloads the wheel: it keeps most of its speed */
+  }else{
+    const q=sst(r+0.1,r+1.3,t);
+    s.p=lerp(0.3,B,q);s.map=lerp(-0.7,B,sst(r,r+1.0,t));s.rpm=Rb*lerp(0.817,1,q);
+  }
+  s.v1=150*(s.rpm/150000)*(1-k*0.97);                           /* new air through the MAF: almost none while the throttle is closed */
+  s.v2=lerp(150,6,k);
+  s.rec=L;s.v4=L*lerp(200,105,sst(l,l+7,t));
   s.fuelOn=k>0.5?0:1;s.eng=lerp(1,0.62,k);s.exh=lerp(1,0.22,k);s.cylA=lerp(1,0.35,k);
 }
 /* diesel, variable geometry stuck closed, turbo in overspeed: lift-off at c, the compressor surges from c+d (slow
@@ -271,7 +294,7 @@ function hookState(s,t){
   surge(s,t,K.H_LIFT,K.H_SLOW-K.H_LIFT,1e4,1.5,false);
   const slow=s.surge,rs=s.rev;
   /* the burst is solid, then the flutter flickers at 10 Hz while the sound decays */
-  const fl=lerp(1,0.4+0.6*Math.pow(0.5+0.5*Math.cos(TAU*10*(t-K.HE.tb)),0.8),sst(0.22,0.36,t-K.HE.tb));
+  const fl=K.HFL?lerp(1,0.25+0.75*Math.pow(0.5+0.5*Math.cos(TAU*10*(t-K.HE.tb)),0.8),pulse(t-K.HE.tb,K.HFL[0]-0.05,K.HFL[0]+0.03,K.HFL[1]-0.03,K.HFL[1]+0.08)):1;
   const rb=Math.pow(hookEnv(t),0.55)*fl*(1-slow);
   const on=Math.max(slow,sst(K.H_LIFT+0.05,K.H_LIFT+0.25,t)),rev=Math.max(rs,rb);
   s.surge=on;s.rev=rev;
@@ -285,22 +308,16 @@ function hookState(s,t){
   s.brg=on*d*(0.55+0.45*rev);
   s.spark=sst(K.H_SPK,K.H_SPK+0.35,t)*(0.5+0.5*rev);
 }
-/* the diesel story (rows 4-13 of the voice-over), as keyframed tracks */
+/* the diesel story (rows 6-11 of the voice-over), as keyframed tracks: healthy lift-off, then overspeed and overboost */
 const TR=(function(){
   const a=K;
   return {
-    eng:[[0,1],[a.D_LIFT,1],[a.D_LIFT+1,0.62],[a.D_ACC,0.62],[a.D_ACC+0.8,1],[a.G_LOW,1],[a.G_LOW+1.0,0.55],[a.G_HIGH,0.55],[a.G_HIGH+1.1,1.15],
-         [a.C_LOW,1.15],[a.C_LOW+1.0,0.55],[a.C_TRY-0.2,0.55],[a.C_TRY+1.2,1.1],[a.L_LIFT,1.1],[a.L_LIFT+0.35,0.68]],
-    exh:[[0,1],[a.D_LIFT,1],[a.D_LIFT+1,0.75],[a.D_ACC,0.75],[a.D_ACC+0.8,1],[a.G_LOW,1],[a.G_LOW+1.0,0.7],[a.G_HIGH,0.7],[a.G_HIGH+1.1,1.15],
-         [a.C_LOW,1.15],[a.C_LOW+1.0,0.7],[a.C_TRY-0.2,0.7],[a.C_TRY+1.2,1.15],[a.L_LIFT,1.15],[a.L_LIFT+0.35,0.7]],
-    vgt:[[0,0.55],[a.D_LIFT,0.55],[a.D_LIFT+3,0.9],[a.D_ACC,0.9],[a.D_ACC+2.2,0.55],[a.G_SWEEP,0.55],[a.G_SWEEP+0.75,0.9],[a.G_SWEEP+1.7,0.2],[a.G_SWEEP+2.4,0.5],
-         [a.G_CLOSE,0.5],[a.G_CLOSE+1.0,0.06],[a.G_OPEN,0.06],[a.G_OPEN+1.0,0.95],[a.C_LOW+0.2,0.95],[a.C_LOW+2.0,0.05],[a.C_STUCK,0.02],[a.C_STUCK+0.5,0]],
-    rpm:[[0,140000],[a.D_LIFT,140000],[a.D_LIFT+4,80000],[a.D_ACC,80000],[a.D_ACC+2.5,150000],[a.G_LOW,150000],[a.G_LOW+1.6,104000],[a.G_CLOSE+1.4,112000],
-         [a.G_HIGH,112000],[a.G_HIGH+1.8,150000],[a.C_LOW,150000],[a.C_LOW+1.6,106000],[a.C_TRY,112000],[a.C_TRY+1.6,150000],[a.O_R0,150000],[a.O_R1,192000]],
-    p:[[0,1.2],[a.D_LIFT,1.2],[a.D_LIFT+3,0.12],[a.D_ACC,0.12],[a.D_ACC+2.2,1.2],[a.G_LOW,1.2],[a.G_LOW+1.6,0.7],[a.G_CLOSE+1.4,1.0],
-       [a.G_HIGH,1.0],[a.G_HIGH+1.8,1.3],[a.C_LOW,1.3],[a.C_LOW+1.6,0.9],[a.C_TRY,1.0],[a.C_TRY+1.8,1.3],[a.O_P0,1.3],[a.O_P1,2.3]],
-    v:[[0,150],[a.D_LIFT,150],[a.D_LIFT+3,85],[a.D_ACC,85],[a.D_ACC+2.2,150],[a.G_LOW,150],[a.G_LOW+1.2,95],[a.G_HIGH,95],[a.G_HIGH+1.4,165],
-       [a.C_LOW,165],[a.C_LOW+1.2,95],[a.C_TRY,95],[a.C_TRY+1.4,160],[a.O_R0,160],[a.O_R1,185]]
+    eng:[[0,1],[a.D_LIFT,1],[a.D_LIFT+1,0.62],[a.D_ACC,0.62],[a.D_ACC+0.8,1],[a.O_R0,1],[a.O_R1,1.1],[a.L_LIFT,1.1],[a.L_LIFT+0.35,0.68]],
+    exh:[[0,1],[a.D_LIFT,1],[a.D_LIFT+1,0.75],[a.D_ACC,0.75],[a.D_ACC+0.8,1],[a.O_R0,1],[a.O_R1,1.15],[a.L_LIFT,1.15],[a.L_LIFT+0.35,0.7]],
+    vgt:[[0,0.55],[a.D_LIFT,0.55],[a.D_LIFT+3,0.9],[a.D_ACC,0.9],[a.D_ACC+2.2,0.55],[a.O_R0,0.55],[a.O_R0+1.2,0]],
+    rpm:[[0,140000],[a.D_LIFT,140000],[a.D_LIFT+4,80000],[a.D_ACC,80000],[a.D_ACC+2.2,150000],[a.O_R0,150000],[a.O_R1,192000]],
+    p:[[0,1.2],[a.D_LIFT,1.2],[a.D_LIFT+3,0.12],[a.D_ACC,0.12],[a.D_ACC+2.2,1.3],[a.O_P0,1.3],[a.O_P1,2.3]],
+    v:[[0,150],[a.D_LIFT,150],[a.D_LIFT+3,85],[a.D_ACC,85],[a.D_ACC+2.2,150],[a.O_R0,150],[a.O_R1,185]]
   };
 })();
 function dieselStory(s,t){
@@ -317,23 +334,28 @@ function dieselStory(s,t){
   s.fuelOn=(t>=K.D_LIFT&&t<K.D_ACC)?0:1;
   s.eng=kf(t,TR.eng);s.exh=kf(t,TR.exh);s.vgt=kf(t,TR.vgt);s.rpm=kf(t,TR.rpm);s.p=kf(t,TR.p);s.map=s.p-0.04;
   s.v1=s.v2=kf(t,TR.v);
-  s.stuck=sst(K.C_STUCK,K.C_STUCK+0.5,t);s.dep=0.6*sst(K.C_DEP,K.C_STUCK+0.5,t);s.act=sst(K.C_TRY,K.C_TRY+0.5,t);
 }
 function stateAt(U,variant){
   const ph=phaseOf(U,variant);
-  const s={ph,fuel:'P',fuelOn:1,eng:1,exh:1,cylA:1,thr:1,bovOn:1,lift:0,p:1.2,map:1.2,rpm:150000,v1:150,v2:150,v3:0,vent:0,surge:0,rev:0,q:0,stress:0,jolt:0,spark:0,brg:0,vgt:0.55,vgtOn:0,stuck:0,dep:0,act:0};
-  if(ph==='P'){
-    if(variant==='top'){if(U<K.SP_C2)petrolEvent(s,U,K.SP_C1,K.SP_R1,1.2,0.32);else petrolEvent(s,U,K.SP_C2,1e4,1.2,0.32);}
-    else petrolEvent(s,U,K.P_C,1e4,1.2,K.P_L-K.P_C);
+  const s={ph,fuel:'P',fuelOn:1,eng:1,exh:1,cylA:1,thr:1,bovOn:1,lift:0,dvOn:0,dvLift:0,rec:0,v4:0,p:1.2,map:1.2,rpm:150000,v1:150,v2:150,v3:0,vent:0,
+    surge:0,rev:0,q:0,stress:0,jolt:0,spark:0,brg:0,vgt:0.55,vgtOn:0,stuck:0,dep:0,act:0,pmax:2.05,rmax:178000};
+  if(ph==='P1')petrolDV(s,U,K.P_C,K.P_L,K.P_OK);
+  else if(ph==='P2'){
+    const up=sst(K.B_ACC,K.B_ACC+1.8,U);                       /* the modified turbo spins faster and makes more boost */
+    petrolEvent(s,U,K.P2_C,1e4,lerp(1.2,1.65,up),K.P2_L-K.P2_C,lerp(150000,182000,up));
+    s.pmax=1.8;s.rmax=174000;
+  }else if(ph==='PT'){
+    if(U<K.SP_C2)petrolEvent(s,U,K.SP_C1,K.SP_R1,1.2,0.32);else petrolEvent(s,U,K.SP_C2,1e4,1.2,0.32);
   }else if(ph==='B'){
     if(U<K.SP_C2)surge(s,U,K.SP_C1,0.1,K.SP_R1,K.HZ,true);else surge(s,U,K.SP_C2,0.1,1e4,K.HZ,false);
   }else if(ph==='H')hookState(s,U);
   else if(ph==='N')dieselStory(s,U);
-  else if(ph==='W')surge(s,U,K.W_LIFT,0.1,K.W_ACC,K.HZ,true);
+  else if(ph==='W')surge(s,U,K.W_LIFT,0.1,1e4,K.HZ,false);
   else{s.fuel='D';s.bovOn=0;s.vgtOn=1;}
+  s.maf=clamp(Math.abs(s.v1)/150,0,1.25);
   return s;
 }
-/* look-up tables per variant: crank angle, exhaust gas, the three air streams, rotor angle;
+/* look-up tables per variant: crank angle, exhaust gas, the four air streams, rotor angle;
    cool = exhaust intervals (in gas distance) emitted with the fuel cut */
 const LUT={oil:new Float32Array(NS+1)};
 const LV={};
@@ -342,16 +364,16 @@ const LV={};
   for(let i=0,oi=0;i<=NS;i++){LUT.oil[i]=oi;oi+=dt*0.42;}
   ['main','top','bot'].forEach(v=>{
     const F=()=>new Float32Array(NS+1);
-    const A={th:F(),gex:F(),g1:F(),g2:F(),g3:F(),spin:F(),cool:[]};
-    let th=200,g=0,g1=0,g2=0,g3=0,sp=0,was=1,ca=0;
+    const A={th:F(),gex:F(),g1:F(),g2:F(),g3:F(),g4:F(),spin:F(),cool:[]};
+    let th=200,g=0,g1=0,g2=0,g3=0,g4=0,sp=0,was=1,ca=0;
     for(let i=0;i<=NS;i++){
       const U=i*dt,s=stateAt(U,v);
-      A.th[i]=th;A.gex[i]=g;A.g1[i]=g1;A.g2[i]=g2;A.g3[i]=g3;A.spin[i]=sp;
+      A.th[i]=th;A.gex[i]=g;A.g1[i]=g1;A.g2[i]=g2;A.g3[i]=g3;A.g4[i]=g4;A.spin[i]=sp;
       if(was&&!s.fuelOn)ca=g;else if(!was&&s.fuelOn)A.cool.push([ca,g]);
       was=s.fuelOn;
       const r=560*s.eng,le=vLift(th,498,8)/LIFT_V;
       g+=dt*(r/720)*300*(0.22+1.5*le)*s.exh;th+=dt*r;
-      g1+=dt*s.v1;g2+=dt*s.v2;g3+=dt*s.v3;sp+=dt*TAU*1.15*(s.rpm/150000);
+      g1+=dt*s.v1;g2+=dt*s.v2;g3+=dt*s.v3;g4+=dt*s.v4;sp+=dt*TAU*1.15*(s.rpm/150000);
     }
     if(!was)A.cool.push([ca,1e9]);
     LV[v]=A;
@@ -731,8 +753,8 @@ function voluteCuts(V,mat){
 /* ---- air filter ---- */
 (function(){
   const g=new T.Group();
-  g.add(new T.Mesh(axGeo([[-232,0],[-232,30],[-190,30],[-190,24]],{full:true,seg:40,closed:false}),M.filter));
-  for(let k=0;k<12;k++){const r=new T.Mesh(axGeo([[-229+k*3.2,30.4],[-227.4+k*3.2,30.4]],{full:true,seg:40,closed:false}),M.ring);g.add(r);}
+  g.add(new T.Mesh(axGeo([[-232,0],[-232,30],[-208,30],[-208,26.5]],{full:true,seg:40,closed:false}),M.filter));
+  for(let k=0;k<7;k++){const r=new T.Mesh(axGeo([[-229+k*3.2,30.4],[-227.4+k*3.2,30.4]],{full:true,seg:40,closed:false}),M.ring);g.add(r);}
   turbo.add(g);
 })();
 
@@ -942,6 +964,77 @@ const conn=new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(61.5,T
   new T.LineDashedMaterial({color:0xffb224,dashSize:5,gapSize:4,transparent:true,opacity:0,toneMapped:false}));
 conn.computeLineDistances();scene.add(conn);
 
+/* =====================================================================
+   REEL v2 (15.11.2026): AIR-MASS SENSOR (MAF) IN FRONT OF THE COMPRESSOR + FACTORY RECIRCULATION (DIVERTER) VALVE
+   ON THE COMPRESSOR INLET, WITH ITS RETURN HOSE FROM THE PRESSURE PIPE (petrol engines)
+   ===================================================================== */
+const MAF_X=-199,DV_X=-138,DV_Y=TY+24.6,DV_P=22,DV_TAPX=DV_X-42;
+M.mafTube=stdC(0x24282d,.2,.62);C.mafTube=cut(0x424951,HA);M.mafBody=std(0x16181b,.15,.6);C.mafBody=cut(0x2b3037,HB);
+M.dvBody=stdC(0x2d3238,.3,.55);C.dvBody=cut(0x4b525b,HB);M.coil=stdC(0xb4703a,.85,.38);C.coil=cut(0xc58a52,HA);
+const COIL0=col(0xc58a52),COIL1=col(0xffc061);
+/* MAF: short tube between the filter and the compressor inlet, plug-in hot-film sensor */
+axPart(turbo,[[-208,19.2],[-190,19.2],[-190,26.5],[-208,26.5]],M.mafTube,C.mafTube,{seg:40});
+const MAFG=new T.Group();MAFG.position.set(MAF_X,TY,0);scene.add(MAFG);
+let mafEl,mafGlow;
+(function(){
+  const bx=(w,h,d,x,y,z,m)=>{const b=new T.Mesh(new T.BoxGeometry(w,h,d),m||M.mafBody);b.position.set(x,y,z);MAFG.add(b);return b;};
+  bx(7,21,11,0,16.5,-5.5);                       /* finger in the air stream */
+  bx(18,4.5,16,0,28.6,-8);                       /* flange on the tube */
+  bx(11.5,13,13,-0.5,37.2,-7);                   /* connector body */
+  bx(9,7,9,9,38.5,-7,std(0x3d434a,.3,.5));       /* plug */
+  capPoly(MAFG,[[-3.5,6],[3.5,6],[3.5,26.4],[9,26.4],[9,30.8],[5.3,30.8],[5.3,43.7],[-6.3,43.7],[-6.3,30.8],[-9,30.8],[-9,26.4],[-3.5,26.4]],C.mafBody,0.03);
+  const win=new T.Mesh(polyGeo([[-2.3,8],[2.3,8],[2.3,14],[-2.3,14]]),flat(0x07090c));win.position.z=0.05;MAFG.add(win);
+  mafEl=new T.Mesh(polyGeo([[-1.7,10.3],[1.7,10.3],[1.7,11.7],[-1.7,11.7]]),new T.MeshBasicMaterial({color:0xffb040,toneMapped:false,side:T.DoubleSide}));mafEl.position.z=0.06;MAFG.add(mafEl);
+  mafGlow=new T.Sprite(new T.SpriteMaterial({map:null,color:0xffa030,blending:T.AdditiveBlending,depthWrite:false,transparent:true,opacity:0,toneMapped:false}));
+  mafGlow.position.set(0,11,1.2);mafGlow.scale.set(15,15,1);mafGlow.renderOrder=8;MAFG.add(mafGlow);
+})();
+/* recirculation valve: vertical, on top of the inlet duct; poppet lifted by a solenoid; side port to the return hose */
+const DVG=new T.Group();DVG.position.set(DV_X,DV_Y,0.03);scene.add(DVG);
+const DVm=new T.Group();DVG.add(DVm);
+let dvSpring;
+(function(){
+  const PO=7,PIN=5.5,W0=DV_P-PO,W1=DV_P+PO,OUT_D=Math.asin(PO/17);
+  /* stub through the duct wall + valve seat */
+  revolved(DVG,[[7,-5.5],[10,-5.5],[10,12],[17,12],[17,14.2],[7,14.2]],M.alu,C.alu,{seg:36});
+  {const b=new T.Mesh(polyGeo([[-7,-5.7],[7,-5.7],[7,0.3],[-7,0.3]]),flat(0x4d545c));b.position.z=-0.004;DVG.add(b);}   /* bore through the duct wall */
+  /* chamber: outer and inner skins, window where the port joins (towards -X) */
+  const full=(prof)=>DVG.add(new T.Mesh(latheArc(prof,Math.PI/2,Math.PI,44,false),M.dvBody));
+  const part=(prof)=>DVG.add(new T.Mesh(latheArc(prof,Math.PI/2,Math.PI-OUT_D,44,false),M.dvBody));
+  full([[17,14.2,1],[17,W0,1]]);part([[17,W0,1],[17,W1,1]]);full([[17,W1,1],[17,43,1]]);
+  full([[13.5,40,1],[13.5,W1,1]]);part([[13.5,W1,1],[13.5,W0,1]]);full([[13.5,W0,1],[13.5,14.2,1]]);
+  capPoly(DVG,[[13.5,14.2],[17,14.2],[17,43],[13.5,43]],C.dvBody);
+  capPoly(DVG,[[-17,14.2],[-13.5,14.2],[-13.5,DV_P-PIN],[-17,DV_P-PIN]],C.dvBody);
+  capPoly(DVG,[[-17,DV_P+PIN],[-13.5,DV_P+PIN],[-13.5,43],[-17,43]],C.dvBody);
+  /* partition with the stem guide */
+  revolved(DVG,[[2.6,40],[13.5,40],[13.5,43],[5.2,43],[5.2,44.2],[2.6,44.2]],M.dvBody,C.dvBody,{seg:40});
+  /* side port with hose barb, along -X */
+  const op=[[PIN,13.6],[PO,13.6],[PO,25.5],[7.9,26.6],[7.9,27.6],[PO,28.8],[PO,30],[PIN,30]];
+  const og=latheArc(op,Math.PI/2,Math.PI,28,true);og.rotateZ(Math.PI/2);og.translate(0,DV_P,0);DVG.add(new T.Mesh(og,M.dvBody));
+  const oc=capGeo(op);oc.rotateZ(Math.PI/2);oc.translate(0,DV_P,0.01);DVG.add(new T.Mesh(oc,C.dvBody));edges(DVG,oc,0.02);
+  /* solenoid: coil, armature tube, yoke with the top cap, connector */
+  revolved(DVG,[[6.2,45.6],[13.2,45.6],[13.2,63.6],[6.2,63.6]],M.coil,C.coil,{seg:40});
+  revolved(DVG,[[5.5,44.4],[6.1,44.4],[6.1,66],[5.5,66]],M.steel,cut(0xc4cad1,HB),{seg:30});
+  revolved(DVG,[[0,66],[13.4,66],[13.4,43],[17,43],[17,66.4],[15.4,69],[0,69]],M.dvBody,C.dvBody,{seg:44});
+  {const con=new T.Mesh(new T.BoxGeometry(13,11,12),M.mafBody);con.position.set(22.5,57,-8);DVG.add(con);
+   const pl=new T.Mesh(new T.BoxGeometry(8,8,9),std(0x3d434a,.3,.5));pl.position.set(31,58.5,-8);DVG.add(pl);}
+  /* moving part: valve disc with rubber seal, stem, armature */
+  revolved(DVm,[[0,15],[10.6,15],[10.6,16.4],[11.6,16.4],[11.6,17.8],[8.6,19.2],[2.4,19.8],[2.4,44.6],[5.2,44.6],[5.2,55],[0,55]],M.poppet,C.poppet,{seg:40});
+  revolved(DVm,[[7.6,14.3],[10.4,14.3],[10.4,15],[7.6,15]],M.rubber,C.rub,{seg:40});
+  dvSpring=new T.Mesh(makeHelix(3.4,0.7,5),M.bovSpring);DVG.add(dvSpring);
+})();
+let dvLiftNow=-1;
+function setDv(lift){
+  if(Math.abs(lift-dvLiftNow)<0.002)return;dvLiftNow=lift;
+  const y=lift*6;DVm.position.y=y;setHelix(dvSpring.geometry,55+y,66-(55+y));
+  C.coil.color.copy(COIL0).lerp(COIL1,lift);
+}
+setDv(0);
+/* return hose: side port -> up and back -> tap under the pressure pipe (the upper run, behind the section plane) */
+const DVH_PTS=[[-21,DV_P,0],[-30,DV_P,0],[-36,DV_P+0.3,-0.3],[-41,DV_P+3,-1.2],[-43.5,DV_P+9,-3],[-44,DV_P+20,-7],[-43,DV_P+40,-15.5],[-42,DV_P+60,-23.5],[-42,DV_P+75,-26]].map(p=>[DV_X+p[0],DV_Y+p[1],p[2]]);
+const DVH=curvePath(DVH_PTS,90);
+const dvHose=new T.Mesh(new T.TubeGeometry(DVH.curve,90,8.6,20,false),M.hose);scene.add(dvHose);
+const dvTap=new T.Mesh(new T.CylinderGeometry(10.4,10.4,9,24),M.alu);dvTap.position.set(DV_TAPX,TY+107.5,-25.6);scene.add(dvTap);
+
 const FEED=curvePath([[EX+HALF_W,-60,-22],[-58,-62,-44],[-24,-52,-52],[-22,40,-52],[-22,206,-50],[-14,236,-34],[OIL_A,240,-12],[OIL_A,236,-2],[OIL_A,TY+52,0]],150);
 scene.add(new T.Mesh(new T.TubeGeometry(FEED.curve,140,3.6,14,false),M.pipeOil));
 const DRAIN=curvePath([[OIL_A,TY-48,0],[OIL_A,108,0],[10,76,0],[16,40,0],[16,-90,0],[6,-150,0],[-24,-178,0],[-64,-184,0],[EX+70,-184,0]],160);
@@ -1084,10 +1177,10 @@ const D_TAP=nearestD(PIPE_X,BOV_Y),D_THR=nearestD(PIPE_X,THR_Y);
 const WARN_C=new T.Color(1.0,0.3,0.22);
 const N1=1100,s1=[];
 for(let i=0;i<N1;i++){s1.push({e:rnd()*4000,psi:rnd()*TAU,ri:2+14*Math.sqrt(rnd()),j:[rnd()*2-1,rnd()*2-1,rnd()],q:rnd(),sz:0.8+0.6*rnd()});}
-s1.forEach(p=>{p.L1=100;p.L2=p.L1+40;p.L3=p.L2+22;p.pe=((p.psi+1.6)%TAU);p.L4=p.L3+(TAU-p.pe)*58+CV.outlet;p.L5=p.L4+D_TAP;p.per=p.L5+60;});
+s1.forEach(p=>{p.L1=112;p.L2=p.L1+40;p.L3=p.L2+22;p.pe=((p.psi+1.6)%TAU);p.L4=p.L3+(TAU-p.pe)*58+CV.outlet;p.L5=p.L4+D_TAP;p.per=p.L5+60;});
 const s1Pts=makePts(N1,{max:26,soft:1.3});
 function airPos(p,d,out){
-  if(d<p.L1){const k=d/p.L1;turboPt(-200+k*100,p.ri,p.psi+0.2*k,out);return 0;}
+  if(d<p.L1){const k=d/p.L1;turboPt(-212+k*112,p.ri,p.psi+0.2*k,out);return 0;}
   if(d<p.L2){const s=(d-p.L1)/40,h=cHub(s),t=cTip(s),q=clamp((p.ri-7)/13,0,1)*0.8+0.1;turboPt(lerp(h[0],t[0],q),lerp(h[1],t[1],q),p.psi+0.2+1.1*s,out);return 0.2*s;}
   if(d<p.L3){const k=(d-p.L2)/22;turboPt(lerp(-74,CV.a0+3,k),lerp(29,CV.r(p.pe)-CV.rho(p.pe)*0.5,k),p.psi+1.3+0.3*k,out);return 0.2+0.2*k;}
   if(d<p.L4){
@@ -1099,17 +1192,23 @@ function airPos(p,d,out){
   INP.at(d-p.L4,out);const rr=10;out.x+=p.j[0]*rr*0.7;out.y+=p.j[1]*rr*0.7;out.z-=p.j[2]*rr*0.6;
   return 0.5;
 }
+/* reel v2: stream 1 with (a) the part that runs inside the recirculation loop faded out while the loop is drawn by
+   stream 4 and (b) an x-ray copy for the pressure pipe behind the section plane, shown while the diverter is fitted */
+const s1X=makePts(N1,{max:24,soft:1.3,order:3});s1X.mat.depthTest=false;
 function drawS1(G,S){
-  s1Pts.begin();const back=clamp(-S.v1/120,0,1);
+  s1Pts.begin();s1X.begin();const back=clamp(-S.v1/120,0,1),xr=S.dvOn?1:0;
   for(const p of s1){
     const d=((G+p.e)%p.per+p.per)%p.per;if(d>p.L5)continue;
     const prog=airPos(p,d,_v);if(_v.z>3)continue;
-    const a=0.44*(1-sst(0.5,3,_v.z))*sst(0,10,d)*(1-sst(p.L5-5,p.L5,d));
+    let a=0.44*(1-sst(0.5,3,_v.z))*sst(0,10,d)*(1-sst(p.L5-5,p.L5,d));
+    if(S.rec>0.01&&d>DJ-8&&d<p.L4+D_DVT+8)a*=1-S.rec;
     if(prog<0.2)_c.copy(AIR_C);else if(prog<0.4)_c.copy(AIR_C).lerp(AIR_W,(prog-0.2)/0.2);else{_c.copy(AIR_W);if(prog>0.45&&_v.x<-240&&_v.y<228)_c.lerp(AIR_C,clamp((228-_v.y)/70,0,1));}
     if(back>0)_c.lerp(WARN_C,back*0.85);
-    s1Pts.push(_v,_c,Math.min(0.9,a*(1+0.8*back)),2.4*p.sz*(1+0.35*back));
+    const al=Math.min(0.9,a*(1+0.8*back)),sz=2.4*p.sz*(1+0.35*back);
+    s1Pts.push(_v,_c,al,sz);
+    if(xr&&_v.z<-12&&d>=p.L3+(TAU-p.pe)*58)s1X.push(_v,_c,al*0.5*sst(TY+66,TY+80,_v.y),sz);
   }
-  s1Pts.end();
+  s1Pts.end();s1X.end();
 }
 const N2=420,s2=[],L2S=INP.len-D_TAP,PER2=L2S+40;
 for(let i=0;i<N2;i++)s2.push({e:rnd()*PER2,j:[rnd()*2-1,rnd()*2-1,rnd()],sz:0.8+0.6*rnd()});
@@ -1174,7 +1273,7 @@ const chevs=[];
     chevs.push({grp,o,m});
   }
 })();
-const CH_X0=-196,CH_L=78;
+const CH_X0=-186,CH_L=70;
 const CHEV_F=new T.Color(0.30,0.70,1.0),CHEV_B=new T.Color(1.0,0.27,0.17);
 function drawChev(G,S){
   const dir=S.v1>=0?1:-1,sp=Math.min(1,Math.abs(S.v1)/55);
@@ -1214,6 +1313,48 @@ function drawEmbers(G,sc,S){
     }
   }
   emPts.end();
+}
+
+/* --- reel v2, stream 4: the recirculation loop of the diverter valve (petrol, throttle closed, valve open):
+       compressor inlet -> wheel -> scroll -> pressure pipe -> tap -> return hose -> valve -> back in front of the wheel --- */
+const D_DVT=(function(){for(let d=0;d<INP.len;d+=0.5){INP.at(d,_v);if(_v.x<=DV_TAPX)return d;}return 120;})();
+const DJ=90;                                                    /* the returned air joins the inlet stream again at x = -122 */
+const RC=(function(){
+  const hose=DVH_PTS.slice().reverse().map(p=>[p[0],p[1],p[2]]);hose[0][1]+=2;
+  const L=(x,y)=>[DV_X+x,DV_Y+y,0];
+  return curvePath(hose.concat([L(-15,21),L(-12,18.6),L(-8,17.2),L(-3.5,16),L(-0.5,13.2),L(0,6),L(0,-2),L(0.5,-7),L(4,-12.5),L(10,-17.5),L(16,-20.5)]),170).path;
+})();
+function rcD(x,y){let best=0,bd=1e9;for(let d=0;d<RC.len;d+=0.5){RC.at(d,_v);const e=Math.abs(_v.x-x)+Math.abs(_v.y-y);if(e<bd){bd=e;best=d;}}return best;}
+const RC_V=rcD(DV_X-14,DV_Y+21),RC_S=rcD(DV_X-0.5,DV_Y+13.2);  /* into the valve chamber, down the stub */
+const REC_C=new T.Color(0.37,0.88,0.81);
+const N4=900,s4=[];
+for(let i=0;i<N4;i++){
+  const p={e:rnd(),psi:(rnd()-0.5)*2.6,ri:3+13*Math.sqrt(rnd()),j:[rnd()*2-1,rnd()*2-1,rnd()],sz:0.8+0.6*rnd()};
+  p.L1=112;p.L2=p.L1+40;p.L3=p.L2+22;p.pe=((p.psi+1.6)%TAU+TAU)%TAU;p.L4=p.L3+(TAU-p.pe)*58+CV.outlet;
+  p.LA=p.L4+D_DVT-DJ;p.per=p.LA+RC.len;p.a0=new T.Vector3();p.a1=new T.Vector3();airPos(p,DJ,p.a0);airPos(p,p.L4+D_DVT,p.a1);
+  s4.push(p);
+}
+const s4Pts=makePts(N4,{max:26,soft:1.3}),s4X=makePts(N4,{max:24,soft:1.3,order:3});s4X.mat.depthTest=false;
+function drawS4(G,S){
+  s4Pts.begin();s4X.begin();
+  if(S.rec>0.01)for(const p of s4){
+    const s=((G+p.e*p.per)%p.per+p.per)%p.per;let a=0.62,hid=0;
+    if(s<p.LA){
+      const d=DJ+s;airPos(p,d,_v);
+      if(d>=p.L4)hid=1;                                                             /* pressure pipe, behind the section plane */
+      else if(d>=p.L3+(TAU-p.pe)*58){a*=sst(TY+66,TY+80,_v.y);hid=1;}              /* riser: shown only above the scroll */
+      else if(_v.z>3)continue;else a*=1-sst(0.5,3,_v.z);
+    }else{
+      const b=s-p.LA;RC.at(b,_v);
+      const inV=sst(RC_V-12,RC_V,b),rr=lerp(5.2,lerp(2.5,4.2,sst(RC_S-3,RC_S+5,b)),inV);
+      _v.x+=p.j[0]*rr*0.7;_v.y+=p.j[1]*rr*lerp(0.7,0.55,inV);_v.z=lerp(_v.z-p.j[2]*rr*0.8,0.5+0.9*p.j[2],inV);
+      if(b<14)_w.copy(_v),_v.copy(p.a1).lerp(_w,sst(0,14,b));
+      if(b>RC.len-16)_v.lerp(p.a0,sst(RC.len-16,RC.len,b));
+      hid=_v.z<-7.5?1:0;
+    }
+    (hid?s4X:s4Pts).push(_v,REC_C,a*S.rec*(hid?0.6:1),2.8*p.sz);
+  }
+  s4Pts.end();s4X.end();
 }
 
 /* --- gas inside the cylinder --- */
@@ -1284,38 +1425,35 @@ const TYp=y=>TY+y;
 const pv=(a,b)=>U=>pulse(U,a,a+0.4,b-0.4,b);
 const dgA=(x,y,z)=>()=>[DGP.x+x,DGP.y+y,z||0];
 const vaneAt=(k,z)=>()=>{const g=dgVanes[k];return [DGP.x+g.position.x,DGP.y+g.position.y,z||6];};
-/* petrol engine with blow-off */
-addLabel('Turbosuflantă',null,[-20,TY+46,-10],1,24,-26,pv(T_P+0.7,K.P_IN+0.6));
-addLabel('Intercooler',null,[-245,196,0],1,30,6,pv(T_P+1.0,K.P_IN+0.6),'air');
-addLabel('Supapă blow-off',null,[-322,143,-4],-1,10,28,pv(T_P+1.3,K.P_C-0.6),'big');
-addLabel('Clapetă de accelerație',null,[-247,THR_Y,0],1,22,-4,pv(T_P+1.6,K.P_C-0.6),'air');
-addLabel('Motor pe benzină','cu bujie',[EX-6,40,0],1,20,24,pv(T_P+1.9,K.P_IN+1.2),'fire');
-addLabel('Clapetă închisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.P_C+0.35,T_D-0.25),'warn');
-addLabel('Aer blocat','sub presiune',[-266,BOV_Y+30,0],1,22,10,pv(K.P_C+0.7,K.P_L+0.35),'warn');
-addLabel('Aer eliberat','pșșșt',[-266-BOV_OUT,BOV_Y-60,8],1,22,-6,pv(K.P_L+0.35,T_D-0.25),'air');
-/* diesel: nothing to vent */
+/* petrol engine as it leaves the factory: recirculation (diverter) valve, MAF */
+addLabel('Motor pe benzină','cu bujie',[EX-6,40,0],1,20,24,pv(T_P+0.6,K.P_DV+0.2),'fire');
+addLabel('Turbosuflantă',null,[-20,TY+46,-10],1,24,-26,pv(T_P+0.9,K.P_DV+0.2));
+addLabel('Intercooler',null,[-245,196,0],1,30,6,pv(T_P+1.2,K.P_DV+0.2),'air');
+addLabel('Clapetă de accelerație',null,[-247,THR_Y,0],1,22,-4,pv(T_P+1.5,K.P_DV+0.2),'air');
+addLabel('Supapă de recirculare','diverter valve · din fabrică',[DV_X+14,DV_Y+60,0],1,10,22,pv(K.P_DV+0.3,K.P_LIFT+0.5),'big');
+addLabel('Clapetă închisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.P_C+0.35,K.P_L+0.3),'warn');
+addLabel('Aer comprimat','nu mai are unde să se ducă',[-266+10,BOV_Y+16,0],1,22,14,pv(K.P_TRAP,K.P_L+0.3),'warn');
+addLabel('Supapa se deschide',null,[DV_X+14,DV_Y+54,0],1,18,-30,pv(K.P_L+0.5,K.P_BACK),'air');
+addLabel('Aerul se întoarce','înainte de compresor',[DV_X+8,TY+6,0],1,26,-34,pv(K.P_BACK,K.P_MAF+0.2),'air');
+addLabel('Senzor MAF','aici se măsoară aerul',[MAF_X,TY+40,-4],-1,10,-36,pv(K.P_MAF1,K.P_OK+0.6),'big');
+addLabel('Aer deja măsurat','rămâne captiv în circuit',[DV_X-24,TY-6,0],1,8,-36,pv(K.P_CAP-0.4,K.P_OK-0.1),'air');
+addLabel('Motorul funcționează corect',null,[EX-6,40,0],1,20,24,pv(K.P_OK+0.35,T_B-0.2),'air');
+/* tuned petrol engine: blow-off */
+addLabel('Supapă blow-off','pe mașinile tunate',[-322,143,-4],-1,10,28,pv(T_B+0.6,K.P2_C-0.5),'big');
+addLabel('Turbina se accelerează prea mult',null,[-84,TY+34,6],1,26,-40,pv(K.B_ACC+0.2,K.P2_C+0.2),'warn');
+addLabel('Clapetă închisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.P2_C+0.35,T_D-0.25),'warn');
+addLabel('Presiune în plus','motorul nu mai are nevoie de ea',[-266,BOV_Y+30,0],1,22,10,pv(K.P2_NEED-0.5,K.P2_L+0.35),'warn');
+addLabel('Aer eliberat în atmosferă','de aici vine sunetul',[-266-BOV_OUT,BOV_Y-60,8],1,22,-6,pv(K.P2_L+0.35,T_D-0.25),'air');
+/* diesel: nothing to recirculate, nothing to vent */
 addLabel('Motor diesel','cu injector',[EX+10,60,0],1,24,22,pv(T_D+0.6,K.D_LIFT+1.4),'fire');
-addLabel('Clapeta rămâne deschisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.D_LIFT+0.2,K.D_NOBOV-0.3),'air');
-addLabel('Aerul trece prin motor',null,[-252,48,0],1,24,-14,pv(K.D_AIR,K.D_NOBOV-0.3),'air');
-addLabel('Fără supapă blow-off','din fabrică',[-277,BOV_Y,0],-1,14,20,pv(K.D_NOBOV+0.2,K.D_TURBO-0.2),'big');
-/* where the sound comes from */
-addLabel('Turbosuflantă',null,[-20,TY+46,-10],1,24,-26,pv(K.D_TURBO+0.2,K.G_IN+0.3));
-addLabel('Geometrie variabilă','în carcasa turbinei',[61.5,TY+38,-4],1,20,-26,pv(K.G_IN,K.G_IN+2.3),'fire');
-/* how the vanes work */
-addLabel('Inel de palete',null,vaneAt(1),1,34,26,pv(K.G_RING,K.G_LOW+0.2));
-addLabel('Gaze de evacuare',null,dgA(150,102,3),1,10,30,pv(K.G_RING+0.9,K.G_LOW+0.2),'fire');
-addLabel('Roata turbinei',null,dgA(-12,10,8),-1,40,-52,pv(K.G_RING+1.3,K.G_LOW+0.2));
-addLabel('Actuator',null,dgA(172,-112,10),1,6,26,pv(K.G_ACT,K.G_LOW+0.2));
-addLabel('Turații mici','palete închise · gaze rapide',vaneAt(1),1,34,26,pv(K.G_CLOSE+0.5,K.G_HIGH+0.5),'fire');
-addLabel('Turații mari','palete deschise · turația rămâne sub limită',vaneAt(1),1,34,26,pv(K.G_OPEN+0.5,K.C_LOW+0.4),'air');
-/* soot blocks them */
-addLabel('Calamină','depusă pe palete',vaneAt(5),-1,26,-30,pv(K.C_DEP+0.5,K.O_OUT+0.3),'warn');
-addLabel('Palete blocate pe închis',null,vaneAt(1),1,34,26,pv(K.C_STUCK+0.2,K.O_OUT+0.3),'warn');
-addLabel('Actuator','nu le mai poate deschide',dgA(172,-112,10),1,6,26,pv(K.C_TRY+0.1,K.O_0+0.6));
-addLabel('Roata turbinei','lovită cu viteză prea mare',dgA(-12,10,8),-1,40,-52,pv(K.O_HIT,K.O_OUT+0.3),'warn');
-/* overspeed, overboost */
-addLabel('Turbină','peste turația maximă',[72,TY+22,8],1,14,46,pv(K.O_OUT+1.1,K.L_LIFT+0.2),'warn');
-addLabel('Presiune peste limită',null,[-84,TY+72,-40],-1,26,-10,pv(K.O_PRES,K.L_LIFT+0.2),'warn');
+addLabel('Clapeta rămâne deschisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.D_LIFT+0.2,K.D_NOBOV-0.2),'air');
+addLabel('Aerul trece prin motor',null,[-252,48,0],1,24,-14,pv(K.D_AIR,K.D_NOBOV-0.2),'air');
+addLabel('Fără supapă de recirculare',null,[DV_X,DV_Y+4,0],1,16,-46,pv(K.D_NODV,K.D_TURBO-0.3),'big');
+addLabel('Fără blow-off','din fabrică',[-279,BOV_Y,0],-1,12,24,pv(K.D_NOBO,K.D_TURBO-0.3),'big');
+/* where the sound comes from: overspeed */
+addLabel('Turbosuflantă',null,[-20,TY+46,-10],1,24,-26,pv(K.D_TURBO+0.3,K.O_R0+0.6));
+addLabel('Turbină supraturată','peste turația maximă',[72,TY+22,8],1,14,46,pv(K.O_R0+0.9,K.L_LIFT+0.2),'warn');
+addLabel('Prea mult aer și presiune','mai mult decât cere motorul',[-84,TY+72,-40],-1,26,-10,pv(K.O_AIR,K.L_LIFT+0.2),'warn');
 /* lift-off: surge */
 addLabel('Injecție tăiată',null,[EX+10,60,0],1,24,22,pv(K.L_LIFT+0.3,K.S_ON-1.6),'warn');
 addLabel('Motorul cere mai puțin aer',null,[-252,48,0],1,24,-14,pv(K.L_ENG,K.S_ON-1.6),'air');
@@ -1325,20 +1463,30 @@ addLabel('Roata compresorului','tensiune pe palete',[-88,TY-16,8],-1,26,-34,pv(K
 addLabel('Lagăr axial','lovit înainte-înapoi',[-52,TY+22,0],-1,14,20,pv(K.X_BRG0-0.2,K.X_PAL+0.2),'warn');
 addLabel('Axul capătă joc',null,[-22,TY-6,6],1,20,-30,pv(K.X_JOC,K.X_PAL+0.2),'warn');
 addLabel('Paletele ating carcasa',null,[-80,TY-30,0],-1,24,-16,pv(K.X_SPK,T_S-0.3),'warn');
-/* closing */
-addLabel('Pompaj','aerul se întoarce în pulsuri',[-150,TY+12,-4],-1,10,26,pv(K.W_LIFT+0.6,K.W_DG+0.1),'warn');
-addLabel('Geometrie variabilă','palete blocate de calamină',vaneAt(1),1,34,26,pv(K.W_DG+0.9,TU+1),'warn');
-addLabel('Actuator',null,dgA(172,-112,10),1,6,26,pv(K.W_DG+1.3,TU+1));
+/* closing: why there is too much air on the intake of a diesel */
+addLabel('Prea mult aer pe admisie','de ce?',[-84,TY+72,-40],-1,26,-10,pv(K.W_Q,K.W_DG+0.2),'warn');
+addLabel('Geometrie variabilă blocată',null,vaneAt(1),1,34,26,pv(K.W_DG+0.9,K.W_OTH+0.2),'warn');
+addLabel('Actuator','problemă pe acționare',dgA(172,-112,10),1,6,26,pv(K.W_ACT,K.W_OTH+0.2),'warn');
+addLabel('Alte defecte','presiune prea mare pe admisie',[-266+12,150,0],1,24,14,pv(K.W_OTH+0.9,K.W_LIFT+0.1),'warn');
+addLabel('Pompaj','aerul se întoarce în pulsuri',[-150,TY+12,-4],-1,10,26,pv(K.W_LIFT+0.7,TU+1),'warn');
 let labelsOn=true;
 
 /* ================= camera ================= */
 const SHOTS={
   wide:{c:[-128,40],w:470,h:430,az:14,el:8},
   wide2:{c:[-128,40],w:470,h:430,az:-12,el:10},
+  /* petrol with the recirculation valve */
+  dvLoop:{c:[-160,228],w:220,h:200,az:6,el:6},
+  dvWide:{c:[-196,186],w:310,h:300,az:10,el:6},
+  dvMaf:{c:[-176,222],w:204,h:186,az:-8,el:6},
+  /* petrol with the blow-off */
   bovT:{c:[-292,108],w:170,h:200,az:10,el:5},
   bov:{c:[-305,116],w:120,h:140,az:8,el:4},
   bovMid:{c:[-230,150],w:330,h:340,az:12,el:6},
+  p2T:{c:[-176,196],w:330,h:300,az:2,el:6},
+  /* diesel */
   intake:{c:[-215,70],w:300,h:300,az:12,el:6},
+  noV:{c:[-205,178],w:330,h:320,az:8,el:6},
   comp:{c:[-120,TY+20],w:220,h:230,az:-28,el:9},
   compIn:{c:[-140,TY+4],w:200,h:170,az:-22,el:8},
   hookA0:{c:[-66,TY-6],w:350,h:250,az:-2,el:11},
@@ -1350,15 +1498,19 @@ const SHOTS={
   turboO:{c:[-24,TY+8],w:352,h:250,az:14,el:7},
   airPath:{c:[-185,100],w:340,h:330,az:10,el:6},
   chra:{c:[-60,TY+6],w:150,h:130,az:10,el:4},
-  vgt:{c:[DGP.x+38,DGP.y-14],w:322,h:330,az:0,el:0},
-  vgtIn:{c:[DGP.x+6,DGP.y+4],w:262,h:262,az:0,el:0}
+  vgt:{c:[DGP.x+38,DGP.y-14],w:322,h:330,az:0,el:0}
 };
 const CAMKEYS=[[0,'hookA0'],[K.H_LIFT-0.55,'hookA'],[K.H_LIFT+0.35,'hookB'],[K.H_DMG-0.3,'hookB'],[K.H_DMG+0.9,'chra'],[K.H_SPK-0.2,'chra'],[K.H_SPK+0.8,'wheel'],[T_P,'wheel'],
-  [T_P+0.01,'wide'],[K.P_IN,'wide'],[K.P_IN+1.4,'bovMid'],[K.P_C-1.9,'bovMid'],[K.P_C-0.7,'bovT'],[K.P_L-0.6,'bovT'],[K.P_L+0.5,'bov'],[T_D,'bov'],
-  [T_D+0.01,'intake'],[K.D_NOBOV-0.7,'intake'],[K.D_NOBOV+0.5,'bovT'],[K.D_ACC+0.2,'bovT'],[K.D_TURBO-0.4,'bovMid'],[K.D_TURBO+0.9,'turboAll'],[K.G_IN+0.5,'turboAll'],[K.G_IN+1.7,'vgt'],
-  [K.G_LOW-0.3,'vgt'],[K.G_LOW+1.0,'vgtIn'],[K.C_TRY-0.5,'vgtIn'],[K.C_TRY+0.7,'vgt'],[K.O_0-0.2,'vgt'],[K.O_0+1.0,'vgtIn'],[K.O_OUT,'vgtIn'],[K.O_OUT+1.2,'turboO'],
+  /* petrol, from the factory: recirculation valve + MAF */
+  [T_P+0.01,'wide'],[K.P_IN+0.4,'wide'],[K.P_DV+0.9,'dvLoop'],[K.P_LIFT-0.2,'dvLoop'],[K.P_LIFT+1.1,'dvWide'],[K.P_L-0.5,'dvWide'],[K.P_L+0.9,'dvLoop'],
+  [K.P_MAF-0.1,'dvLoop'],[K.P_MAF+1.2,'dvMaf'],[K.P_OK-0.3,'dvMaf'],[K.P_OK+1.0,'dvWide'],[T_B,'dvWide'],
+  /* tuned petrol: blow-off */
+  [T_B+0.01,'bovMid'],[K.B_PROT-0.3,'bovMid'],[K.B_PROT+1.0,'p2T'],[K.P2_C-0.7,'p2T'],[K.P2_C+0.5,'bovT'],[K.P2_L-0.6,'bovT'],[K.P2_L+0.5,'bov'],[T_D,'bov'],
+  /* diesel */
+  [T_D+0.01,'intake'],[K.D_NOBOV-0.4,'intake'],[K.D_NOBOV+0.9,'noV'],[K.D_TURBO-0.5,'noV'],[K.D_TURBO+0.8,'turboAll'],[K.O_PRES-0.6,'turboAll'],[K.O_PRES+0.8,'turboO'],
   [K.L_LIFT-0.6,'turboO'],[K.L_LIFT+0.9,'airPath'],[K.S_ON-1.9,'airPath'],[K.S_ON-0.5,'compIn'],[K.X_AX-0.5,'compIn'],[K.X_AX+0.8,'chra'],[K.X_PAL-0.4,'chra'],[K.X_PAL+0.8,'wheel'],[T_S,'wheel'],
-  [T_W,'compIn'],[K.W_DG-0.2,'compIn'],[K.W_DG+1.1,'vgt'],[TU,'vgt']];
+  /* closing: the causes, then the surge once more */
+  [T_W,'turboO'],[K.W_DG-0.2,'turboO'],[K.W_DG+1.0,'vgt'],[K.W_OTH-0.1,'vgt'],[K.W_OTH+1.1,'airPath'],[K.W_LIFT-0.5,'airPath'],[K.W_LIFT+0.8,'compIn'],[K.W_FIND+0.3,'compIn'],[K.W_FIND+1.8,'hookA'],[TU,'hookA']];
 /* split screen: top = the blow-off and the compressor, bottom = the compressor inlet in surge (same scale) */
 const SPLIT_A={c:[-212,138],w:330,h:150,az:6,el:5},SPLIT_B={c:[-150,172],w:330,h:150,az:-8,el:5};
 const user={az:0,el:0,zoom:1};
@@ -1422,28 +1574,33 @@ function setHud(mode,labels){
 function cls(id,c){const e=$(id);if(e.dataset.c!==c){e.dataset.c=c;e.className=c;}}
 /* slow-motion pill: the surge pulses are shown slowed down */
 /* no pill in the hook: the hook titles sit right under the HUD */
-const slowOn=U=>(U>=K.L_LIFT&&U<T_S)||(U>=K.W_LIFT&&U<K.W_ACC);
+const slowOn=U=>(U>=K.L_LIFT&&U<T_S)||U>=K.W_LIFT;
 function updateUI(U,S){
   const sp=$('slowp'),so=S&&slowOn(U);if(sp.dataset.o!==String(so)){sp.dataset.o=String(so);sp.style.opacity=so?1:0;}
   const hud=document.querySelector('.hud');if(hud.dataset.h!==String(!S)){hud.dataset.h=String(!S);hud.style.visibility=S?'visible':'hidden';}
   if(!S){setHud('S',[null,null,null]);return;}
-  setHud('A',['Turație turbo','Presiune turbo',null]);
+  /* with the recirculation valve the third row shows what the MAF measures: the looped air is not measured again */
+  const maf=S.ph==='P1';
+  if(maf)setHud('B',['Turație turbo','Presiune turbo','Aer măsurat · MAF']);else setHud('A',['Turație turbo','Presiune turbo',null]);
   setText('v0',fmtInt(Math.round(S.rpm/1000)*1000)+' rpm');
   setText('v1',fmtBar(S.p));
-  cls('v1',S.p>2.05?'warn':'');cls('v0',S.rpm>178000||(S.surge>0.5&&S.rev>0.25)?'warn':'');
+  if(maf)setText('v2',fmtInt(Math.round(Math.max(0,S.v1)/150*31)*10)+' kg/h');
+  cls('v1',S.p>S.pmax?'warn':'');cls('v0',S.rpm>S.rmax||(S.surge>0.5&&S.rev>0.25)?'warn':'');
 }
 
 /* ================= per-frame state ================= */
 const vEl=[0];
 let FUEL=1,CYLA=1;
 sparkFlash.material.map=glowTex;sparkFlash.material.needsUpdate=true;
+mafGlow.material.map=glowTex;mafGlow.material.needsUpdate=true;
+const MAF0=col(0x5a3410),MAF1=col(0xffc860);
 M.wheelC.emissive=new T.Color(0,0,0);M.bronzeT.emissive=new T.Color(0,0,0);
 const surgeGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,color:0xff3a20,blending:T.AdditiveBlending,depthWrite:false,transparent:true,opacity:0,toneMapped:false}));
 surgeGlow.position.set(-86,TY,-6);surgeGlow.scale.set(90,90,1);scene.add(surgeGlow);
 const BRZ=col(0xc9945a),BRR=col(0xff3b1f);
 const WC_E=new T.Color(1,0.12,0.06),BR_E=new T.Color(1,0.28,0.06),VAC_E=new T.Color(0.15,0.55,1);
-/* enlarged variable-geometry view: when it is on screen (main take only) */
-const dgScale=U=>Math.max(sst(K.G_IN+0.1,K.G_IN+0.9,U)*(1-sst(K.O_OUT+0.3,K.O_OUT+1.1,U)),sst(K.W_DG,K.W_DG+0.8,U));
+/* enlarged variable-geometry view: only in the closing, while the voice names it as one of the causes (main take only) */
+const dgScale=U=>pulse(U,K.W_DG,K.W_DG+0.8,K.W_OTH+0.1,K.W_OTH+0.9);
 function apply(U,variant){
   variant=variant||'main';
   const S=stateAt(U,variant),L=LV[variant];
@@ -1475,9 +1632,13 @@ function apply(U,variant){
   BV.visible=!!S.bovOn;vacHose.visible=vacNip.visible=!!S.bovOn;
   setBov(S.bovOn?S.lift:0);
   M.hoseV.emissive.copy(VAC_E).multiplyScalar(0.55*clamp(-S.map/0.7,0,1)*(S.bovOn?1:0));
+  /* recirculation valve and MAF */
+  DVG.visible=dvHose.visible=dvTap.visible=!!S.dvOn;
+  setDv(S.dvOn?S.dvLift:0);
+  mafEl.material.color.copy(MAF0).lerp(MAF1,clamp(S.maf,0,1));mafGlow.material.opacity=0.6*clamp(S.maf,0,1);
   const GX=lut(L.gex,U),G1=lut(L.g1,U);
   drawExhaust(GX,variant);
-  drawS1(G1,S);drawS2(lut(L.g2,U));drawS3(lut(L.g3,U),S);drawSparks(U,S);drawChev(G1,S);
+  drawS1(G1,S);drawS2(lut(L.g2,U));drawS3(lut(L.g3,U),S);drawS4(lut(L.g4,U),S);drawSparks(U,S);drawChev(G1,S);
   /* enlarged variable-geometry view */
   const sc=variant==='main'?dgScale(U):0;
   DG.visible=sc>0.01;conn.visible=DG.visible;
@@ -1492,14 +1653,14 @@ function apply(U,variant){
     dgLever.position.set(dgLeverPiv.x+12*Math.cos(lam),dgLeverPiv.y+12*Math.sin(lam),2);dgLever.rotation.z=lam;
     const dx=dgActPos.x-ex,dy=dgActPos.y-ey,Lr=Math.hypot(dx,dy);
     dgRod.position.set((ex+dgActPos.x)/2,(ey+dgActPos.y)/2,3);dgRod.scale.set(1,Lr,1);dgRod.rotation.z=Math.atan2(dy,dx)-Math.PI/2;
-    conn.material.opacity=0.85*Math.max(pulse(U,K.G_IN+0.2,K.G_IN+0.6,K.G_IN+2.2,K.G_IN+2.8),pulse(U,K.O_OUT,K.O_OUT+0.3,K.O_OUT+0.8,K.O_OUT+1.1));
+    conn.material.opacity=0.85*pulse(U,K.W_DG+0.2,K.W_DG+0.6,K.W_OTH-0.1,K.W_OTH+0.5);
   }
   drawEmbers(GX,sc,S);
   const O=lut(LUT.oil,U);
   oilMats.forEach(m=>{m.uniforms.uHi.value=0;m.uniforms.uPhase.value=O*(m.uniforms.uLen.value>1.5?1.6:1.0);});
   drawDrops(U,0,1e5);
   const tr=t=>pulse(U,t-0.4,t-0.04,t+0.04,t+0.42);
-  $('fade').style.opacity=Math.max(tr(T_P),tr(T_D),tr(T_S),tr(T_W)).toFixed(3);
+  $('fade').style.opacity=Math.max(tr(T_P),tr(T_B),tr(T_D),tr(T_S),tr(T_W)).toFixed(3);
   return {th,st,S};
 }
 
