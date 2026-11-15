@@ -64,8 +64,9 @@ Lângă aceste fișiere trebuie `three/` (pachetul npm three@0.128.0, dezarhivat
    Modul vechi (efect generat, `--shape`, `--comp`, `--lead`) a rămas în script.
 3. `python3 build_reel.py`, apoi cadre de probă pe fiecare fază (`shot.cjs` + `sheet.py`).
 4. Folderul reel-ului ca la `anim_injectie` (pasul 4): `new_reel.sh <slug> <mp4 negru de durata poveștii, cu o pistă audio mută>`, vocea și cronologia copiate,
-   `audio/hook_bed.wav`, `out/v2.json` = `{"narrator": true, "orig_gain": 0, "music": false, "sfx": false, "beds": [{"wav": "audio/hook_bed.wav", "t": 3.25, "gain": 1.0, "duck": 0.6}]}`,
+   `audio/hook_bed.wav`, `out/v2.json` = `{"narrator": true, "orig_gain": 0, "music": false, "sfx": false, "beds": [{"wav": "audio/hook_bed.wav", "t": 3.25, "gain": 1.3, "duck": 0.6}]}`,
    `python3 retime.py`, `out/frames_meta.json` = `{"n_out": round(total × 30)}`.
+   Nivelul sunetului (`gain` 1.3) e pus pe măsurători, nu după ureche: în mixul final sunetul ajunge la ≈ −15 LUFS (maxim momentan), cu vocea la ≈ −14, iar tot fișierul are −14,1 LUFS integrat.
 5. Randarea: `N=2 OUT=<reel>/frames_base NF=<int(story_end × 30) + 1> ./vrender.sh` (aici 4.222 de cadre; 540×960 la DPR 2, JPEG q92). Viteza depinde de mașină: randarea e software (SwiftShader) și folosește toate nucleele.
    Pe o mașină cu 4 nuclee iese cam 1 cadru/s cu 1 sau 2 procese (70 de minute), iar cu 4 procese se sufocă (0,3 cadre/s și primul cadru trece de limita de timp a capturii); varianta 1 a mers cu 4 procese la 0,6 s/cadru pe o mașină mai mare.
    Compozitorul folosește cadrele doar până la sfârșitul poveștii (cardul de final are fundalul lui). Dacă se schimbă doar sunetul din hook, se refac doar cadrele hook-ului (t < `K.T_P`): se șterg și se rulează din nou `vrender.sh`.
