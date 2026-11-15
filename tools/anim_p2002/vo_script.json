@@ -1,0 +1,18 @@
+[
+ {"text": "Eroarea {P2002|pe două mii doi}, eficiență filtru de particule. Ce înseamnă, de cele mai multe ori, pe motoarele {2.0|doi zero} Euro {6|șase} de pe gama {VAG?|vag?}", "gap": 0.3, "tags": "[serious] [matter of fact] [conversational tone]"},
+ {"text": "De cele mai multe ori, filtrul nu are nimic. Problema e la EGR și la răcitorul de gaze. Hai să-ți arăt de ce.", "gap": 0.55},
+ {"text": "Gazele ies din motor și trec prin turbină, prin catalizator și prin filtrul de particule.", "gap": 0.6},
+ {"text": "După filtru, o parte din ele se întoarce în admisie, prin răcitorul de gaze și prin supapa EGR.", "gap": 0.4},
+ {"text": "În filtru, gazele trec prin pereții poroși, iar funinginea rămâne în canale.", "gap": 0.45},
+ {"text": "Calculatorul nu vede în filtru. Măsoară doar presiunea, înainte și după el.", "gap": 0.45},
+ {"text": "Separat, calculează câtă funingine ar trebui să fie acolo. Dacă măsoară mult mai puțin, crede că filtrul nu mai reține și dă eroarea.", "gap": 0.4},
+ {"text": "Cel mai des, de vină e răcitorul de gaze. Se înfundă cu depuneri, iar prin el trec mai puține gaze decât a socotit calculatorul.", "gap": 0.65},
+ {"text": "Presiunea pe filtru iese mai mică decât cea așteptată. Apare eroarea, deși filtrul e bun.", "gap": 0.4},
+ {"text": "Uneori, răcitorul e și fisurat: pierde antigel, fără nicio pată sub mașină.", "gap": 0.45},
+ {"text": "A doua cauză e supapa EGR. Înțepenită de depuneri, nu se mai deschide cât i se cere. Efectul e același.", "gap": 0.6},
+ {"text": "Aceeași eroare o dă și un furtunaș crăpat sau înfundat, la senzorul de presiune. Sau aerul pierdut pe admisie și un debitmetru care măsoară greșit.", "gap": 0.6},
+ {"text": "Sunt și cazuri în care filtrul chiar are de suferit. Un injector care picură face mai multă funingine decât e în calcul.", "gap": 0.6},
+ {"text": "Filtrul regenerează des și foarte fierbinte, până crapă. Iar unul nou pățește la fel.", "gap": 0.4},
+ {"text": "Mai e și uleiul: trecut de segmenți sau scăpat pe la axul turbinei, arde și lasă cenușă. Iar cenușa nu mai iese din filtru la regenerare.", "gap": 0.55},
+ {"text": "Așa că, înainte să schimbi filtrul, caută cauza. Eroarea arată spre filtru, dar cauza se găsește la diagnoză.", "gap": 0.65}
+]
