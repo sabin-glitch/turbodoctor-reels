@@ -240,6 +240,15 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* eSvc (14.11.2026, Range Rover 80.000 km): pictogramele serviciilor sub „Diagnoză gratuită”, cerute de Sabin — CFG.endIcons = true (turbine, injectoare, DPF, motoare) sau [[icon, text], ...] */
 #eSvc{display:none;position:absolute;left:141px;top:1166px;width:798px;grid-template-columns:390px 390px;gap:18px}
 #endCard.hasSvc #eSvc{display:grid}
+/* ePh (15.11.2026, seria „De ce se strică turbinele”): numărul de telefon pe ecranul de final, cerut de Sabin pentru serie — CFG.endPhone = true (0739 065 065) sau 'număr'; restul cardului urcă pentru a-i face loc */
+#ePh{display:none;position:absolute;left:0;right:0;top:1002px;text-align:center;font-family:Anton;font-size:112px;line-height:1;color:var(--yellow);letter-spacing:3px;-webkit-text-stroke:10px #000;paint-order:stroke fill}
+#ePh small{display:block;font-family:JB;font-weight:800;font-size:24px;line-height:1;color:#A5E9FF;letter-spacing:3px;-webkit-text-stroke:0;margin-bottom:8px}
+#endCard.hasPh #ePh{display:block}
+#endCard.hasPh .eWord{top:250px}
+#endCard.hasPh #eMap{top:392px}
+#endCard.hasPh #eMapTitle{top:846px}
+#endCard.hasPh #eFree{top:892px}
+#endCard.hasPh #eSvc{top:1176px}
 #eSvc .svc{height:128px;border-radius:28px;background:rgba(12,16,22,.88);border:4px solid rgba(255,255,255,.92);display:flex;align-items:center;gap:14px;padding:0 14px 0 12px;box-shadow:0 14px 32px rgba(0,0,0,.5);opacity:0}
 #eSvc .svcI{width:98px;height:98px;border-radius:50%;background:#FFD21F;flex:none;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18)}
 #eSvc .svcI svg{width:76px;height:76px}
@@ -355,6 +364,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
   <div id="eMap"></div>
   <div id="eMapTitle">UNITĂȚILE NOASTRE</div>
   <div id="eFree"><img src="assets/emoji/stethoscope.png" alt="">DIAGNOZĂ GRATUITĂ</div>
+  <div id="ePh"></div>
   <div id="eSvc"></div>
  </div>
  <div id="flash"></div>
@@ -1113,15 +1123,16 @@ function rEnd(t) {
   const el = $('endCard'); if (t < TEND || CFG.endCard === false) { hide(el); return; }  // endCard:false = promo final screen built from items (opis)
   const k = t - TEND; el.style.display = 'block'; el.style.opacity = clamp(k / .3); el.style.transform = 'none';
   if (CFG.endSub && !el.classList.contains('hasSub')) { el.classList.add('hasSub'); el.querySelector('#eSub').innerHTML = [].concat(CFG.endSub).join('<br>'); }
+  if (CFG.endPhone && !el.classList.contains('hasPh')) { el.classList.add('hasPh'); el.querySelector('#ePh').innerHTML = `<small>PROGRAMĂRI</small>${CFG.endPhone === true ? '0739 065 065' : CFG.endPhone}`; }
   const SVC = CFG.endIcons === true ? SVC_DEF : CFG.endIcons;
   if (SVC && !el.classList.contains('hasSvc')) { el.classList.add('hasSvc');
     el.querySelector('#eSvc').innerHTML = SVC.map(([ic, tx, kk]) => `<div class="svc"><div class="svcI">${SVC_ICONS[ic] || ''}</div><div class="svcT"><div class="a">${kk || 'REPARAȚII'}</div><div class="b">${tx}</div></div></div>`).join(''); }
   if (SVC) el.querySelectorAll('#eSvc .svc').forEach((c, i) => { const p = clamp((k - SVC_AT - i * SVC_DT) / .32); c.style.opacity = eOut(p).toFixed(3);
     c.style.transform = `translateY(${((1 - eOut(p)) * 26).toFixed(1)}px) scale(${p > 0 ? eBack(p, 2.0).toFixed(4) : 0})`; });
-  const seq = [['.eWord', .05], ['#eSub', .3], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1]];
+  const seq = [['.eWord', .05], ['#eSub', .3], ['#eMap', .5], ['#eMapTitle', .65], ['#eFree', 2.1], ['#ePh', 2.35]];
   seq.forEach(([sel, d]) => { const c = el.querySelector(sel); const p = clamp((k - d) / .4);
     let tr = `translateY(${(1 - eOut(p)) * 40}px)`;
-    if (sel === '#eFree') tr += ` scale(${p > 0 ? eBack(p, 2.0) : 0})`;
+    if (sel === '#eFree' || sel === '#ePh') tr += ` scale(${p > 0 ? eBack(p, 2.0) : 0})`;
     c.style.opacity = eOut(p); c.style.transform = tr; c.style.transformOrigin = '50% 50%'; });
   TL.map.cities.forEach((c, i) => { const d = 1.05 + i * .26, p = clamp((k - d) / .35);
     document.getElementById('pin' + i).querySelector('.pinG').setAttribute('transform', `translate(0 ${(-(1 - eOut(p)) * 60).toFixed(1)}) scale(${p > 0 ? eBack(p, 2.2) : 0})`);
