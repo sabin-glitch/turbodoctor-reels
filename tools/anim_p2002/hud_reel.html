@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ro"><head><meta charset="utf-8">
+<title>HUD · reel „Eroarea P2002”</title>
+<style>
+@font-face{font-family:"Barlow";font-weight:400;src:url(../fonts/fontsource-barlow-5.3.0/package/files/barlow-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212,U+2260}
+@font-face{font-family:"Barlow";font-weight:400;src:url(../fonts/fontsource-barlow-5.3.0/package/files/barlow-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0218-021B}
+@font-face{font-family:"Barlow";font-weight:500;src:url(../fonts/fontsource-barlow-5.3.0/package/files/barlow-latin-500-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212,U+2260}
+@font-face{font-family:"Barlow";font-weight:500;src:url(../fonts/fontsource-barlow-5.3.0/package/files/barlow-latin-ext-500-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0218-021B}
+@font-face{font-family:"Barlow";font-weight:600;src:url(../fonts/fontsource-barlow-5.3.0/package/files/barlow-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212,U+2260}
+@font-face{font-family:"Barlow";font-weight:600;src:url(../fonts/fontsource-barlow-5.3.0/package/files/barlow-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0218-021B}
+@font-face{font-family:"Barlow Condensed";font-weight:500;src:url(../fonts/fontsource-barlow-condensed-5.3.0/package/files/barlow-condensed-latin-500-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212,U+2260}
+@font-face{font-family:"Barlow Condensed";font-weight:500;src:url(../fonts/fontsource-barlow-condensed-5.3.0/package/files/barlow-condensed-latin-ext-500-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0218-021B}
+@font-face{font-family:"Barlow Condensed";font-weight:600;src:url(../fonts/fontsource-barlow-condensed-5.3.0/package/files/barlow-condensed-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212,U+2260}
+@font-face{font-family:"Barlow Condensed";font-weight:600;src:url(../fonts/fontsource-barlow-condensed-5.3.0/package/files/barlow-condensed-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0218-021B}
+@font-face{font-family:"Barlow Condensed";font-weight:700;src:url(../fonts/fontsource-barlow-condensed-5.3.0/package/files/barlow-condensed-latin-700-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+2000-206F,U+2190-21FF,U+2212,U+2260}
+@font-face{font-family:"Barlow Condensed";font-weight:700;src:url(../fonts/fontsource-barlow-condensed-5.3.0/package/files/barlow-condensed-latin-ext-700-normal.woff2) format("woff2");unicode-range:U+0100-02AF,U+0218-021B}
+:root{--o:#ff9238;--r:#ff5a4d;--b:#58b6ff;--g:#3fd68a;--t:#eef1f4;--mut:#a3abb5;--amb:#f5b62a}
+html,body{margin:0;padding:0;background:transparent}
+#hud{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:"Barlow",sans-serif;color:var(--t);-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+#hud.preview{background:#1a1e23}
+.abs{position:absolute}
+/* reel: sus titlul si widgetul (de la y 196, sub butoanele aplicatiilor), jos zona subtitrarilor (y 1290-1530) intunecata usor */
+#scrimT{left:0;top:0;width:1080px;height:560px;background:linear-gradient(180deg,rgba(9,11,14,.93) 0%,rgba(9,11,14,.88) 36%,rgba(9,11,14,.80) 55%,rgba(9,11,14,.42) 66%,rgba(9,11,14,.13) 78%,rgba(9,11,14,0) 87%)}
+#scrimB{left:0;top:1170px;width:1080px;height:750px;background:linear-gradient(180deg,rgba(9,11,14,0) 0%,rgba(9,11,14,.42) 16%,rgba(9,11,14,.62) 34%,rgba(9,11,14,.78) 56%,rgba(9,11,14,.95) 78%,rgba(9,11,14,.98) 100%)}
+.title{left:60px;top:196px;white-space:nowrap;transform-origin:0 0}
+.title .k{font:700 31px/1.1 "Barlow Condensed";letter-spacing:.15em;text-transform:uppercase;margin-bottom:7px}
+.title .t{font:700 64px/1.05 "Barlow Condensed";color:#fff;letter-spacing:.002em;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.chipb{left:60px;top:318px;white-space:nowrap;font:700 27px "Barlow Condensed";letter-spacing:.16em;padding:6px 15px 8px;border-radius:6px;border:2px solid;transform-origin:0 50%}
+/* widget calculat / masurat */
+#ecu{right:50px;top:196px;width:318px;transform:scale(1.1);transform-origin:100% 0;background:rgba(11,13,16,.80);padding:13px 16px 12px;border-radius:10px;border:1.5px solid rgba(255,255,255,.10)}
+#ecu .hd{font:600 20px "Barlow Condensed";letter-spacing:.2em;color:#9aa3ad;text-align:right;margin-bottom:9px}
+.row{display:flex;justify-content:space-between;align-items:baseline;font:600 25px "Barlow Condensed";letter-spacing:.1em;color:#d9dfe5}
+.row b{font:700 31px "Barlow Condensed";letter-spacing:.02em;color:#fff}
+.bar{position:relative;height:9px;border-radius:5px;background:rgba(255,255,255,.14);margin:5px 0 12px 0;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:#dfe5ea}
+#ecu .st{display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:2px;font:700 23px "Barlow Condensed";letter-spacing:.12em;height:32px}
+#ecu .note{font:500 18px "Barlow Condensed";letter-spacing:.14em;color:#8b95a0;text-align:right;margin-top:7px}
+.code{display:inline-block;padding:2px 10px 3px;border-radius:5px;background:var(--r);color:#fff;font:700 23px "Barlow Condensed";letter-spacing:.08em}
+/* etichete */
+#lines{left:0;top:0}
+.lab{white-space:nowrap;font:600 38px/1.1 "Barlow Condensed";color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);letter-spacing:.012em;background:rgba(11,13,16,.80);padding:3px 13px 6px;border-radius:7px;box-shadow:0 2px 14px rgba(0,0,0,.35)}
+.lab small{display:block;font:600 25px/1.25 "Barlow Condensed";letter-spacing:.13em;margin-top:3px}
+/* martorul din hook */
+#hook{display:flex;align-items:center;gap:22px;padding:18px 28px 20px 22px;border-radius:14px;background:rgba(16,19,23,.88);border:1.5px solid rgba(255,90,77,.55);box-shadow:0 12px 40px rgba(0,0,0,.5);transform-origin:50% 50%}
+#hook .c{font:700 60px/1 "Barlow Condensed";color:#fff;letter-spacing:.03em}
+#hook .d{font:600 27px/1.2 "Barlow Condensed";letter-spacing:.07em;color:#ffb3ab;margin-top:5px}
+/* schema calculat / masurat */
+#info{left:60px;top:356px;width:960px}
+.pan{position:absolute;left:0;width:960px;box-sizing:border-box;padding:24px 34px 26px;border-radius:16px;background:rgba(17,20,25,.84);border:1.5px solid rgba(255,255,255,.13)}
+.pan .h{display:flex;align-items:baseline;gap:16px;white-space:nowrap}
+.pan .h b{font:700 46px "Barlow Condensed";letter-spacing:.09em}
+.pan .h span{font:500 33px "Barlow Condensed";color:#b9c1ca;letter-spacing:.02em}
+.pan .chips{display:flex;flex-wrap:wrap;gap:11px;margin:15px 0 20px}
+.pan .chips span{font:600 30px "Barlow Condensed";letter-spacing:.04em;color:#e6eaee;border:1.5px solid rgba(255,255,255,.24);background:rgba(255,255,255,.06);padding:6px 17px 9px;border-radius:7px}
+.pan .res{display:flex;align-items:center;gap:22px}
+.pan .res .bar{flex:1;height:15px;border-radius:8px;margin:0}
+.pan .res .bar i{border-radius:8px}
+.pan .res b{font:700 50px "Barlow Condensed";min-width:104px;text-align:right;color:#fff}
+.pan .res em{font:600 24px "Barlow Condensed";font-style:normal;letter-spacing:.14em;color:#98a1ab;min-width:150px}
+#cmp{left:0;width:960px;height:92px;display:flex;align-items:center;justify-content:center;gap:20px}
+#cmp .s{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 58px/1 "Barlow Condensed";padding-bottom:7px;box-sizing:border-box}
+#cmp .x{font:700 38px "Barlow Condensed";letter-spacing:.1em}
+#fault{left:0;width:960px;display:flex;justify-content:center}
+#fault .in{display:flex;align-items:center;gap:22px;padding:17px 30px 19px 22px;border-radius:14px;background:rgba(40,14,13,.92);border:1.5px solid rgba(255,90,77,.7);box-shadow:0 12px 40px rgba(0,0,0,.5)}
+#fault .c{font:700 56px/1 "Barlow Condensed";color:#fff;letter-spacing:.03em}
+#fault .d{font:600 27px/1.2 "Barlow Condensed";letter-spacing:.07em;color:#ffb3ab;margin-top:4px}
+/* lista de la final */
+#final{left:60px;top:352px;width:960px}
+.it{position:absolute;left:0;width:960px;height:96px;display:flex;align-items:center;gap:24px;box-sizing:border-box;padding:0 26px;border-radius:13px;background:rgba(17,20,25,.84);border:1.5px solid rgba(255,255,255,.12)}
+.it .n{font:700 30px "Barlow Condensed";letter-spacing:.1em;color:var(--r);min-width:36px}
+.it .x{font:600 43px "Barlow Condensed";color:#fff;flex:1;letter-spacing:.005em;white-space:nowrap}
+.it .k{width:46px;height:46px}
+#fin2{left:0;width:960px}
+#fin2 .a{font:700 66px/1.1 "Barlow Condensed";color:#fff}
+#fin2 .b{font:700 66px/1.1 "Barlow Condensed";color:var(--o)}
+</style></head>
+<body>
+<div id="hud">
+  <div id="scrimT" class="abs"></div><div id="scrimB" class="abs"></div>
+  <div id="titles"></div>
+  <div id="chips"></div>
+  <div id="ecu" class="abs">
+    <div class="hd">FUNINGINE ÎN FILTRU</div>
+    <div class="row"><span>CALCULATĂ</span><b id="ecC">20 g</b></div><div class="bar"><i id="ecCb"></i></div>
+    <div class="row"><span>MĂSURATĂ</span><b id="ecM">20 g</b></div><div class="bar"><i id="ecMb"></i></div>
+    <div class="st"><span id="ecS">SE POTRIVESC</span><span class="code" id="ecP">P2002</span></div>
+    <div class="note">VALORI DE EXEMPLU</div>
+  </div>
+  <svg id="lines" class="abs" width="1080" height="1920" viewBox="0 0 1080 1920"></svg>
+  <div id="labels"></div>
+  <div id="hook" class="abs">
+    <svg width="104" height="78" viewBox="0 0 104 78" id="lamp0"></svg>
+    <div><div class="c">P2002</div><div class="d">FILTRU DE PARTICULE: EFICIENȚĂ SUB PRAG</div></div>
+  </div>
+  <div id="info" class="abs">
+    <div class="pan" id="panA" style="top:0">
+      <div class="h"><b style="color:var(--b)">CALCULAT</b><span>din mersul motorului</span></div>
+      <div class="chips" id="chA"><span>Injecție</span><span>Aer</span><span>EGR</span><span>Temperaturi</span><span>Lambda</span></div>
+      <div class="res"><em>FUNINGINE</em><div class="bar"><i id="ibA" style="background:var(--b)"></i></div><b id="ivA">0 g</b></div>
+    </div>
+    <div id="cmp" class="abs"><div class="s" id="cmpS">≠</div><div class="x" id="cmpX">MULT SUB CALCUL</div></div>
+    <div class="pan" id="panB">
+      <div class="h"><b style="color:var(--o)">MĂSURAT</b><span>din presiunea pe filtru</span></div>
+      <div class="chips" id="chB"><span>Presiune diferențială</span><span>Debit de gaze</span></div>
+      <div class="res"><em>FUNINGINE</em><div class="bar"><i id="ibB" style="background:var(--o)"></i></div><b id="ivB">0 g</b></div>
+    </div>
+    <div id="fault" class="abs"><div class="in">
+      <svg width="96" height="72" viewBox="0 0 104 78" id="lamp1"></svg>
+      <div><div class="c">P2002</div><div class="d">EFICIENȚA FILTRULUI SUB PRAG</div></div>
+    </div></div>
+  </div>
+  <div id="final" class="abs">
+    <div id="items"></div>
+    <div id="fin2" class="abs"><div class="a"></div><div class="b"></div></div>
+  </div>
+</div>
+<script src="hud_reel_data.js"></script>
+<script>
+(function(){
+const TL = window.TL, FPS = TL.fps, $ = id => document.getElementById(id);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const seg = (t, a, b) => { const x = clamp((t - a) / Math.max(b - a, 1e-6)); return x * x * (3 - 2 * x); };
+const out3 = x => 1 - Math.pow(1 - clamp(x), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const GMAX = 40;            // grame la bara plina (valori de exemplu)
+const LAMP = c => `<g fill="none" stroke="${c}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
+  <path d="M4 39h14M86 39h14"/><rect x="18" y="14" width="68" height="50" rx="9"/></g>
+  <g fill="${c}"><circle cx="34" cy="29" r="4.6"/><circle cx="52" cy="29" r="4.6"/><circle cx="70" cy="29" r="4.6"/>
+  <circle cx="43" cy="42" r="4.6"/><circle cx="61" cy="42" r="4.6"/><circle cx="34" cy="53" r="4.6"/><circle cx="52" cy="53" r="4.6"/><circle cx="70" cy="53" r="4.6"/></g>`;
+$('lamp0').innerHTML = LAMP('#f5b62a'); $('lamp1').innerHTML = LAMP('#f5b62a');
+const E = TL.ecu, I = TL.info, F = TL.final, LP = TL.lamp;
+
+// ---- titluri si pastile
+const titles = TL.titles.map(o => { o.el = el('div', 'abs title', `<div class="k" style="color:${o.col}">${esc(o.k)}</div><div class="t">${esc(o.t)}</div>`); $('titles').appendChild(o.el);
+  o.wide = !(o.on < E.off - 0.3 && o.off > E.on + 0.3); return o; });
+const chips = TL.chips.map(o => { o.el = el('div', 'abs chipb', esc(o.text)); o.el.style.color = o.col; o.el.style.borderColor = o.col + 'b0'; o.el.style.background = 'rgba(11,13,16,.78)'; $('chips').appendChild(o.el); return o; });
+// ---- etichete
+const NS = 'http://www.w3.org/2000/svg';
+const labs = TL.labels.map(o => {
+  let h = esc(o.text); if (o.sub) h += '<small></small>';
+  o.el = el('div', 'abs lab', h); $('labels').appendChild(o.el);
+  o.line = document.createElementNS(NS, 'polyline'); o.line.setAttribute('fill', 'none'); o.line.setAttribute('stroke', o.col); o.line.setAttribute('stroke-width', '2.6');
+  o.line.setAttribute('stroke-linejoin', 'round'); o.line.setAttribute('stroke-linecap', 'round');
+  o.sh = o.line.cloneNode(); o.sh.setAttribute('stroke', 'rgba(0,0,0,.55)'); o.sh.setAttribute('stroke-width', '5.5');
+  o.ring = document.createElementNS(NS, 'circle'); o.ring.setAttribute('fill', 'none'); o.ring.setAttribute('stroke', o.col); o.ring.setAttribute('stroke-width', '2');
+  o.dot = document.createElementNS(NS, 'circle'); o.dot.setAttribute('fill', o.col); o.dot.setAttribute('stroke', 'rgba(0,0,0,.6)'); o.dot.setAttribute('stroke-width', '1.5');
+  [o.sh, o.line, o.ring, o.dot].forEach(e => $('lines').appendChild(e)); o.cur = null; return o; });
+// ---- lista de la final
+const itemEls = F.items.map((x, i) => { const d = el('div', 'it', `<span class="n">${i + 1}</span><span class="x">${esc(x)}</span><svg class="k" viewBox="0 0 46 46"><circle cx="23" cy="23" r="20" fill="none" stroke="#3fd68a" stroke-width="3"/><path d="M13 24l7 7 13-15" fill="none" stroke="#3fd68a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>`); d.style.top = (i * 108) + 'px'; $('items').appendChild(d); return d; });
+$('fin2').style.top = (F.items.length * 108 + 30) + 'px'; $('fin2').querySelector('.a').textContent = F.a; $('fin2').querySelector('.b').textContent = F.b;
+$('hook').style.top = LP.y + 'px';
+
+function track(keys, t) {         // pista de chei [t, v], cu trecere lina intre ele
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) if (t < keys[i][0]) return lerp(keys[i - 1][1], keys[i][1], seg(t, keys[i - 1][0], keys[i][0]));
+  return keys[keys.length - 1][1];
+}
+function fit() {                  // titlurile prea late se micsoreaza
+  titles.forEach(o => { const lim = o.wide ? 960 : 566; const w = o.el.offsetWidth; o.sc = w > lim ? lim / w : 1; });
+  labs.forEach(o => { o.w = o.el.offsetWidth; o.h = o.el.offsetHeight; });
+  $('hook').style.display = 'flex'; $('hook').style.left = Math.round(540 - $('hook').offsetWidth / 2) + 'px';
+}
+function setFrame(f) {
+  const t = f / FPS;
+  $('scrimB').style.opacity = (0.35 + 0.65 * seg(t, TL.hook_end - 0.1, TL.ans + 0.4)).toFixed(3);
+  titles.forEach(o => {
+    const a = seg(t, o.on, o.on + 0.4) * (1 - seg(t, o.off - 0.02, o.off + 0.2));
+    o.el.style.opacity = a.toFixed(3); o.el.style.display = a > 0.002 ? 'block' : 'none';
+    o.el.style.transform = `translateY(${((1 - out3((t - o.on) / 0.5)) * 16).toFixed(2)}px) scale(${o.sc})`;
+  });
+  chips.forEach(o => {
+    const a = seg(t, o.on, o.on + 0.22) * (1 - seg(t, o.off - 0.02, o.off + 0.2));
+    o.el.style.opacity = a.toFixed(3); o.el.style.display = a > 0.002 ? 'block' : 'none';
+    const k = t - o.on; o.el.style.transform = `scale(${(0.82 + 0.18 * out3(k / 0.3) + 0.06 * Math.exp(-Math.max(0, k - 0.1) * 9) * Math.sin(Math.max(0, k - 0.1) * 22)).toFixed(4)})`;
+  });
+  // widget
+  const ea = seg(t, E.on, E.on + 0.4) * (1 - seg(t, E.off - 0.05, E.off + 0.2));
+  $('ecu').style.opacity = ea.toFixed(3); $('ecu').style.display = ea > 0.002 ? 'block' : 'none';
+  if (ea > 0.002) {
+    const c = track(E.calc, t), m = track(E.meas, t);
+    // 0 = se potrivesc; 1 = masurat peste calcul (filtru incarcat, fara eroare de eficienta); 2 = masurat mult sub calcul -> P2002
+    const stOf = (cc, mm) => (cc - mm) > 0.115 ? 2 : (mm - cc) > 0.115 ? 1 : 0;
+    let st = stOf(c, m);
+    if (st === 0) {                            // in trecerea directa de la „peste calcul” la „mult sub calcul” nu se aprinde verdele
+      const K = E.meas; let i = 1; while (i < K.length - 1 && t >= K[i][0]) i++;
+      if (t > K[i - 1][0] && t < K[i][0]) { const sa = stOf(c, K[i - 1][1]), sb = stOf(c, K[i][1]); if (sa && sb && sa !== sb) st = (c - m) > 0 ? sb : sa; }
+    }
+    const bad = st === 2;
+    $('ecC').textContent = Math.round(c * GMAX) + ' g'; $('ecM').textContent = Math.round(m * GMAX) + ' g';
+    $('ecCb').style.width = (c * 100).toFixed(2) + '%'; $('ecMb').style.width = (m * 100).toFixed(2) + '%';
+    $('ecCb').style.background = '#58b6ff'; $('ecMb').style.background = ['#ff9238', '#f5b62a', '#ff5a4d'][st];
+    $('ecS').textContent = ['SE POTRIVESC', 'PESTE CALCUL', 'MULT SUB CALCUL'][st]; $('ecS').style.color = ['#3fd68a', '#f5b62a', '#ff7a6e'][st];
+    $('ecP').style.opacity = bad ? (0.72 + 0.28 * Math.sin(t * 9)).toFixed(3) : '0.0'; $('ecP').style.display = bad ? 'inline-block' : 'none';
+  }
+  // etichete
+  labs.forEach(o => {
+    const p = seg(t, o.on, o.on + 0.5), q = 1 - seg(t, o.off - 0.28, o.off - 0.04), a = p * q;
+    const vis = a > 0.002;
+    o.el.style.display = vis ? 'block' : 'none'; [o.sh, o.line, o.ring, o.dot].forEach(e => e.style.display = vis ? 'block' : 'none');
+    if (!vis) return;
+    const i = clamp(f - o.f0, 0, o.ax.length - 1), ax = o.ax[i], ay = o.ay[i];
+    if (o.sub) {
+      let cur = o.sub[0]; o.sub.forEach(x => { if (t >= x[0]) cur = x; });
+      const sm = o.el.querySelector('small');
+      if (o.cur !== cur) { o.cur = cur; sm.textContent = cur[1]; sm.style.display = cur[1] ? 'block' : 'none'; sm.style.color = cur[2]; o.w = o.el.offsetWidth; o.h = o.el.offsetHeight; }
+    }
+    const w = o.w, h = o.sub ? 51 : o.h, tx = o.al === 'r' ? o.tx - w : o.tx, ty = o.ty;
+    o.el.style.left = tx + 'px'; o.el.style.top = ty + 'px';
+    let pts;
+    const cy = ty + h * 0.5, hh = o.h;
+    if (ax < tx - 26) pts = [[tx - 1, cy], [tx - 26, cy], [ax, ay]];
+    else if (ax > tx + w + 26) pts = [[tx + w + 1, cy], [tx + w + 26, cy], [ax, ay]];
+    else if (ay > ty) pts = [[clamp(ax, tx + 16, tx + w - 16), ty + hh + 1], [ax, ay]];
+    else pts = [[clamp(ax, tx + 16, tx + w - 16), ty - 1], [ax, ay]];
+    pts.reverse(); let L = 0; const sl = [];        // linia creste dinspre punct spre text
+    for (let j = 1; j < pts.length; j++) { const d = Math.hypot(pts[j][0] - pts[j - 1][0], pts[j][1] - pts[j - 1][1]); sl.push(d); L += d; }
+    const g = seg(p, 0.12, 0.78) * L; let acc = 0; const outp = [pts[0]];
+    for (let j = 1; j < pts.length; j++) {
+      if (acc + sl[j - 1] <= g) { outp.push(pts[j]); acc += sl[j - 1]; }
+      else { const k = (g - acc) / sl[j - 1]; outp.push([lerp(pts[j - 1][0], pts[j][0], k), lerp(pts[j - 1][1], pts[j][1], k)]); break; }
+    }
+    const str = outp.map(q => q[0].toFixed(1) + ',' + q[1].toFixed(1)).join(' ');
+    o.line.setAttribute('points', str); o.sh.setAttribute('points', str);
+    o.line.style.opacity = (q * 0.95).toFixed(3); o.sh.style.opacity = (q * 0.5).toFixed(3);
+    const da = seg(p, 0, 0.3) * q, pulse = ((t - o.on) % 1.6 + 1.6) % 1.6 / 1.6;
+    o.dot.setAttribute('cx', ax); o.dot.setAttribute('cy', ay); o.dot.setAttribute('r', (7 * out3(p / 0.35)).toFixed(2)); o.dot.style.opacity = da.toFixed(3);
+    o.ring.setAttribute('cx', ax); o.ring.setAttribute('cy', ay); o.ring.setAttribute('r', (8 + 16 * pulse).toFixed(2)); o.ring.style.opacity = (da * 0.6 * (1 - pulse)).toFixed(3);
+    o.el.style.opacity = (seg(p, 0.5, 1) * q).toFixed(3);
+  });
+  // martorul din hook
+  { const a = seg(t, LP.on, LP.on + 0.3) * (1 - seg(t, LP.off - 0.25, LP.off));
+    $('hook').style.display = a > 0.002 ? 'flex' : 'none'; $('hook').style.opacity = a.toFixed(3);
+    $('hook').style.transform = `scale(${(0.9 + 0.1 * out3((t - LP.on) / 0.4)).toFixed(4)})`;
+    $('lamp0').style.opacity = (0.55 + 0.45 * (Math.sin(t * 7.5) > -0.2 ? 1 : 0.25)).toFixed(2); }
+  // schema calculat / masurat
+  { const on = t > I.t0 - 0.1 && t < I.t1 + 0.3, fo = 1 - seg(t, I.t1 - 0.3, I.t1 + 0.05);
+    $('info').style.display = on ? 'block' : 'none';
+    if (on) {
+      const aA = seg(t, I.pA, I.pA + 0.45) * fo, aB = seg(t, I.pB, I.pB + 0.45) * fo;
+      $('panA').style.opacity = aA.toFixed(3); $('panA').style.transform = `translateY(${((1 - out3((t - I.pA) / 0.6)) * 22).toFixed(2)}px)`;
+      $('panB').style.opacity = aB.toFixed(3); $('panB').style.transform = `translateY(${((1 - out3((t - I.pB) / 0.6)) * 22).toFixed(2)}px)`;
+      [...$('chA').children].forEach((c, i) => { c.style.opacity = seg(t, I.pA + 0.4 + i * 0.15, I.pA + 0.65 + i * 0.15).toFixed(3); });
+      [...$('chB').children].forEach((c, i) => { c.style.opacity = seg(t, I.pB + 0.4 + i * 0.22, I.pB + 0.65 + i * 0.22).toFixed(3); });
+      const hA = $('panA').offsetHeight; $('cmp').style.top = (hA + 4) + 'px'; $('panB').style.top = (hA + 100) + 'px';
+      $('fault').style.top = (hA + 100 + $('panB').offsetHeight + 34) + 'px';
+      const cA = 0.5 * seg(t, I.gA0, I.gA1), cB = I.vB * seg(t, I.gB0, I.gB1);
+      $('ibA').style.width = (cA * 100).toFixed(2) + '%'; $('ivA').textContent = Math.round(cA * GMAX) + ' g';
+      $('ibB').style.width = (cB * 100).toFixed(2) + '%'; $('ivB').textContent = Math.round(cB * GMAX) + ' g';
+      const bad = t >= I.cmp - 0.05;
+      $('ibB').style.background = bad ? '#ff5a4d' : '#ff9238';
+      const ac = seg(t, I.cmp, I.cmp + 0.3) * fo;
+      $('cmp').style.opacity = ac.toFixed(3); $('cmp').style.transform = `scale(${(0.88 + 0.12 * out3((t - I.cmp) / 0.35)).toFixed(4)})`;
+      $('cmpS').style.background = 'rgba(255,90,77,.18)'; $('cmpS').style.border = '2.5px solid #ff5a4d'; $('cmpS').style.color = '#ff7a6e'; $('cmpX').style.color = '#ff7a6e';
+      const af = seg(t, I.fault, I.fault + 0.3) * fo;
+      $('fault').style.opacity = af.toFixed(3); $('fault').style.transform = `scale(${(0.9 + 0.1 * out3((t - I.fault) / 0.4)).toFixed(4)})`;
+      $('lamp1').style.opacity = (0.55 + 0.45 * (Math.sin(t * 7.5) > -0.2 ? 1 : 0.25)).toFixed(2);
+    } }
+  // lista de la final
+  { const on = t > F.t0 - 0.05;
+    $('final').style.display = on ? 'block' : 'none';
+    if (on) {
+      itemEls.forEach((d, i) => { const a0 = F.i0 + i * F.di, a = seg(t, a0, a0 + 0.32);
+        d.style.opacity = a.toFixed(3); d.style.transform = `translateX(${((1 - out3((t - a0) / 0.5)) * -26).toFixed(2)}px)`;
+        const k = d.querySelector('.k'), ka = seg(t, a0 + 0.3, a0 + 0.55); k.style.opacity = ka.toFixed(3); k.style.transform = `scale(${(0.6 + 0.4 * out3((t - a0 - 0.3) / 0.35)).toFixed(3)})`; });
+      const a2 = seg(t, F.fin2, F.fin2 + 0.45);
+      $('fin2').style.opacity = a2.toFixed(3); $('fin2').style.transform = `translateY(${((1 - out3((t - F.fin2) / 0.6)) * 18).toFixed(2)}px)`;
+    } }
+}
+window.setFrame = setFrame;
+document.fonts.ready.then(() => { fit(); setFrame(0); window.__ready = true; });
+if (location.hash.startsWith('#t=')) { $('hud').classList.add('preview'); document.fonts.ready.then(() => { fit(); setFrame(Math.round(parseFloat(location.hash.slice(3)) * FPS)); }); }
+})();
+</script>
+</body></html>
