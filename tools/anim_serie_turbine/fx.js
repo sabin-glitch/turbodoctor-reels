@@ -38,7 +38,7 @@ const rubPts=ptsFront(500,{add:true,max:14,soft:0.8,order:7});
 const RUB=[];for(let i=0;i<500;i++)RUB.push({ph:rnd(),a:rnd(),s:rnd(),sp:0.5+rnd(),side:i%2?1:-1,j:rnd()*2-1,w:i%4===0?1:0});
 function drawRub(t){
   rubPts.begin();
-  if(FX.rub>0.01)for(const q of RUB){if(q.a>FX.rub)continue;const life=0.3,tt=((t*1.9+q.ph)%life)/life;
+  if(FX.rub>0.01)for(const q of RUB){if(q.a>FX.rub||(FX.rubSide>0.5&&FX.rubSide<1.5&&q.w)||(FX.rubSide>1.5&&!q.w))continue;const life=0.3,tt=((t*1.9+q.ph)%life)/life;
     let x,r;if(q.w){const p=tTip(0.15+0.7*q.s);x=p[0];r=p[1];}else{const p=cTip(0.35+0.65*q.s);x=p[0];r=p[1];}
     const ang=q.side*(Math.PI/2-0.05-0.5*tt*q.sp);turboPt(x+q.j*tt*5-(q.w?-1:1)*tt*7*q.sp,r+0.6+tt*9*q.sp,ang,_v);_v.y-=tt*tt*8;_v.z=Math.min(_v.z,-0.2)+2.5;
     _c.copy(SP_C).lerp(SP_H,tt);rubPts.push(_v,_c,(1-tt)*0.95,1.15);}
@@ -111,7 +111,7 @@ const coke=new T.Group();turbo.add(coke);
   for(let i=0;i<10;i++)add(-13+20*h(i+260),-35-12*h(i+270),0.8+1.0*h(i+280),0.6+0.4*h(i+290));                                    /* drain outlet */
 })();
 const SMK=[];for(let i=0;i<260;i++)SMK.push({ph:rnd(),x:rnd(),a:rnd(),sz:0.8+1.2*rnd(),j:rnd()*2-1});
-const smkPts=ptsFront(260,{max:40,soft:1.8,order:8});const SMK_C=new T.Color(0.62,0.62,0.66),SMK_B=new T.Color(0.52,0.66,1.0);
+const smkPts=ptsFront(260,{max:40,soft:1.8,order:8});const SMK_C=new T.Color(0.62,0.62,0.66),SMK_B=new T.Color(0.52,0.66,1.0),SMK_K=new T.Color(0.045,0.04,0.036);
 function drawSmoke(t){
   smkPts.begin();
   if(FX.smoke>0.01)for(const q of SMK){if(q.a>FX.smoke)continue;const tt=(t*0.22+q.ph)%1;
@@ -120,6 +120,9 @@ function drawSmoke(t){
   if(FX.blue>0.01)for(const q of SMK){if(q.a>FX.blue*0.75)continue;const tt=(t*0.5+q.ph)%1;
     _v.set(82+86*tt,TY+q.j*(9+9*tt)+2*Math.sin(t*2+q.ph*30),-2-10*q.x);
     smkPts.push(_v,SMK_B,0.42*Math.sin(Math.PI*Math.min(1,tt*1.1))*FX.blue,5+10*tt*q.sz);}
+  if(FX.sootOut>0.01)for(const q of SMK){if(q.a>FX.sootOut*0.92)continue;const tt=(t*0.55+q.ph)%1;
+    _v.set(84+112*tt,TY+q.j*(10+13*tt)+2*Math.sin(t*2+q.ph*30)+7*tt*tt,1.2);
+    smkPts.push(_v,SMK_K,0.72*Math.sin(Math.PI*Math.min(1,tt*1.1))*FX.sootOut,6+13*tt*q.sz);}
   smkPts.end();
 }
 /* ---- blocked oil return / crankcase pressure ---- */
@@ -151,7 +154,7 @@ const LEAK=[];for(let i=0;i<440;i++)LEAK.push({k:i%4,ph:rnd(),a:rnd(),sz:0.8+0.6
 const leakPts=ptsFront(440,{max:16,soft:0.8,order:7});
 function drawLeak(t){
   leakPts.begin();
-  if(FX.leak>0.01)for(const q of LEAK){if(q.a>FX.leak||(FX.leakSide===1&&q.k%2===0))continue;const path=leakPaths[q.k],u=(q.ph+t*0.16)%1,d=u*path.len;path.at(d,_v);
+  if(FX.leak>0.01)for(const q of LEAK){if(q.a>FX.leak||(FX.leakSide===1&&q.k%2===0)||(FX.leakSide===2&&q.k%2===1))continue;const path=leakPaths[q.k],u=(q.ph+t*0.16)%1,d=u*path.len;path.at(d,_v);
     _v.x+=q.j*0.5;_v.y+=q.j*0.5*(u>0.4?2:1);
     if(q.k%2&&u>0.62)_c.copy(OILC).lerp(SMK_B,(u-0.62)/0.38);else _c.copy(OILC);
     leakPts.push(_v,_c,0.95*sst(0,0.06,u)*(1-sst(0.86,1,u)),1.35*q.sz*(q.k%2&&u>0.62?1+3*(u-0.62):1));}

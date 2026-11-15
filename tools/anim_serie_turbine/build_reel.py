@@ -14,7 +14,7 @@ rep("try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPre
 cues = json.load(open(os.path.join(HERE, EP, 'vo/cues.json'), encoding='utf-8'))
 rep("const TU=46;", "const TU=Math.ceil(16+%.2f+18);" % cues['end'])
 rep("if(q.a>F.sparks)continue;", "if(q.a>F.sparks||(F.only!=null&&q.k!==F.only))continue;")
-tail = ''.join(open(os.path.join(HERE, f), encoding='utf-8').read() + '\n' for f in ('fx.js', 'dir_pre.js', EP + '.js', 'dir_post.js'))
+tail = ''.join(open(os.path.join(HERE, f), encoding='utf-8').read() + '\n' for f in ('fx.js', 'fx2.js', 'dir_pre.js', EP + '.js', 'dir_post.js'))
 open(os.path.join(HERE, EP, 'vo/cues.js'), 'w', encoding='utf-8').write('window.CUES=' + json.dumps(cues, ensure_ascii=False) + ';\n')
 F = '../fonts/'
 css = '''

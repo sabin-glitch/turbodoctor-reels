@@ -90,7 +90,7 @@ function apply(t){
   else drawDrops(U,0,1e5);
   applyFail(t,arr(SA,t));
   if(FX.only>=0)heatSpr.forEach((s,i)=>{if(i!==FX.only)s.material.opacity=0;});
-  applyFX(t,U,crown);
+  applyFX(t,U,crown);applyFX2(t,U,crown);
   return {th,st};
 }
 const dipEl=$('dip'),flashEl=$('flash');

@@ -16,10 +16,40 @@ EPS = {
          tags={2:{'presiune':'y','singur':'y','retur':'y'},3:{'infundat':'r','calamina':'r','indoit':'r'},4:{'carter':'y','presiune':'r','infundata':'r','uzati':'r','milibari':'y'},
                5:{'aduna':'r','impins':'r','etansari':'y','admisie':'c','evacuare':'r'},6:{'fum':'c','albastru':'c','intercooler':'c','consum':'r','cauza':'y'},
                7:{'ars':'r','incleiaza':'r','supraturari':'r','necontrolate':'r'},8:{'problema':'r','ramane':'r'},9:{'eviti':'g','curat':'g','corect':'g','silicon':'y','verificata':'g','maxim':'g'}}),
+ 5: dict(name='CORPURI STRĂINE: ADMISIE', size=90, first='corpurile', desc='corpurile străine din admisie',
+         tags={2:{'aluminiu':'y','300000':'y'},3:{'loveste':'r','paletele':'y','nisip':'r','saiba':'r','gheata':'r'},4:{'ciupita':'r','indoita':'r','dezechilibreaza':'r','lagarele':'y'},
+               5:{'rupt':'r','infundat':'r','lipseste':'r','fisurat':'r','nefiltrat':'r'},6:{'uitate':'r','surub':'r','saiba':'r','piulita':'r'},7:{'repetate':'r','noua':'c','cedeaza':'r'},
+               8:{'eviti':'g','calitate':'g','timp':'g','fara':'g','cureti':'g'}}),
+ 6: dict(name='CORPURI STRĂINE: EVACUARE', size=86, first='corpurile', desc='corpurile străine din evacuare',
+         tags={2:{'cilindru':'y','galeria':'y','turbinei':'y'},3:{'rupe':'r','supapa':'r','segment':'r','galerie':'r','paletele':'y'},4:{'rup':'r','indoaie':'r'},5:{'rupte':'r','dezechilibrat':'r'},
+               6:{'victima':'y','motor':'r'},7:{'noua':'c','resturile':'r','distrug':'r'},8:{'eviti':'g','gasesti':'g','repari':'g','cureti':'g'}}),
+ 7: dict(name='GAZE PREA FIERBINȚI', size=113, first='temperatura', desc='temperatura prea mare a gazelor de evacuare',
+         tags={2:{'plaja':'y','temperaturi':'y'},3:{'depasesc':'r','crapa':'r','oboseste':'r','coace':'r'},4:{'calamina':'r','infunda':'r','ungerii':'y'},5:{'secunde':'r'},
+               6:{'soft':'r','modificat':'r','ardere':'r','injectie':'r','injectoare':'y','pompa':'y'},7:{'oprirea':'r','cald':'r'},8:{'eviti':'g','parametri':'g','verificate':'g','fara':'g'}}),
+ 8: dict(name='SUPRATURAREA', size=160, first='supraturarea', desc='supraturarea',
+         tags={2:{'maxima':'y','centrifuga':'r','aluminiu':'y'},3:{'creste':'r','atinge':'r','rupe':'r'},4:{'coaja':'y','portocala':'y','supraturarii':'r'},5:{'secunde':'r'},
+               6:{'soft':'r','modificat':'r','blocata':'r','inchis':'r','calamina':'r','fisurat':'r','actuatorul':'y','membrana':'y'},7:{'repetate':'r','obosesc':'r'},8:{'eviti':'g','fara':'g','curata':'g','verificata':'g'}}),
+ 9: dict(name='GEOMETRIA BLOCATĂ', size=126, first='geometria', desc='geometria variabilă blocată',
+         tags={2:{'palete':'y','mobile':'y','inchid':'c','deschid':'c'},3:{'funinginea':'r','ars':'r','intepenesc':'r'},4:{'deschis':'r','presiune':'y','avarie':'r'},5:{'inchis':'r','maxima':'y','supraturarea':'r'},
+               6:{'funingine':'r','recircularea':'y','proasta':'r','carter':'y','scurte':'r'},7:{'eviti':'g','curat':'g','buna':'g','lung':'g'}}),
+ 10: dict(name='DPF ÎNFUNDAT', size=160, first='filtrul', desc='filtrul de particule înfundat',
+         tags={2:{'plin':'r','dop':'r'},3:{'fierbinti':'r','presiunea':'r','temperatura':'r'},4:{'etansare':'y','coc':'r','infunda':'r','uzeaza':'r'},5:{'impins':'r','compresorului':'c','calamina':'r'},
+               6:{'crapa':'r','oboseala':'r'},7:{'noua':'c','fara':'r','cedeze':'r'},8:{'eviti':'g','verifici':'g','curatarea':'g'}}),
+ 11: dict(name='SCĂPĂRI ȘI ÎNFUNDĂRI', size=107, first='scăpările', desc='scăpările și înfundările de pe traseul de aer și de gaze',
+         tags={2:{'scapare':'r','infundare':'r'},3:{'infundat':'r','vid':'r','ulei':'y'},4:{'fisurat':'r','slabit':'r','repede':'r'},5:{'crapata':'r','lipsa':'r','fura':'r'},6:{'infundat':'r','caldura':'r'},
+               7:{'suieratul':'y','negru':'r','putere':'r','uleiul':'y'},8:{'eviti':'g','timp':'g','verificate':'g','ignora':'g'}}),
+ 12: dict(name='GREȘELILE DE MONTAJ', size=113, first='greșelile', desc='greșelile de montaj',
+         tags={2:{'noi':'c','montaj':'r'},3:{'prima':'y','amorsata':'r','turat':'r'},4:{'doua':'y','silicon':'r','invers':'r','ingusteaza':'r'},5:{'treia':'y','vechi':'r','calamina':'r'},
+               6:{'patra':'y','neschimbate':'r','resturile':'r'},7:{'regula':'y','cauza':'y'},8:{'eviti':'g','amorsata':'g','noi':'g','curatate':'g','corecte':'g','fara':'g'}}),
+ 13: dict(name='UZURA MOTORULUI', size=140, first='uzura', desc='uzura motorului',
+         tags={2:{'segmentii':'y','cilindrii':'y','scapa':'r','carter':'y'},3:{'presiunea':'r','scurge':'r','impins':'r'},4:{'funingine':'r','murdar':'r','zgarie':'r'},5:{'albastru':'c','consum':'r','ambele':'y'},
+               6:{'martorul':'y','bolnavul':'r'},7:{'motorul':'y','sanatos':'g'},8:{'eviti':'g','verifici':'g'}}),
 }
+ONLY = [int(x) for x in sys.argv[1:]]
 def nrm(s):
     s = unicodedata.normalize('NFD', s.lower()); return ''.join(c for c in s if c.isalnum() and unicodedata.category(c) != 'Mn')
 for n, E in EPS.items():
+    if ONLY and n not in ONLY: continue
     c = json.load(open(f'ep{n}/vo/cues.json')); L = c['lines']; NL = len(L)
     def W(i, w, k=0): return [x for x in c['words'] if x['win'] == i and nrm(x['text']) == nrm(w)][k]['s']
     T1 = L[0]['start'] + .02; T2 = W(0, 'turbinele') - .03; T3 = W(0, 'cauza') - .03; T4 = W(0, E['first']) - .03
