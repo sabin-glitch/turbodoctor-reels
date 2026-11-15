@@ -1,0 +1,1605 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blow-off pe diesel (reel)</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&amp;family=Barlow:wght@400;500&amp;display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b1016;
+  --bg-lift:#1b2632;
+  --ink:#e8edf3;
+  --muted:#8e9aa8;
+  --line:rgba(232,237,243,.16);
+  --accent:#ffb224;
+  --air:#7ccaf5;
+  --fire:#ff6a2b;
+  --smoke:#b9a89a;
+  --oil:#f0b43a;
+  --steel:#c3ccd6;
+  --warn:#ff5a45;
+  --clean:#5fe0cf;
+  --vac:#5aa8ff;
+  --display:"Barlow Condensed","Arial Narrow","Roboto Condensed",sans-serif;
+  --body:"Barlow","Segoe UI",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);overflow:hidden;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+#stage{position:fixed;inset:0;background:
+  linear-gradient(rgba(232,237,243,.032) 1px,transparent 1px) 0 0/48px 48px,
+  linear-gradient(90deg,rgba(232,237,243,.032) 1px,transparent 1px) 0 0/48px 48px,
+  radial-gradient(110% 75% at 50% 40%,var(--bg-lift) 0%,#0e141b 55%,#06090d 100%)}
+#gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#gl:active{cursor:grabbing}
+#leaders{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#leaders line{stroke:rgba(232,237,243,.62);stroke-width:1}
+#leaders circle{fill:var(--ink)}
+#labels{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.lb{position:absolute;top:0;left:0;font:600 11.5px/1.1 var(--display);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;color:var(--ink);padding:3px 6px;background:rgba(8,12,17,.76);border-left:2px solid var(--accent);will-change:transform,opacity}
+.lb.l{border-left:0;border-right:2px solid var(--accent)}
+.lb.oil{border-color:var(--oil)}.lb.air{border-color:var(--air)}.lb.fire{border-color:var(--fire)}
+.lb small{display:block;font:500 10px/1.15 var(--display);letter-spacing:.06em;color:var(--muted);margin-top:2px}
+#top{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:14px 16px 34px;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(6,9,13,.9) 0%,rgba(6,9,13,.62) 55%,rgba(6,9,13,0) 100%)}
+h1{font:700 22px/1 var(--display);letter-spacing:.025em;text-transform:uppercase;margin:0;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{font:500 12px/1.2 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:5px 0 0}
+.hud{margin:0;display:grid;gap:7px;text-align:right}
+.hud dt{white-space:nowrap;font:500 10px/1 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.hud dd{margin:2px 0 0;font:600 19px/1 var(--display);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+#bottom{position:fixed;left:0;right:0;bottom:0;padding:26px 16px 12px;display:grid;gap:10px;justify-items:center;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,9,13,.94) 0%,rgba(6,9,13,.8) 62%,rgba(6,9,13,0) 100%)}
+#bottom>*{pointer-events:auto;width:100%;max-width:580px}
+.cap{--phase:var(--air)}
+.cap-head{display:flex;align-items:center;gap:10px;min-height:20px}
+.tag{font:700 15px/1 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--phase)}
+.slow{font:600 10px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);border:1px solid var(--line);padding:4px 6px;border-radius:2px}
+.slow[hidden]{display:none}
+#capText{font:400 14.5px/1.38 var(--body);margin:6px 0 0;min-height:4.14em;max-width:64ch;text-wrap:pretty}
+.rail{position:relative;height:26px}
+.segs,.names{position:absolute;left:0;right:0;display:flex;gap:2px}
+.segs{top:0;height:6px}
+.segs i{flex:var(--w) 1 0;background:rgba(232,237,243,.15);border-radius:1px;position:relative;overflow:hidden}
+.segs i::after{content:"";position:absolute;inset:0;background:var(--c);transform-origin:left center;transform:scaleX(var(--f,0))}
+.names{top:13px;font:600 9.5px/1 var(--display);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+.names span{flex:var(--w) 1 0;white-space:nowrap;overflow:hidden;min-width:0}
+.names span.on{color:var(--ink)}
+#scrub{position:absolute;left:-8px;top:-9px;width:calc(100% + 16px);height:24px;margin:0;-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer}
+#scrub::-webkit-slider-runnable-track{background:transparent;height:24px}
+#scrub::-moz-range-track{background:transparent;height:24px}
+#scrub::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:16px;height:16px;margin-top:4px;border-radius:50%;background:var(--ink);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--ink)}
+#scrub::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--ink);border:3px solid var(--bg);box-shadow:0 0 0 1px var(--ink)}
+.ctrl{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button{font:600 13px/1 var(--display);letter-spacing:.09em;text-transform:uppercase;color:var(--ink);background:rgba(232,237,243,.07);border:1px solid var(--line);border-radius:3px;height:38px;padding:0 13px;cursor:pointer}
+button:hover{background:rgba(232,237,243,.13)}
+button:focus-visible,#scrub:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#play{background:var(--accent);color:#1c1303;border-color:transparent;min-width:96px}
+#play:hover{background:#ffc04d}
+button[aria-pressed="true"]{border-color:rgba(232,237,243,.6)}
+button[hidden]{display:none}
+.note{font:400 11px/1.35 var(--body);color:var(--muted);margin:0}
+#fade{position:fixed;inset:0;pointer-events:none;opacity:0;background:var(--bg)}
+body.reel .rail,body.reel .ctrl,body.reel .note{display:none}
+#fail{display:none;position:fixed;inset:0;place-items:center;padding:24px;text-align:center;font:400 15px/1.5 var(--body);color:var(--ink);background:var(--bg)}
+body.fail #fail{display:grid}
+body.fail #top,body.fail #bottom,body.fail #stage,body.fail #fade{display:none}
+@media (max-width:420px){
+  h1{font-size:19px}
+  .sub{font-size:11px}
+  .hud dd{font-size:17px}
+  #capText{font-size:13.5px}
+  button{padding:0 11px}
+}
+@media (min-aspect-ratio:5/4) and (min-width:640px){
+  #bottom{left:20px;right:auto;bottom:20px;width:min(400px,42vw);padding:16px 16px 14px;justify-items:stretch;
+    background:rgba(8,12,17,.84);border:1px solid var(--line);border-radius:4px}
+  #bottom>*{max-width:none}
+}
+@media (max-height:520px){
+  #capText{min-height:0;font-size:13px}
+  .note{display:none}
+  #bottom{gap:8px}
+  button{height:34px}
+}
+.lb.warn{border-color:var(--warn);color:#ffe3dd}.lb.big{font-size:15.5px;padding:5px 9px;letter-spacing:.08em}.lb.big small{font-size:11px}
+.hud dd.warn{color:var(--warn)}.hud dd.vac{color:var(--vac)}
+#slowp{justify-self:end;font:600 10px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;color:var(--ink);border:1px solid rgba(232,237,243,.45);padding:4px 6px;border-radius:2px;opacity:0;margin-top:1px;background:rgba(8,12,17,.6)}
+#split{position:fixed;inset:0;pointer-events:none;display:none}
+#split.on{display:block}
+#split .sp{position:absolute;right:12px;display:flex;flex-direction:column;align-items:flex-end;text-align:right;gap:4px;background:rgba(8,12,17,.82);padding:9px 11px 10px;border-radius:3px;max-width:64%}
+#split .sp b{font:700 17px/1 var(--display);letter-spacing:.07em;text-transform:uppercase}
+#split .sp em{font:700 12px/1 var(--display);font-style:normal;letter-spacing:.12em;text-transform:uppercase;padding:4px 7px;border-radius:2px;margin-top:3px}
+#split .ok b{color:var(--clean)}#split .ok em{background:var(--clean);color:#04201c}
+#split .bad b{color:var(--warn)}#split .bad em{background:var(--warn);color:#2a0702}
+#split .div{position:absolute;left:0;right:0;height:2px;background:rgba(232,237,243,.35)}
+#split .dim{position:absolute;left:0;right:0;background:#06090d;opacity:0}
+#split .cue{position:absolute;left:12px;font:700 13px/1 var(--display);letter-spacing:.1em;text-transform:uppercase;padding:6px 9px;border-radius:2px;background:#0b1016;color:var(--ink);border:1px solid rgba(232,237,243,.4);transform:translateY(-50%)}
+#split .cue.lift{color:#1a0f02;background:var(--accent);border-color:var(--accent)}
+/* vo mode (the reel): no title, caption or rail; read-outs top right; the scene sits between 13% and 66% of the height */
+body.vo #title,body.vo #bottom{display:none!important}
+body.vo #top{background:none;padding-top:20px;justify-content:flex-end}
+body.vo .lb{font-size:14px;padding:4px 7px}body.vo .lb small{font-size:11.5px}body.vo .lb.big{font-size:18px}body.vo .lb.big small{font-size:12.5px}
+body.vo .hud{background:rgba(8,12,17,.66);padding:9px 11px 9px 14px;border-radius:3px}
+</style>
+<div id="stage">
+  <canvas id="gl" aria-label="Animație 3D: de ce un diesel care suflă ca un blow-off are turbina în pompaj"></canvas>
+  <svg id="leaders" aria-hidden="true"></svg>
+  <div id="labels" aria-hidden="true"></div>
+</div>
+<div id="split" aria-hidden="true">
+  <div class="sp ok" id="spA"><b>Benzină · blow-off</b><em>Normal</em></div>
+  <i class="div" id="spD"></i>
+  <div class="sp bad" id="spB"><b>Diesel · pompaj</b><em>Defect</em></div>
+  <i class="dim" id="spX"></i><i class="dim" id="spY"></i>
+  <div class="cue" id="spC">Accelerezi</div>
+</div>
+<div id="fade" aria-hidden="true"></div>
+
+<header id="top">
+  <div id="title">
+    <h1>Sunet de <span>blow-off</span> pe diesel</h1>
+    <p class="sub" id="sub">Motor · turbină · lagăre · compresor</p>
+  </div>
+  <dl class="hud">
+    <div id="h0"><dt id="l0">Arbore cotit</dt><dd id="v0">0°</dd></div>
+    <div id="h1"><dt id="l1">Temperatură gaze</dt><dd id="v1">0 °C</dd></div>
+    <div id="h2" hidden><dt id="l2"></dt><dd id="v2"></dd></div>
+    <div id="slowp">Încetinitor</div>
+  </dl>
+</header>
+
+<section id="bottom">
+  <div class="cap" id="cap">
+    <div class="cap-head">
+      <span class="tag" id="tag">Turbosuflanta</span>
+      <span class="slow" id="slow" hidden>Încetinitor</span>
+    </div>
+    <p id="capText"></p>
+  </div>
+  <div class="rail">
+    <div class="segs" id="segs"></div>
+    <div class="names" id="names"></div>
+    <input type="range" id="scrub" min="0" max="132.31" step="0.01" value="0" aria-label="Poziția în animație">
+  </div>
+  <div class="ctrl">
+    <button id="play" type="button">Pauză</button>
+    <button id="speed" type="button">Viteză 1×</button>
+    <button id="lab" type="button" aria-pressed="true">Etichete</button>
+    <button id="cam" type="button" hidden>Resetează camera</button>
+  </div>
+  <p class="note">Trage ca să rotești, ciupește ca să apropii. Schemă simplificată: jocurile din lagăre și filmul de ulei sunt mult mărite, rotația e încetinită, iar valorile sunt orientative.</p>
+</section>
+
+<div id="fail">Animația 3D nu a putut porni pe acest dispozitiv. Reîncarcă pagina sau deschide-o într-un browser actualizat.</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+const T=window.THREE;
+const $=id=>document.getElementById(id);
+const fail=()=>document.body.classList.add('fail');
+if(!T){fail();return;}
+
+/* ================= helpers ================= */
+const DEG=Math.PI/180, TAU=Math.PI*2;
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const sst=(a,b,x)=>{const t=clamp((x-a)/(b-a),0,1);return t*t*(3-2*t);};
+const pulse=(x,a0,a1,b0,b1)=>sst(a0,a1,x)*(1-sst(b0,b1,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+function pchip(xs,ys){
+  const n=xs.length,h=[],d=[],m=new Array(n);
+  for(let i=0;i<n-1;i++){h[i]=xs[i+1]-xs[i];d[i]=(ys[i+1]-ys[i])/h[i];}
+  m[0]=d[0];m[n-1]=d[n-2];
+  for(let i=1;i<n-1;i++)m[i]=(d[i-1]*d[i]<=0)?0:3*(h[i-1]+h[i])/((2*h[i]+h[i-1])/d[i-1]+(h[i]+2*h[i-1])/d[i]);
+  return x=>{x=clamp(x,xs[0],xs[n-1]);let i=0;while(i<n-2&&x>xs[i+1])i++;const t=(x-xs[i])/h[i],t2=t*t,t3=t2*t;
+    return ys[i]*(2*t3-3*t2+1)+h[i]*m[i]*(t3-2*t2+t)+ys[i+1]*(-2*t3+3*t2)+h[i]*m[i+1]*(t3-t2);};
+}
+const rnd=(function(){let s=97531;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};})();
+
+/* ================= layout (mm, schematic) ================= */
+const TU=132.31;
+const EX=-150;                 /* cylinder axis */
+const TY=175;                  /* turbo shaft axis height */
+const R=41, CRK=40, ROD=128, CLEAR=1.6, COMP_H=36, HEAD_H=48, BLOCK_BOT=-146, HALF_W=64, DEPTH=64;
+const XV=22.5, RV_IN=12.3, RV_EX=11.3, RPORT=9.5, LIFT_V=9;
+const OIL_A=-3;
+/* turbine volute */
+const TV={a0:66, r:p=>54-12*p/TAU, rho:p=>14-9*p/TAU, inlet:70};
+/* compressor volute */
+const CV={a0:-84, r:p=>50+12*p/TAU, rho:p=>6+12*p/TAU, outlet:80};
+
+/* ================= timeline (reel, in voice time) ================= */
+/* K = anchors computed by build_reel.py from vo/cues.json (word starts of the voice-over), all in seconds of the reel.
+   Phases:
+   H  hook: diesel without blow-off, vanes stuck -> lift-off at K.H_LIFT, the surge bursts follow the hook sound (K.HE),
+      then slow-motion pulses and the damage look
+   P  petrol engine with blow-off: throttle closes at K.P_C, the valve lifts at K.P_L
+   N  the diesel story, one continuous take: healthy lift-off (D_LIFT..D_ACC) -> how the vanes work (G_*) ->
+      soot blocks them closed (C_*) -> overspeed and overboost (O_*) -> lift-off (L_LIFT) -> surge (S_ON) -> damage (X_*)
+   S  split screen: top = petrol + blow-off, bottom = diesel in surge; both lift off at SP_C1 and SP_C2
+   W  closing: surge once more, then the enlarged variable-geometry view */
+const K={"HZ": 1.2, "SEND": 124.767, "HE": {"t0": 3.15, "tb": 3.181, "v": [0.757, 0.911, 0.992, 0.864, 0.889, 0.87, 0.764, 0.605, 0.488, 0.488, 0.486, 0.489, 0.49, 0.49, 0.466, 0.463, 0.437, 0.453, 0.448, 0.467, 0.454, 0.449, 0.432, 0.423, 0.399, 0.388, 0.397, 0.412, 0.414, 0.402, 0.393, 0.402, 0.43, 0.426, 0.416, 0.386, 0.379, 0.361, 0.355, 0.348, 0.35, 0.336, 0.344, 0.362, 0.366, 0.356, 0.313, 0.302, 0.324, 0.354, 0.347, 0.292, 0.284, 0.279, 0.281, 0.297, 0.301, 0.3, 0.274, 0.259, 0.306, 0.257, 0.299, 0.224, 0.301, 0.232, 0.319, 0.244, 0.287, 0.226, 0.313, 0.274, 0.265, 0.178, 0.19, 0.143, 0.13, 0.099, 0.111, 0.069, 0.064, 0.028, 0.013, 0.01]}, "H_LIFT": 3.081, "H_SLOW": 4.75, "H_DMG": 7.51, "H_SPK": 9.05, "T_P": 10.22, "P_IN": 14.25, "P_C": 19.75, "P_L": 22.31, "T_D": 24.81, "D_LIFT": 26.47, "D_AIR": 28.43, "D_NOBOV": 32.63, "D_ACC": 34.97, "D_TURBO": 37.19, "G_IN": 39.35, "G_RING": 42.82, "G_ACT": 45.46, "G_SWEEP": 45.06, "G_LOW": 46.955, "G_CLOSE": 48.235, "G_HIGH": 52.055, "G_OPEN": 53.105, "C_LOW": 56.245, "C_DEP": 56.965, "C_STUCK": 59.045, "C_TRY": 60.805, "O_0": 63.415, "O_HIT": 63.775, "O_R0": 64.015, "O_R1": 69.655, "O_P0": 67.315, "O_P1": 71.635, "O_OUT": 66.915, "O_PRES": 69.775, "L_LIFT": 74.5, "L_ENG": 76.48, "L_COMP": 78.72, "S_ON": 83.98, "X_STR": 92.74, "X_AX": 95.24, "X_BRG0": 96.52, "X_BRG": 98.11, "X_JOC": 99.53, "X_PAL": 100.97, "X_SPK": 102.25, "T_S": 105.425, "SP_C1": 106.175, "SP_R1": 108.455, "SP_C2": 109.905, "SP_A0": 108.915, "SP_B0": 111.555, "T_W": 114.66, "W_LIFT": 115.16, "W_ACC": 119.08, "W_DG": 119.28};
+const T_P=K.T_P,T_D=K.T_D,T_S=K.T_S,T_W=K.T_W;
+const NS=Math.ceil(TU*240);
+const kf=(t,a)=>{if(t<=a[0][0])return a[0][1];for(let i=1;i<a.length;i++){if(t<a[i][0]){const p=a[i-1],q=a[i];return lerp(p[1],q[1],sst(p[0],q[0],t));}}return a[a.length-1][1];};
+function vLift(th,open,close){const x=((th-open)%720+720)%720,dur=((close-open)%720+720)%720;if(x>dur)return 0;const s=Math.sin(Math.PI*x/dur);return LIFT_V*s*s;}
+function phaseOf(U,variant){if(variant==='top')return 'P';if(variant==='bot')return 'B';return U<T_P?'H':U<T_D?'P':U<T_S?'N':U<T_W?'S':'W';}
+/* petrol: throttle closes at c, opens again at r; B = boost, ld = delay until the blow-off lifts */
+function petrolEvent(s,t,c,r,B,ld){
+  const k=sst(c,c+0.3,t)*(1-sst(r,r+0.45,t));               /* throttle closed amount */
+  const L=sst(c+ld,c+ld+0.4,t)*(1-sst(r-0.15,r+0.25,t));     /* blow-off lift */
+  const Rb=150000;
+  s.thr=1-k;s.lift=L;
+  if(t<c){s.p=B;s.map=B;s.rpm=Rb;}
+  else if(t<r+0.2){
+    const spike=0.3*sst(c,c+0.3+ld*0.4,t)*(1-L);
+    s.p=lerp(B+spike,0.12,sst(c+ld,c+ld+1.6,t));s.map=lerp(B,-0.7,sst(c,c+0.25+ld*0.6,t));s.rpm=Rb*lerp(1,0.8,sst(c+0.2,c+ld+3.0,t));
+  }else{
+    const q=sst(r+0.1,r+1.3,t);
+    s.p=lerp(0.12,B,q);s.map=lerp(-0.7,B,sst(r,r+1.0,t));s.rpm=Rb*lerp(0.8,1,q);
+  }
+  s.v1=150*(s.rpm/150000)*(1-k*(1-L)*0.96);
+  s.v2=lerp(150,6,k);
+  s.v3=k*L*lerp(150,330,clamp(s.p/B+0.25,0,1));
+  s.vent=k*L*(1-0.8*sst(c+ld+1.8,c+ld+3.4,t));               /* the trapped air runs out */
+  /* overrun: no fuel, the engine slows down and breathes almost nothing past the closed throttle */
+  s.fuelOn=k>0.5?0:1;s.eng=lerp(1,0.62,k);s.exh=lerp(1,0.22,k);s.cylA=lerp(1,0.35,k);
+}
+/* diesel, variable geometry stuck closed, turbo in overspeed: lift-off at c, the compressor surges from c+d (slow
+   motion: pulses at hz) until r. loop: the turbo winds down and spools up again after r */
+function surge(s,t,c,d,r,hz,loop){
+  const k=sst(c,c+0.35,t)*(1-sst(r,r+0.5,t));
+  const on=sst(c+d,c+d+0.5,t)*(1-sst(r-0.45,r+0.15,t));
+  const q=(t-c-d)*hz;
+  const w=clamp((Math.sin(TAU*q)+0.25)/1.25,0,1),rev=Math.pow(w,1.4)*on;   /* the reverse part of each pulse lasts a little longer */
+  const dk=loop?sst(c+d+0.4,r,t)*(1-sst(r+0.2,r+1.4,t)):0;
+  s.fuel='D';s.bovOn=0;s.vgtOn=1;s.vgt=0;s.stuck=1;s.dep=0.6;s.act=1;
+  s.fuelOn=k>0.5?0:1;s.eng=lerp(1.1,0.68,k);s.exh=lerp(1.15,0.7,k);
+  s.surge=on;s.rev=rev;s.q=q;
+  const vf=lerp(185,lerp(110,48,sst(c+0.4,c+d+0.2,t)),k);
+  s.v1=vf-(vf+270)*rev;s.v2=lerp(185,62,sst(c,c+0.6,t)*(1-sst(r,r+0.5,t)));
+  s.p=lerp(2.3+0.15*k*sst(c+0.3,Math.max(c+d,c+0.8),t),1.3,dk)-0.55*rev;s.map=s.p-0.12;
+  s.stress=on*(0.3+0.7*rev);
+  s.jolt=on*(Math.sin(TAU*q*2)*0.5+rev*0.5);
+  s.rpm=lerp(192000,150000,dk)-24000*rev;
+}
+const hookEnv=t=>{const x=(t-K.HE.t0)*60,v=K.HE.v;if(x<0||x>=v.length-1)return 0;const i=Math.floor(x);return v[i]+(v[i+1]-v[i])*(x-i);};
+/* hook: the same fault in real time. The reverse bursts follow the chuffs of the hook sound, then slow motion */
+function hookState(s,t){
+  surge(s,t,K.H_LIFT,K.H_SLOW-K.H_LIFT,1e4,1.5,false);
+  const slow=s.surge,rs=s.rev;
+  /* the burst is solid, then the flutter flickers at 10 Hz while the sound decays */
+  const fl=lerp(1,0.4+0.6*Math.pow(0.5+0.5*Math.cos(TAU*10*(t-K.HE.tb)),0.8),sst(0.22,0.36,t-K.HE.tb));
+  const rb=Math.pow(hookEnv(t),0.55)*fl*(1-slow);
+  const on=Math.max(slow,sst(K.H_LIFT+0.05,K.H_LIFT+0.25,t)),rev=Math.max(rs,rb);
+  s.surge=on;s.rev=rev;
+  const vf=lerp(185,48,sst(K.H_LIFT,K.H_LIFT+0.3,t));
+  s.v1=vf-(vf+270)*rs-(vf+900)*rb;
+  s.p=2.3-0.55*rev-0.5*sst(K.H_LIFT+0.2,K.H_SLOW,t)*(1-slow);s.map=s.p-0.12;
+  s.stress=on*(0.3+0.7*rev);
+  const d=sst(K.H_DMG,K.H_DMG+1.2,t);
+  s.jolt=(slow*(Math.sin(TAU*s.q*2)*0.5+rs*0.5)+rb*0.9)*(1+1.4*d);
+  s.rpm=192000-24000*rev-16000*sst(K.H_LIFT+0.2,K.H_SLOW,t)-22000*sst(K.H_SPK,K.H_SPK+2.5,t);
+  s.brg=on*d*(0.55+0.45*rev);
+  s.spark=sst(K.H_SPK,K.H_SPK+0.35,t)*(0.5+0.5*rev);
+}
+/* the diesel story (rows 4-13 of the voice-over), as keyframed tracks */
+const TR=(function(){
+  const a=K;
+  return {
+    eng:[[0,1],[a.D_LIFT,1],[a.D_LIFT+1,0.62],[a.D_ACC,0.62],[a.D_ACC+0.8,1],[a.G_LOW,1],[a.G_LOW+1.0,0.55],[a.G_HIGH,0.55],[a.G_HIGH+1.1,1.15],
+         [a.C_LOW,1.15],[a.C_LOW+1.0,0.55],[a.C_TRY-0.2,0.55],[a.C_TRY+1.2,1.1],[a.L_LIFT,1.1],[a.L_LIFT+0.35,0.68]],
+    exh:[[0,1],[a.D_LIFT,1],[a.D_LIFT+1,0.75],[a.D_ACC,0.75],[a.D_ACC+0.8,1],[a.G_LOW,1],[a.G_LOW+1.0,0.7],[a.G_HIGH,0.7],[a.G_HIGH+1.1,1.15],
+         [a.C_LOW,1.15],[a.C_LOW+1.0,0.7],[a.C_TRY-0.2,0.7],[a.C_TRY+1.2,1.15],[a.L_LIFT,1.15],[a.L_LIFT+0.35,0.7]],
+    vgt:[[0,0.55],[a.D_LIFT,0.55],[a.D_LIFT+3,0.9],[a.D_ACC,0.9],[a.D_ACC+2.2,0.55],[a.G_SWEEP,0.55],[a.G_SWEEP+0.75,0.9],[a.G_SWEEP+1.7,0.2],[a.G_SWEEP+2.4,0.5],
+         [a.G_CLOSE,0.5],[a.G_CLOSE+1.0,0.06],[a.G_OPEN,0.06],[a.G_OPEN+1.0,0.95],[a.C_LOW+0.2,0.95],[a.C_LOW+2.0,0.05],[a.C_STUCK,0.02],[a.C_STUCK+0.5,0]],
+    rpm:[[0,140000],[a.D_LIFT,140000],[a.D_LIFT+4,80000],[a.D_ACC,80000],[a.D_ACC+2.5,150000],[a.G_LOW,150000],[a.G_LOW+1.6,104000],[a.G_CLOSE+1.4,112000],
+         [a.G_HIGH,112000],[a.G_HIGH+1.8,150000],[a.C_LOW,150000],[a.C_LOW+1.6,106000],[a.C_TRY,112000],[a.C_TRY+1.6,150000],[a.O_R0,150000],[a.O_R1,192000]],
+    p:[[0,1.2],[a.D_LIFT,1.2],[a.D_LIFT+3,0.12],[a.D_ACC,0.12],[a.D_ACC+2.2,1.2],[a.G_LOW,1.2],[a.G_LOW+1.6,0.7],[a.G_CLOSE+1.4,1.0],
+       [a.G_HIGH,1.0],[a.G_HIGH+1.8,1.3],[a.C_LOW,1.3],[a.C_LOW+1.6,0.9],[a.C_TRY,1.0],[a.C_TRY+1.8,1.3],[a.O_P0,1.3],[a.O_P1,2.3]],
+    v:[[0,150],[a.D_LIFT,150],[a.D_LIFT+3,85],[a.D_ACC,85],[a.D_ACC+2.2,150],[a.G_LOW,150],[a.G_LOW+1.2,95],[a.G_HIGH,95],[a.G_HIGH+1.4,165],
+       [a.C_LOW,165],[a.C_LOW+1.2,95],[a.C_TRY,95],[a.C_TRY+1.4,160],[a.O_R0,160],[a.O_R1,185]]
+  };
+})();
+function dieselStory(s,t){
+  s.fuel='D';s.bovOn=0;s.vgtOn=1;
+  if(t>=K.L_LIFT){
+    surge(s,t,K.L_LIFT,K.S_ON-K.L_LIFT,1e4,K.HZ,false);
+    const wear=0.3*sst(K.X_BRG0,K.X_BRG0+0.8,t)+0.7*sst(K.X_BRG,K.X_BRG+1.4,t);
+    s.jolt*=1+1.6*sst(K.X_JOC,K.X_JOC+1.5,t);
+    s.brg=s.surge*wear*(0.55+0.45*s.rev);
+    s.spark=sst(K.X_SPK,K.X_SPK+0.4,t)*(0.5+0.5*s.rev);
+    s.rpm-=30000*sst(K.X_SPK+0.5,K.X_SPK+4.5,t);
+    return;
+  }
+  s.fuelOn=(t>=K.D_LIFT&&t<K.D_ACC)?0:1;
+  s.eng=kf(t,TR.eng);s.exh=kf(t,TR.exh);s.vgt=kf(t,TR.vgt);s.rpm=kf(t,TR.rpm);s.p=kf(t,TR.p);s.map=s.p-0.04;
+  s.v1=s.v2=kf(t,TR.v);
+  s.stuck=sst(K.C_STUCK,K.C_STUCK+0.5,t);s.dep=0.6*sst(K.C_DEP,K.C_STUCK+0.5,t);s.act=sst(K.C_TRY,K.C_TRY+0.5,t);
+}
+function stateAt(U,variant){
+  const ph=phaseOf(U,variant);
+  const s={ph,fuel:'P',fuelOn:1,eng:1,exh:1,cylA:1,thr:1,bovOn:1,lift:0,p:1.2,map:1.2,rpm:150000,v1:150,v2:150,v3:0,vent:0,surge:0,rev:0,q:0,stress:0,jolt:0,spark:0,brg:0,vgt:0.55,vgtOn:0,stuck:0,dep:0,act:0};
+  if(ph==='P'){
+    if(variant==='top'){if(U<K.SP_C2)petrolEvent(s,U,K.SP_C1,K.SP_R1,1.2,0.32);else petrolEvent(s,U,K.SP_C2,1e4,1.2,0.32);}
+    else petrolEvent(s,U,K.P_C,1e4,1.2,K.P_L-K.P_C);
+  }else if(ph==='B'){
+    if(U<K.SP_C2)surge(s,U,K.SP_C1,0.1,K.SP_R1,K.HZ,true);else surge(s,U,K.SP_C2,0.1,1e4,K.HZ,false);
+  }else if(ph==='H')hookState(s,U);
+  else if(ph==='N')dieselStory(s,U);
+  else if(ph==='W')surge(s,U,K.W_LIFT,0.1,K.W_ACC,K.HZ,true);
+  else{s.fuel='D';s.bovOn=0;s.vgtOn=1;}
+  return s;
+}
+/* look-up tables per variant: crank angle, exhaust gas, the three air streams, rotor angle;
+   cool = exhaust intervals (in gas distance) emitted with the fuel cut */
+const LUT={oil:new Float32Array(NS+1)};
+const LV={};
+(function(){
+  const dt=1/240;
+  for(let i=0,oi=0;i<=NS;i++){LUT.oil[i]=oi;oi+=dt*0.42;}
+  ['main','top','bot'].forEach(v=>{
+    const F=()=>new Float32Array(NS+1);
+    const A={th:F(),gex:F(),g1:F(),g2:F(),g3:F(),spin:F(),cool:[]};
+    let th=200,g=0,g1=0,g2=0,g3=0,sp=0,was=1,ca=0;
+    for(let i=0;i<=NS;i++){
+      const U=i*dt,s=stateAt(U,v);
+      A.th[i]=th;A.gex[i]=g;A.g1[i]=g1;A.g2[i]=g2;A.g3[i]=g3;A.spin[i]=sp;
+      if(was&&!s.fuelOn)ca=g;else if(!was&&s.fuelOn)A.cool.push([ca,g]);
+      was=s.fuelOn;
+      const r=560*s.eng,le=vLift(th,498,8)/LIFT_V;
+      g+=dt*(r/720)*300*(0.22+1.5*le)*s.exh;th+=dt*r;
+      g1+=dt*s.v1;g2+=dt*s.v2;g3+=dt*s.v3;sp+=dt*TAU*1.15*(s.rpm/150000);
+    }
+    if(!was)A.cool.push([ca,1e9]);
+    LV[v]=A;
+  });
+})();
+const lut=(arr,U)=>{const x=clamp(U,0,TU)*240,i=Math.min(NS-1,Math.floor(x));return arr[i]+(arr[i+1]-arr[i])*(x-i);};
+
+/* ================= renderer ================= */
+const canvas=$('gl');
+let renderer;
+try{renderer=new T.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});}catch(e){fail();return;}
+const DPR=Math.min(window.devicePixelRatio||1,2);
+renderer.setPixelRatio(DPR);
+renderer.setClearColor(0x000000,0);
+renderer.outputEncoding=T.sRGBEncoding;
+renderer.toneMapping=T.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.12;
+renderer.localClippingEnabled=true;
+const scene=new T.Scene();
+const FOV=28;
+const camera=new T.PerspectiveCamera(FOV,1,10,6000);
+(function env(){
+  const s=new T.Scene(),box=new T.BoxGeometry(1,1,1);
+  s.add(new T.Mesh(new T.BoxGeometry(420,420,420),new T.MeshBasicMaterial({color:new T.Color(0.2,0.235,0.29),side:T.BackSide})));
+  const panel=(x,y,z,sx,sy,sz,r,g,b)=>{const m=new T.Mesh(box,new T.MeshBasicMaterial({color:new T.Color(r,g,b)}));m.position.set(x,y,z);m.scale.set(sx,sy,sz);s.add(m);};
+  panel(0,200,70,280,4,180,7,7.4,8);
+  panel(-200,40,60,4,230,130,1.6,2.3,3.4);
+  panel(200,0,90,4,170,110,3.4,2.5,1.6);
+  panel(0,30,200,230,150,4,1.3,1.35,1.4);
+  panel(0,-200,0,420,4,420,0.035,0.035,0.04);
+  const pm=new T.PMREMGenerator(renderer);
+  scene.environment=pm.fromScene(s,0.035,1,1200).texture;
+  pm.dispose();
+})();
+scene.add(new T.HemisphereLight(0xcfe3ff,0x15110d,0.5));
+const key=new T.DirectionalLight(0xffffff,1.0);key.position.set(140,230,280);scene.add(key);
+const rim=new T.DirectionalLight(0x9fc4ff,0.55);rim.position.set(-220,90,-140);scene.add(rim);
+
+/* ================= materials ================= */
+const col=h=>new T.Color(h).convertSRGBToLinear();
+const CLIP=[new T.Plane(new T.Vector3(0,0,-1),0.02)];
+const std=(h,m,r,x)=>new T.MeshStandardMaterial(Object.assign({color:col(h),metalness:m,roughness:r,side:T.DoubleSide,envMapIntensity:0.85},x||{}));
+const stdC=(h,m,r,x)=>std(h,m,r,Object.assign({clippingPlanes:CLIP},x||{}));
+function hatchTex(dir){
+  const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');
+  g.fillStyle='#fff';g.fillRect(0,0,64,64);g.strokeStyle='rgba(0,0,0,.17)';g.lineWidth=3.2;
+  for(let i=-64;i<=128;i+=32){g.beginPath();if(dir>0){g.moveTo(i,64);g.lineTo(i+64,0);}else{g.moveTo(i,0);g.lineTo(i+64,64);}g.stroke();}
+  const t=new T.CanvasTexture(c);t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(1/9,1/9);t.anisotropy=4;return t;
+}
+const HA=hatchTex(1),HB=hatchTex(-1);
+const cut=(h,tex)=>new T.MeshBasicMaterial({color:col(h),map:tex===undefined?HA:tex,toneMapped:false,side:T.DoubleSide});
+const flat=(h,x)=>new T.MeshBasicMaterial(Object.assign({color:col(h),toneMapped:false,side:T.DoubleSide},x||{}));
+const EDGE=new T.LineBasicMaterial({color:0x05080b,transparent:true,opacity:.55,toneMapped:false});
+const M={
+  headOut:std(0x9aa2ab,.86,.5), blockOut:std(0x3b4047,.62,.66), bore:std(0x767d85,.92,.4),
+  piston:std(0x868d95,.88,.46), ring:std(0x2a2e33,.8,.45), pin:std(0xd4d9df,1,.18), rod:std(0x7d858e,.9,.46),
+  valveIn:std(0x7f868e,.92,.42,{envMapIntensity:0.6}), valveEx:std(0x6f675f,.88,.5,{envMapIntensity:0.6}), spring:std(0xc3c9d0,1,.24),
+  portIn:std(0x7d858e,.8,.56), portEx:std(0x3c3834,.5,.8), injBody:std(0x8f969e,.95,.3), crown:std(0x33363b,.35,.72), deck:std(0x3d4046,.4,.7),
+  tHouse:stdC(0x6a5d52,.75,.55), tHouseIn:std(0x4a3f37,.6,.7), cHouse:stdC(0xb9c0c7,.9,.32), cHouseIn:std(0xa7afb7,.9,.36),
+  chra:std(0x6b7178,.8,.5), bronze:std(0xc08a4a,.95,.32), steel:std(0xcfd5dc,1,.2), wheelT:std(0x8a8079,.95,.34), wheelC:std(0xd6dce2,1,.22),
+  manifold:stdC(0x5f5550,.7,.62), pipeAlu:stdC(0x9aa3ab,.9,.32), pipeOil:stdC(0x8f969e,.95,.28), hose:stdC(0x2b2f35,.2,.7),
+  cooler:stdC(0x7c858e,.85,.4), filter:std(0x272b30,.1,.8), dark:flat(0x0d1117)
+};
+M.bronzeT=std(0xc08a4a,.95,.32);
+const C={
+  head:cut(0x87919d,HA), block:cut(0x4c535c,HB), liner:cut(0x6f7883,HA), piston:cut(0x9ca5b0,HB), inj:cut(0x6f7883,HB),
+  chra:cut(0x7c8590,HA), tHouse:cut(0x7a6a5c,HB), cHouse:cut(0xb3bcc6,HB), back:cut(0xa2acb7,HA), bronze:cut(0xc9945a,HB), shield:cut(0x9aa3ad,HA), carter:cut(0x4c535c,HA)
+};
+
+/* ================= geometry helpers ================= */
+const V2=(x,y)=>new T.Vector2(x,y);
+function latheGeo(profile,o){
+  o=o||{};const pts=[],push=p=>pts.push(V2(Math.max(p[0],1e-4),p[1]));
+  profile.forEach(p=>{push(p);if(!p[2])push(p);});
+  if(o.closed!==false)push(profile[0]);
+  return new T.LatheGeometry(pts,o.seg||(o.full?40:26),o.full?0:Math.PI/2,o.full?Math.PI*2:Math.PI);
+}
+function capGeo(profile){
+  const n=profile.length,a=profile.map(p=>V2(p[0],p[1]));
+  if(profile[0][0]===0&&profile[n-1][0]===0){
+    const pts=a.slice();for(let i=n-2;i>=1;i--)pts.push(V2(-profile[i][0],profile[i][1]));
+    return new T.ShapeGeometry(new T.Shape(pts));
+  }
+  return new T.ShapeGeometry([new T.Shape(a),new T.Shape(profile.map(p=>V2(-p[0],p[1])).reverse())]);
+}
+function edges(parent,geo,z){const l=new T.LineSegments(new T.EdgesGeometry(geo),EDGE);l.position.z=z===undefined?0.015:z;parent.add(l);return l;}
+function revolved(parent,profile,mat,cutMat,o){
+  const g=new T.Group();g.add(new T.Mesh(latheGeo(profile,o),mat));
+  if(cutMat){const cg=capGeo(profile);g.add(new T.Mesh(cg,cutMat));edges(g,cg);}
+  parent.add(g);return g;
+}
+/* revolved around the turbo axis (x); profile points are [a, r] */
+function axGeo(profile,o){const g=latheGeo(profile.map(p=>[p[1],p[0],p[2]]),o);g.rotateZ(-Math.PI/2);return g;}
+function axCap(profile,top,bot){
+  const sh=[];
+  if(top!==false)sh.push(new T.Shape(profile.map(p=>V2(p[0],p[1]))));
+  if(bot!==false)sh.push(new T.Shape(profile.map(p=>V2(p[0],-p[1])).reverse()));
+  return new T.ShapeGeometry(sh);
+}
+function axPart(parent,profile,mat,cutMat,o){
+  o=o||{};const g=new T.Group();
+  if(mat)g.add(new T.Mesh(axGeo(profile,o),mat));
+  if(cutMat){const cg=axCap(profile,o.top,o.bot);const m=new T.Mesh(cg,cutMat);m.position.z=o.z||0;g.add(m);edges(g,cg,(o.z||0)+0.015);}
+  parent.add(g);return g;
+}
+function polyGeo(pts){return new T.ShapeGeometry(new T.Shape(pts.map(p=>V2(p[0],p[1]))));}
+function remap(geo,fn){const p=geo.attributes.position;for(let i=0;i<p.count;i++){const v=fn(p.getX(i),p.getY(i));p.setXYZ(i,v[0],v[1],v[2]);}p.needsUpdate=true;geo.computeVertexNormals();return geo;}
+function ribbon(pts,hw,z,d0){
+  const n=pts.length,pos=[],uv=[],idx=[];let len=d0||0;
+  for(let i=0;i<n;i++){
+    const p=pts[i],a=pts[Math.max(i-1,0)],b=pts[Math.min(i+1,n-1)];
+    let tx=b[0]-a[0],ty=b[1]-a[1];const l=Math.hypot(tx,ty)||1;tx/=l;ty/=l;
+    if(i>0)len+=Math.hypot(p[0]-pts[i-1][0],p[1]-pts[i-1][1]);
+    pos.push(p[0]-ty*hw,p[1]+tx*hw,z,p[0]+ty*hw,p[1]-tx*hw,z);uv.push(len,-1,len,1);
+    if(i<n-1){const k=i*2;idx.push(k,k+1,k+2,k+1,k+3,k+2);}
+  }
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(idx);return g;
+}
+function makeHelix(Rh,wire,turns){
+  const segT=22,segR=7,n=Math.round(turns*segT)+1,cnt=n*(segR+1),idx=[];
+  for(let i=0;i<n-1;i++)for(let j=0;j<segR;j++){const a=i*(segR+1)+j,b=a+segR+1;idx.push(a,a+1,b,b,a+1,b+1);}
+  const g=new T.BufferGeometry();
+  g.setAttribute('position',new T.BufferAttribute(new Float32Array(cnt*3),3));
+  g.setAttribute('normal',new T.BufferAttribute(new Float32Array(cnt*3),3));
+  g.setIndex(idx);g.userData={Rh,wire,turns,segR,n};return g;
+}
+function setHelix(g,y0,h){
+  const d=g.userData,P=g.attributes.position.array,N=g.attributes.normal.array,pitch=h/d.turns;let k=0;
+  for(let i=0;i<d.n;i++){
+    const t=i/(d.n-1),ph=t*d.turns*2*Math.PI,cx=Math.cos(ph),sz=Math.sin(ph),y=y0+h*t;
+    let tx=-d.Rh*sz,ty=pitch/(2*Math.PI),tz=d.Rh*cx;const tl=Math.hypot(tx,ty,tz);tx/=tl;ty/=tl;tz/=tl;
+    const bx=ty*sz,by=tz*cx-tx*sz,bz=-ty*cx;
+    for(let j=0;j<=d.segR;j++){
+      const a=j/d.segR*2*Math.PI,ca=Math.cos(a),sa=Math.sin(a),nx=cx*ca+bx*sa,ny=by*sa,nz=sz*ca+bz*sa;
+      P[k]=d.Rh*cx+d.wire*nx;P[k+1]=y+d.wire*ny;P[k+2]=d.Rh*sz+d.wire*nz;N[k]=nx;N[k+1]=ny;N[k+2]=nz;k+=3;
+    }
+  }
+  g.attributes.position.needsUpdate=true;g.attributes.normal.needsUpdate=true;
+}
+/* tube swept along a list of centres with explicit frames and radii */
+function sweepGeo(cs,n1s,n2s,rs,segR){
+  segR=segR||28;const pos=[],idx=[],uv=[];let len=0;
+  for(let i=0;i<cs.length;i++){
+    if(i>0)len+=cs[i].distanceTo(cs[i-1]);
+    for(let j=0;j<=segR;j++){const a=j/segR*TAU,ca=Math.cos(a),sa=Math.sin(a);
+      pos.push(cs[i].x+rs[i]*(n1s[i].x*ca+n2s[i].x*sa),cs[i].y+rs[i]*(n1s[i].y*ca+n2s[i].y*sa),cs[i].z+rs[i]*(n1s[i].z*ca+n2s[i].z*sa));uv.push(len,j/segR);}
+  }
+  for(let i=0;i<cs.length-1;i++)for(let j=0;j<segR;j++){const a=i*(segR+1)+j,b=a+segR+1;idx.push(a,b,a+1,b,b+1,a+1);}
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();return g;
+}
+/* sampled polyline with arc length */
+function polyPath(pts){
+  const P=pts.map(p=>p.clone?p.clone():new T.Vector3(p[0],p[1],p[2])),L=[0];
+  for(let i=1;i<P.length;i++)L.push(L[i-1]+P[i].distanceTo(P[i-1]));
+  return {P,L,len:L[L.length-1],at(d,out){d=clamp(d,0,this.len);let lo=0,hi=this.L.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(this.L[m]<=d)lo=m;else hi=m;}
+    const t=(d-this.L[lo])/((this.L[hi]-this.L[lo])||1);return out.copy(this.P[lo]).lerp(this.P[hi],t);}};
+}
+function curvePath(pts,n){const c=new T.CatmullRomCurve3(pts.map(p=>new T.Vector3(p[0],p[1],p[2])),false,'centripetal');return {curve:c,path:polyPath(c.getSpacedPoints(n||120))};}
+const turboPt=(a,r,ph,out)=>out.set(a,TY+r*Math.sin(ph),-r*Math.cos(ph));
+
+/* =====================================================================
+   ENGINE (single cylinder, section view)
+   ===================================================================== */
+const eng=new T.Group();eng.position.x=EX;scene.add(eng);
+(function(){
+  eng.add(revolvedMesh([[R,0],[47,0],[47,BLOCK_BOT],[R,BLOCK_BOT]],M.bore,C.liner,{seg:56}));
+  [1,-1].forEach(s=>{
+    const sh=new T.Shape([V2(s*47,-0.8),V2(s*HALF_W,-0.8),V2(s*HALF_W,BLOCK_BOT),V2(s*47,BLOCK_BOT)]);
+    const jk=[[50.4,-74],[57.8,-74],[57.8,-9],[50.4,-9]];
+    sh.holes.push(new T.Path(jk.map(p=>V2(s*p[0],p[1]))));
+    const g=new T.ShapeGeometry(sh);eng.add(new T.Mesh(g,C.block));edges(eng,g);
+    eng.add(new T.Mesh(polyGeo(jk.map(p=>[s*p[0],p[1]])),flat(0x1c4c59)));
+    eng.add(new T.Mesh(remap(new T.PlaneGeometry(DEPTH,-BLOCK_BOT),(x,y)=>[s*HALF_W,y+BLOCK_BOT/2,-(x+DEPTH/2)]),M.blockOut));
+  });
+  eng.add(new T.Mesh(remap(new T.PlaneGeometry(HALF_W*2,-BLOCK_BOT),(x,y)=>[x,y+BLOCK_BOT/2,-DEPTH]),M.blockOut));
+  /* oil pan (carter) */
+  const PB=-208,PW=70;
+  [1,-1].forEach(s=>{const g=polyGeo([[s*(PW-4),BLOCK_BOT],[s*PW,BLOCK_BOT],[s*PW,PB],[s*(PW-4),PB]]);eng.add(new T.Mesh(g,C.carter));edges(eng,g);
+    eng.add(new T.Mesh(remap(new T.PlaneGeometry(DEPTH,BLOCK_BOT-PB),(x,y)=>[s*PW,y+(BLOCK_BOT+PB)/2,-(x+DEPTH/2)]),M.blockOut));});
+  {const g=polyGeo([[-PW,PB],[PW,PB],[PW,PB-4],[-PW,PB-4]]);eng.add(new T.Mesh(g,C.carter));edges(eng,g);}
+  eng.add(new T.Mesh(remap(new T.PlaneGeometry(PW*2,BLOCK_BOT-PB),(x,y)=>[x,y+(BLOCK_BOT+PB)/2,-DEPTH]),M.blockOut));
+  eng.add(new T.Mesh(remap(new T.PlaneGeometry(PW*2,DEPTH),(x,y)=>[x,PB,-(y+DEPTH/2)]),M.blockOut));
+})();
+function revolvedMesh(profile,mat,cutMat,o){const g=new T.Group();g.add(new T.Mesh(latheGeo(profile,o),mat));if(cutMat){const cg=capGeo(profile);g.add(new T.Mesh(cg,cutMat));edges(g,cg);}return g;}
+const oilPool=new T.Mesh(polyGeo([[-66,-204],[66,-204],[66,-190],[-66,-190]]),new T.MeshBasicMaterial({color:col(0x9a6a12),toneMapped:false,side:T.DoubleSide}));
+oilPool.position.z=0.03;eng.add(oilPool);
+const oilPoolBack=new T.Mesh(remap(new T.PlaneGeometry(132,DEPTH),(x,y)=>[x,-190,-(y+DEPTH/2)]),new T.MeshStandardMaterial({color:col(0x7a520c),metalness:0.2,roughness:0.25,side:T.DoubleSide}));
+eng.add(oilPoolBack);
+
+let injMesh;
+/* cylinder head with ports */
+const PORTPTS={};
+(function(){
+  function side(s,rv,portMat,name){
+    const ctl=[[XV,0],[XV,8],[XV+2.4,16],[XV+9.8,24.6],[XV+22,29.8],[HALF_W-6,31],[HALF_W,31]].map(p=>V2(s*p[0],p[1]));
+    const curve=new T.SplineCurve(ctl),N=48,Cc=[],Nn=[],rr=[];let len=0,prev=null;
+    for(let i=0;i<=N;i++){
+      const t=i/N,c=curve.getPoint(t),tg=curve.getTangent(t).normalize();
+      if(prev)len+=c.distanceTo(prev);prev=c;
+      Cc.push(c);Nn.push(s<0?V2(-tg.y,tg.x):V2(tg.y,-tg.x));
+      rr.push(RPORT+(rv+0.25-RPORT)*(1-sst(0,3.8,len)));
+    }
+    const W1=Cc.map((c,i)=>V2(c.x+Nn[i].x*rr[i],c.y+Nn[i].y*rr[i])),W2=Cc.map((c,i)=>V2(c.x-Nn[i].x*rr[i],c.y-Nn[i].y*rr[i]));
+    W1[0].y=W2[0].y=0;W1[N].x=W2[N].x=s*HALF_W;
+    const a=[W1[0],V2(s*HALF_W,0)];for(let i=N;i>=1;i--)a.push(W1[i]);
+    const b=W2.slice();b.push(V2(s*HALF_W,HEAD_H),V2(s*10.7,HEAD_H),V2(s*10.7,20.5),V2(s*3.75,20.5),V2(s*3.75,0));
+    const g=new T.ShapeGeometry([new T.Shape(a),new T.Shape(b)]);
+    eng.add(new T.Mesh(g,C.head));edges(eng,g);
+    const segP=14,pos=[],idx=[];
+    for(let i=0;i<=N;i++)for(let j=0;j<=segP;j++){const ph=Math.PI+j/segP*Math.PI,cn=Math.cos(ph),sn=Math.sin(ph);pos.push(Cc[i].x+Nn[i].x*rr[i]*cn,Cc[i].y+Nn[i].y*rr[i]*cn,rr[i]*sn);}
+    for(let i=0;i<N;i++)for(let j=0;j<segP;j++){const k=i*(segP+1)+j,q=k+segP+1;idx.push(k,q,k+1,q,q+1,k+1);}
+    const tg=new T.BufferGeometry();tg.setAttribute('position',new T.Float32BufferAttribute(pos,3));tg.setIndex(idx);tg.computeVertexNormals();
+    eng.add(new T.Mesh(tg,portMat));
+    const sf=new T.Shape();sf.moveTo(0,0);sf.lineTo(0,31-RPORT);sf.absarc(0,31,RPORT,-Math.PI/2,Math.PI/2,false);sf.lineTo(0,HEAD_H);sf.lineTo(DEPTH,HEAD_H);sf.lineTo(DEPTH,0);
+    eng.add(new T.Mesh(remap(new T.ShapeGeometry(sf,16),(x,y)=>[s*HALF_W,y,-x]),M.headOut));
+    PORTPTS[name]=Cc.map(c=>new T.Vector3(c.x+EX,c.y,0));
+  }
+  side(-1,RV_IN,M.portIn,'in');side(1,RV_EX,M.portEx,'ex');
+  const roof=new T.Shape();roof.moveTo(-R,0);
+  [[-XV,RV_IN+0.25],[0,3.75],[XV,RV_EX+0.25]].forEach(n=>{roof.lineTo(n[0]-n[1],0);roof.absarc(n[0],0,n[1],Math.PI,0,true);});
+  roof.lineTo(R,0);roof.absarc(0,0,R,0,Math.PI,false);
+  eng.add(new T.Mesh(remap(new T.ShapeGeometry(roof,28),(x,y)=>[x,0,-y]),M.deck));
+  const top=new T.Shape();top.moveTo(-HALF_W,0);top.lineTo(-10.7,0);top.absarc(0,0,10.7,Math.PI,0,true);top.lineTo(HALF_W,0);top.lineTo(HALF_W,DEPTH);top.lineTo(-HALF_W,DEPTH);
+  eng.add(new T.Mesh(remap(new T.ShapeGeometry(top,20),(x,y)=>[x,HEAD_H,-y]),M.headOut));
+  eng.add(new T.Mesh(remap(new T.PlaneGeometry(HALF_W*2,HEAD_H),(x,y)=>[x,y+HEAD_H/2,-DEPTH]),M.headOut));
+  /* simplified injector */
+  injMesh=revolvedMesh([[0,-2.2,1],[2.4,-1.2,1],[3.6,2.6],[3.6,20.5],[10.5,20.5],[10.5,64],[8,66],[8,96],[0,96]],M.injBody,C.inj,{seg:30});eng.add(injMesh);
+})();
+function makeValve(x,rv,mat){
+  const g=new T.Group();g.position.x=x;
+  g.add(new T.Mesh(latheGeo([[0,0],[rv,0],[rv,1.0],[rv-3,4.0],[6.2,6.6,1],[3.9,10.4,1],[2.9,15.5,1],[2.7,20],[2.7,78],[0,78]],{full:true,closed:false,seg:36}),mat));
+  g.add(new T.Mesh(latheGeo([[2.7,72],[9.7,72],[9.7,74.2],[6,75.6],[2.7,75.6]],{full:true,seg:28}),M.injBody));
+  const sp=new T.Mesh(makeHelix(8,1.3,4.5),M.spring);sp.position.x=x;eng.add(sp);
+  eng.add(g);return {g,sp};
+}
+const vIn=makeValve(-XV,RV_IN,M.valveIn),vEx=makeValve(XV,RV_EX,M.valveEx);
+const piston=new T.Group();eng.add(piston);
+const pCrownD=new T.Group(),pCrownP=new T.Group();piston.add(pCrownD);piston.add(pCrownP);   /* diesel bowl / petrol dish */
+(function(){
+  const prof=[[0,-5.2,1],[5,-6.6,1],[9.5,-10.6,1],[13.5,-13.6,1],[17,-14,1],[20.4,-12.4,1],[22.3,-8.6,1],[22.4,-5.2,1],[21.6,-2.6,1],[22.3,-0.9,1],[23.8,0],
+    [39.6,0],[40.6,-1],[40.6,-56],[37.4,-56],[37.4,-31],[33,-23.5,1],[26,-21.5,1],[0,-21.5]];
+  const profP=[[0,-3.2,1],[14,-3.2,1],[21,-2.7,1],[26.5,-1.1,1],[29.5,0],[39.6,0],[40.6,-1],[40.6,-56],[37.4,-56],[37.4,-31],[33,-23.5,1],[26,-21.5,1],[0,-21.5]];
+  pCrownD.add(new T.Mesh(latheGeo(prof.slice(0,13),{closed:false,seg:56}),M.crown));
+  pCrownP.add(new T.Mesh(latheGeo(profP.slice(0,7),{closed:false,seg:56}),std(0x4d5157,.55,.58)));
+  piston.add(new T.Mesh(latheGeo(prof.slice(12),{closed:false,seg:56}),M.piston));
+  {const cg=capGeo(prof);pCrownD.add(new T.Mesh(cg,C.piston));edges(pCrownD,cg);}
+  {const cg=capGeo(profP);pCrownP.add(new T.Mesh(cg,C.piston));edges(pCrownP,cg);}
+  [[-5,-7.2],[-10,-12.2],[-15,-18]].forEach(r=>{const g=revolvedMesh([[37.8,r[0]],[R-0.05,r[0]],[R-0.05,r[1]],[37.8,r[1]]],M.ring,flat(0x23272c),{seg:56});g.position.z=0.02;piston.add(g);});
+  const boss=new T.Mesh(new T.CylinderGeometry(13.5,13.5,22,28),M.piston);boss.rotation.x=Math.PI/2;boss.position.set(0,-COMP_H,-25);piston.add(boss);
+  const pin=new T.Mesh(new T.CylinderGeometry(8.5,8.5,32,32,1,true),M.pin);pin.rotation.x=Math.PI/2;pin.position.set(0,-COMP_H,-16);piston.add(pin);
+  const ps=new T.Shape();ps.absarc(0,0,8.5,0,Math.PI*2,false);const hole=new T.Path();hole.absarc(0,0,4.4,0,Math.PI*2,true);ps.holes.push(hole);
+  const pg=new T.ShapeGeometry(ps,28);const pc=new T.Mesh(pg,cut(0xbcc3cb,HA));pc.position.set(0,-COMP_H,0.01);piston.add(pc);
+})();
+const rod=new T.Group();eng.add(rod);
+(function(){
+  const s=new T.Shape(),a0=-125*DEG,a1=-55*DEG;
+  s.moveTo(12*Math.cos(a0),12*Math.sin(a0));s.absarc(0,0,12,a0,a1,true);s.lineTo(9.6,-(ROD+14));s.lineTo(-9.6,-(ROD+14));
+  const h=new T.Path();h.absarc(0,0,8.5,0,Math.PI*2,true);s.holes.push(h);
+  const g=new T.ExtrudeGeometry(s,{depth:9,bevelEnabled:false,curveSegments:28});g.translate(0,0,-9);
+  const clip=[new T.Plane(new T.Vector3(0,1,0),-BLOCK_BOT)];
+  const mCap=cut(0x77808b,HA),mSide=std(0x7d858e,.9,.46);mCap.clippingPlanes=clip;mSide.clippingPlanes=clip;
+  rod.add(new T.Mesh(g,[mCap,mSide]));
+})();
+const pistonDrop=th=>{const a=th*DEG;return(CRK+ROD)-(CRK*Math.cos(a)+Math.sqrt(ROD*ROD-CRK*CRK*Math.sin(a)*Math.sin(a)));};
+
+/* =====================================================================
+   TURBOCHARGER (axis along x at y = TY; housings cut at z = 0)
+   ===================================================================== */
+const turbo=new T.Group();turbo.position.y=TY;scene.add(turbo);
+const rotor=new T.Group();turbo.add(rotor);
+
+/* ---- wheels ---- */
+function bladeGeo(hubF,tipF,thF,s0,thick){
+  const Ns=26,Nt=8,pos=[],idx=[];
+  for(const f of [-1,1]){
+    const base=pos.length/3;
+    for(let i=0;i<=Ns;i++){const s=s0+(1-s0)*i/Ns,h=hubF(s),t=tipF(s);
+      for(let j=0;j<=Nt;j++){const q=j/Nt,a=lerp(h[0],t[0],q),r=lerp(h[1],t[1],q),th=thF(s,q)+f*thick/(2*r);pos.push(a,r*Math.sin(th),-r*Math.cos(th));}}
+    for(let i=0;i<Ns;i++)for(let j=0;j<Nt;j++){const a=base+i*(Nt+1)+j,b=a+Nt+1;idx.push(a,b,a+1,b,b+1,a+1);}
+  }
+  /* close the tip edge */
+  const per=(Ns+1)*(Nt+1);
+  for(let i=0;i<Ns;i++){const a=i*(Nt+1)+Nt,b=a+Nt+1;idx.push(a,b,a+per,b,b+per,a+per);}
+  const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();return g;
+}
+/* turbine wheel: radial inflow at r 28, axial exit at a 80 */
+const tHub=s=>[80-24*Math.cos(Math.PI*s/2),28-20*Math.sin(Math.PI*s/2)];
+const tTip=s=>[80-17*Math.cos(Math.PI*s/2),28-7*Math.sin(Math.PI*s/2)];
+const tTh=(s,q)=>-0.85*Math.pow(sst(0.3,1,s),1.3)*(0.75+0.25*q);
+(function(){
+  const pr=[[53,0],[53,27.5,1],[54,28],[56,28]];for(let i=1;i<=20;i++){const h=tHub(i/20);pr.push([h[0],h[1],1]);}pr.push([82,7.4],[85,5],[86,0]);
+  rotor.add(new T.Mesh(axGeo(pr,{full:true,seg:48,closed:false}),M.wheelT));
+  const bg=bladeGeo(tHub,tTip,tTh,0,1.1);
+  for(let k=0;k<11;k++){const m=new T.Mesh(bg,M.wheelT);m.rotation.x=k*TAU/11;rotor.add(m);}
+})();
+/* compressor wheel: axial inflow at a -100, radial exit at r 28 */
+const cHub=s=>[-100+28*Math.sin(Math.PI*s/2),7+21*(1-Math.cos(Math.PI*s/2))];
+const cTip=s=>[-100+24*Math.sin(Math.PI*s/2),20+8*(1-Math.cos(Math.PI*s/2))];
+const cTh=(s,q)=>0.95*Math.pow(1-s,2)*(0.35+0.65*q)-0.32*s*s;
+(function(){
+  const pr=[[-102.5,0],[-102.5,4.4],[-101,6.2,1]];for(let i=0;i<=20;i++){const h=cHub(i/20);pr.push([h[0],h[1],1]);}pr.push([-71,28],[-70,26],[-70,5.5]);
+  rotor.add(new T.Mesh(axGeo(pr,{full:true,seg:48,closed:false}),M.wheelC));
+  const full=bladeGeo(cHub,cTip,cTh,0,0.9),split=bladeGeo(cHub,cTip,cTh,0.38,0.9);
+  for(let k=0;k<6;k++){const m=new T.Mesh(full,M.wheelC);m.rotation.x=k*TAU/6;rotor.add(m);const n=new T.Mesh(split,M.wheelC);n.rotation.x=(k+0.5)*TAU/6;rotor.add(n);}
+  rotor.add(new T.Mesh(axGeo([[-109,0],[-109,4.2],[-108,5.2],[-103,5.2],[-102.5,4.4],[-102.5,0]],{full:true,seg:6,closed:false}),M.steel));
+})();
+/* shaft, flinger, thrust collar (rotating) */
+(function(){
+  rotor.add(new T.Mesh(axGeo([[-108,0],[-108,4.2],[-70,4.2],[-70,5],[38,5],[38,7],[52,7],[53,9],[53,0]],{full:true,seg:36,closed:false}),M.steel));
+  rotor.add(new T.Mesh(axGeo([[-70,5],[-70,7.2],[-58.5,7.2],[-58.5,19],[-55.5,19],[-55.5,5]],{full:true,seg:40}),M.steel));
+  /* piston-ring grooves read as dark bands */
+  [[-66.3,-64.7],[44.2,45.8]].forEach(g=>{const r=g[0]<0?7.25:7.05;rotor.add(new T.Mesh(axGeo([[g[0],r],[g[1],r]],{full:true,seg:36,closed:false}),M.ring));});
+  /* a flat stripe so the spin is visible on the bare shaft */
+  const st=new T.Mesh(new T.BoxGeometry(60,1.6,0.6),flat(0x2a3038));st.position.set(-8,0,5.05);rotor.add(st);
+  const st2=st.clone();st2.position.set(-8,0,-5.05);rotor.add(st2);
+})();
+
+/* ---- centre housing (CHRA), section ---- */
+const CH_TOP=[[-61,7.6],[-61,46],[-55,46],[-55,34],[-6.6,34],[-6.6,44],[0.6,44],[0.6,34],[44,34],[44,36],[50,36],[50,7.6],[42,7.6],[42,10],[34,10],[34,10],[22,10],[22,12.5],[-28,12.5],[-28,10],[-40,10],[-40,8],[-49,8],[-49,25],[-61,25]];
+const CH_BOT=[[-61,7.6],[-61,46],[-55,46],[-55,34],[-14,34],[-14,12.5],[-28,12.5],[-28,10],[-40,10],[-40,8],[-49,8],[-49,25],[-61,25]];
+const CH_BOT2=[[8,34],[44,34],[44,36],[50,36],[50,7.6],[42,7.6],[42,10],[22,10],[22,12.5],[8,12.5]];
+(function(){
+  /* outer 3D shell and bore surfaces (back half) */
+  turbo.add(new T.Mesh(axGeo([[-61,46],[-55,46],[-55,34],[44,34],[44,36],[50,36]],{closed:false,seg:40}),M.chra));
+  turbo.add(new T.Mesh(axGeo([[-61,25],[-49,25],[-49,8],[-40,8],[-40,10],[-28,10],[-28,12.5],[22,12.5],[22,10],[42,10],[42,7.6],[50,7.6]],{closed:false,seg:40}),std(0x9aa2ab,.55,.55)));
+  const top=new T.Mesh(new T.ShapeGeometry(new T.Shape(CH_TOP.map(p=>V2(p[0],p[1])))),C.chra);turbo.add(top);edges(turbo,top.geometry);
+  [CH_BOT,CH_BOT2].forEach(P=>{const g=new T.ShapeGeometry(new T.Shape(P.map(p=>V2(p[0],-p[1])).reverse()));turbo.add(new T.Mesh(g,C.chra));edges(turbo,g);});
+  /* drain fitting below */
+  [[-14,-34],[8,-34]].forEach((p,i)=>{const g=polyGeo(i?[[8,-34],[12,-34],[12,-48],[8,-48]]:[[-18,-34],[-14,-34],[-14,-48],[-18,-48]]);turbo.add(new T.Mesh(g,C.chra));edges(turbo,g);});
+  /* drain cavity backing */
+  const cav=new T.Mesh(polyGeo([[-28,-12.6],[22,-12.6],[22,-14],[8,-34],[8,-48],[-14,-48],[-14,-34],[-28,-14]]),M.dark);cav.position.z=-6;turbo.add(cav);
+  /* journal bearings (floating bronze sleeves) */
+  [[-40,-28],[22,34]].forEach(s=>{axPart(turbo,[[s[0],6.2],[s[1],6.2],[s[1],8.8],[s[0],8.8]],M.bronze,C.bronze,{seg:32});});
+  /* thrust bearing */
+  C.bronzeT=cut(0xc9945a,HB);axPart(turbo,[[-54.6,6.6],[-49.2,6.6],[-49.2,24.6],[-54.6,24.6]],M.bronzeT,C.bronzeT,{seg:40});
+  /* compressor back plate with seal bore */
+  axPart(turbo,[[-69,7.6],[-61,7.6],[-61,48],[-69,48]],std(0xb4bcc4,.9,.3),C.back,{seg:48});
+  /* piston rings (static) */
+  [[-66.2,-64.8,6.6,7.6],[44.3,45.7,6.4,7.6]].forEach(r=>axPart(turbo,[[r[0],r[2]],[r[1],r[2]],[r[1],r[3]],[r[0],r[3]]],M.ring,flat(0x15181c),{seg:28,z:0.03}));
+  /* heat shield */
+  axPart(turbo,[[50,7.8],[51.4,7.8],[51.4,36],[49,38.5],[50,38.5]],std(0xa9b1b9,.95,.3),C.shield,{seg:40});
+  /* oil inlet banjo */
+  const bj=polyGeo([[-8,44],[-6.6,44],[-6.6,52],[-8,52]]),bj2=polyGeo([[0.6,44],[2,44],[2,52],[0.6,52]]);
+  [bj,bj2].forEach(g=>{turbo.add(new T.Mesh(g,C.chra));edges(turbo,g);});
+})();
+
+/* ---- turbine housing ---- */
+function voluteGeo(V,turb){
+  const cs=[],n1=[],n2=[],rs=[],X=new T.Vector3(1,0,0);
+  const add=(c,r)=>{cs.push(c);n1.push(r.n);n2.push(X);rs.push(r.rho);};
+  if(turb)for(let i=0;i<=8;i++){const y=-V.inlet+V.inlet*i/8;add(new T.Vector3(V.a0,TY+y,-V.r(0)),{n:new T.Vector3(0,0,-1),rho:V.rho(0)});}
+  for(let i=turb?1:0;i<=96;i++){const p=i/96*TAU;add(turboPt(V.a0,V.r(p),p,new T.Vector3()),{n:new T.Vector3(0,Math.sin(p),-Math.cos(p)),rho:V.rho(p)});}
+  if(!turb)for(let i=1;i<=8;i++){const y=V.outlet*i/8;add(new T.Vector3(V.a0,TY+y,-V.r(TAU)),{n:new T.Vector3(0,0,-1),rho:V.rho(TAU)});}
+  return sweepGeo(cs,n1,n2,rs,30);
+}
+function voluteCuts(V,mat){
+  [Math.PI/2,1.5*Math.PI].forEach(p=>{
+    const r=V.r(p),rho=V.rho(p),g=new T.RingGeometry(rho,rho+3.2,36);const m=new T.Mesh(g,mat);
+    m.position.set(V.a0,TY+r*Math.sin(p),0.01);scene.add(m);edges(scene,g,0.02).position.set(V.a0,TY+r*Math.sin(p),0.02);
+  });
+}
+(function(){
+  const vg=voluteGeo(TV,true);scene.add(new T.Mesh(vg,M.tHouse));voluteCuts(TV,C.tHouse);
+  /* shroud and outlet */
+  const sh=[[57,31.5]];for(let i=0;i<=16;i++){const t=tTip(i/16);sh.push([t[0],t[1]+1.2,1]);}sh.push([150,22.2],[150,32],[144,32],[144,27],[86,27],[78,31],[66,38],[57,38]);
+  axPart(turbo,sh,M.tHouseIn,C.tHouse,{seg:40});
+  /* back wall of the scroll next to the heat shield */
+  axPart(turbo,[[52,38.5],[56,38.5],[56,44],[52,44]],M.tHouseIn,C.tHouse,{seg:40});
+})();
+/* ---- compressor housing ---- */
+(function(){
+  const vg=voluteGeo(CV,false);scene.add(new T.Mesh(vg,M.cHouse));voluteCuts(CV,C.cHouse);
+  const sh=[[-190,19.2],[-101,19.2]];for(let i=0;i<=16;i++){const t=cTip(i/16);sh.push([t[0],t[1]+1.0,1]);}
+  sh.push([-77,29.2],[-77,47],[-81,47],[-81,33],[-96,26],[-110,24.6],[-184,24.6],[-184,30],[-190,30]);
+  axPart(turbo,sh,M.cHouseIn,C.cHouse,{seg:40});
+})();
+/* ---- air filter ---- */
+(function(){
+  const g=new T.Group();
+  g.add(new T.Mesh(axGeo([[-232,0],[-232,30],[-190,30],[-190,24]],{full:true,seg:40,closed:false}),M.filter));
+  for(let k=0;k<12;k++){const r=new T.Mesh(axGeo([[-229+k*3.2,30.4],[-227.4+k*3.2,30.4]],{full:true,seg:40,closed:false}),M.ring);g.add(r);}
+  turbo.add(g);
+})();
+
+/* ================= pipes ================= */
+const EXH=curvePath([[EX+HALF_W,31,0],[EX+HALF_W+18,31.5,-2],[-30,40,-16],[14,58,-40],[50,82,-52],[TV.a0,98,-TV.r(0)],[TV.a0,TY-TV.inlet,-TV.r(0)]],140);
+scene.add(new T.Mesh(new T.TubeGeometry(EXH.curve,120,12,28,false),M.manifold));
+const INT=curvePath([[CV.a0,TY+CV.outlet,-CV.r(TAU)],[CV.a0,TY+CV.outlet+12,-CV.r(TAU)+2],[-104,292,-46],[-160,298,-30],[-238,294,-14],[-262,272,-5],[-266,226,0],[-266,80,0],[-258,42,0],[-236,31,0],[EX-HALF_W,31,0]],160);
+scene.add(new T.Mesh(new T.TubeGeometry(INT.curve,150,13,28,false),M.pipeAlu));
+/* intercooler block on the vertical run */
+(function(){
+  const box=new T.Mesh(new T.BoxGeometry(46,74,50),M.cooler);box.position.set(-266,190,-6);scene.add(box);
+  const fin=document.createElement('canvas');fin.width=8;fin.height=64;const g=fin.getContext('2d');g.fillStyle='#4f5861';g.fillRect(0,0,8,64);g.fillStyle='#8f99a3';g.fillRect(0,0,8,3);
+  const ft=new T.CanvasTexture(fin);ft.wrapS=ft.wrapT=T.RepeatWrapping;ft.repeat.set(1,14);
+  const face=new T.Mesh(new T.PlaneGeometry(46,74),new T.MeshBasicMaterial({map:ft,color:col(0xb8c2cc),toneMapped:false,side:T.DoubleSide}));face.position.set(-266,190,0.05);scene.add(face);
+  edges(scene,new T.PlaneGeometry(46,74),0.06).position.set(-266,190,0.06);
+})();
+/* =====================================================================
+   BLOW-OFF VALVE (poppet + diaphragm), THROTTLE BODY, SPARK PLUG, VGT VANES
+   ===================================================================== */
+const BOV_Y=128,THR_Y=100,PIPE_X=-266,BOV_W0=22,BOV_W1=36,BOV_OUT=29;   /* outlet window along the valve axis, outlet centre */
+M.bovBody=stdC(0x2457b8,.72,.3);M.bovCap=stdC(0x1b2a44,.7,.34);M.alu=stdC(0xbcc3ca,.92,.28);
+M.rubber=stdC(0x24272b,.1,.75);M.brass=stdC(0xb79d62,.95,.3);M.tbHouse=stdC(0x8f989f,.85,.42);M.plastic=stdC(0x26292d,.15,.6);
+M.bovSpring=stdC(0xd7dce2,1,.22);M.hoseV=stdC(0x202327,.15,.7);
+M.poppet=stdC(0xc9a85c,.95,.26);C.poppet=cut(0xd8bd78,HB);C.bov=cut(0x7f9fd8,HB);C.bovCap=cut(0x5a6f96,HA);C.alu=cut(0xb8c0c8,HA);C.rub=cut(0x34383d,HA);C.tb=cut(0xa3acb4,HB);
+/* half lathe around Y with explicit phi range (back half by default) */
+function latheArc(profile,phi0,phiLen,seg,closed){
+  const pts=[],push=p=>pts.push(V2(Math.max(p[0],1e-4),p[1]));
+  profile.forEach(p=>{push(p);if(!p[2])push(p);});if(closed)push(profile[0]);
+  return new T.LatheGeometry(pts,seg||40,phi0===undefined?Math.PI/2:phi0,phiLen===undefined?Math.PI:phiLen);
+}
+function capPoly(parent,pts,mat,z){const g=polyGeo(pts);const m=new T.Mesh(g,mat);m.position.z=z||0.01;parent.add(m);edges(parent,g,(z||0.01)+0.01);return m;}
+const BV=new T.Group();BV.position.set(PIPE_X,BOV_Y,0);BV.rotation.z=Math.PI/2;scene.add(BV);   /* local +Y = world -X */
+const BVm=new T.Group();BV.add(BVm);                                                             /* moving poppet */
+let bovDia,bovDiaCap,bovSpring;
+(function(){
+  const OUT_D=Math.asin(7.4/17);
+  /* weld-on stub */
+  revolved(BV,[[9,7],[11.5,7],[11.5,18.5],[9,18.5]],M.alu,C.alu,{seg:32});
+  revolved(BV,[[11.5,10.2],[12.9,10.2],[12.9,14.6],[11.5,14.6]],M.steel,cut(0xc4cad1,HB),{seg:32});
+  {const sc=new T.Mesh(new T.BoxGeometry(5,4.4,6),M.steel);sc.position.set(13.5,12.4,-9);BV.add(sc);}
+  /* lower body: outer and inner skins, side window where the outlet joins */
+  const full=(prof)=>BV.add(new T.Mesh(latheArc(prof,Math.PI/2,Math.PI,44,false),M.bovBody));
+  const part=(prof)=>BV.add(new T.Mesh(latheArc(prof,Math.PI/2,Math.PI-OUT_D,44,false),M.bovBody));
+  full([[9,18,1],[17,18,1],[17,BOV_W0,1]]);part([[17,BOV_W0,1],[17,BOV_W1,1]]);full([[17,BOV_W1,1],[17,47,1],[19,47,1],[19,50.5,1],[12.5,50.5,1],[12.5,BOV_W1,1]]);
+  part([[12.5,BOV_W1,1],[12.5,BOV_W0,1]]);full([[12.5,BOV_W0,1],[12.5,20.5,1],[9,20.5,1],[9,18,1]]);
+  /* partition with stem guide */
+  revolved(BV,[[3,41],[12.5,41],[12.5,44],[5.2,44],[5.2,46.5],[3,46.5]],M.bovBody,C.bov,{seg:40});
+  /* section faces of the body */
+  capPoly(BV,[[9,18],[17,18],[17,47],[19,47],[19,50.5],[12.5,50.5],[12.5,20.5],[9,20.5]],C.bov);
+  capPoly(BV,[[-9,18],[-17,18],[-17,BOV_W0],[-12.5,BOV_W0],[-12.5,20.5],[-9,20.5]],C.bov);
+  capPoly(BV,[[-12.5,BOV_W1],[-17,BOV_W1],[-17,47],[-19,47],[-19,50.5],[-12.5,50.5]],C.bov);
+  /* side outlet (to atmosphere), along local -X */
+  const op=[[5.6,12.5],[7.2,12.5],[7.2,27],[9.8,33.5],[9.8,35],[8.2,35],[5.6,29]];
+  const og=latheArc(op,Math.PI/2,Math.PI,32,true);og.rotateZ(Math.PI/2);og.translate(0,BOV_OUT,0);BV.add(new T.Mesh(og,M.bovBody));
+  const oc=capGeo(op);oc.rotateZ(Math.PI/2);oc.translate(0,BOV_OUT,0.01);BV.add(new T.Mesh(oc,C.bov));edges(BV,oc,0.02);
+  /* cap with spring chamber and vacuum nipple */
+  revolved(BV,[[12.5,50.6],[20,50.6],[20,54],[16.8,57],[13.4,65],[6,69.4],[3.4,70],[3.4,79],[1.3,79],[1.3,68.6],[4.2,67],[11.2,63.4],[14.6,56],[14.6,52.2],[12.5,52.2]],M.bovCap,C.bovCap,{seg:44});
+  /* bolts on the flange (back side) */
+  [-0.55,0.55].forEach(a=>{const b=new T.Mesh(new T.CylinderGeometry(1.8,1.8,5,6),M.steel);const ph=Math.PI+a;b.position.set(19.5*Math.sin(ph),53,19.5*Math.cos(ph));BV.add(b);});
+  /* poppet: valve disc + stem, diaphragm plate */
+  revolved(BVm,[[0,20.5],[9.3,20.5],[9.3,21.2],[11.6,21.2],[11.6,22.6],[8.6,23.9],[2.6,24.5],[2.6,47.2],[0,47.2]],M.poppet,C.poppet,{seg:40});
+  revolved(BVm,[[9.3,20.5],[11.4,20.5],[11.4,21.2],[9.3,21.2]],M.rubber,C.rub,{seg:40});
+  revolved(BVm,[[0,47.2],[11,47.2],[11,49],[0,49]],M.steel,cut(0xd0d6dc,HB),{seg:40});
+  bovSpring=new T.Mesh(makeHelix(7.4,0.95,5),M.bovSpring);BV.add(bovSpring);
+  bovDia=new T.Mesh(new T.BufferGeometry(),M.rubber);BV.add(bovDia);
+  bovDiaCap=new T.Mesh(new T.BufferGeometry(),C.rub);bovDiaCap.position.z=0.012;BV.add(bovDiaCap);
+})();
+let diaLift=-1;
+function setBov(lift){
+  const y=lift*7;BVm.position.y=y;
+  setHelix(bovSpring.geometry,49+y,64.5-(49+y));
+  if(Math.abs(lift-diaLift)<0.002)return;diaLift=lift;
+  const prof=[[11,49.2+y],[13.2,49.7+y*0.8-0.9],[15.6,50.2+y*0.4-0.9],[18.5,50.6]];
+  const top=prof.map(p=>[p[0],p[1]+0.9]);
+  const pts=prof.concat(top.slice().reverse());
+  bovDia.geometry.dispose();bovDia.geometry=latheArc(pts.map(p=>[p[0],p[1],1]),Math.PI/2,Math.PI,40,true);bovDia.geometry.computeVertexNormals();
+  bovDiaCap.geometry.dispose();bovDiaCap.geometry=new T.ShapeGeometry([new T.Shape(pts.map(p=>V2(p[0],p[1]))),new T.Shape(pts.map(p=>V2(-p[0],p[1])).reverse())]);
+}
+setBov(0);
+/* vacuum hose: from the nipple to the intake after the throttle */
+const VACH=curvePath([[PIPE_X-79,BOV_Y,-3],[PIPE_X-84,BOV_Y-8,-5],[PIPE_X-86,BOV_Y-40,-9],[PIPE_X-72,58,-12],[PIPE_X-34,52,-14],[PIPE_X-14,54,-10]],80);
+M.hoseV.emissive=new T.Color(0,0,0);
+const vacHose=new T.Mesh(new T.TubeGeometry(VACH.curve,80,2.3,12,false),M.hoseV);scene.add(vacHose);
+const vacNip=new T.Mesh(new T.CylinderGeometry(2.4,2.8,6,12),M.alu);vacNip.rotation.z=Math.PI/2;vacNip.position.set(PIPE_X-12,54,-10);scene.add(vacNip);
+/* throttle body on the vertical run */
+const TB=new T.Group();TB.position.set(PIPE_X,THR_Y,0);scene.add(TB);
+const flap=new T.Mesh(new T.CylinderGeometry(12.4,12.4,1.1,44),M.brass);
+(function(){
+  revolved(TB,[[13.1,-10],[17.5,-10],[17.5,-7],[20,-7],[20,7],[17.5,7],[17.5,10],[13.1,10]],M.tbHouse,C.tb,{seg:44});
+  TB.add(flap);
+  const sh=new T.Mesh(new T.CylinderGeometry(1.5,1.5,46,10),M.steel.clone());sh.material.clippingPlanes=CLIP;sh.rotation.x=Math.PI/2;sh.position.z=-8;TB.add(sh);
+  const boss=new T.Mesh(new T.CylinderGeometry(4.6,4.6,12,16),M.tbHouse);boss.rotation.x=Math.PI/2;boss.position.z=-26;TB.add(boss);
+  const act=new T.Mesh(new T.BoxGeometry(34,24,20),M.plastic);act.position.set(30,0,-16);TB.add(act);
+  const mot=new T.Mesh(new T.CylinderGeometry(8,8,22,22),std(0x3a4047,.6,.45));mot.rotation.z=Math.PI/2;mot.position.set(30,-2,-4);TB.add(mot);
+  const plug=new T.Mesh(new T.BoxGeometry(10,9,8),std(0x15171a,.1,.7));plug.position.set(42,11,-16);TB.add(plug);
+})();
+/* spark plug + ignition coil (petrol), swapped with the injector for the diesel part */
+const plugG=new T.Group();eng.add(plugG);
+(function(){
+  const cer=std(0xeeeae0,.05,.3),cerC=cut(0xf2efe8,HA);
+  plugG.add(revolvedMesh([[2.2,0.4],[3.65,0.4],[3.65,20.5],[9.2,20.5],[9.2,28.5],[6.4,30],[2.2,30]],M.steel,cut(0xc4cad1,HB),{seg:30}));
+  plugG.add(revolvedMesh([[0,0.2],[1.5,0.2],[2.2,4],[2.2,30],[5.6,30],[5.6,46],[4.4,49],[3.2,52],[3.2,58],[0,58]],cer,cerC,{seg:30}));
+  plugG.add(revolvedMesh([[0,-1.8],[0.8,-1.8],[0.8,0.4],[0,0.4]],M.steel,cut(0xc4cad1,HB),{seg:12}));
+  const ge=new T.Mesh(new T.BoxGeometry(1.2,3.2,1.6),M.steel);ge.position.set(3,-1.0,-0.8);plugG.add(ge);
+  const ge2=new T.Mesh(new T.BoxGeometry(3.4,1.0,1.6),M.steel);ge2.position.set(1.8,-2.4,-0.8);plugG.add(ge2);
+  plugG.add(revolvedMesh([[5.8,44],[7.6,42],[9.4,46],[10.2,48],[10.2,92],[0,92],[0,60],[3.4,58],[3.4,52],[5.8,50]],std(0x1d2024,.1,.7),cut(0x3a3f45,HA),{seg:30}));
+  const head=new T.Mesh(new T.BoxGeometry(34,18,30),std(0x17191c,.2,.5));head.position.set(6,100,-12);plugG.add(head);
+  const con=new T.Mesh(new T.BoxGeometry(10,10,10),std(0x3d434a,.3,.5));con.position.set(24,104,-12);plugG.add(con);
+})();
+const sparkFlash=new T.Sprite(new T.SpriteMaterial({map:null,color:0xbfe0ff,blending:T.AdditiveBlending,depthTest:false,depthWrite:false,transparent:true,opacity:0,toneMapped:false}));
+sparkFlash.renderOrder=11;sparkFlash.scale.set(12,12,1);sparkFlash.position.set(EX,-1.8,1);scene.add(sparkFlash);
+/* variable-geometry vanes in the turbine (diesel only) */
+const vanesIn=[],VGG=new T.Group();turbo.add(VGG);
+(function(){
+  const vm=stdC(0x9b948d,.9,.38),geo=new T.BoxGeometry(6.5,9,1.3);
+  for(let k=0;k<11;k++){const piv=new T.Group();piv.rotation.x=k*TAU/11;VGG.add(piv);
+    const v=new T.Group();v.position.set(61.5,0,-33.5);piv.add(v);v.add(new T.Mesh(geo,vm));vanesIn.push(v);}
+  axPart(VGG,[[57.6,29],[58.6,29],[58.6,38.5],[57.6,38.5]],std(0x6e655d,.8,.5),C.tHouse,{seg:40});
+})();
+
+/* =====================================================================
+   ENLARGED VARIABLE-GEOMETRY VIEW (same model as in the EGR film): vane ring seen along the shaft,
+   turbine wheel, actuator with lever and rod; soot on the vanes
+   ===================================================================== */
+/* soot shader */
+const NOISE_GL=[
+'float h3(vec3 p){p=fract(p*0.3183099+0.1);p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}',
+'float vn(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.0-2.0*f);',
+' return mix(mix(mix(h3(i),h3(i+vec3(1,0,0)),f.x),mix(h3(i+vec3(0,1,0)),h3(i+vec3(1,1,0)),f.x),f.y),',
+'  mix(mix(h3(i+vec3(0,0,1)),h3(i+vec3(1,0,1)),f.x),mix(h3(i+vec3(0,1,1)),h3(i+vec3(1,1,1)),f.x),f.y),f.z);}',
+'float fbm(vec3 p){return 0.55*vn(p)+0.3*vn(p*2.13)+0.15*vn(p*4.7);}'].join('\n');
+const DEP_VS='varying vec3 vP;varying vec2 vUv;void main(){vUv=uv;vec4 w=modelMatrix*vec4(position,1.0);vP=w.xyz;gl_Position=projectionMatrix*viewMatrix*w;}';
+const DEP_FS=[NOISE_GL,
+'uniform float uDep,uWipe,uMode,uBase,uBase2,uClipZ,uClipY,uWipeZ;uniform vec4 uHole;uniform vec3 uA,uB;varying vec3 vP;varying vec2 vUv;',
+'void main(){',
+' float n=fbm(vP*0.16);',
+' float w=clamp(uBase+exp(-distance(vP,uA)/42.0)+0.85*exp(-distance(vP,uB)/34.0),0.0,1.0);',
+' float cov=uDep*(0.45+0.75*w);',
+' if(cov<0.002)discard;',
+' float lim=cov*(0.5+0.75*n);',
+' if(uMode<0.5){if(vUv.y>lim)discard;}',
+' else{if(n>cov*uBase2)discard;}',
+' if(vP.x<uWipe||vP.z>uWipeZ||vP.z>uClipZ||vP.y>uClipY)discard;',
+' if(uHole.w>0.0&&distance(vP,uHole.xyz)<uHole.w*(0.75+0.5*n))discard;',
+' float n2=vn(vP*1.4);',
+' vec3 c=mix(vec3(0.05,0.04,0.032),vec3(0.21,0.15,0.1),n2*n2);',
+' c+=vec3(0.08,0.065,0.045)*smoothstep(0.78,0.95,vn(vP*0.8+3.0));',
+' float e=(1.0-smoothstep(0.0,4.0,vP.x-uWipe))*step(-5000.0,uWipe);',
+' e=max(e,(1.0-smoothstep(0.0,5.0,uWipeZ-vP.z))*step(uWipeZ,5000.0));',
+' c=mix(c,vec3(0.5,0.95,0.88),e);',
+' if(uMode<0.5)c+=vec3(0.16,0.11,0.07)*smoothstep(lim-0.07,lim,vUv.y);',
+' gl_FragColor=vec4(c,1.0);',
+'}'].join('\n');
+const depMats=[];
+function depMat(mode,o){
+  o=o||{};
+  const m=new T.ShaderMaterial({vertexShader:DEP_VS,fragmentShader:DEP_FS,side:T.DoubleSide,
+    polygonOffset:mode>0.5,polygonOffsetFactor:-2,polygonOffsetUnits:-2,
+    uniforms:{uDep:{value:0},uWipe:{value:-1e4},uMode:{value:mode},uBase:{value:o.base===undefined?0.25:o.base},uBase2:{value:o.cov||0.62},uClipZ:{value:o.mf?0.02:1e4},uClipY:{value:1e4},uWipeZ:{value:1e4},uHole:{value:new T.Vector4(0,0,0,0)},
+      uA:{value:o.a||new T.Vector3(-266,58,-6)},uB:{value:o.b||new T.Vector3(-246,31,-8)}}});
+  m.userData.group=o.group||'in';depMats.push(m);return m;
+}
+function rectCut(x0,y0,x1,y1,mat,parent){const g=polyGeo([[x0,y0],[x1,y0],[x1,y1],[x0,y1]]);const m=new T.Mesh(g,mat);parent.add(m);edges(parent,g);return m;}
+const DGP=new T.Vector3(300,TY,0),DG=new T.Group();DG.position.copy(DGP);scene.add(DG);
+const VG={rp:72,n:11,cIn:-11,cOut:27};
+const dgVanes=[],dgActPos=new T.Vector2(142,-128),dgLeverPiv=new T.Vector2(104,-74);
+let dgWheel,dgLever,dgRod;
+const vaneDep=depMat(1,{base:1,group:'vgt',cov:0.9});
+(function(){
+  const chan=flat(0x2a231e);
+  const ring=(r0,r1,mat,z)=>{const m=new T.Mesh(new T.RingGeometry(r0,r1,128),mat);m.position.z=z;DG.add(m);return m;};
+  ring(92,112,chan,-10);
+  ring(40,92,std(0x57514b,.85,.45),-7);
+  const wall=ring(112,121,C.tHouse,0);edges(DG,wall.geometry,0.02);
+  const ch=new T.Mesh(polyGeo([[0,92],[178,92],[178,112],[0,112]]),chan);ch.position.z=-10;DG.add(ch);
+  rectCut(0,112,178,121,C.tHouse,DG);rectCut(36,83,178,92,C.tHouse,DG);
+  /* wheel */
+  dgWheel=new T.Group();DG.add(dgWheel);
+  const wm=std(0x8a8079,.95,.34);
+  const back=new T.Mesh(new T.CircleGeometry(50,64),std(0x6f665f,.9,.4));back.position.z=-5;dgWheel.add(back);
+  const hub=new T.Mesh(new T.CylinderGeometry(19,22,12,40),wm);hub.rotation.x=Math.PI/2;hub.position.z=1;dgWheel.add(hub);
+  const nut=new T.Mesh(new T.CylinderGeometry(7,7,14,6),M.steel);nut.rotation.x=Math.PI/2;nut.position.z=2;dgWheel.add(nut);
+  const up=[],dn=[],N=12;
+  for(let i=0;i<=N;i++){const r=lerp(18,50,i/N),a=0.55*Math.pow(i/N,1.4),hw=lerp(1.6,1.0,i/N),x=r*Math.cos(a),y=r*Math.sin(a),nx=-Math.sin(a),ny=Math.cos(a);up.push(V2(x+nx*hw,y+ny*hw));dn.push(V2(x-nx*hw,y-ny*hw));}
+  const bg=new T.ExtrudeGeometry(new T.Shape(up.concat(dn.reverse())),{depth:9,bevelEnabled:false});bg.translate(0,0,-4.5);
+  for(let k=0;k<11;k++){const b=new T.Mesh(bg,wm);b.rotation.z=k*TAU/11;dgWheel.add(b);}
+  /* vanes: cambered airfoils on pivot pins */
+  const UP=[],LO=[],NA=16;
+  for(let i=0;i<=NA;i++){const s=i/NA,x=lerp(VG.cIn,VG.cOut,s),yt=28.5*(0.2969*Math.sqrt(s)-0.126*s-0.3516*s*s+0.2843*s*s*s-0.1015*s*s*s*s),yc=2.0*Math.sin(Math.PI*s);UP.push(V2(x,yc+yt));LO.push(V2(x,yc-yt));}
+  const vg=new T.ExtrudeGeometry(new T.Shape(UP.concat(LO.reverse())),{depth:12,bevelEnabled:false});vg.translate(0,0,-6);
+  const vmat=std(0xa59e97,.9,.35);
+  for(let k=0;k<VG.n;k++){
+    const phi=k*TAU/VG.n,g=new T.Group();g.position.set(VG.rp*Math.cos(phi),VG.rp*Math.sin(phi),0);g.userData.phi=phi;
+    g.add(new T.Mesh(vg,vmat));g.add(new T.Mesh(vg,vaneDep));
+    const pin=new T.Mesh(new T.CircleGeometry(2.6,16),flat(0x1e2328));pin.position.z=6.3;g.add(pin);
+    DG.add(g);dgVanes.push(g);
+  }
+  /* actuator, lever, rod */
+  const act=new T.Mesh(new T.BoxGeometry(56,36,22),std(0x23272c,.3,.6));act.position.set(dgActPos.x+28,dgActPos.y,-2);DG.add(act);
+  const can=new T.Mesh(new T.CylinderGeometry(15,15,20,28),std(0x353b42,.5,.5));can.rotation.x=Math.PI/2;can.position.set(dgActPos.x+30,dgActPos.y,8);DG.add(can);
+  dgLever=new T.Mesh(new T.BoxGeometry(30,6,4),std(0xb8bec5,.95,.3));DG.add(dgLever);
+  dgRod=new T.Mesh(new T.CylinderGeometry(1.8,1.8,1,10),M.steel);DG.add(dgRod);
+  const lp=new T.Mesh(new T.CircleGeometry(4,16),flat(0x1e2328));lp.position.set(dgLeverPiv.x,dgLeverPiv.y,3);DG.add(lp);
+})();
+function vanePsi(phi,beta){const tx=-Math.sin(phi),ty=Math.cos(phi),rx=Math.cos(phi),ry=Math.sin(phi);return Math.atan2(ty*Math.cos(beta)-ry*Math.sin(beta),tx*Math.cos(beta)-rx*Math.sin(beta));}
+const conn=new T.Line(new T.BufferGeometry().setFromPoints([new T.Vector3(61.5,TY+38,-4),new T.Vector3(DGP.x-86,DGP.y+86,0)]),
+  new T.LineDashedMaterial({color:0xffb224,dashSize:5,gapSize:4,transparent:true,opacity:0,toneMapped:false}));
+conn.computeLineDistances();scene.add(conn);
+
+const FEED=curvePath([[EX+HALF_W,-60,-22],[-58,-62,-44],[-24,-52,-52],[-22,40,-52],[-22,206,-50],[-14,236,-34],[OIL_A,240,-12],[OIL_A,236,-2],[OIL_A,TY+52,0]],150);
+scene.add(new T.Mesh(new T.TubeGeometry(FEED.curve,140,3.6,14,false),M.pipeOil));
+const DRAIN=curvePath([[OIL_A,TY-48,0],[OIL_A,108,0],[10,76,0],[16,40,0],[16,-90,0],[6,-150,0],[-24,-178,0],[-64,-184,0],[EX+70,-184,0]],160);
+scene.add(new T.Mesh(new T.TubeGeometry(DRAIN.curve,150,6.5,20,false),M.hose));
+
+/* ================= oil ================= */
+const OIL_BASE=new T.Color(0xc98a12),OIL_HOT=new T.Color(0xffe08a),OIL_DIM=new T.Color(0x4a3410);
+const oilVS='varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}';
+const oilFS=[
+ 'uniform float uFront,uPhase,uHi,uAlpha,uK,uLen;uniform vec3 uBase,uHot,uDim;varying vec2 vUv;',
+ 'void main(){',
+ ' float d=vUv.x*uLen;',
+ ' float lit=1.0-smoothstep(uFront-3.0,uFront+0.5,d);',
+ ' float on=max(lit,1.0-uHi);',
+ ' float x=fract(d*uK-uPhase);',
+ ' float dash=smoothstep(0.0,0.22,x)*(1.0-smoothstep(0.42,0.9,x));',
+ ' vec3 c=mix(uDim,uBase,on);c=mix(c,uHot,dash*0.6*on);',
+ ' float edge=uLen>1.5?1.0:1.0-smoothstep(0.7,1.0,abs(vUv.y));',
+ ' gl_FragColor=vec4(c,uAlpha*edge);',
+ '}'].join('\n');
+const oilMats=[];
+function oilMat(len,k){
+  const m=new T.ShaderMaterial({vertexShader:oilVS,fragmentShader:oilFS,transparent:true,depthWrite:false,side:T.DoubleSide,
+    uniforms:{uFront:{value:1e5},uPhase:{value:0},uHi:{value:0},uAlpha:{value:1},uK:{value:k||0.11},uLen:{value:len||1},uBase:{value:OIL_BASE},uHot:{value:OIL_HOT},uDim:{value:OIL_DIM}}});
+  oilMats.push(m);return m;
+}
+const oilNet=[];   /* CHRA network, distances in mm from the inlet */
+(function(){
+  const add=(pts,hw,d0,front)=>{const m=oilMat(1,0.16);m.userData.net=front||'chra';const mesh=new T.Mesh(ribbon(pts,hw,0.04,d0),m);turbo.add(mesh);oilNet.push(m);return mesh;};
+  const vd=(pts,hw)=>{const m=new T.Mesh(ribbon(pts,hw+0.5,0.03,0),M.dark);turbo.add(m);};
+  const nets=[
+    [[[OIL_A,52],[OIL_A,18]],2.4,0],
+    [[[OIL_A,18],[-52,18]],1.8,34],
+    [[[OIL_A,18],[28,18]],1.8,34],
+    [[[-34,18],[-34,6.2]],1.3,34+31],
+    [[[28,18],[28,6.2]],1.3,34+31],
+    [[[-52,18],[-52,13],[-55.05,13]],1.1,34+49]
+  ];
+  nets.forEach(n=>vd(n[0],n[1]));nets.forEach(n=>add(n[0],n[1],n[2]));
+  /* bearing films: outer (sleeve to housing) and inner (shaft to sleeve), top then bottom */
+  [[-34,-40,-28],[28,22,34]].forEach(J=>{
+    const dO=34+31+8,dI=dO+2.6;
+    [[9.4,dO],[5.6,dI]].forEach(f=>{
+      add([[J[0],f[0]],[J[1],f[0]]],0.62,f[1]);add([[J[0],f[0]],[J[2],f[0]]],0.62,f[1]);
+      const db=f[1]+Math.PI*f[0];
+      add([[J[0],-f[0]],[J[1],-f[0]]],0.62,db);add([[J[0],-f[0]],[J[2],-f[0]]],0.62,db);
+    });
+  });
+  /* thrust film */
+  const dT=34+49+8;
+  add([[-55.05,13],[-55.05,19]],0.45,dT);add([[-55.05,13],[-55.05,6.4]],0.45,dT);
+  add([[-55.05,-13],[-55.05,-19]],0.45,dT+Math.PI*13);add([[-55.05,-13],[-55.05,-6.4]],0.45,dT+Math.PI*13);
+})();
+/* oil inside the feed and drain lines */
+const feedOil=oilMat(FEED.path.len,0.05),drainOil=oilMat(DRAIN.path.len,0.05);
+scene.add(new T.Mesh(new T.TubeGeometry(FEED.curve,140,2.3,10,false),feedOil));
+(function(){const c=new T.CatmullRomCurve3(DRAIN.curve.points.map(p=>p.clone().add(new T.Vector3(0,0,-2.5))),false,'centripetal');
+  scene.add(new T.Mesh(new T.TubeGeometry(c,150,2.0,10,false),drainOil));})();
+/* oil passage in the block feeding the line (from the pump) */
+(function(){
+  const g=ribbon([[40,-186],[54,-186],[60.6,-178],[60.6,-60],[HALF_W,-60]],1.8,0.04,0);
+  const m=oilMat(1,0.05);m.userData.block=true;const mesh=new T.Mesh(g,m);mesh.position.x=EX;scene.add(mesh);oilNet.blockMat=m;
+  const pump=new T.Mesh(new T.CircleGeometry(7,24),flat(0x3d434a));pump.position.set(EX+40,-186,0.05);scene.add(pump);
+  const pr=new T.Mesh(new T.RingGeometry(7,8.4,24),flat(0x15181c));pr.position.set(EX+40,-186,0.06);scene.add(pr);
+})();
+
+/* ================= particles ================= */
+const SOFT_FS=['uniform float uSoft;varying vec3 vCol;varying float vAl;',
+ 'void main(){vec2 c=gl_PointCoord-0.5;float d=dot(c,c)*4.0;if(d>1.0)discard;gl_FragColor=vec4(vCol,vAl*pow(1.0-d,uSoft));}'].join('\n');
+const shared={uScale:{value:800},uPix:{value:DPR}};
+function makePts(n,o){
+  o=o||{};
+  const g=new T.BufferGeometry();
+  const P=new Float32Array(n*3),Cc=new Float32Array(n*3),A=new Float32Array(n),S=new Float32Array(n);
+  g.setAttribute('position',new T.BufferAttribute(P,3));g.setAttribute('aCol',new T.BufferAttribute(Cc,3));
+  g.setAttribute('aAl',new T.BufferAttribute(A,1));g.setAttribute('aSz',new T.BufferAttribute(S,1));
+  const m=new T.ShaderMaterial({transparent:true,depthWrite:false,blending:o.add?T.AdditiveBlending:T.NormalBlending,
+    uniforms:{uScale:shared.uScale,uPix:shared.uPix,uMax:{value:o.max||40},uSoft:{value:o.soft||1.3}},
+    vertexShader:['attribute vec3 aCol;attribute float aAl,aSz;uniform float uScale,uPix,uMax;varying vec3 vCol;varying float vAl;',
+      'void main(){vec4 mv=modelViewMatrix*vec4(position,1.0);gl_Position=projectionMatrix*mv;gl_PointSize=clamp(aSz*uScale/-mv.z,1.2*uPix,uMax*uPix);vCol=aCol;vAl=aAl;}'].join('\n'),
+    fragmentShader:SOFT_FS});
+  const p=new T.Points(g,m);p.frustumCulled=false;p.renderOrder=o.order||2;scene.add(p);
+  let k=0;
+  return {P,C:Cc,A,S,g,mat:m,begin(){k=0;},push(v,c,a,s){if(k>=n||a<0.004)return;P[k*3]=v.x;P[k*3+1]=v.y;P[k*3+2]=v.z;Cc[k*3]=c.r;Cc[k*3+1]=c.g;Cc[k*3+2]=c.b;A[k]=a;S[k]=s;k++;},
+    end(){g.setDrawRange(0,k);['position','aCol','aAl','aSz'].forEach(a=>g.attributes[a].needsUpdate=true);}};
+}
+const _v=new T.Vector3(),_w=new T.Vector3(),_c=new T.Color();
+const GAS_HOT=new T.Color(1.0,0.46,0.13),GAS_MID=new T.Color(0.95,0.58,0.3),GAS_OUT=new T.Color(0.62,0.56,0.52);
+const AIR_C=new T.Color(0.49,0.80,1.0),AIR_W=new T.Color(1.0,0.74,0.5);
+
+/* --- exhaust: cylinder -> port -> manifold -> scroll -> wheel -> outlet --- */
+const EXP=(function(){
+  const pts=[new T.Vector3(EX+XV,-4,0)].concat(PORTPTS.ex);
+  EXH.path.P.forEach((p,i)=>{if(i>0)pts.push(p);});
+  return polyPath(pts);
+})();
+const NEX=9600,exP=[];
+const EX_SPAN=Math.max(lut(LV.main.gex,TU),lut(LV.top.gex,TU),lut(LV.bot.gex,TU))+700;
+for(let i=0;i<NEX;i++){exP.push({e:-700+EX_SPAN*i/NEX+rnd()*2,ph:0.25+rnd()*(TAU-0.45),j:[rnd()*2-1,rnd()*2-1,rnd()],q:rnd(),ro:4+15*Math.sqrt(rnd()),sz:0.8+0.6*rnd()});}
+exP.forEach(p=>{p.L1=EXP.len;p.L2=p.L1+p.ph*48;p.L3=p.L2+36;p.L4=p.L3+82;});
+const exPts=makePts(1400,{max:26,soft:1.4});
+function exPos(p,d,out){
+  if(d<p.L1){
+    EXP.at(d,out);const rr=d<30?7:9.5;out.x+=p.j[0]*rr*0.75;out.y+=p.j[1]*rr*0.75;out.z-=p.j[2]*rr*0.8;
+    return d/p.L1*0.3;
+  }
+  if(d<p.L2){
+    const ph=(d-p.L1)/48,r=TV.r(ph),rho=TV.rho(ph)*0.7;
+    turboPt(TV.a0+p.j[0]*rho,r+p.j[1]*rho,ph,out);return 0.3;
+  }
+  if(d<p.L3){
+    const k=(d-p.L2)/36,r0=TV.r(p.ph)-TV.rho(p.ph);let a,r;
+    if(k<0.25){const q=k/0.25;a=lerp(TV.a0-3,60+p.q*2,q);r=lerp(r0,28.5,q);}
+    else{const s=(k-0.25)/0.75,h=tHub(s),t=tTip(s),q=0.2+0.6*p.q;a=lerp(h[0],t[0],q);r=lerp(h[1],t[1],q);}
+    turboPt(a,r,p.ph+k*1.1,out);return 0.3+0.4*k;
+  }
+  const k=(d-p.L3)/82;turboPt(80+k*82,p.ro*(1-0.15*k),p.ph+1.1+0.5*k,out);return 0.7+0.3*k;
+}
+const GAS_COOL=new T.Color(0.60,0.68,0.76);
+exP.forEach(p=>{p.cool={};for(const v in LV)p.cool[v]=LV[v].cool.some(q=>p.e>=q[0]&&p.e<q[1]);});
+function drawExhaust(G,variant){
+  exPts.begin();
+  for(const p of exP){
+    const d=G-p.e;if(d<0||d>p.L4)continue;
+    const prog=exPos(p,d,_v);
+    if(_v.z>3)continue;
+    let a=0.5*(1-sst(0.5,3,_v.z))*sst(0,8,d)*(1-sst(p.L4-25,p.L4,d));
+    if(prog<0.35)_c.copy(GAS_HOT);else if(prog<0.7)_c.copy(GAS_HOT).lerp(GAS_MID,(prog-0.35)/0.35);else _c.copy(GAS_MID).lerp(GAS_OUT,(prog-0.7)/0.3);
+    if(p.cool[variant]){_c.copy(GAS_COOL);a*=0.5;}
+    exPts.push(_v,_c,a,(prog<0.3?3.2:2.6)*p.sz);
+  }
+  exPts.end();
+}
+
+/* --- air, as three streams: (1) filter -> compressor -> pipe up to the blow-off tap,
+       (2) tap -> intercooler -> throttle -> port -> cylinder, (3) tap -> blow-off -> atmosphere --- */
+const INP=(function(){const pts=INT.path.P.slice();PORTPTS.in.slice().reverse().forEach((p,i)=>{if(i>0)pts.push(p);});pts.push(new T.Vector3(EX-XV,-6,0));return polyPath(pts);})();
+function nearestD(x,y){let best=0,bd=1e9;for(let d=0;d<INP.len;d+=0.5){INP.at(d,_v);const e=Math.abs(_v.x-x)+Math.abs(_v.y-y)+Math.abs(_v.z);if(e<bd){bd=e;best=d;}}return best;}
+const D_TAP=nearestD(PIPE_X,BOV_Y),D_THR=nearestD(PIPE_X,THR_Y);
+const WARN_C=new T.Color(1.0,0.3,0.22);
+const N1=1100,s1=[];
+for(let i=0;i<N1;i++){s1.push({e:rnd()*4000,psi:rnd()*TAU,ri:2+14*Math.sqrt(rnd()),j:[rnd()*2-1,rnd()*2-1,rnd()],q:rnd(),sz:0.8+0.6*rnd()});}
+s1.forEach(p=>{p.L1=100;p.L2=p.L1+40;p.L3=p.L2+22;p.pe=((p.psi+1.6)%TAU);p.L4=p.L3+(TAU-p.pe)*58+CV.outlet;p.L5=p.L4+D_TAP;p.per=p.L5+60;});
+const s1Pts=makePts(N1,{max:26,soft:1.3});
+function airPos(p,d,out){
+  if(d<p.L1){const k=d/p.L1;turboPt(-200+k*100,p.ri,p.psi+0.2*k,out);return 0;}
+  if(d<p.L2){const s=(d-p.L1)/40,h=cHub(s),t=cTip(s),q=clamp((p.ri-7)/13,0,1)*0.8+0.1;turboPt(lerp(h[0],t[0],q),lerp(h[1],t[1],q),p.psi+0.2+1.1*s,out);return 0.2*s;}
+  if(d<p.L3){const k=(d-p.L2)/22;turboPt(lerp(-74,CV.a0+3,k),lerp(29,CV.r(p.pe)-CV.rho(p.pe)*0.5,k),p.psi+1.3+0.3*k,out);return 0.2+0.2*k;}
+  if(d<p.L4){
+    const sd=d-p.L3,spiral=(TAU-p.pe)*58;
+    if(sd<spiral){const ph=p.pe+sd/58,rho=CV.rho(ph)*0.7;turboPt(CV.a0+p.j[0]*rho,CV.r(ph)+p.j[1]*rho,ph,out);}
+    else{const y=sd-spiral,rho=CV.rho(TAU)*0.7;out.set(CV.a0+p.j[0]*rho,TY+y,-CV.r(TAU)+p.j[1]*rho);}
+    return 0.4;
+  }
+  INP.at(d-p.L4,out);const rr=10;out.x+=p.j[0]*rr*0.7;out.y+=p.j[1]*rr*0.7;out.z-=p.j[2]*rr*0.6;
+  return 0.5;
+}
+function drawS1(G,S){
+  s1Pts.begin();const back=clamp(-S.v1/120,0,1);
+  for(const p of s1){
+    const d=((G+p.e)%p.per+p.per)%p.per;if(d>p.L5)continue;
+    const prog=airPos(p,d,_v);if(_v.z>3)continue;
+    const a=0.44*(1-sst(0.5,3,_v.z))*sst(0,10,d)*(1-sst(p.L5-5,p.L5,d));
+    if(prog<0.2)_c.copy(AIR_C);else if(prog<0.4)_c.copy(AIR_C).lerp(AIR_W,(prog-0.2)/0.2);else{_c.copy(AIR_W);if(prog>0.45&&_v.x<-240&&_v.y<228)_c.lerp(AIR_C,clamp((228-_v.y)/70,0,1));}
+    if(back>0)_c.lerp(WARN_C,back*0.85);
+    s1Pts.push(_v,_c,Math.min(0.9,a*(1+0.8*back)),2.4*p.sz*(1+0.35*back));
+  }
+  s1Pts.end();
+}
+const N2=420,s2=[],L2S=INP.len-D_TAP,PER2=L2S+40;
+for(let i=0;i<N2;i++)s2.push({e:rnd()*PER2,j:[rnd()*2-1,rnd()*2-1,rnd()],sz:0.8+0.6*rnd()});
+const s2Pts=makePts(N2,{max:26,soft:1.3});
+function drawS2(G){
+  s2Pts.begin();
+  for(const p of s2){
+    const d=((G+p.e)%PER2+PER2)%PER2;if(d>L2S)continue;
+    const D=D_TAP+d;INP.at(D,_v);const rr=D<D_THR+30?10:8;_v.x+=p.j[0]*rr*0.7;_v.y+=p.j[1]*rr*0.7;_v.z-=p.j[2]*rr*0.6;
+    if(_v.z>3)continue;
+    const a=0.44*(1-sst(0.5,3,_v.z))*sst(0,4,d)*(1-sst(L2S-30,L2S,d));
+    _c.copy(AIR_C);
+    s2Pts.push(_v,_c,a,2.4*p.sz);
+  }
+  s2Pts.end();
+}
+/* blow-off vent: world coordinates (the valve axis points to -X, outlet points down) */
+const VENT=polyPath([[PIPE_X,BOV_Y,-1],[PIPE_X-14,BOV_Y,-1],[PIPE_X-20.5,BOV_Y-0.5,-1],[PIPE_X-24.5,BOV_Y-5,-1],[PIPE_X-27,BOV_Y-12,-1],[PIPE_X-BOV_OUT,BOV_Y-20,-1],[PIPE_X-BOV_OUT,BOV_Y-36,-1]].map(p=>new T.Vector3(p[0],p[1],p[2])));
+const VENT_C=new T.Color().copy(AIR_C).lerp(new T.Color(1,1,1),0.5);
+const VEXT=50,N3=480,s3=[],PER3=VENT.len+VEXT+20;
+for(let i=0;i<N3;i++)s3.push({e:rnd()*PER3,j:[rnd()*2-1,rnd()*2-1,rnd()*2-1],sz:0.8+0.7*rnd(),sp:0.5+rnd()});
+const s3Pts=makePts(N3,{max:30,soft:1.2});
+function drawS3(G,S){
+  s3Pts.begin();
+  const vis=S.bovOn?S.vent:0;
+  if(vis>0.01)for(const p of s3){
+    const d=((G*p.sp+p.e)%PER3+PER3)%PER3;if(d>VENT.len+VEXT)continue;
+    let a;
+    if(d<VENT.len){VENT.at(d,_v);const rr=d<18?6.5:d<34?3.4:5;_v.x+=p.j[0]*rr*0.7;_v.y+=p.j[1]*rr*(d<18?0.9:0.4);_v.z+=-Math.abs(p.j[2])*rr*0.6;a=0.5;}
+    else{const k=(d-VENT.len)/VEXT;_v.set(PIPE_X-BOV_OUT+p.j[0]*(5+30*k),BOV_Y-36-k*VEXT,p.j[2]*(4+26*k)-2);a=0.5*(1-k);}
+    if(_v.z>2&&d<VENT.len)continue;
+    _c.copy(VENT_C);
+    s3Pts.push(_v,_c,a*vis*sst(0,6,d),2.6*p.sz);
+  }
+  s3Pts.end();
+}
+/* sparks where the compressor blades touch the housing */
+const sparkPts=makePts(260,{max:14,soft:0.8,add:true,order:4});
+const SPK_C=new T.Color(1.0,0.72,0.3),SPK_H=new T.Color(1,0.95,0.75);
+function drawSparks(U,S){
+  sparkPts.begin();
+  if(S.spark>0.01)for(let i=0;i<260;i++){
+    const life=0.42,age=((U*1.0+i*0.0137)%life+life)%life,seed=Math.floor((U+i*0.0137)/life)*977+i*31;
+    const r1=((Math.sin(seed*12.9898)*43758.5453)%1+1)%1,r2=((Math.sin(seed*78.233)*24634.6345)%1+1)%1;
+    const sg=i%2?1:-1,ph=sg*(Math.PI/2-0.35*r1),a0=-80+r2*5;turboPt(a0,27.6,ph,_v);
+    const ty=Math.cos(ph),tz=Math.sin(ph),sp=70+90*r2;
+    _v.x+=(-25-40*r1)*age;_v.y+=(ty*sp+sg*40)*age-90*age*age;_v.z+=tz*sp*age*0.5;
+    if(_v.z>8)continue;
+    _c.copy(SPK_H).lerp(SPK_C,age/life);
+    sparkPts.push(_v,_c,S.spark*(1-age/life),2.0);
+  }
+  sparkPts.end();
+}
+/* flow-direction chevrons in the compressor inlet duct: blue towards the wheel, red when the air comes back */
+const chevs=[];
+(function(){
+  const g=new T.ShapeGeometry(new T.Shape([V2(-4.5,-7.5),V2(-0.8,-7.5),V2(4.8,0),V2(-0.8,7.5),V2(-4.5,7.5),V2(1.1,0)]));
+  for(let i=0;i<3;i++){
+    const grp=new T.Group();grp.position.set(0,TY,0.9);scene.add(grp);
+    const o=new T.Mesh(g,new T.MeshBasicMaterial({color:0x070b10,transparent:true,opacity:0,depthWrite:false,toneMapped:false,side:T.DoubleSide}));o.scale.set(1.34,1.26,1);o.position.x=0.3;o.renderOrder=6;grp.add(o);
+    const m=new T.Mesh(g,new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:0,depthWrite:false,toneMapped:false,side:T.DoubleSide}));m.position.z=0.05;m.renderOrder=7;grp.add(m);
+    chevs.push({grp,o,m});
+  }
+})();
+const CH_X0=-196,CH_L=78;
+const CHEV_F=new T.Color(0.30,0.70,1.0),CHEV_B=new T.Color(1.0,0.27,0.17);
+function drawChev(G,S){
+  const dir=S.v1>=0?1:-1,sp=Math.min(1,Math.abs(S.v1)/55);
+  chevs.forEach((c,i)=>{
+    const s=(((G*0.42+i*CH_L/3)%CH_L)+CH_L)%CH_L,a=sp*sst(0,9,s)*(1-sst(CH_L-9,CH_L,s));
+    c.grp.position.x=CH_X0+s;c.grp.scale.x=dir;
+    c.m.material.color.copy(dir>0?CHEV_F:CHEV_B);c.m.material.opacity=0.95*a;c.o.material.opacity=0.6*a;
+  });
+}
+/* --- exhaust gas in the enlarged variable-geometry view (local coordinates of DG) --- */
+const NEM=260,embers=[];
+for(let i=0;i<NEM;i++){const turns=0.35+rnd()*0.9;embers.push({off:rnd(),turns,j:rnd()*2-1,sz:0.8+0.6*rnd(),vf:0.85+0.3*rnd(),per:178+turns*TAU*92+32+26});}
+const _e=new T.Vector3();
+function emPos(e,s,out,sw){
+  const L1=178;
+  if(s<L1){out.set(178-s,102+e.j*7,3);return 1;}
+  s-=L1;const R0=102+e.j*6,ang=e.turns*TAU,L2=ang*92;
+  if(s<L2){const q=s/L2,a=Math.PI/2+q*ang,r=lerp(R0,82,q);out.set(r*Math.cos(a),r*Math.sin(a),3);return 2;}
+  s-=L2;const a0=Math.PI/2+ang,L3=32;
+  if(s<L3){const q=s/L3,r=lerp(82,50,q),a=a0+sw*q;out.set(r*Math.cos(a),r*Math.sin(a),3);return 3;}
+  s-=L3;const q=Math.min(1,s/26),r=lerp(50,24,q),a=a0+sw+0.9*q;out.set(r*Math.cos(a),r*Math.sin(a),3);return 4;
+}
+const emPts=makePts(NEM*4,{max:30,soft:1.0,add:true,order:5});
+const EMB_C=new T.Color(1.0,0.5,0.16),EMB_F=new T.Color(1.0,0.84,0.5);
+function drawEmbers(G,sc,S){
+  emPts.begin();
+  if(sc>0.01){
+    const fast=clamp(1-S.vgt/0.55,0,1),sw=lerp(0.55,1.2,fast);   /* closed vanes: the gas enters the wheel faster and more tangentially */
+    for(const e of embers){
+      const s=(((G*1.9*e.vf+e.off*e.per)%e.per)+e.per)%e.per;
+      const ph=emPos(e,s,_e,sw);
+      _v.copy(_e).multiplyScalar(sc).add(DGP);
+      const a=sst(0,14,s)*(ph===4?1-sst(0,1,(s-(e.per-26))/26):1);
+      _c.copy(EMB_C);if(ph>=3)_c.lerp(EMB_F,0.7*fast);
+      emPts.push(_v,_c,a,4.2*e.sz*sc);
+      for(let q=1;q<=3;q++){emPos(e,Math.max(0,s-q*9),_e,sw);_w.copy(_e).multiplyScalar(sc).add(DGP);emPts.push(_w,_c,0.4*a/q,3.2*e.sz*sc);}
+    }
+  }
+  emPts.end();
+}
+
+/* --- gas inside the cylinder --- */
+const cyl=[];for(let i=0;i<700;i++){const a=Math.PI+rnd()*Math.PI,r=Math.sqrt(rnd())*(R-2);cyl.push([r*Math.cos(a),rnd(),r*Math.sin(a),rnd()]);}
+const cylPts=makePts(700,{max:30,soft:1.6});
+const fireLight=new T.PointLight(0xffa24a,0,220,2);scene.add(fireLight);
+const glowTex=(function(){const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d'),gr=g.createRadialGradient(64,64,0,64,64,64);
+  gr.addColorStop(0,'rgba(255,236,190,1)');gr.addColorStop(.25,'rgba(255,170,70,.55)');gr.addColorStop(.6,'rgba(255,90,20,.14)');gr.addColorStop(1,'rgba(255,60,0,0)');
+  g.fillStyle=gr;g.fillRect(0,0,128,128);return new T.CanvasTexture(c);})();
+const glow=new T.Sprite(new T.SpriteMaterial({map:glowTex,blending:T.AdditiveBlending,depthTest:false,depthWrite:false,transparent:true,opacity:0,toneMapped:false}));
+glow.renderOrder=10;scene.add(glow);
+const tGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,blending:T.AdditiveBlending,depthWrite:false,transparent:true,opacity:0,toneMapped:false,color:0xff7a30}));
+tGlow.position.set(TV.a0,TY,-30);tGlow.scale.set(150,150,1);scene.add(tGlow);
+function cycleState(th){
+  const c=((th%720)+720)%720;
+  const burn=pulse(c,352,366,400,470);
+  return {c,burn};
+}
+function drawCyl(th,crown){
+  const s=cycleState(th),c=s.c;cylPts.begin();
+  let colA,al=0.34;
+  if(c<180)colA=AIR_C;
+  else if(c<352){_w.set(0,0,0);colA=new T.Color().copy(AIR_C).lerp(AIR_W,sst(200,352,c));}
+  else if(c<540){colA=new T.Color().copy(GAS_HOT).lerp(new T.Color(1,0.85,0.5),s.burn*0.6);al=0.42;}
+  else{colA=GAS_HOT;al=0.42*(1-0.55*sst(540,700,c));}
+  if(c>=705||c<20)colA=new T.Color().copy(GAS_HOT).lerp(AIR_C,sst(700,740,c<20?c+720:c));
+  if(!FUEL){colA=c<180||c>=705?AIR_C:new T.Color().copy(AIR_C).lerp(AIR_W,0.4);al=0.3;}
+  al*=CYLA;
+  for(const q of cyl){_v.set(EX+q[0],lerp(crown+1,-1,q[1]),q[2]);cylPts.push(_v,colA,al,3.4);}
+  cylPts.end();
+  return s;
+}
+
+/* --- oil drops in the drain --- */
+const dropSrc=[[-40,-10],[-28,-10],[22,-10],[34,-10],[-49,-14]];
+const dropPaths=dropSrc.map(s=>{
+  const pts=[new T.Vector3(s[0],TY+s[1],-1.5),new T.Vector3(s[0]*0.6+OIL_A*0.4,TY-24,-1.5),new T.Vector3(OIL_A,TY-38,-1.5)];
+  DRAIN.path.P.forEach((p,i)=>{if(i>0)pts.push(new T.Vector3(p.x,p.y,-2.5));});
+  return polyPath(pts);
+});
+const drops=[];for(let i=0;i<520;i++)drops.push({k:i%dropSrc.length,ph:rnd(),sz:0.7+0.6*rnd(),j:rnd()*2-1});
+const dropPts=makePts(520,{max:18,soft:0.9,order:3});
+const OILC=new T.Color(0.95,0.62,0.12);
+function drawDrops(U,hi,front){
+  const O=lut(LUT.oil,U);dropPts.begin();
+  for(const d of drops){
+    const path=dropPaths[d.k],t=(d.ph+O*0.55)%1,dist=t*path.len;
+    if(hi>0.01&&front<dist)continue;
+    path.at(dist,_v);_v.x+=d.j*(dist<40?1.2:2.0);
+    dropPts.push(_v,OILC,0.85*sst(0,4,dist)*(1-sst(path.len-12,path.len,dist)),1.3*d.sz);
+  }
+  dropPts.end();
+}
+
+/* ================= labels ================= */
+const labelDefs=[],svg=$('leaders'),labBox=$('labels');
+function addLabel(text,sub,anchor,side,dx,dy,vis,cls){
+  const el=document.createElement('div');el.className='lb'+(side<0?' l':'')+(cls?' '+cls:'');el.textContent=text;
+  if(sub){const s=document.createElement('small');s.textContent=sub;el.appendChild(s);}
+  labBox.appendChild(el);
+  const ln=document.createElementNS('http://www.w3.org/2000/svg','line'),dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  dot.setAttribute('r','2.2');svg.appendChild(ln);svg.appendChild(dot);
+  labelDefs.push({el,ln,dot,anchor:typeof anchor==='function'?anchor:()=>anchor,side,dx,dy,vis,w:0,h:0});
+}
+let crownNow=-CLEAR;
+const TYp=y=>TY+y;
+/* establishing */
+const pv=(a,b)=>U=>pulse(U,a,a+0.4,b-0.4,b);
+const dgA=(x,y,z)=>()=>[DGP.x+x,DGP.y+y,z||0];
+const vaneAt=(k,z)=>()=>{const g=dgVanes[k];return [DGP.x+g.position.x,DGP.y+g.position.y,z||6];};
+/* petrol engine with blow-off */
+addLabel('Turbosuflantă',null,[-20,TY+46,-10],1,24,-26,pv(T_P+0.7,K.P_IN+0.6));
+addLabel('Intercooler',null,[-245,196,0],1,30,6,pv(T_P+1.0,K.P_IN+0.6),'air');
+addLabel('Supapă blow-off',null,[-322,143,-4],-1,10,28,pv(T_P+1.3,K.P_C-0.6),'big');
+addLabel('Clapetă de accelerație',null,[-247,THR_Y,0],1,22,-4,pv(T_P+1.6,K.P_C-0.6),'air');
+addLabel('Motor pe benzină','cu bujie',[EX-6,40,0],1,20,24,pv(T_P+1.9,K.P_IN+1.2),'fire');
+addLabel('Clapetă închisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.P_C+0.35,T_D-0.25),'warn');
+addLabel('Aer blocat','sub presiune',[-266,BOV_Y+30,0],1,22,10,pv(K.P_C+0.7,K.P_L+0.35),'warn');
+addLabel('Aer eliberat','pșșșt',[-266-BOV_OUT,BOV_Y-60,8],1,22,-6,pv(K.P_L+0.35,T_D-0.25),'air');
+/* diesel: nothing to vent */
+addLabel('Motor diesel','cu injector',[EX+10,60,0],1,24,22,pv(T_D+0.6,K.D_LIFT+1.4),'fire');
+addLabel('Clapeta rămâne deschisă',null,[-266+12,THR_Y,0],1,24,-12,pv(K.D_LIFT+0.2,K.D_NOBOV-0.3),'air');
+addLabel('Aerul trece prin motor',null,[-252,48,0],1,24,-14,pv(K.D_AIR,K.D_NOBOV-0.3),'air');
+addLabel('Fără supapă blow-off','din fabrică',[-277,BOV_Y,0],-1,14,20,pv(K.D_NOBOV+0.2,K.D_TURBO-0.2),'big');
+/* where the sound comes from */
+addLabel('Turbosuflantă',null,[-20,TY+46,-10],1,24,-26,pv(K.D_TURBO+0.2,K.G_IN+0.3));
+addLabel('Geometrie variabilă','în carcasa turbinei',[61.5,TY+38,-4],1,20,-26,pv(K.G_IN,K.G_IN+2.3),'fire');
+/* how the vanes work */
+addLabel('Inel de palete',null,vaneAt(1),1,34,26,pv(K.G_RING,K.G_LOW+0.2));
+addLabel('Gaze de evacuare',null,dgA(150,102,3),1,10,30,pv(K.G_RING+0.9,K.G_LOW+0.2),'fire');
+addLabel('Roata turbinei',null,dgA(-12,10,8),-1,40,-52,pv(K.G_RING+1.3,K.G_LOW+0.2));
+addLabel('Actuator',null,dgA(172,-112,10),1,6,26,pv(K.G_ACT,K.G_LOW+0.2));
+addLabel('Turații mici','palete închise · gaze rapide',vaneAt(1),1,34,26,pv(K.G_CLOSE+0.5,K.G_HIGH+0.5),'fire');
+addLabel('Turații mari','palete deschise · turația rămâne sub limită',vaneAt(1),1,34,26,pv(K.G_OPEN+0.5,K.C_LOW+0.4),'air');
+/* soot blocks them */
+addLabel('Calamină','depusă pe palete',vaneAt(5),-1,26,-30,pv(K.C_DEP+0.5,K.O_OUT+0.3),'warn');
+addLabel('Palete blocate pe închis',null,vaneAt(1),1,34,26,pv(K.C_STUCK+0.2,K.O_OUT+0.3),'warn');
+addLabel('Actuator','nu le mai poate deschide',dgA(172,-112,10),1,6,26,pv(K.C_TRY+0.1,K.O_0+0.6));
+addLabel('Roata turbinei','lovită cu viteză prea mare',dgA(-12,10,8),-1,40,-52,pv(K.O_HIT,K.O_OUT+0.3),'warn');
+/* overspeed, overboost */
+addLabel('Turbină','peste turația maximă',[72,TY+22,8],1,14,46,pv(K.O_OUT+1.1,K.L_LIFT+0.2),'warn');
+addLabel('Presiune peste limită',null,[-84,TY+72,-40],-1,26,-10,pv(K.O_PRES,K.L_LIFT+0.2),'warn');
+/* lift-off: surge */
+addLabel('Injecție tăiată',null,[EX+10,60,0],1,24,22,pv(K.L_LIFT+0.3,K.S_ON-1.6),'warn');
+addLabel('Motorul cere mai puțin aer',null,[-252,48,0],1,24,-14,pv(K.L_ENG,K.S_ON-1.6),'air');
+addLabel('Compresor supraturat','împinge în continuare',[-86,TY+16,8],-1,32,26,pv(K.L_COMP,K.S_ON-0.3),'warn');
+addLabel('Aerul se întoarce','prin roata compresorului',[-150,TY+12,-4],-1,10,26,pv(K.S_ON+0.3,K.X_AX-0.3),'warn');
+addLabel('Roata compresorului','tensiune pe palete',[-88,TY-16,8],-1,26,-34,pv(K.X_STR,K.X_AX+1.4),'warn');
+addLabel('Lagăr axial','lovit înainte-înapoi',[-52,TY+22,0],-1,14,20,pv(K.X_BRG0-0.2,K.X_PAL+0.2),'warn');
+addLabel('Axul capătă joc',null,[-22,TY-6,6],1,20,-30,pv(K.X_JOC,K.X_PAL+0.2),'warn');
+addLabel('Paletele ating carcasa',null,[-80,TY-30,0],-1,24,-16,pv(K.X_SPK,T_S-0.3),'warn');
+/* closing */
+addLabel('Pompaj','aerul se întoarce în pulsuri',[-150,TY+12,-4],-1,10,26,pv(K.W_LIFT+0.6,K.W_DG+0.1),'warn');
+addLabel('Geometrie variabilă','palete blocate de calamină',vaneAt(1),1,34,26,pv(K.W_DG+0.9,TU+1),'warn');
+addLabel('Actuator',null,dgA(172,-112,10),1,6,26,pv(K.W_DG+1.3,TU+1));
+let labelsOn=true;
+
+/* ================= camera ================= */
+const SHOTS={
+  wide:{c:[-128,40],w:470,h:430,az:14,el:8},
+  wide2:{c:[-128,40],w:470,h:430,az:-12,el:10},
+  bovT:{c:[-292,108],w:170,h:200,az:10,el:5},
+  bov:{c:[-305,116],w:120,h:140,az:8,el:4},
+  bovMid:{c:[-230,150],w:330,h:340,az:12,el:6},
+  intake:{c:[-215,70],w:300,h:300,az:12,el:6},
+  comp:{c:[-120,TY+20],w:220,h:230,az:-28,el:9},
+  compIn:{c:[-140,TY+4],w:200,h:170,az:-22,el:8},
+  hookA0:{c:[-66,TY-6],w:350,h:250,az:-2,el:11},
+  hookA:{c:[-78,TY+4],w:300,h:210,az:-10,el:9},
+  hookB:{c:[-132,TY+2],w:210,h:170,az:-24,el:8},
+  wheel:{c:[-84,TY-2],w:124,h:112,az:-14,el:5},
+  cyl:{c:[EX+4,-6],w:180,h:215,az:14,el:5},
+  turboAll:{c:[-50,TY+10],w:330,h:260,az:16,el:7},
+  turboO:{c:[-24,TY+8],w:352,h:250,az:14,el:7},
+  airPath:{c:[-185,100],w:340,h:330,az:10,el:6},
+  chra:{c:[-60,TY+6],w:150,h:130,az:10,el:4},
+  vgt:{c:[DGP.x+38,DGP.y-14],w:322,h:330,az:0,el:0},
+  vgtIn:{c:[DGP.x+6,DGP.y+4],w:262,h:262,az:0,el:0}
+};
+const CAMKEYS=[[0,'hookA0'],[K.H_LIFT-0.55,'hookA'],[K.H_LIFT+0.35,'hookB'],[K.H_DMG-0.3,'hookB'],[K.H_DMG+0.9,'chra'],[K.H_SPK-0.2,'chra'],[K.H_SPK+0.8,'wheel'],[T_P,'wheel'],
+  [T_P+0.01,'wide'],[K.P_IN,'wide'],[K.P_IN+1.4,'bovMid'],[K.P_C-1.9,'bovMid'],[K.P_C-0.7,'bovT'],[K.P_L-0.6,'bovT'],[K.P_L+0.5,'bov'],[T_D,'bov'],
+  [T_D+0.01,'intake'],[K.D_NOBOV-0.7,'intake'],[K.D_NOBOV+0.5,'bovT'],[K.D_ACC+0.2,'bovT'],[K.D_TURBO-0.4,'bovMid'],[K.D_TURBO+0.9,'turboAll'],[K.G_IN+0.5,'turboAll'],[K.G_IN+1.7,'vgt'],
+  [K.G_LOW-0.3,'vgt'],[K.G_LOW+1.0,'vgtIn'],[K.C_TRY-0.5,'vgtIn'],[K.C_TRY+0.7,'vgt'],[K.O_0-0.2,'vgt'],[K.O_0+1.0,'vgtIn'],[K.O_OUT,'vgtIn'],[K.O_OUT+1.2,'turboO'],
+  [K.L_LIFT-0.6,'turboO'],[K.L_LIFT+0.9,'airPath'],[K.S_ON-1.9,'airPath'],[K.S_ON-0.5,'compIn'],[K.X_AX-0.5,'compIn'],[K.X_AX+0.8,'chra'],[K.X_PAL-0.4,'chra'],[K.X_PAL+0.8,'wheel'],[T_S,'wheel'],
+  [T_W,'compIn'],[K.W_DG-0.2,'compIn'],[K.W_DG+1.1,'vgt'],[TU,'vgt']];
+/* split screen: top = the blow-off and the compressor, bottom = the compressor inlet in surge (same scale) */
+const SPLIT_A={c:[-212,138],w:330,h:150,az:6,el:5},SPLIT_B={c:[-150,172],w:330,h:150,az:-8,el:5};
+const user={az:0,el:0,zoom:1};
+let VW=1,VH=1,padTop=60,padBot=200,padLeft=0,pxPerMm=1,hudBox={left:1e9,bottom:0};
+const camTarget=new T.Vector3(),tmpV=new T.Vector3();
+function shotAt(U){
+  let i=0;while(i<CAMKEYS.length-2&&U>=CAMKEYS[i+1][0])i++;
+  const a=SHOTS[CAMKEYS[i][1]],b=SHOTS[CAMKEYS[i+1][1]],t0=CAMKEYS[i][0],t1=CAMKEYS[i+1][0];
+  const t=t1>t0?sst(t0,t1,U):1;
+  /* zoom in log space so wide-to-close moves feel even */
+  const lw=Math.exp(lerp(Math.log(a.w),Math.log(b.w),t)),lh=Math.exp(lerp(Math.log(a.h),Math.log(b.h),t));
+  return {cx:lerp(a.c[0],b.c[0],t),cy:lerp(a.c[1],b.c[1],t),w:lw,h:lh,az:lerp(a.az,b.az,t),el:lerp(a.el,b.el,t)};
+}
+function placeCamera(U){
+  const s=shotAt(U),tf=Math.tan(FOV*DEG/2),aspect=VW/VH;
+  const safeH=Math.max(120,VH-padTop-padBot),safeW=Math.max(120,VW-32-padLeft);
+  let d=Math.max((s.h/2)/tf*(VH/safeH),(s.w/2)/(tf*aspect)*(VW/safeW))/user.zoom;
+  const az=clamp(s.az+user.az,-80,80)*DEG,el=clamp(s.el+user.el,-30,60)*DEG;
+  camTarget.set(s.cx,s.cy,0);
+  camera.position.set(camTarget.x+d*Math.sin(az)*Math.cos(el),camTarget.y+d*Math.sin(el),d*Math.cos(az)*Math.cos(el));
+  camera.lookAt(camTarget);
+  const shift=((padTop-padBot)/2)/VH*(2*d*tf);
+  camera.updateMatrixWorld();tmpV.setFromMatrixColumn(camera.matrixWorld,1);
+  camera.position.addScaledVector(tmpV,shift);
+  if(padLeft){tmpV.setFromMatrixColumn(camera.matrixWorld,0);camera.position.addScaledVector(tmpV,-(padLeft/2)/VH*(2*d*tf));}
+  camera.near=Math.max(1,d*0.05);camera.far=d*8+1500;camera.updateProjectionMatrix();
+  camera.updateMatrixWorld();
+  pxPerMm=VH/(2*d*tf);
+  shared.uScale.value=VH*DPR/(2*tf);
+}
+function placeLabels(U){
+  for(const L of labelDefs){
+    let o=labelsOn?Math.min(1,L.vis(U)):0;
+    if(o>=0.02){const a=L.anchor();tmpV.set(a[0],a[1],a[2]).project(camera);L.sx=(tmpV.x*0.5+0.5)*VW;L.sy=(-tmpV.y*0.5+0.5)*VH;o*=sst(padTop-14,padTop+10,L.sy)*(1-sst(VH-padBot+4,VH-padBot+26,L.sy))*sst(-4,12,L.sx)*(1-sst(VW-12,VW+4,L.sx));}
+    if(o<0.02){L.el.style.opacity=0;L.ln.style.opacity=0;L.dot.style.opacity=0;continue;}
+    const x=L.sx,y=L.sy;
+    if(!L.w){L.w=L.el.offsetWidth;L.h=L.el.offsetHeight;}
+    const dx=clamp(L.dx*pxPerMm,16,92),ty=clamp(y-L.dy*pxPerMm,padTop+6,VH-padBot-L.h+10);
+    let ex,lx;
+    if(L.side>0){lx=Math.min(x+dx,VW-L.w-8);ex=lx;}else{ex=Math.max(x-dx,L.w+8);lx=ex-L.w;}
+    if(lx+L.w>hudBox.left-6&&ty-L.h/2<hudBox.bottom+6)o=0;
+    L.el.style.transform='translate('+lx.toFixed(1)+'px,'+(ty-L.h/2).toFixed(1)+'px)';
+    L.el.style.opacity=o;L.ln.style.opacity=o;L.dot.style.opacity=o;
+    L.ln.setAttribute('x1',x.toFixed(1));L.ln.setAttribute('y1',y.toFixed(1));L.ln.setAttribute('x2',ex.toFixed(1));L.ln.setAttribute('y2',ty.toFixed(1));
+    L.dot.setAttribute('cx',x.toFixed(1));L.dot.setAttribute('cy',y.toFixed(1));
+  }
+}
+
+/* ================= captions, rail, read-outs ================= */
+const STEPS=[[0,TU,'','--accent','','']];
+let hudMode='';const hudCache={};
+function setText(id,v){if(hudCache[id]!==v){hudCache[id]=v;$(id).textContent=v;}}
+const fmtInt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const fmtDec=(n,d)=>n.toFixed(d).replace('.',',');
+const fmtBar=v=>{const r=Math.round(v*10)/10;return (r<0?'−':'+')+fmtDec(Math.abs(r),1)+' bar';};
+function setHud(mode,labels){
+  if(hudMode===mode)return;hudMode=mode;
+  for(let i=0;i<3;i++){const l=labels[i];$('h'+i).hidden=!l;if(l)$('l'+i).textContent=l;}
+  hudBox=document.querySelector('.hud').getBoundingClientRect();
+}
+function cls(id,c){const e=$(id);if(e.dataset.c!==c){e.dataset.c=c;e.className=c;}}
+/* slow-motion pill: the surge pulses are shown slowed down */
+/* no pill in the hook: the hook titles sit right under the HUD */
+const slowOn=U=>(U>=K.L_LIFT&&U<T_S)||(U>=K.W_LIFT&&U<K.W_ACC);
+function updateUI(U,S){
+  const sp=$('slowp'),so=S&&slowOn(U);if(sp.dataset.o!==String(so)){sp.dataset.o=String(so);sp.style.opacity=so?1:0;}
+  const hud=document.querySelector('.hud');if(hud.dataset.h!==String(!S)){hud.dataset.h=String(!S);hud.style.visibility=S?'visible':'hidden';}
+  if(!S){setHud('S',[null,null,null]);return;}
+  setHud('A',['Turație turbo','Presiune turbo',null]);
+  setText('v0',fmtInt(Math.round(S.rpm/1000)*1000)+' rpm');
+  setText('v1',fmtBar(S.p));
+  cls('v1',S.p>2.05?'warn':'');cls('v0',S.rpm>178000||(S.surge>0.5&&S.rev>0.25)?'warn':'');
+}
+
+/* ================= per-frame state ================= */
+const vEl=[0];
+let FUEL=1,CYLA=1;
+sparkFlash.material.map=glowTex;sparkFlash.material.needsUpdate=true;
+M.wheelC.emissive=new T.Color(0,0,0);M.bronzeT.emissive=new T.Color(0,0,0);
+const surgeGlow=new T.Sprite(new T.SpriteMaterial({map:glowTex,color:0xff3a20,blending:T.AdditiveBlending,depthWrite:false,transparent:true,opacity:0,toneMapped:false}));
+surgeGlow.position.set(-86,TY,-6);surgeGlow.scale.set(90,90,1);scene.add(surgeGlow);
+const BRZ=col(0xc9945a),BRR=col(0xff3b1f);
+const WC_E=new T.Color(1,0.12,0.06),BR_E=new T.Color(1,0.28,0.06),VAC_E=new T.Color(0.15,0.55,1);
+/* enlarged variable-geometry view: when it is on screen (main take only) */
+const dgScale=U=>Math.max(sst(K.G_IN+0.1,K.G_IN+0.9,U)*(1-sst(K.O_OUT+0.3,K.O_OUT+1.1,U)),sst(K.W_DG,K.W_DG+0.8,U));
+function apply(U,variant){
+  variant=variant||'main';
+  const S=stateAt(U,variant),L=LV[variant];
+  FUEL=S.fuelOn;CYLA=S.cylA;
+  const th=lut(L.th,U),crown=-CLEAR-pistonDrop(th);crownNow=crown;
+  piston.position.y=crown;rod.position.y=crown-COMP_H;rod.rotation.z=Math.asin(CRK*Math.sin(th*DEG)/ROD);
+  const li=vLift(th,712,222),le=vLift(th,498,8);
+  vIn.g.position.y=-li;vEx.g.position.y=-le;
+  setHelix(vIn.sp.geometry,HEAD_H+1.3,22.4-li);setHelix(vEx.sp.geometry,HEAD_H+1.3,22.4-le);
+  const st=drawCyl(th,crown);
+  const burn=st.burn*FUEL,cy=Math.max(crown*0.5-3,-40);
+  fireLight.intensity=1.6*burn;fireLight.position.set(EX,cy,10);
+  glow.material.opacity=0.2*burn;glow.position.set(EX,cy-2,-8);const gs=60+26*burn+Math.min(-crown,60)*0.9;glow.scale.set(gs,gs*0.72,1);
+  const petrol=S.fuel==='P';
+  plugG.visible=petrol;injMesh.visible=!petrol;VGG.visible=!!S.vgtOn;pCrownP.visible=petrol;pCrownD.visible=!petrol;
+  sparkFlash.material.opacity=petrol&&FUEL?0.95*pulse(st.c,343,346,351,355):0;
+  /* turbo */
+  rotor.rotation.x=lut(L.spin,U);
+  rotor.position.set(S.jolt*1.7,S.surge*0.35*Math.sin(U*61),S.surge*0.35*Math.cos(U*53));
+  tGlow.material.opacity=0.10*FUEL;
+  M.wheelC.emissive.copy(WC_E).multiplyScalar(0.65*S.stress);
+  M.bronzeT.emissive.copy(BR_E).multiplyScalar(1.5*S.brg);
+  C.bronzeT.color.copy(BRZ).lerp(BRR,0.85*S.brg);
+  surgeGlow.material.opacity=0.55*S.rev*S.surge;
+  const beta=lerp(6,40,S.vgt)*DEG;
+  vanesIn.forEach(g=>{g.rotation.x=beta;});
+  /* throttle and blow-off */
+  flap.rotation.z=lerp(0.12,Math.PI/2-0.06,S.thr);
+  BV.visible=!!S.bovOn;vacHose.visible=vacNip.visible=!!S.bovOn;
+  setBov(S.bovOn?S.lift:0);
+  M.hoseV.emissive.copy(VAC_E).multiplyScalar(0.55*clamp(-S.map/0.7,0,1)*(S.bovOn?1:0));
+  const GX=lut(L.gex,U),G1=lut(L.g1,U);
+  drawExhaust(GX,variant);
+  drawS1(G1,S);drawS2(lut(L.g2,U));drawS3(lut(L.g3,U),S);drawSparks(U,S);drawChev(G1,S);
+  /* enlarged variable-geometry view */
+  const sc=variant==='main'?dgScale(U):0;
+  DG.visible=sc>0.01;conn.visible=DG.visible;
+  if(DG.visible){
+    DG.scale.setScalar(sc);
+    vaneDep.uniforms.uDep.value=S.dep;
+    dgVanes.forEach(g=>{g.rotation.z=vanePsi(g.userData.phi,beta);});
+    dgWheel.rotation.z=lut(L.spin,U)*1.2;
+    /* the actuator keeps trying to open the stuck vanes */
+    const cmd=S.vgt+0.085*S.act*S.stuck*(0.5+0.5*Math.sin(U*6.5));
+    const lam=(-110+40*cmd)*DEG,ex=dgLeverPiv.x+24*Math.cos(lam),ey=dgLeverPiv.y+24*Math.sin(lam);
+    dgLever.position.set(dgLeverPiv.x+12*Math.cos(lam),dgLeverPiv.y+12*Math.sin(lam),2);dgLever.rotation.z=lam;
+    const dx=dgActPos.x-ex,dy=dgActPos.y-ey,Lr=Math.hypot(dx,dy);
+    dgRod.position.set((ex+dgActPos.x)/2,(ey+dgActPos.y)/2,3);dgRod.scale.set(1,Lr,1);dgRod.rotation.z=Math.atan2(dy,dx)-Math.PI/2;
+    conn.material.opacity=0.85*Math.max(pulse(U,K.G_IN+0.2,K.G_IN+0.6,K.G_IN+2.2,K.G_IN+2.8),pulse(U,K.O_OUT,K.O_OUT+0.3,K.O_OUT+0.8,K.O_OUT+1.1));
+  }
+  drawEmbers(GX,sc,S);
+  const O=lut(LUT.oil,U);
+  oilMats.forEach(m=>{m.uniforms.uHi.value=0;m.uniforms.uPhase.value=O*(m.uniforms.uLen.value>1.5?1.6:1.0);});
+  drawDrops(U,0,1e5);
+  const tr=t=>pulse(U,t-0.4,t-0.04,t+0.04,t+0.42);
+  $('fade').style.opacity=Math.max(tr(T_P),tr(T_D),tr(T_S),tr(T_W)).toFixed(3);
+  return {th,st,S};
+}
+
+/* ================= interaction and loop ================= */
+let u=0,playing=true,speed=1,scrubbing=false,dirty=true,last=0;
+const scrub=$('scrub');
+function frameShot(s,vw,vh){
+  const tf=Math.tan(FOV*DEG/2),aspect=vw/vh;camera.aspect=aspect;
+  const d=Math.max((s.h/2)/tf,(s.w/2)/(tf*aspect))/user.zoom;
+  const az=clamp(s.az+user.az,-80,80)*DEG,el=clamp(s.el+user.el,-30,60)*DEG;
+  camTarget.set(s.c[0],s.c[1],0);
+  camera.position.set(camTarget.x+d*Math.sin(az)*Math.cos(el),camTarget.y+d*Math.sin(el),d*Math.cos(az)*Math.cos(el));
+  camera.lookAt(camTarget);camera.near=Math.max(1,d*0.05);camera.far=d*8+1500;camera.updateProjectionMatrix();camera.updateMatrixWorld();
+  shared.uScale.value=vh*DPR/(2*tf);
+}
+function render(){
+  const split=u>=T_S&&u<T_W,vo=document.body.classList.contains('vo');
+  $('split').classList.toggle('on',split);
+  if(vo){padTop=VH*(u<T_P?0.30:0.13);padBot=VH-VH*0.66;padLeft=0;}
+  if(!split){
+    renderer.setScissorTest(false);renderer.setViewport(0,0,VW,VH);camera.aspect=VW/VH;
+    const r=apply(u,'main');placeCamera(u);placeLabels(u);updateUI(u,r.S);
+    renderer.render(scene,camera);dirty=false;return;
+  }
+  for(const L of labelDefs){L.el.style.opacity=0;L.ln.style.opacity=0;L.dot.style.opacity=0;}
+  const y0=padTop+4,y1=VH-padBot,hh=Math.max(60,(y1-y0-8)/2);
+  renderer.setScissorTest(true);renderer.setScissor(0,0,VW,VH);renderer.setViewport(0,0,VW,VH);renderer.clear();
+  [['top',y0],['bot',y0+hh+8]].forEach(q=>{
+    apply(u,q[0]);frameShot(q[0]==='top'?SPLIT_A:SPLIT_B,VW,hh);
+    const yb=VH-(q[1]+hh);renderer.setViewport(0,yb,VW,hh);renderer.setScissor(0,yb,VW,hh);renderer.render(scene,camera);
+  });
+  renderer.setScissorTest(false);
+  $('spA').style.top=(y0+hh-$('spA').offsetHeight-8)+'px';$('spB').style.top=(y0+2*hh+8-$('spB').offsetHeight-8)+'px';$('spD').style.top=(y0+hh+3)+'px';
+  {const lift=(u>=K.SP_C1&&u<K.SP_R1)||u>=K.SP_C2,c=$('spC');c.style.top=(y0+hh+4)+'px';if(c.dataset.l!==String(lift)){c.dataset.l=String(lift);c.textContent=lift?'Ridici piciorul':'Accelerezi';c.classList.toggle('lift',lift);}}
+  /* the half that is not being talked about is dimmed */
+  {const X=$('spX'),Y=$('spY');X.style.top=y0+'px';X.style.height=hh+'px';Y.style.top=(y0+hh+8)+'px';Y.style.height=hh+'px';
+   Y.style.opacity=(0.62*pulse(u,K.SP_A0,K.SP_A0+0.35,K.SP_B0-0.15,K.SP_B0+0.2)).toFixed(3);X.style.opacity=(0.62*sst(K.SP_B0-0.15,K.SP_B0+0.2,u)).toFixed(3);}
+  updateUI(u,null);dirty=false;
+}
+function resize(){
+  const r=$('stage').getBoundingClientRect();VW=Math.max(1,r.width);VH=Math.max(1,r.height);
+  renderer.setSize(VW,VH,false);camera.aspect=VW/VH;camera.updateProjectionMatrix();
+  const br=$('bottom').getBoundingClientRect(),sidePanel=br.width<VW*0.6;
+  hudBox=document.querySelector('.hud').getBoundingClientRect();
+  padTop=$('title').getBoundingClientRect().bottom+8;padBot=sidePanel?18:VH-br.top-18;padLeft=sidePanel?br.right+8:0;
+  if(document.body.classList.contains('vo')){padTop=VH*0.13;padBot=VH-VH*0.66;padLeft=0;}
+  svg.setAttribute('viewBox','0 0 '+VW+' '+VH);labelDefs.forEach(L=>{L.w=0;});
+  dirty=true;
+}
+function frame(t){
+  requestAnimationFrame(frame);
+  const dt=Math.min(0.05,(t-last)/1000||0);last=t;
+  if(playing&&!scrubbing){u=(u+dt*speed)%TU;scrub.value=u.toFixed(2);dirty=true;}
+  if(dirty)render();
+}
+function setPlaying(p){playing=p;$('play').textContent=p?'Pauză':'Redă';}
+$('play').addEventListener('click',()=>setPlaying(!playing));
+const SPEEDS=[1,2,0.5];
+$('speed').addEventListener('click',()=>{speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];$('speed').textContent='Viteză '+String(speed).replace('.',',')+'×';});
+$('lab').addEventListener('click',()=>{labelsOn=!labelsOn;$('lab').setAttribute('aria-pressed',labelsOn);dirty=true;});
+function camChanged(){$('cam').hidden=!(Math.abs(user.az)>0.5||Math.abs(user.el)>0.5||Math.abs(user.zoom-1)>0.02);dirty=true;}
+$('cam').addEventListener('click',()=>{user.az=user.el=0;user.zoom=1;camChanged();});
+scrub.addEventListener('input',()=>{scrubbing=true;u=clamp(parseFloat(scrub.value),0,TU-0.001);dirty=true;});
+['change','pointerup','touchend','blur'].forEach(e=>scrub.addEventListener(e,()=>{scrubbing=false;}));
+const ptrs=new Map();let pinch=0,moved=0,downAt=0;
+canvas.addEventListener('pointerdown',e=>{canvas.setPointerCapture(e.pointerId);ptrs.set(e.pointerId,[e.clientX,e.clientY]);if(ptrs.size===1){moved=0;downAt=performance.now();}pinch=0;});
+canvas.addEventListener('pointermove',e=>{
+  const p=ptrs.get(e.pointerId);if(!p)return;const dx=e.clientX-p[0],dy=e.clientY-p[1];p[0]=e.clientX;p[1]=e.clientY;
+  if(ptrs.size===1){moved+=Math.abs(dx)+Math.abs(dy);if(moved>5){user.az=clamp(user.az-dx*0.35,-90,90);user.el=clamp(user.el+dy*0.3,-40,55);camChanged();}}
+  else if(ptrs.size===2){const a=[...ptrs.values()],d=Math.hypot(a[0][0]-a[1][0],a[0][1]-a[1][1]);if(pinch)user.zoom=clamp(user.zoom*d/pinch,0.6,3.2);pinch=d;moved=99;camChanged();}
+});
+const up=e=>{if(!ptrs.has(e.pointerId))return;ptrs.delete(e.pointerId);pinch=0;
+  if(e.type==='pointerup'&&ptrs.size===0&&moved<=5&&performance.now()-downAt<320)setPlaying(!playing);};
+canvas.addEventListener('pointerup',up);canvas.addEventListener('pointercancel',up);
+canvas.addEventListener('wheel',e=>{e.preventDefault();user.zoom=clamp(user.zoom*Math.exp(-e.deltaY*0.0012),0.6,3.2);camChanged();},{passive:false});
+window.addEventListener('keydown',e=>{
+  if(e.target&&/^(BUTTON|INPUT)$/.test(e.target.tagName)&&e.key===' ')return;
+  if(e.key===' '){e.preventDefault();setPlaying(!playing);}
+  else if(e.key==='ArrowRight'){u=(u+0.2)%TU;scrub.value=u.toFixed(2);dirty=true;}
+  else if(e.key==='ArrowLeft'){u=(u-0.2+TU)%TU;scrub.value=u.toFixed(2);dirty=true;}
+});
+window.addEventListener('resize',resize);
+if(window.ResizeObserver)new ResizeObserver(resize).observe($('bottom'));
+canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();fail();});
+document.body.classList.add('reel','vo');
+function start(d){
+  if(d&&typeof d.u==='number'){u=clamp(d.u,0,TU-0.001);if(d.speed)speed=d.speed;if(d.playing===false)setPlaying(false);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){u=16;setPlaying(false);}
+  scrub.max=TU;scrub.value=u.toFixed(2);resize();render();
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(resize);
+  requestAnimationFrame(frame);
+}
+const hot=window.claude&&window.claude.hot;
+if(hot&&hot.snapshot)hot.snapshot(()=>({u,playing,speed}));
+if(hot&&hot.ready)hot.ready(start);else start((hot&&hot.data)||{});
+window.__seek=x=>{u=clamp(x,0,TU-0.001);scrub.value=u.toFixed(2);render();};
+window.__pause=()=>setPlaying(false);
+window.__reel=on=>{document.body.classList.toggle('reel',on!==false);resize();render();};
+window.__cam=(az,el,zoom)=>{user.az=az;user.el=el;user.zoom=zoom||1;render();};
+window.__TU=TU;window.__vo=on=>{document.body.classList.toggle('vo',on!==false);resize();render();};window.__K=K;
+window.__ready=true;
+})();
+</script>

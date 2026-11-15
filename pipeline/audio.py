@@ -227,7 +227,8 @@ def slash():  # blade cut for a sliced title / a car cut in two ("Am tÄƒiat preÈ
 GEN = dict(slash=slash, chime=chime, boom=boom, rise=rise, crank=crank, impact=impact, hit=hit, crack=crack, whoosh=whoosh, riser=riser, pop=pop, beep=beep, alarm=alarm, shimmer=shimmer, stamp=stamp,
            tick=tick, tick2=tick2, ding=ding, confetti=confetti, type=typing, scan=scan, lock=lock, glitch=glitch, data=data)
 fx = np.zeros((n_total, 2), np.float32)
-for c in json.load(open(f"{ROOT}/out/sfx.json")):
+# out/v2.json "sfx": false -> no effects at all (voice-only sound, asked by Sabin for the animated priming reel, 14.11.2026)
+for c in (json.load(open(f"{ROOT}/out/sfx.json")) if cfg.get("sfx", True) else []):
     if c["kind"] not in GEN: continue
     s = GEN[c["kind"]]().astype(np.float32) * c["gain"]; o = int(round(c["t"] * SR))
     if o < 0: s = s[-o:]; o = 0
