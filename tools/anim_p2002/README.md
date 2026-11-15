@@ -6,15 +6,17 @@ Cerut de Sabin pe 15.11.2026: „Animația e bună, te rog, dă drumul și fă u
 Ce înseamnă de cele mai multe ori pe motoarele 2.0 Euro 6 de pe gama VAG. Și după aia explicația cu vocea mea.”
 
 Rezultat: `animatii/TurboDoctor_Reel_Eroare_P2002_EA288.mp4` (129,4 s = poveste 121,9 s + card de final 7,5 s), `_coperta.jpg` (cadrul de la 8,55 s)
-și `_text_postare.txt`. **Stare: livrat spre aprobare pe 15.11, neprogramat.** La programare: etichetă AI pe TikTok și Instagram (voce generată),
-Facebook ca POST cu titlu (peste 90 s), fără bifele de conținut comercial.
+și `_text_postare.txt`. **Stare: aprobat de Sabin pe 15.11.2026 („Postează-l … astăzi pe toate canalele sociale de pe brandul Turbo Doctor”) și programat
+în aceeași zi în Metricool:** YouTube 15:00 (Short), Facebook 17:00 (POST cu titlu, fiindcă are peste 90 s), Instagram 17:00 (Reel), TikTok 19:00.
+Fiecare rețea a primit cea mai bună oră rămasă liberă (în aceeași zi mai ieșeau alte trei reel-uri). Etichetă AI pe TikTok și Instagram (voce generată),
+fără bifele de conținut comercial. S-a urcat masterul din `finish.sh`, fără recomprimare.
 
 ## Ce spune (16 rânduri, `vo_script.json`)
 
 - **Hook (rândul 0), pe vorbele lui Sabin:** „Eroarea P2002, eficiență filtru de particule. Ce înseamnă, de cele mai multe ori, pe motoarele 2.0 Euro 6 de pe gama VAG?”
   („filtru de particule” e adăugat, ca să fie clar despre ce eficiență e vorba).
 - **Răspunsul (rândul 1):** „De cele mai multe ori, filtrul nu are nimic. Problema e la EGR și la răcitorul de gaze. Hai să-ți arăt de ce.”
-  Răspunsul e luat din reelul aprobat al lui Sabin „Ai motorul 2.0 Euro 6 din gama VAG?”; **de confirmat de el**.
+  Răspunsul e luat din reelul aprobat al lui Sabin „Ai motorul 2.0 Euro 6 din gama VAG?”; Sabin a aprobat reelul așa, fără observații.
 - **Explicația (rândurile 2–15), în altă ordine decât filmul:** traseul gazelor (s01, s02) → filtrul (s03) → cum judecă calculatorul, calculat față de măsurat (s04, s05)
   → cauza 1, cea mai deasă: răcitorul de gaze înfundat, apoi fisurat (s07, s08, s09) → cauza 2: supapa EGR (s10) → cauza 3: furtunașele senzorului (s06)
   → cauza 4: aerul pierdut și debitmetrul (s16) → cauza 5: injecția (s11, s12) → cauza 6: uleiul ars, cenușa (s13, s14, s15) → lista de diagnoză (s17).
