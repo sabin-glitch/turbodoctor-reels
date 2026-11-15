@@ -14,6 +14,18 @@ e semnul că turbina se va distruge”, apoi traseul.
 
 Varianta 1 (16 rânduri, 132 s, geometria variabilă explicată pe larg) este în istoricul git al acestui folder (commit-urile de dinainte de varianta 2).
 
+Rezultat: `animatii/TurboDoctor_Reel_Blow_Off_Diesel_Pompaj.mp4` (148,2 s = poveste 140,7 s + card de final 7,5 s), `_coperta.jpg` (cadrul de la 9,6 s) și `_text_postare.txt`.
+**Stare: varianta 2 aprobată de Sabin pe 15.11.2026 („Programează-l pe toate platformele pe brandul Turbo Doctor, acum…”) și programată în aceeași zi în Metricool,
+pe cele patru rețele ale brandului turbodoctoroficial, toate la 14:42** („acum” = aceeași oră pe toate rețelele, la ~10 minute de la programare):
+YouTube (Short), Facebook (POST cu titlu, fiindcă are peste 90 s), Instagram (Reel), TikTok. Etichetă AI pe Instagram și TikTok (voce generată), nu pe YouTube;
+fără bifele de conținut comercial. S-a urcat masterul din `finish.sh`, fără recomprimare, cu `publish_media_batch.sh` (commit normal pe `media`, ca să nu dispară
+fișierele reelurilor programate de alte fire în aceeași zi); fișierul descărcat de pe linkul raw are același sha256 ca masterul.
+
+Ce rămâne ca regulă din observațiile lui Sabin la acest reel:
+- când reelul se sprijină pe un sunet („dacă auzi sunetul ăsta”), sunetul este o **înregistrare reală**, nu un efect generat; doar domeniu public sau CC0, cu sursa și licența spuse lui;
+- se explică **fenomenul** („din ce cauză se aude zgomotul”), iar **cauzele posibile vin la final**, pe scurt, fără să fie legată toată povestea de una singură dintre ele;
+- comparația cu benzina începe cu ce au mașinile **din fabrică** (supapa de recirculare, aerul captiv după MAF) și abia apoi cu ce se pune la tuning (blow-off).
+
 ## Diferența față de `anim_egr` / amorsare: regie pe cuvinte, nu re-temporizare
 
 La EGR și la amorsare animația avea cronologia ei (U), iar vocea era legată de ea printr-o hartă U(t). Aici povestea reelului are altă ordine
