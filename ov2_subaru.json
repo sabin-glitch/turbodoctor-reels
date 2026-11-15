@@ -1,0 +1,5 @@
+{
+ "id": "ov2_subaru",
+ "source_url": "https://api.openverse.org/v1/audio/",
+ "downloader": "curl"
+}
