@@ -1,0 +1,5 @@
+{
+ "id": "webq_sb",
+ "source_url": "https://soundbible.com/search.php",
+ "downloader": "curl"
+}
