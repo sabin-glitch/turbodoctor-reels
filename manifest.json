@@ -1710,6 +1710,11 @@
   "downloader": "curl"
  },
  {
+  "id": "fsq_ewanp2",
+  "source_url": "https://freesound.org/people/EwanPenman11/sounds/",
+  "downloader": "curl"
+ },
+ {
   "id": "ov2_tuned",
   "source_url": "https://api.openverse.org/v1/audio/",
   "downloader": "curl"
@@ -1777,6 +1782,11 @@
  {
   "id": "vo_amy_q1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/d1ZjEj5uQsWrNrYEWZf0/kxDtb69NT6M9rC4OiQw7/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "fsq_s659563",
+  "source_url": "https://freesound.org/people/EwanPenman11/sounds/659563/",
   "downloader": "curl"
  },
  {
@@ -1920,6 +1930,11 @@
   "downloader": "curl"
  },
  {
+  "id": "fsr_659563",
+  "source_url": "https://cdn.freesound.org/previews/659/659563_13241413-hq.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2s_S11",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/25Pjbba1sPSSpfkEkX9t/QfF2R8rAo8QbSN1y3o4b/content.mp4",
   "downloader": "curl"
@@ -1972,6 +1987,11 @@
  {
   "id": "bov2_L05b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/YX8Czm6qWNUGkvhkbl4D/J1jS2jZkzemibHhJho1g/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "fsq_ewanp1",
+  "source_url": "https://freesound.org/people/EwanPenman11/sounds/",
   "downloader": "curl"
  },
  {
@@ -2082,6 +2102,11 @@
  {
   "id": "bov_L11b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/cPUmZ5Mhzi0QgRUDDsXn/y49sQEawW7LBldSGC2w7/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "fsr_659565",
+  "source_url": "https://cdn.freesound.org/previews/659/659565_13241413-hq.mp3",
   "downloader": "curl"
  },
  {
