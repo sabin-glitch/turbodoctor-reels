@@ -41,11 +41,11 @@ window.REEL_CFG = ({{ aw, ew, S0, SEND, TEND }}) => {{
     endPhone: true,
     hideCap: [[0, S1 - .1]],
     items: [
-      {{ k: 'boom', t: T1, dur: T3 - .12 - T1, txt: 'DE CE SE STRICĂ', y: 400, size: 132, col: '#FFFFFF', from: 3.2, sh: 18, ca: 22, riser: false, bg: .6, cg: .3 }},
-      {{ k: 'boom', t: T2, dur: T3 - .12 - T2, txt: 'TURBINELE?', y: 570, size: 186, col: '#FFD21F', from: 3.0, sh: 20, ca: 24, riser: false, bg: .7, cg: .3 }},
-      {{ k: 'boom', t: T3, dur: HK - .1 - T3, txt: 'CAUZA {n} DIN 13', y: 410, size: 150, col: '#FFD21F', from: 3.2, sh: 18, ca: 22, riser: false, bg: .6, cg: .3 }},
-      {{ k: 'boom', t: T4, dur: HK - .1 - T4, txt: '{E['name']}', y: 570, size: {E['size']}, col: '#FF4B4B', from: 3.0, sh: 20, ca: 24, riser: false, bg: .7, cg: .3, glow: 'rgba(255,75,75,.6)' }},
-      {{ k: 'chip', t0: S1 + .9, t1: HK - .15, y: 690, ph: [[S1 + .9, 'eyes', 'TOATE CAUZELE: TIKTOK · FACEBOOK · YOUTUBE', 'yellow']] }},
+      {{ k: 'boom', t: T1, dur: T3 - .12 - T1, txt: 'DE CE SE STRICĂ', y: 448, size: 132, col: '#FFFFFF', from: 3.2, sh: 18, ca: 22, riser: false, bg: .6, cg: .3 }},
+      {{ k: 'boom', t: T2, dur: T3 - .12 - T2, txt: 'TURBINELE?', y: 612, size: 180, col: '#FFD21F', from: 3.0, sh: 20, ca: 24, riser: false, bg: .7, cg: .3 }},
+      {{ k: 'boom', t: T3, dur: HK - .1 - T3, txt: 'CAUZA {n} DIN 13', y: 455, size: 150, col: '#FFD21F', from: 3.2, sh: 18, ca: 22, riser: false, bg: .6, cg: .3 }},
+      {{ k: 'boom', t: T4, dur: HK - .1 - T4, txt: '{E['name']}', y: 612, size: {E['size']}, col: '#FF4B4B', from: 3.0, sh: 20, ca: 24, riser: false, bg: .7, cg: .3, glow: 'rgba(255,75,75,.6)' }},
+      {{ k: 'chip', t0: S1 + .9, t1: HK - .15, y: 1226, ph: [[S1 + .9, 'eyes', 'TOATE CAUZELE: TIKTOK · FACEBOOK · YOUTUBE', 'yellow']] }},
     ],
     fx: [
       {{ k: 'punch', t: T1, a: .08, sh: 16 }}, {{ k: 'punch', t: T2, a: .1, sh: 22 }}, {{ k: 'glitch', t: T2, d: .14 }},
@@ -57,4 +57,5 @@ window.REEL_CFG = ({{ aw, ew, S0, SEND, TEND }}) => {{
 }};
 """
     open(f"/home/claude/reels/{slugs[str(n)]}/reel.js", 'w').write(js)
+    json.dump({'t': round(T4 + .9, 2)}, open(f"/home/claude/reels/{slugs[str(n)]}/out/cover_t.json", 'w'))
     print(n, 'ok', T1, T2, T3, T4, HK)
