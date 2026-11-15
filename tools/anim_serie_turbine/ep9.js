@@ -10,7 +10,7 @@ window.GAUGE={title:'PRESIUNEA DE SUPRAALIMENTARE',
   state:v=>v<0.4?{hot:true,sub:'prea mică: motorul nu mai trage',txt:'PREA MICĂ'}:(v>1?{hot:true,sub:'peste limită: supraturare',txt:'PREA MARE'}:{hot:false,sub:'cât cere motorul',txt:'POTRIVITĂ'}),
   vis:t=>Math.max(win(W(2,'ca')-.2,Q.src-.05)(t),win(Q.trip2+.5,Q.out-.05)(t)),val:t=>track(GV,t)+0.012*Math.sin(t*8)};
 const TR={
-  inset:[[0,1],[HOOK_END-.02,1],[HOOK_END,0],[Q.ring,0],[Q.ring+.5,1],[Q.weak+.1,1],[Q.weak+.5,0],[Q.shut-.02,0],[Q.shut,1],[Q.ovr+.1,1],[Q.ovr+.5,0],[Q.src,0],[Q.trip,0],[Q.trip+.5,1],[Q.fix-.02,1],[Q.fix,0],[Q.trip2,0],[Q.trip2+.5,1],[Q.out-.02,1],[Q.out,0],[END+3,0]],
+  inset:[[0,1],[W(1,'Vezi')+.6,1],[W(1,'pe')-.1,0],[HOOK_END,0],[Q.ring,0],[Q.ring+.5,1],[Q.weak+.1,1],[Q.weak+.5,0],[Q.shut-.02,0],[Q.shut,1],[Q.ovr+.1,1],[Q.ovr+.5,0],[Q.src,0],[Q.trip,0],[Q.trip+.5,1],[Q.fix-.02,1],[Q.fix,0],[Q.trip2,0],[Q.trip2+.5,1],[Q.out-.02,1],[Q.out,0],[END+3,0]],
   vgtPos:[...osc(0,3.7,1.2,.1,.9),[Q.stuck,.12],[HOOK_END-.02,.12],[HOOK_END,.5],[W(2,'Ele'),.5],[W(2,'închid')+.4,.08],[W(2,'și'),.08],[W(2,'deschid')+.4,.95],[W(2,'ca'),.95],[W(2,'ca')+.8,.5],[Q.soot,.5],
     [Q.soot+.8,.75],[Q.soot+1.8,.35],[Q.seize,.6],[Q.open-.02,.6],[Q.open,.95],[Q.shut-.02,.95],[Q.shut,.05],[Q.src-.02,.05],[Q.src,.5],[Q.trip2,.5],...osc(Q.trip2+.3,Q.out,1.4,.15,.9),[END+3,.5]],
   vgtSoot:[[0,0],[1.2,0],[4,1],[HOOK_END-.02,1],[HOOK_END,0],[Q.soot,0],[W(3,'ele')+.3,1],[Q.src-.02,1],[Q.src,0],[Q.trip+.2,0],[Te(6)+.2,1],[Q.fix-.02,1],[Q.fix,0],[END+3,0]],
@@ -31,7 +31,7 @@ const TR={
 const wheelC=[-98,TY+19,0],insP=[INS[0].x+30,INS[0].y+18,2],manP=[-40,38,-10],burnP=()=>[EX,Math.min(-12,crownNow*0.5),0];
 /* hook */
 addLabel('Palete mobile',null,insP,1,10,26,win(.5,Q.stuck-.1));
-addLabel('Blocate de funingine',null,insP,1,10,26,win(Q.stuck+.1,HOOK_END-.05),'bad');
+addLabel('Blocate de funingine',null,insP,1,10,26,win(Q.stuck+.1,W(1,'pe')-.1),'bad');
 addLabel('Supraturare',null,wheelC,1,18,36,win(W(1,'pe')+.3,HOOK_END-.05),'bad');
 /* how it works */
 addLabel('Inel de palete mobile','în jurul roții turbinei',[59,TY+33,0],1,14,40,win(Ts(2)+.3,Q.ring+.3),'fire');
