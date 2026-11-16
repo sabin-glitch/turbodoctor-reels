@@ -132,6 +132,15 @@ def ov_spec(C):
     if a > 0.003:
         P = np.stack([(RW[:, 0] * 1080 + 30 * np.sin(t * 0.7 + RW[:, 3] * 6)) % 1080, (RW[:, 1] * 1920 - t * (40 + 50 * RW[:, 2])) % 1920], -1)
         D.dots2(C, P, 3.0 + 5.0 * RW[:, 2], (255, 192, 42), 0.35 * a, glow=0.6)
+    # cine cere: pozitia comuna a producatorilor de echipamente de injectie (2009), pana apar cerintele
+    ac = F.pop(t, L(4) + 0.05, W(4, 'unge') + 0.1, 0.3, 0.3)
+    if ac > 0.003:
+        D.rbox(C, 170, 600, 740, 470, (110, 120, 132), ac, th=2, fill=(8, 12, 17, 225), r=18)
+        D.text(C, 'POZIȚIA COMUNĂ · 2009', 540, 648, 28, (182, 194, 207), ac, 'mont9')
+        for k, nm in enumerate(('BOSCH', 'DELPHI', 'DENSO', 'SIEMENS VDO', 'STANADYNE')):
+            an = ac * float(seg(t, W(4, 'echipamente') - 0.1 + 0.14 * k, W(4, 'echipamente') + 0.12 + 0.14 * k))
+            D.text(C, nm, 540, 716 + 60 * k, 60, (255, 255, 255), an, 'anton')
+        D.text(C, 'Cerințe pentru motorină', 540, 1034, 26, (150, 160, 172), ac, 'mont')
     F.spr(C, 'g_req', 540, 400, L(4) - 0.05, LE(4) + 0.3, anchor='tc')
     F.spr(C, 'c_lube', 540, 500, W(4, 'unge') - 0.1, LE(4) + 0.3, anchor='tc')
     ap = a * float(seg(t, W(4, 'cel') - 0.2, W(4, 'cel') + 0.1))
