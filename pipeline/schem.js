@@ -1885,5 +1885,301 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
+  // ---------- photo panel overlays (14.11.2026, „Produs în România”: motorul 4.4 BMW M pus deasupra exact când îl pomenește) ----------
+  // The schem item carries `img` (a real photo with a free licence, as a persistent <img> under this SVG - see the compositor); this function
+  // draws only the vector layer: the photo "develops" behind a scan bar, corner brackets, a big spec that slams in, a typed code plate and a
+  // bracket on the zone the parts come from. All times are absolute reel seconds.
+  // P = { big: [t, '4.4', 'LITRI · V8 BITURBO'], code: [t, 'COD MOTOR', 'S63'], zone: [t, x, y, w, h, 'DE AICI VIN TURBINELE', 'r'|'l'] }
+  function photoId(tl, ph, pt, P, t, o) {
+    const W = 914, H = (o && o.h) || 430; let s = '';
+    s += `<defs><linearGradient id="pidV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#071425" stop-opacity=".5"/><stop offset=".2" stop-color="#071425" stop-opacity="0"/><stop offset=".58" stop-color="#071425" stop-opacity="0"/><stop offset="1" stop-color="#071425" stop-opacity=".82"/></linearGradient>` +
+      `<linearGradient id="pidS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#62D8FF" stop-opacity="0"/><stop offset="1" stop-color="#62D8FF" stop-opacity=".6"/></linearGradient></defs>`;
+    s += `<rect x="0" y="0" width="${W}" height="${H}" fill="url(#pidV)"/>`;  // seats the photo into the dark panel and keeps the labels readable
+    // 1) reveal, left to right
+    const rv = eio(tl / .62), sx = W * rv;
+    if (rv < 1) { s += `<rect x="${f(sx)}" y="0" width="${f(W - sx)}" height="${H}" fill="${C.bg}"/>`;
+      for (let x = Math.ceil(sx / 40) * 40; x < W; x += 40) s += `<line x1="${x}" y1="0" x2="${x}" y2="${H}" stroke="${C.cy}" stroke-width="1" opacity=".12"/>`;
+      for (let y = 40; y < H; y += 40) s += `<line x1="${f(sx)}" y1="${y}" x2="${W}" y2="${y}" stroke="${C.cy}" stroke-width="1" opacity=".12"/>`;
+      s += `<rect x="${f(sx - 110)}" y="0" width="110" height="${H}" fill="url(#pidS)"/><rect x="${f(sx - 4)}" y="0" width="8" height="${H}" fill="#E6FAFF"/>`; }
+    // 2) corner brackets
+    const bk = eo((tl - .4) / .3), a = 36, m = 16 + 22 * (1 - bk);
+    if (bk > 0) s += `<path d="M ${f(m)} ${f(m + a)} V ${f(m)} H ${f(m + a)} M ${f(W - m - a)} ${f(m)} H ${f(W - m)} V ${f(m + a)} M ${f(W - m)} ${f(H - m - a)} V ${f(H - m)} H ${f(W - m - a)} M ${f(m + a)} ${f(H - m)} H ${f(m)} V ${f(H - m - a)}" fill="none" stroke="${C.cy}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="${f(bk * .95)}"/>`;
+    // 3) zone the parts come from (bracket + soft fill + label with a leader)
+    if (P.zone && t >= P.zone[0]) { const [tz, zx, zy, zw, zh, zl, side] = P.zone; const k = t - tz, ap = eo(k / .3), pu = .5 + .5 * Math.sin(k * 6.5), g = 26 * (1 - ap);
+      const x0 = zx - g, y0 = zy - g, x1 = zx + zw + g, y1 = zy + zh + g, L = 28;
+      s += `<rect x="${f(zx)}" y="${f(zy)}" width="${f(zw)}" height="${f(zh)}" rx="10" fill="${C.yel}" opacity="${f((.02 + .04 * pu) * ap)}"/>`;
+      s += `<path d="M ${f(x0)} ${f(y0 + L)} V ${f(y0)} H ${f(x0 + L)} M ${f(x1 - L)} ${f(y0)} H ${f(x1)} V ${f(y0 + L)} M ${f(x1)} ${f(y1 - L)} V ${f(y1)} H ${f(x1 - L)} M ${f(x0 + L)} ${f(y1)} H ${f(x0)} V ${f(y1 - L)}" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" opacity="${f(ap)}"/>` +
+        `<path d="M ${f(x0)} ${f(y0 + L)} V ${f(y0)} H ${f(x0 + L)} M ${f(x1 - L)} ${f(y0)} H ${f(x1)} V ${f(y0 + L)} M ${f(x1)} ${f(y1 - L)} V ${f(y1)} H ${f(x1 - L)} M ${f(x0 + L)} ${f(y1)} H ${f(x0)} V ${f(y1 - L)}" fill="none" stroke="${C.yel}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="${f(ap)}"/>`;
+      if (zl) { const lp = eo((k - .18) / .28), right = side !== 'l', lx = right ? zx + zw + 34 : zx - 34, ly = zy + 34;
+        if (lp > 0) s += `<line x1="${f(right ? zx + zw + 4 : zx - 4)}" y1="${f(ly)}" x2="${f(right ? lx + 2 : lx - 2)}" y2="${f(ly)}" stroke="${C.yel}" stroke-width="4" opacity="${f(lp)}"/>` +
+          `<g transform="translate(${f((1 - lp) * (right ? -18 : 18))} 0)">${tag(lx, ly, zl, C.yel, right ? 'start' : 'end', 23, f(lp))}</g>`; } }
+    // 4) big spec, bottom left: slams in on the word
+    if (P.big && t >= P.big[0] - .02) { const k = t - P.big[0], p = cl(k / .13), sc = k < .13 ? lerp(2.5, 1, p * p * p) : 1 + .07 * Math.exp(-(k - .13) * 9) * Math.sin((k - .13) * 36);
+      const cx = P.bigX || 146, cy = H - (P.bigDy || 108), fs = P.bigSize || 160;
+      s += `<g transform="translate(${cx} ${cy}) scale(${sc.toFixed(4)})" opacity="${f(cl(p * 3))}"><text x="0" y="${f(fs * .37)}" font-family="Anton" font-size="${fs}" text-anchor="middle" fill="${C.yel}" stroke="#000" stroke-width="16" stroke-linejoin="round" paint-order="stroke" letter-spacing="3">${P.big[1]}</text></g>`;
+      const q = eo((k - .2) / .26); if (q > 0 && P.big[2]) s += `<g transform="translate(${f((1 - q) * -16)} 0)">${tag(cx + (P.bigTagDx ?? 142), cy + (P.bigTagDy ?? 10), P.big[2], C.w, 'start', 25, f(q))}</g>`; }
+    // 5) code plate, bottom right: typed
+    if (P.code && t >= P.code[0]) { const k = t - P.code[0], lab = P.code[1] + ' · ', full = lab + P.code[2], n = Math.min(full.length, Math.floor(k * 30)), size = 25;
+      const w = full.length * (size * .6 + 1.5) + 30, h = size * 1.7, x0 = W - 30 - w, yc = H - 46, ap = eo(k / .2);
+      s += `<g opacity="${f(ap)}"><rect x="${f(x0)}" y="${f(yc - h / 2)}" width="${f(w)}" height="${f(h)}" rx="9" fill="rgba(7,20,37,.95)" stroke="${C.cy}" stroke-width="2.5"/>` +
+        `<text x="${f(x0 + 15)}" y="${f(yc + size * .36)}" font-family="JB" font-weight="800" font-size="${size}" letter-spacing="1.5" fill="${C.cy}">${full.slice(0, Math.min(n, lab.length))}<tspan fill="${C.yel}">${n > lab.length ? full.slice(lab.length, n) : ''}</tspan>${n < full.length && Math.floor(t * 6) % 2 ? '▌' : ''}</text></g>`; }
+    return s;
+  }
+
+  // ---------- pops & bangs -> probleme pe zona de wastegate (14.11.2026, turbine BMW M 4.4) ----------
+  // Compact panel (914 x 330, so the real wastegate he films below stays visible): exhaust gas from the engine drives the turbine; with a
+  // pops & bangs map the mixture also fires in the exhaust (bursts along the gas path), and the hits land on the wastegate flap and its linkage.
+  // states: 'flow' = normal gas flow · 'pops' = bursts in the exhaust · 'wg' = wastegate zone marked as the place where problems appear
+  function popsBangs(tl, ph, pt, P) {
+    const st = stOf(ph, P, ['pops', 'wg'][ph] || 'pops'); const pops = st !== 'flow', wg = st === 'wg'; let s = '';
+    const wc = [255, 152], R = 104;
+    // turbine housing + inlet duct from the engine
+    s += `<path d="M 255 48 A ${R} ${R} 0 1 1 175.3 218.8" fill="none" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    s += `<path d="M 24 270 L 175.3 218.8 M 24 320 L 211 246.3" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    const kick = pops ? 1 + .5 * Math.max(0, Math.sin(tl * 9.7)) : 1, ang = tl * 380 * kick;
+    s += `<circle cx="${wc[0]}" cy="${wc[1]}" r="60" fill="${C.body}" stroke="${C.cy}" stroke-width="4"/>`;
+    for (let i = 0; i < 9; i++) { const a = rad(ang + i * 40); const [x0, y0] = P2(wc[0], wc[1], 16, a), [x1, y1] = P2(wc[0], wc[1], 55, a + .5);
+      s += `<path d="M ${f(x0)} ${f(y0)} Q ${f(wc[0] + Math.cos(a + .2) * 41)} ${f(wc[1] + Math.sin(a + .2) * 41)} ${f(x1)} ${f(y1)}" fill="none" stroke="${C.cy}" stroke-width="4"/>`; }
+    s += T(wc[0], 30, 'TURBINĂ', { s: 19, c: C.dim, a: 'middle' }) + T(24, 252, 'DE LA MOTOR', { s: 17, c: C.dim });
+    // outlet pipe, with the wastegate port in its lower wall
+    s += `<path d="M 356 114 L 890 114 M 356 190 L 470 190 M 536 190 L 890 190" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    s += T(888, 100, 'SPRE EVACUARE', { s: 17, c: C.dim, a: 'end' });
+    const open = !pops ? 0 : (wg ? 7 + 9 * Math.abs(Math.sin(tl * 27)) : 3 + 5 * Math.abs(Math.sin(tl * 24)));
+    const wcol = wg ? C.red : C.steel;
+    s += `<rect x="470" y="190" width="66" height="13" fill="${C.body2}" stroke="${C.cy}" stroke-width="3"/>`;
+    s += `<line x1="548" y1="212" x2="662" y2="268" stroke="${wcol}" stroke-width="6" stroke-linecap="round"/>`;
+    s += `<rect x="652" y="246" width="130" height="62" rx="14" fill="${C.body}" stroke="${wg ? C.red : C.cyD}" stroke-width="3"/>` + T(717, 284, 'ACTUATOR', { s: 17, c: wg ? '#FF8A8A' : C.dim, a: 'middle' });
+    s += `<g transform="rotate(${f(-open)} 468 197)"><rect x="468" y="183" width="78" height="13" rx="5" fill="${wg ? C.red : (pops ? C.org : C.steel)}"/><circle cx="468" cy="197" r="7" fill="${C.w}"/></g>`;
+    // exhaust gas
+    const path = k => { if (k < .4) { const q = k / .4; return [lerp(40, 190, q), lerp(296, 234, q)]; }
+      if (k < .7) { const a = rad(lerp(150, 330, (k - .4) / .3)); return [wc[0] + Math.cos(a) * 82, wc[1] + Math.sin(a) * 82]; }
+      const q = (k - .7) / .3; return [lerp(352, 884, q), 152]; };
+    for (let i = 0; i < 14; i++) { const k = (tl * (.7 + .1 * (i % 3)) + i / 14) % 1; const [x, y] = path(k);
+      s += `<circle cx="${f(x)}" cy="${f(y + (k >= .7 ? (rnd(i) - .5) * 44 : 0))}" r="6.5" fill="${pops && i % 3 === 0 ? C.org : C.smoke}" opacity=".85"/>`; }
+    // pops & bangs: the mixture fires in the exhaust; one burst in three lands at the wastegate
+    if (pops) { const SPOTS = [[118, 268], [222, 86], [498, 172], [330, 150], [160, 252], [508, 168]];
+      for (let j = 0; j < 3; j++) { const u = tl * 1.75 + j / 3, ci = Math.floor(u), q = u - ci; if (q > .62) continue;
+        const sp = SPOTS[(ci * 2 + j * 3 + (wg && j === 0 ? 2 : 0)) % SPOTS.length], [bx, by] = (wg && j === 0) ? SPOTS[2 + 3 * (ci % 2)] : sp;
+        const sc = eo(q / .1) * (1 - cl((q - .34) / .28)), rr = 16 + 86 * eo(q / .6);
+        s += `<circle cx="${bx}" cy="${by}" r="${f(rr)}" fill="none" stroke="${C.org}" stroke-width="${f(7 * (1 - q / .62) + 1)}" opacity="${f(.85 * (1 - q / .62))}"/>`;
+        s += glowC(bx, by, 30 * sc, '#FFE08A', .5 * sc) + emoji(bx, by, 78 * sc, 'collision'); } }
+    // labels
+    if (wg) { const pu = .5 + .5 * Math.sin(pt * 8), ap = eo(pt / .3);
+      s += `<circle cx="506" cy="197" r="${f(64 + 6 * pu + 30 * (1 - ap))}" fill="none" stroke="${C.red}" stroke-width="5" stroke-dasharray="14 10" opacity="${f(ap * (.65 + .35 * pu))}" transform="rotate(${f(pt * 40)} 506 197)"/>`;
+      s += `<g transform="translate(0 ${f((1 - ap) * 10)})">${tag(630, 58, 'APAR PROBLEME · ZONA DE WASTEGATE', C.red, 'middle', 21, f(ap))}</g>`; }
+    else if (pops) { const ap = eo(tl / .3); s += tag(630, 58, 'POPS &amp; BANGS · POCNITURI PE EVACUARE', C.org, 'middle', 19, f(ap)); }
+    else s += tag(630, 58, 'GAZELE ROTESC TURBINA', C.grn, 'middle', 19);
+    s += tag(452, 242, 'WASTEGATE', wg ? C.red : C.cy, 'middle', 20);
+    return s;
+  }
+
+  // ---------- „ingineria din spatele motorizărilor M are o rădăcină și în România” (14.11.2026) ----------
+  // Left: a V8 seen from above (two banks, the two turbos in the V), cylinders firing in order. Right: the map of Romania (TL.map, the same
+  // outline as the end card) in the flag colours. A root grows from the turbos in the V to the pin; then turbos travel along it to the engine.
+  // P = { m: t (the label switches to P.mLab), root: t (the root starts growing, the map appears), pin: t (the pin drops), pinLab, go: t (turbos travel) }; canvas 914 x 360
+  function madeInRo(tl, ph, pt, P, t) {
+    let s = ''; const M = (window.TL || {}).map, ms = .5, mx = 474, my = 44;
+    const vx = 180, T1 = [vx, 138], T2 = [vx, 226];
+    const kR = P.root != null ? t - P.root : -1, kP = P.pin != null ? t - P.pin : -1, kG = P.go != null ? t - P.go : -1;
+    // the engine starts large in the middle of the panel and moves to the left when the root starts
+    const q = kR < 0 ? 0 : eio(kR / .45), sc = lerp(1.15, 1, q), ecx = lerp(457, 180, q), ecy = lerp(200, 182, q);
+    // ---- engine, top view
+    let e = `<rect x="70" y="64" width="220" height="236" rx="22" fill="${C.body}" stroke="${C.cy}" stroke-width="4"/>`;
+    e += `<rect x="160" y="78" width="40" height="208" rx="8" fill="#06101E" stroke="${C.cyD}" stroke-width="2"/>`;
+    const ORDER = [0, 4, 3, 7, 5, 2, 6, 1], beat = (tl * 9) % 8;
+    for (let b = 0; b < 2; b++) { const cx = b ? 241 : 119;
+      e += `<rect x="${cx - 35}" y="78" width="70" height="208" rx="12" fill="${C.body2}" stroke="${C.cyD}" stroke-width="3"/>`;
+      for (let i = 0; i < 4; i++) { const idx = b * 4 + i, d = (beat - ORDER.indexOf(idx) + 8) % 8, fire = d < 1.6 ? 1 - d / 1.6 : 0;
+        e += `<circle cx="${cx}" cy="${108 + i * 50}" r="17" fill="${C.org}" fill-opacity="${f(.12 + .7 * fire)}" stroke="${fire > .05 ? C.org : C.cy}" stroke-width="3.5"/>`; } }
+    const hot = kG >= 0 ? C.grn : C.yel, pul = .5 + .5 * Math.sin(tl * 6);
+    [T1, T2].forEach(([x, y], i) => { e += glowC(x, y, 24 + 5 * pul, hot, .18 + .14 * pul) + `<circle cx="${x}" cy="${y}" r="15" fill="${C.bg}" stroke="${hot}" stroke-width="4"/>`;
+      for (let j = 0; j < 3; j++) { const a = rad(tl * 420 + j * 120 + i * 40), [x1, y1] = P2(x, y, 11, a); e += `<line x1="${x}" y1="${y}" x2="${f(x1)}" y2="${f(y1)}" stroke="${hot}" stroke-width="3" stroke-linecap="round"/>`; } });
+    const sw = P.m != null ? t - P.m : -1, lab = sw >= 0 ? (P.mLab || 'MOTORIZĂRILE M') : (P.lab || 'INGINERIE COMPLEXĂ'), pop = sw >= 0 && sw < .3 ? 1 + .22 * Math.sin(cl(sw / .3) * Math.PI) : 1;
+    e += `<g transform="translate(180 34) scale(${pop.toFixed(3)}) translate(-180 -34)">${tag(180, 34, lab, sw >= 0 ? C.yel : C.cy, 'middle', 21, f(eo(tl / .3)))}</g>`;
+    if (q > 0) e += T(180, 332, 'V8 · 2 TURBINE ÎN V', { s: 17, c: C.dim, a: 'middle', op: f(q) });
+    s += `<g transform="translate(${f(ecx - 180 * sc)} ${f(ecy - 182 * sc)}) scale(${sc.toFixed(4)})">${e}</g>`;
+    // side labels while the engine is alone on the panel
+    if (q < 1) { const o1 = eo((tl - .55) / .3) * (1 - q), o2 = eo((tl - 1.5) / .3) * (1 - q);
+      if (o1 > 0) s += `<line x1="306" y1="150" x2="352" y2="150" stroke="${C.cy}" stroke-width="3" opacity="${f(o1)}"/>` + tag(300, 150, 'MOTOR V8', C.cy, 'end', 22, f(o1));
+      if (o2 > 0) s += `<line x1="476" y1="200" x2="608" y2="200" stroke="${C.yel}" stroke-width="3" opacity="${f(o2)}"/>` + tag(614, 200, '2 TURBINE ÎN V', C.yel, 'start', 22, f(o2)); }
+    // ---- Romania
+    const mp = eo((kR - .2) / .6);
+    if (M && mp > 0) { const tr = `transform="translate(${mx} ${my}) scale(${ms})"`, W3 = M.w * ms / 3;
+      s += `<defs><clipPath id="mroC"><path d="${M.path}" ${tr}/></clipPath></defs>`;
+      s += `<g clip-path="url(#mroC)" opacity="${f(.42 * mp)}"><rect x="${mx}" y="${my}" width="${f(W3)}" height="${f(M.h * ms)}" fill="#2F6BFF"/><rect x="${f(mx + W3)}" y="${my}" width="${f(W3)}" height="${f(M.h * ms)}" fill="${C.yel}"/><rect x="${f(mx + 2 * W3)}" y="${my}" width="${f(W3 + 2)}" height="${f(M.h * ms)}" fill="#FF3B30"/></g>`;
+      s += `<path d="${M.path}" ${tr} fill="none" stroke="#EAF6FF" stroke-width="5" stroke-linejoin="round" opacity="${f(mp)}"/>`;
+      s += T(mx + M.w * ms * .47, my + M.h * ms * .46, 'ROMÂNIA', { s: 36, c: '#fff', a: 'middle', ls: 4, op: f(.95 * mp) }); }
+    const buc = M ? (M.cities.find(c => c.name === 'BUCUREȘTI') || M.cities[0]) : { x: 508, y: 478 }, PX = mx + buc.x * ms, PY = my + buc.y * ms;
+    // ---- the root: from the turbos in the V to the pin (starts once the engine has moved over)
+    const A0 = [202, 222], A1 = [300, 222], A2 = [326, 322], A3 = [446, 322], B1 = [566, 322], B2 = [640, PY + 16], B3 = [PX, PY];
+    const bz = (p0, c1, c2, p1, u) => { const v = 1 - u; return [v * v * v * p0[0] + 3 * v * v * u * c1[0] + 3 * v * u * u * c2[0] + u * u * u * p1[0], v * v * v * p0[1] + 3 * v * v * u * c1[1] + 3 * v * u * u * c2[1] + u * u * u * p1[1]]; };
+    const rootPt = u => u < .5 ? bz(A0, A1, A2, A3, u * 2) : bz(A3, B1, B2, B3, (u - .5) * 2);
+    if (kR >= .4) { const g = eio((kR - .4) / 1.0), d = `M ${A0} C ${A1} ${A2} ${A3} C ${B1} ${B2} ${f(PX)} ${f(PY)}`, rc = kG >= 0 ? C.grn : C.yel;
+      s += `<path d="${d}" fill="none" stroke="#000" stroke-opacity=".5" stroke-width="13" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - g).toFixed(4)}"/>` +
+        `<path d="${d}" fill="none" stroke="${rc}" stroke-width="7" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="${(1 - g).toFixed(4)}"/>`;
+      [[.2, -26, 34], [.42, 30, 30], [.63, -24, 32], [.8, 22, 26]].forEach(([u, dx, dy]) => { const r = eo((g - u) / .22); if (r <= 0) return; const [x, y] = rootPt(u);
+        s += `<path d="M ${f(x)} ${f(y)} q ${f(dx * .2)} ${f(dy * .7)} ${f(dx * r)} ${f(dy * r)}" fill="none" stroke="${rc}" stroke-width="4" stroke-linecap="round" opacity=".85"/>`; }); }
+    // ---- the pin
+    if (kP >= 0) { const pp = eo(kP / .32), hk = (kP % 1.4) / 1.4, dy = -(1 - pp) * 70;
+      s += `<circle cx="${f(PX)}" cy="${f(PY)}" r="${f(8 + hk * 40)}" fill="none" stroke="${C.yel}" stroke-width="4" opacity="${f(pp * (.9 - .9 * hk))}"/>`;
+      s += `<g transform="translate(${f(PX)} ${f(PY + dy)}) scale(.62)" opacity="${f(cl(pp * 3))}"><path d="M 0 0 C -7 -16 -26 -28 -26 -46 A 26 26 0 1 1 26 -46 C 26 -28 7 -16 0 0 Z" fill="#E11D2E" stroke="#fff" stroke-width="5"/><circle cx="0" cy="-46" r="9" fill="#fff"/></g>`;
+      if (P.pinLab) s += tag(PX, PY + 34, P.pinLab, C.yel, 'middle', 21, f(eo((kP - .15) / .3))); }
+    // ---- turbos made here travel along the root to the engine
+    if (kG >= 0) for (let j = 0; j < 3; j++) { const u = 1 - ((kG * .42 + j / 3) % 1), [x, y] = rootPt(u), op = cl(u / .08) * cl((1 - u) / .08);
+      s += `<g opacity="${f(op)}"><circle cx="${f(x)}" cy="${f(y)}" r="15" fill="${C.bg}" stroke="${C.grn}" stroke-width="4"/><circle cx="${f(x)}" cy="${f(y)}" r="5.5" fill="${C.grn}"/></g>`; }
+    return s;
+  }
+
+  // ---------- VAG 2.0 Euro 6 (150 CP): exhaust-gas treatment with the low-pressure EGR loop taken after the DPF (14.11.2026) ----------
+  // 914 x 360. states: 'ok' gases flow engine -> turbo -> DPF, part of them return through the EGR cooler + EGR valve to the intake ·
+  // 'dpfErr' DPF efficiency fault · 'egr' cause: EGR valve · 'cooler' cause: EGR valve + EGR cooler · 'engine' ignored -> destroyed engine ·
+  // 'ignore' the whole recirculation loop pulses · 'swap' DPF replaced · 'swapErr' because of the efficiency fault · 'real' the real cause was the gas cooler
+  function vagEgrDpf(tl, ph, pt, P) {
+    const st = typeof ph === 'string' ? ph : (P.states || ['ok', 'dpfErr', 'egr', 'cooler', 'engine', 'ignore'])[ph] || 'ok';
+    const errDpf = st !== 'ok', egrBad = ['egr', 'cooler', 'engine', 'ignore'].includes(st), coolBad = ['cooler', 'engine', 'ignore', 'real'].includes(st);
+    const engBad = st === 'engine' || st === 'ignore', swap = st === 'swap' || st === 'swapErr' || st === 'real', loopHot = st === 'ignore';
+    const pulse = .5 + .5 * Math.sin(tl * 8), inP = eo(pt / .45); let s = '';
+    const EY = 250, LY = 62, IX = 70, TX = 740;
+    // ---- pipes (drawn first)
+    const loopCol = loopHot ? C.red : (egrBad || coolBad) ? 'rgba(255,75,75,.55)' : C.cyD;
+    s += `<path d="M 204 ${EY} L 420 ${EY}" stroke="${C.steelD}" stroke-width="34" opacity=".55"/><path d="M 650 ${EY} L 900 ${EY}" stroke="${C.steelD}" stroke-width="30" opacity=".55"/>`;
+    s += `<path d="M ${TX} ${EY} L ${TX} ${LY} L ${IX} ${LY} L ${IX} 152" fill="none" stroke="${loopCol}" stroke-width="${loopHot ? f(22 + 4 * pulse) : 22}" stroke-linejoin="round" opacity="${loopHot ? f(.55 + .35 * pulse) : .8}"/>`;
+    s += `<path d="M 0 112 L ${IX - 12} 112" stroke="${C.cy}" stroke-width="16" opacity=".3"/>` + T(6, 96, 'AER', { s: 14, c: C.cy });
+    s += T(888, EY - 26, 'EȘAPAMENT', { s: 14, c: C.dim, a: 'end' }) + ARW(846, EY, 902, EY, C.dim, 4, 12);
+    // ---- engine block (4 cylinders)
+    s += `<rect x="24" y="152" width="180" height="164" rx="16" fill="${C.body2}" stroke="${engBad ? C.red : C.cy}" stroke-width="5"/>`;
+    for (let i = 0; i < 4; i++) { const x = 40 + i * 38, py = 176 + 46 * (.5 + .5 * Math.sin(tl * (engBad ? 3 : 9) + i * Math.PI / 2)) + (engBad ? 3 * Math.sin(tl * 37 + i) : 0);
+      s += `<rect x="${x}" y="168" width="30" height="92" rx="4" fill="${C.bg}" stroke="${C.cyD}" stroke-width="3"/><rect x="${x + 3}" y="${f(py)}" width="24" height="24" rx="3" fill="${C.steelD}" stroke="${C.steel}" stroke-width="2"/>`; }
+    s += T(114, 300, 'MOTOR', { s: 22, a: 'middle', c: engBad ? C.red : C.w });
+    if (engBad) { const k = st === 'engine' ? inP : 1;
+      s += `<rect x="28" y="156" width="172" height="156" rx="13" fill="${C.red}" opacity="${f(.2 * k * (.6 + .4 * pulse))}"/>`;
+      s += `<path d="M 138 154 L 124 190 L 146 212 L 126 246 L 150 276 L 136 314" fill="none" stroke="${C.red}" stroke-width="6" stroke-linejoin="round" stroke-dasharray="220" stroke-dashoffset="${f(220 * (1 - k))}"/>`;
+      s += `<g transform="translate(114 222) rotate(-8) scale(${f(.6 + .4 * k)})" opacity="${f(k)}"><rect x="-92" y="-22" width="184" height="44" rx="8" fill="rgba(7,20,37,.92)" stroke="${C.red}" stroke-width="4"/>` + T(0, 8, 'DISTRUS', { s: 25, a: 'middle', c: C.red, ls: 3 }) + '</g>'; }
+    // ---- turbo on the exhaust side
+    const UX = 300, spin = tl * (st === 'ok' ? 9 : 5);
+    s += `<circle cx="${UX}" cy="${EY}" r="44" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/>`;
+    for (let i = 0; i < 7; i++) { const a = spin + i * 2 * Math.PI / 7;
+      s += `<path d="M ${UX} ${EY} Q ${f(UX + 20 * Math.cos(a + .5))} ${f(EY + 20 * Math.sin(a + .5))} ${f(UX + 30 * Math.cos(a))} ${f(EY + 30 * Math.sin(a))}" fill="none" stroke="${C.steel}" stroke-width="4" stroke-linecap="round"/>`; }
+    s += `<circle cx="${UX}" cy="${EY}" r="7" fill="${C.steel}"/>` + T(UX, 318, 'TURBO', { s: 15, a: 'middle', c: C.dim });
+    // ---- DPF canister
+    const DX0 = 420, DX1 = 650, DY0 = 196, DY1 = 304, dCol = swap ? C.grn : st === 'dpfErr' ? C.red : errDpf ? C.yel : C.cy;
+    const drp = st === 'swap' ? eo(pt / .5) : 1;
+    s += `<g transform="translate(0 ${f(-70 * (1 - drp))})" opacity="${f(drp)}"><rect x="${DX0}" y="${DY0}" width="${DX1 - DX0}" height="${DY1 - DY0}" rx="20" fill="${swap ? '#0F2A1B' : '#0B0F16'}" stroke="${dCol}" stroke-width="${st === 'dpfErr' ? f(5 + 3 * pulse) : 5}"/>`;
+    for (let i = 1; i < 5; i++) { const y = DY0 + i * (DY1 - DY0) / 5; s += `<line x1="${DX0 + 14}" y1="${f(y)}" x2="${DX1 - 14}" y2="${f(y)}" stroke="${swap ? 'rgba(74,222,128,.4)' : '#34404F'}" stroke-width="3" stroke-dasharray="14 8"/>`; }
+    s += T((DX0 + DX1) / 2, EY + 12, 'DPF', { s: 34, a: 'middle', c: swap ? C.grn : C.w, ls: 4 }) + '</g>';
+    if (swap) { const k = st === 'swap' ? cl((pt - .35) / .3) : 1;
+      s += `<g opacity="${f(k)}">` + tag(DX0 + 58, DY1 + 2, st === 'real' ? 'SCHIMBAT DE POMANĂ' : 'DPF NOU', st === 'real' ? C.red : C.grn, 'start', 15) + emoji(DX0 + 28, DY1 + 2, 40, 'wrench') + '</g>'; }
+    // fault badge on the DPF
+    if (errDpf) { const bx = DX1 - 6, by = DY0 + 2, sc = st === 'dpfErr' ? 1 + .14 * pulse : st === 'swapErr' ? 1.25 + .2 * pulse : swap ? 1 + .1 * pulse : 1;
+      s += `<g transform="translate(${bx} ${by}) scale(${f(sc)})"><circle r="23" fill="${C.red}"/>` + T(0, 10, '!', { s: 32, a: 'middle', c: '#fff' }) + '</g>';
+      s += tag((DX0 + DX1) / 2 - 14, DY0 - 24, 'EROARE: EFICIENȚĂ DPF', C.red, 'middle', 15, st === 'dpfErr' ? cl(pt / .25) : 1); }
+    // ---- EGR cooler (on the loop, right after the take-off) and EGR valve
+    const CX0 = 548, CX1 = 700, CY0 = 26, CY1 = 98, cCol = coolBad ? C.red : C.cy;
+    s += `<rect x="${CX0}" y="${CY0}" width="${CX1 - CX0}" height="${CY1 - CY0}" rx="12" fill="${C.body}" stroke="${cCol}" stroke-width="${coolBad ? f(5 + 2.5 * pulse) : 5}"/>`;
+    for (let i = 0; i < 5; i++) { const y = CY0 + 12 + i * 12; s += `<line x1="${CX0 + 10}" y1="${y}" x2="${CX1 - 10}" y2="${y}" stroke="${coolBad ? 'rgba(255,75,75,.55)' : C.cyD}" stroke-width="5" stroke-linecap="round"/>`; }
+    if (coolBad) for (let i = 0; i < 26; i++) { const k = st === 'cooler' ? cl((pt - i * .03) / .3) : 1; s += `<circle cx="${f(CX0 + 14 + rnd(i) * (CX1 - CX0 - 28))}" cy="${f(CY0 + 10 + rnd(i + 40) * (CY1 - CY0 - 20))}" r="${f((4 + 4 * rnd(i + 9)) * k)}" fill="#0A0A0A" stroke="#555" stroke-width="1.2"/>`; }
+    s += T((CX0 + CX1) / 2, CY1 + 25, 'RĂCITOR EGR', { s: 18, a: 'middle', c: coolBad ? C.red : C.cy });
+    const VX = 330, vCol = egrBad ? C.red : C.cy, open = egrBad ? .9 : .35 + .3 * Math.sin(tl * 1.4);
+    s += `<circle cx="${VX}" cy="${LY}" r="34" fill="${C.body}" stroke="${vCol}" stroke-width="${egrBad ? f(5 + 2.5 * pulse) : 5}"/>`;
+    s += `<line x1="${f(VX - 25 * Math.cos(open * 1.4))}" y1="${f(LY - 25 * Math.sin(open * 1.4))}" x2="${f(VX + 25 * Math.cos(open * 1.4))}" y2="${f(LY + 25 * Math.sin(open * 1.4))}" stroke="${C.w}" stroke-width="7" stroke-linecap="round"/>`;
+    if (egrBad) for (let i = 0; i < 9; i++) { const a = rad(i * 40 + 10), k = st === 'egr' ? cl((pt - i * .04) / .3) : 1; s += `<circle cx="${f(VX + Math.cos(a) * 25)}" cy="${f(LY + Math.sin(a) * 25)}" r="${f(6.5 * k)}" fill="#0A0A0A" stroke="#555" stroke-width="1.2"/>`; }
+    s += T(VX, CY1 + 25, 'SUPAPĂ EGR', { s: 18, a: 'middle', c: egrBad ? C.red : C.cy });
+    s += T(IX + 20, 140, 'ADMISIE', { s: 14, c: C.dim });
+    // ---- particles: soot before the DPF, clean gas after it, recirculated gas on the loop, fresh air into the intake
+    for (let j = 0; j < 9; j++) { const k = (tl * .5 + j / 9) % 1, x = lerp(206, DX0 - 6, k); if (Math.abs(x - UX) < 46) continue;
+      s += `<circle cx="${f(x)}" cy="${f(EY + 9 * Math.sin(j * 1.9))}" r="6" fill="#0A0A0A" stroke="#aaa" stroke-width="1.5"/>`; }
+    for (let j = 0; j < 6; j++) { const k = (tl * .5 + j / 6) % 1; s += `<circle cx="${f(lerp(DX1 + 6, 898, k))}" cy="${f(EY + 8 * Math.sin(j * 2.3))}" r="5" fill="${C.smoke}" opacity="${f(.85 * (1 - .5 * k))}"/>`; }
+    const slow = coolBad ? .16 : egrBad ? .3 : .42, nL = 11;
+    for (let j = 0; j < nL; j++) { let k = (tl * slow + j / nL) % 1; if (coolBad) k = Math.pow(k, 1.9);   // gas piles up in front of the clogged cooler
+      const L1 = EY - LY, L2 = TX - IX, L3 = 152 - LY, d = k * (L1 + L2 + L3); let x, y;
+      if (d < L1) { x = TX; y = EY - d; } else if (d < L1 + L2) { x = TX - (d - L1); y = LY; } else { x = IX; y = LY + (d - L1 - L2); }
+      if (x > CX0 && x < CX1 && y === LY) continue;
+      const cooled = x < CX0 || x === IX; s += `<circle cx="${f(x)}" cy="${f(y)}" r="6" fill="${cooled ? C.cy : C.org}" opacity=".9"/>`; }
+    for (let j = 0; j < 3; j++) { const k = (tl * .6 + j / 3) % 1; s += `<circle cx="${f(lerp(4, IX - 14, k))}" cy="112" r="5" fill="${C.cy}"/>`; }
+    // ---- cause arrows: valve / cooler -> the DPF fault badge
+    const cause = (x0, y0, on) => { if (!on) return ''; const x1 = DX1 - 12, y1 = DY0 - 46, k = eo(on);
+      return `<path d="M ${x0} ${y0} L ${f(lerp(x0, x1, k))} ${f(lerp(y0, y1, k))}" stroke="${C.red}" stroke-width="5" stroke-dasharray="12 8" stroke-dashoffset="${f(-tl * 60)}" stroke-linecap="round"/>`; };
+    if (st === 'egr' || st === 'cooler') s += cause(VX + 34, LY + 26, st === 'egr' ? cl(pt / .5) : 1);
+    if (st === 'cooler' || st === 'real') s += cause((CX0 + CX1) / 2 - 20, CY1 + 34, cl(pt / .5));
+    if (egrBad && !loopHot && st !== 'engine') s += tag(VX, LY - 50 + 3, 'CAUZA', C.red, 'middle', 14, st === 'egr' ? cl(pt / .25) : 1);
+    if (coolBad && !loopHot && st !== 'engine') s += tag(CX1 + 62, LY, st === 'real' ? 'CAUZA REALĂ' : 'CAUZA', C.red, 'middle', 14, (st === 'cooler' || st === 'real') ? cl(pt / .25) : 1);
+    const L = Object.assign({ ok: ['O PARTE DIN GAZE SE ÎNTORC, RĂCITE, ÎN ADMISIE', C.cy], dpfErr: ['EROARE DE EFICIENȚĂ PE DPF', C.red], egr: ['CAUZA: EGR-UL', C.red],
+      cooler: ['CAUZA: EGR-UL + RĂCITORUL DE EGR', C.red], engine: ['IGNORATE › MOTOR DISTRUS', C.red], ignore: ['NU IGNORA PARTEA DE RECIRCULARE', C.yel],
+      swap: ['DPF-UL A FOST SCHIMBAT', C.yel], swapErr: ['PENTRU CĂ AVEA EROARE PE EFICIENȚĂ', C.red], real: ['PROBLEMA ERA PE RĂCITORUL DE GAZE', C.yel] }, P.labels || {})[st];
+    s += tag(560, 340, L[0], L[1], 'middle', 17, cl(pt / .25));
+    return s;
+  }
+
+  // ---------- "watercooler" = charge-air cooler cooled with coolant (VAG 2.0 Euro 6, 14.11.2026) ----------
+  // 914 x 360. states: 'ok' hot air from the turbo is cooled with coolant · 'crack' the cooler cracks, coolant gets into the intake air ·
+  // 'consume' the engine burns coolant, the level in the tank falls (P.fall = seconds) · 'recon' engines were reconditioned ·
+  // 'where' because coolant was found in various places · 'trace' where did it come from · 'source' from the cracked watercooler
+  function waterCooler(tl, ph, pt, P) {
+    const st = typeof ph === 'string' ? ph : (P.states || ['ok', 'crack', 'consume'])[ph] || 'ok';
+    const late = ['recon', 'where', 'trace', 'source'].includes(st), src = st === 'source', crack = st === 'crack' || st === 'consume' || src;
+    const pulse = .5 + .5 * Math.sin(tl * 8); let s = '';
+    const AY = 208, UX = 104, WX0 = 292, WX1 = 548, WY0 = 128, WY1 = 288, EX0 = 690, EX1 = 892, EY0 = 118, EY1 = 306;
+    // ---- air pipes
+    s += `<path d="M ${UX + 60} ${AY} L ${WX0} ${AY}" stroke="${C.org}" stroke-width="34" opacity=".28"/><path d="M ${WX1} ${AY} L ${EX0} ${AY}" stroke="${C.cy}" stroke-width="34" opacity=".28"/>`;
+    s += T((UX + 60 + WX0) / 2, AY - 28, 'AER CALD', { s: 14, a: 'middle', c: C.org }) + T((WX1 + EX0) / 2, AY - 28, 'ADMISIE', { s: 14, a: 'middle', c: C.cy });
+    // ---- turbo (compressor)
+    s += `<circle cx="${UX}" cy="${AY}" r="72" fill="${C.body2}" stroke="${C.cy}" stroke-width="5"/>`;
+    for (let i = 0; i < 9; i++) { const a = tl * 9 + i * 2 * Math.PI / 9;
+      s += `<path d="M ${UX} ${AY} Q ${f(UX + 34 * Math.cos(a + .5))} ${f(AY + 34 * Math.sin(a + .5))} ${f(UX + 52 * Math.cos(a))} ${f(AY + 52 * Math.sin(a))}" fill="none" stroke="${C.steel}" stroke-width="5" stroke-linecap="round"/>`; }
+    s += `<circle cx="${UX}" cy="${AY}" r="10" fill="${C.steel}"/>` + T(UX, 312, 'TURBO', { s: 17, a: 'middle', c: C.dim });
+    // ---- coolant tank + hose to the cooler
+    const KX = 600, KY = 22, KW = 76, KH = 86;
+    let lvl = .8; if (st === 'consume') lvl = lerp(.8, .2, eio(pt / (P.fall || 2.6))); else if (late) lvl = .2; else if (st === 'crack') lvl = lerp(.8, .72, cl(pt / 1.5));
+    const low = lvl < .34;
+    s += `<path d="M ${KX + 10} ${KY + KH} L ${KX + 10} ${KY + KH + 14} L ${WX1 - 24} ${KY + KH + 14} L ${WX1 - 24} ${WY0}" fill="none" stroke="${C.grn}" stroke-width="9" stroke-linejoin="round" opacity=".55"/>`;
+    s += `<rect x="${KX}" y="${KY}" width="${KW}" height="${KH}" rx="12" fill="${C.body}" stroke="${low ? C.red : C.grn}" stroke-width="${low ? f(4 + 2 * pulse) : 4}"/>`;
+    s += `<rect x="${KX + 5}" y="${f(KY + 5 + (KH - 10) * (1 - lvl))}" width="${KW - 10}" height="${f((KH - 10) * lvl)}" rx="7" fill="${C.grn}" opacity=".8"/>`;
+    s += `<line x1="${KX + KW}" y1="${KY + 18}" x2="${KX + KW + 12}" y2="${KY + 18}" stroke="${C.dim}" stroke-width="3"/><line x1="${KX + KW}" y1="${KY + 66}" x2="${KX + KW + 12}" y2="${KY + 66}" stroke="${low ? C.red : C.dim}" stroke-width="3"/>`;
+    s += T(KX + KW + 18, KY + 23, 'MAX', { s: 13, c: C.dim }) + T(KX + KW + 18, KY + 71, 'MIN', { s: 13, c: low ? C.red : C.dim });
+    s += T(KX + KW + 18, KY + 47, 'ANTIGEL', { s: 15, c: low ? C.red : C.grn });
+    if (st === 'consume' || late) s += ARW(KX - 18, KY + 20, KX - 18, KY + 66, C.red, 5, 14);
+    // ---- watercooler core: vertical coolant tubes, air passes between them
+    s += `<rect x="${WX0}" y="${WY0}" width="${WX1 - WX0}" height="${WY1 - WY0}" rx="16" fill="${C.body}" stroke="${src ? C.red : crack ? C.org : C.cy}" stroke-width="${src ? f(6 + 4 * pulse) : 6}"/>`;
+    for (let i = 0; i < 7; i++) { const x = WX0 + 28 + i * 33.5;
+      s += `<rect x="${f(x - 8)}" y="${WY0 + 12}" width="16" height="${WY1 - WY0 - 24}" rx="7" fill="rgba(74,222,128,.22)" stroke="${C.grn}" stroke-width="2.5"/>`;
+      for (let j = 0; j < 3; j++) { const k = (tl * .5 + j / 3 + i * .13) % 1; s += `<circle cx="${f(x)}" cy="${f(lerp(WY0 + 20, WY1 - 20, i % 2 ? 1 - k : k))}" r="4.5" fill="${C.grn}"/>`; } }
+    s += T((WX0 + WX1) / 2, WY0 - 14, 'WATERCOOLER', { s: 20, a: 'middle', c: src ? C.red : C.w, ls: 2 });
+    s += T((WX0 + WX1) / 2, WY1 + 24, 'RĂCITOR DE AER CU ANTIGEL', { s: 14, a: 'middle', c: C.dim });
+    // ---- air particles: hot (orange) in, cooled (cyan) out
+    for (let j = 0; j < 7; j++) { const k = (tl * .6 + j / 7) % 1; s += `<circle cx="${f(lerp(UX + 66, WX0 - 4, k))}" cy="${f(AY + 9 * Math.sin(j * 2.1))}" r="6" fill="${C.org}"/>`; }
+    for (let j = 0; j < 6; j++) { const k = (tl * .6 + j / 6) % 1; s += `<circle cx="${f(lerp(WX1 + 4, EX0 - 4, k))}" cy="${f(AY + 9 * Math.sin(j * 1.7))}" r="6" fill="${C.cy}"/>`; }
+    // ---- engine block
+    s += `<rect x="${EX0}" y="${EY0}" width="${EX1 - EX0}" height="${EY1 - EY0}" rx="16" fill="${C.body2}" stroke="${late && !src ? C.yel : C.cy}" stroke-width="5"/>`;
+    for (let i = 0; i < 4; i++) { const x = EX0 + 18 + i * 43, py = EY0 + 26 + 56 * (.5 + .5 * Math.sin(tl * 9 + i * Math.PI / 2));
+      s += `<rect x="${x}" y="${EY0 + 18}" width="34" height="108" rx="4" fill="${C.bg}" stroke="${C.cyD}" stroke-width="3"/><rect x="${x + 3}" y="${f(py)}" width="28" height="26" rx="3" fill="${C.steelD}" stroke="${C.steel}" stroke-width="2"/>`; }
+    s += T((EX0 + EX1) / 2, EY1 - 18, 'MOTOR', { s: 22, a: 'middle', c: C.w });
+    // ---- crack on the cooler + coolant drops carried by the intake air into the engine
+    const KRX = WX1 - 30, KRY = AY + 6;
+    if (crack) { const k = st === 'crack' ? eo(pt / .35) : 1;
+      s += `<path d="M ${KRX - 12} ${KRY - 46} L ${KRX + 6} ${KRY - 24} L ${KRX - 9} ${KRY - 4} L ${KRX + 9} ${KRY + 18} L ${KRX - 6} ${KRY + 42}" fill="none" stroke="#fff" stroke-width="5" stroke-linejoin="round" stroke-dasharray="130" stroke-dashoffset="${f(130 * (1 - k))}"/>`;
+      if (st === 'crack' && pt < .6) s += spark(KRX, KRY, pt * 3, C.yel, 7, 16 + 30 * pt);
+      const nD = st === 'crack' ? 5 : 8;
+      for (let j = 0; j < nD; j++) { const q = (tl * .45 + j / nD) % 1; if (st === 'crack' && q > cl(pt / 1.4)) continue;
+        const x = lerp(KRX + 6, EX0 + 30 + (j % 4) * 43, q), y = lerp(KRY, EY0 + 60, Math.pow(q, 2)) + 10 * Math.sin(j * 2.4) * (1 - q);
+        s += drop(x, y, 7, C.grn, .95); } }
+    // ---- late states: engine reconditioned ('recon'), coolant spotted in several places ('where'), traced back ('trace') to the crack ('source')
+    if (late) { const spots = [[EX0 + 24, EY1 - 30], [EX1 - 24, EY1 - 30], [EX0 - 34, AY + 34], [EX0 + 101, EY0 - 14]];
+      const kS = st === 'recon' ? eo(pt / .35) : 1;
+      s += `<g transform="translate(${(EX0 + EX1) / 2} ${EY0 + 74}) rotate(-7) scale(${f(.6 + .4 * kS)})" opacity="${f(kS * (src ? .45 : 1))}"><rect x="-97" y="-21" width="194" height="42" rx="8" fill="rgba(7,20,37,.94)" stroke="${C.yel}" stroke-width="4"/>` + T(0, 7, 'RECONDIȚIONAT', { s: 18, a: 'middle', c: C.yel, ls: 1.5 }) + '</g>';
+      s += `<g opacity="${f(kS)}">` + emoji(EX0 + 4, EY0 + 40, 46, 'wrench') + '</g>';
+      if (st !== 'recon') spots.forEach(([x, y], i) => { const k = st === 'where' ? cl((pt - i * .3) / .3) : 1; if (k <= 0) return;
+        if (st === 'trace' || src) { const d = src ? 1 : cl((pt - i * .12) / 1.9);
+          s += `<path d="M ${x} ${y - 16} L ${f(lerp(x, KRX + 10, eio(d)))} ${f(lerp(y - 16, KRY, eio(d)))}" stroke="${src ? C.red : C.yel}" stroke-width="4" stroke-dasharray="10 8" stroke-dashoffset="${f(tl * 50)}" stroke-linecap="round" opacity=".9"/>`; }
+        s += drop(x, y, 11 * eo(k), C.grn, 1);
+        if (!src) s += `<circle cx="${x + 20}" cy="${y - 22}" r="${f(13 * eo(k))}" fill="${C.yel}"/>` + T(x + 20, y - 16, '?', { s: 19, a: 'middle', c: '#000', op: f(k) }); });
+      if (st === 'trace') s += `<circle cx="${KRX}" cy="${KRY}" r="${f(30 + 6 * pulse)}" fill="${C.yel}" opacity="${f(.9 * cl((pt - 1.2) / .4))}"/>` + T(KRX, KRY + 15, '?', { s: 42, a: 'middle', c: '#000', op: f(cl((pt - 1.2) / .4)) });
+      if (src) s += `<circle cx="${KRX}" cy="${KRY}" r="${f(58 + 8 * pulse)}" fill="none" stroke="${C.red}" stroke-width="6" opacity="${f(cl(pt / .3))}"/>` + tag(KRX - 96, WY0 + 28, 'SPART', C.red, 'middle', 17, cl(pt / .3)); }
+    const L = Object.assign({ ok: ['RĂCEȘTE AERUL DE LA TURBO CU ANTIGEL', C.cy], crack: ['SE CRAPĂ › ANTIGELUL INTRĂ ÎN ADMISIE', C.red], consume: ['MOTORUL ÎNCEPE SĂ CONSUME ANTIGEL', C.red],
+      recon: ['MOTOARE RECONDIȚIONATE...', C.yel], where: ['...PENTRU CĂ EXISTA ANTIGEL PRIN DIFERITE LOCURI', C.yel], trace: ['DE UNDE VENEA ANTIGELUL?', C.yel],
+      source: ['DIN WATERCOOLERUL SPART', C.red] }, P.labels || {})[st];
+    s += tag(457, 340, L[0], L[1], 'middle', 17, cl(pt / .25));
+    return s;
+  }
+
+  return { vagEgrDpf, waterCooler, photoId, popsBangs, madeInRo, commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
 })();
