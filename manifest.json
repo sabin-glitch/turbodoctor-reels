@@ -330,6 +330,11 @@
   "downloader": "curl"
  },
  {
+  "id": "fsq_redline",
+  "source_url": "https://freesound.org/search/",
+  "downloader": "curl"
+ },
+ {
   "id": "si5L01b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/oZHj94II4pUbuDKLs8f0/ZsSnQdZyMt7OPQFcRDkq/content.mp3",
   "downloader": "curl"
@@ -1145,6 +1150,11 @@
   "downloader": "curl"
  },
  {
+  "id": "fsq_revlimiter",
+  "source_url": "https://freesound.org/search/",
+  "downloader": "curl"
+ },
+ {
   "id": "dr_L08a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/d8t7rDGuajrlvup41wiH/gOzLtLbCb77Qs1WDQwMH/content.mp3",
   "downloader": "curl"
@@ -1627,6 +1637,11 @@
  {
   "id": "si7L01a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/Fyeb8b48iDGrDHPiKvDS/AVmJARAe2hZJcHmK2aAB/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "fsq_dieselrevving",
+  "source_url": "https://freesound.org/search/",
   "downloader": "curl"
  },
  {
@@ -3170,6 +3185,11 @@
   "downloader": "curl"
  },
  {
+  "id": "fsq_runaway",
+  "source_url": "https://freesound.org/search/",
+  "downloader": "curl"
+ },
+ {
   "id": "wmq_bmw4",
   "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
@@ -3182,6 +3202,11 @@
  {
   "id": "bov2_L05b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/YX8Czm6qWNUGkvhkbl4D/J1jS2jZkzemibHhJho1g/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "fsq_dieselrev",
+  "source_url": "https://freesound.org/search/",
   "downloader": "curl"
  },
  {
