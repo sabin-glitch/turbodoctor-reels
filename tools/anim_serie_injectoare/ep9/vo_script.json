@@ -21,12 +21,12 @@
   "id": "i9b0"
  },
  {
-  "text": "Producătorii de echipamente de injecție cer o motorină care unge suficient și cel mult {7|șapte} la sută biodiesel.",
+  "text": "Producătorii de echipamente de injecție cer o motorină care unge suficient și cel mult {7|șapte} la sută {biodiesel|biodizel}.",
   "gap": 0.45,
   "id": "i9b1"
  },
  {
-  "text": "Biodieselul vechi sau prost face acizi și depuneri: filtrele se înfundă și piesele se lipesc.",
+  "text": "{Biodieselul|Biodizelul} vechi sau prost face acizi și depuneri: filtrele se înfundă și piesele se lipesc.",
   "gap": 0.45,
   "id": "i9b2"
  },
