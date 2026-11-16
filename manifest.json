@@ -100,6 +100,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf4_v4",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_113811_5bf93d46-807d-4485-b6cb-3fc5e61d0218.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3_sin_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/rRZjbUuKG97gJPOqMxfU/sAO76YHm3OphtyC8q9UP/content.mp3",
   "downloader": "curl"
@@ -545,6 +550,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf4_v5",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_113810_4cfa0884-a7af-419e-821b-d7bcb854f3ec.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "sdt2_e13b4_a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/EYo3wcZ7841rPaMrYd1t/0cMQfbcCpbZzJ1Seblo3/content.mp3",
   "downloader": "curl"
@@ -872,6 +882,11 @@
  {
   "id": "hf_veo_a",
   "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_072905_984fb4b5-2441-4036-bbeb-c6ee6a27a8ff.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf4_k1",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_113809_935b096f-8291-4863-88c6-ee6fd8aac0c9.mp4",
   "downloader": "curl"
  },
  {
@@ -2095,6 +2110,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf4_k0",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_113808_11a2f155-7e05-40ce-bded-5fe1f7178393.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "dr_L27a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/MOuTjKGXEhBlmcxRHD9J/wE5a2TFUz5yv0upDEW70/content.mp3",
   "downloader": "curl"
@@ -3035,6 +3055,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf4_m2",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_113808_216fb712-a5fc-4120-8fd4-a0f149b72ed0.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "ep2_vo_mec_t2",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/5mwwjrHzNMr1cknAMm4G/hei2ipkAxSqOV66Qd7Ms/content.mp3",
   "downloader": "curl"
@@ -3462,6 +3487,11 @@
  {
   "id": "cm_aud_turbo2",
   "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf4_m3",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_113808_ee7a4f74-847a-4abb-85fb-b45b0a642c5a.mp4",
   "downloader": "curl"
  },
  {
