@@ -24,3 +24,5 @@ Hook-ul (rândul 0) arată pompa CP4 în secțiune mergând cu aer (U 69,3–74,
 - Folderul reel-ului ca la `anim_injectie` (pașii 4 și 7); `reel.js`: `pipeline/examples/reel_amorsare_filtru_motorina_animatie.js`.
 
 Valorile din text (circa 2.000 de bari, peste 2.000 de euro) sunt generale, nu dintr-o fișă de producător.
+
+**Stare (16.11.2026):** reelul aprobat este cel refăcut cu pompa CP4 randată în Blender (`tools/blender_cp4/reel/`): hook-ul și partea cu pompa în secțiune au imagine nouă, iar vocea, subtitrările și titlurile sunt cele făcute aici. Sabin l-a aprobat pe 15.11 și e programat pe 16.11. Folderul de lucru al variantei de aici (voce, mix, timeline, cadrele animației) este în /mnt/project-files/animatii/sursa/amorsare-filtru/reel/work/.
