@@ -1,0 +1,73 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”. Astăzi prezentăm cauza {1|unu} din {13|treisprezece}: particulele din motorină.",
+  "gap": 0.25,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i1h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Potrivit Bosch, motorina murdară este cea mai probabilă cauză pentru care un injector cedează înainte de vreme.",
+  "gap": 0.6,
+  "id": "i1b0"
+ },
+ {
+  "text": "Piesele din injector se mișcă la jocuri de {1–4|unu până la patru} microni. Un fir de păr are {50–70|cincizeci până la șaptezeci}.",
+  "gap": 0.45,
+  "id": "i1b1"
+ },
+ {
+  "text": "Așa că exact particulele pe care nu le vezi, de câțiva microni, fac cel mai mult rău.",
+  "gap": 0.4,
+  "id": "i1b2"
+ },
+ {
+  "text": "Prima lovită e supapa de comandă: o bilă de un milimetru. Când se ridică, acul deschide. Când închide, injecția se oprește.",
+  "gap": 0.5,
+  "id": "i1b3"
+ },
+ {
+  "text": "Particulele prinse între bilă și scaun lasă mici adâncituri. Când acestea se unesc, motorina sub presiune trece prin ele și sapă un canal.",
+  "gap": 0.45,
+  "id": "i1b4"
+ },
+ {
+  "text": "Supapa nu mai etanșează. Returul crește, iar injectorul dă mai multă motorină și închide mai târziu.",
+  "gap": 0.4,
+  "id": "i1b5"
+ },
+ {
+  "text": "Ca un șmirghel, aceleași particule macină și duza, iar jetul se strică.",
+  "gap": 0.4,
+  "id": "i1b6"
+ },
+ {
+  "text": "La mașină vezi martorul de motor și pierdere de putere. Uneori, motorul se oprește chiar în mers.",
+  "gap": 0.45,
+  "id": "i1b7"
+ },
+ {
+  "text": "Cum eviți? Filtru de calitate, schimbat la intervalul din cartea service, și motorină de la benzinării serioase.",
+  "gap": 0.5,
+  "id": "i1b8"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

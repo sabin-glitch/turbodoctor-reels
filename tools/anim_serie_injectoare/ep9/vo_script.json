@@ -1,0 +1,68 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {9|nouă} din {13|treisprezece}: motorina care nu unge.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i9h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Motorina e singurul lubrifiant al pompei de înaltă presiune și al injectoarelor.",
+  "gap": 0.6,
+  "id": "i9b0"
+ },
+ {
+  "text": "Producătorii de echipamente de injecție cer o motorină care unge suficient și cel mult {7|șapte} la sută biodiesel.",
+  "gap": 0.45,
+  "id": "i9b1"
+ },
+ {
+  "text": "Biodieselul vechi sau prost face acizi și depuneri: filtrele se înfundă și piesele se lipesc.",
+  "gap": 0.45,
+  "id": "i9b2"
+ },
+ {
+  "text": "Uleiul de încălzire nu unge destul, iar uleiul vegetal e prea vâscos și lasă depuneri.",
+  "gap": 0.45,
+  "id": "i9b3"
+ },
+ {
+  "text": "Și când rămâi fără motorină, aerul intrat în sistem împiedică ungerea.",
+  "gap": 0.45,
+  "id": "i9b4"
+ },
+ {
+  "text": "Fără pelicula de motorină, piesele freacă metal pe metal, duzele se lipesc și supapele cedează.",
+  "gap": 0.45,
+  "id": "i9b5"
+ },
+ {
+  "text": "Cum eviți? Motorină standard de la benzinării serioase, fără amestecuri, și nu mergi până la ultima picătură.",
+  "gap": 0.45,
+  "id": "i9b6"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

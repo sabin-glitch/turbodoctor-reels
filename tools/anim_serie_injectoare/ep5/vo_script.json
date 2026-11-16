@@ -1,0 +1,63 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {5|cinci} din {13|treisprezece}: șaiba de etanșare.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i5h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Între injector și chiulasă stă o șaibă de cupru, care ține gazele de ardere în cilindru.",
+  "gap": 0.6,
+  "id": "i5b0"
+ },
+ {
+  "text": "Dacă lipsește, e refolosită sau nepotrivită, ori clema e strânsă greșit, gazele scapă pe lângă injector.",
+  "gap": 0.45,
+  "id": "i5b1"
+ },
+ {
+  "text": "La fiecare ardere urcă în puțul injectorului și lasă o calamină foarte tare. Mercedes-Benz îi spune „moartea neagră”.",
+  "gap": 0.45,
+  "id": "i5b2"
+ },
+ {
+  "text": "Injectorul se blochează în chiulasă, iar motorul merge prost.",
+  "gap": 0.45,
+  "id": "i5b3"
+ },
+ {
+  "text": "La mașină: funingine în jurul injectorului, mers neregulat, iar la demontare injectorul nu mai iese.",
+  "gap": 0.45,
+  "id": "i5b4"
+ },
+ {
+  "text": "Cum eviți? La orice demontare: șaibă nouă, scaunul curățat și strângere cu cuplul și unghiul din fabrică.",
+  "gap": 0.45,
+  "id": "i5b5"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

@@ -1,0 +1,58 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {10|zece} din {13|treisprezece}: pilitura de la pompă.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i10h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Când pompa de înaltă presiune se macină, pilitura pleacă prin rampă în toate injectoarele.",
+  "gap": 0.6,
+  "id": "i10b0"
+ },
+ {
+  "text": "Se depune mai ales la supapa de comandă, în zona bilei.",
+  "gap": 0.45,
+  "id": "i10b1"
+ },
+ {
+  "text": "Buletinele constructorilor spun la fel: dacă găsești metal în pompă, se schimbă pompa, rampa, toate injectoarele, țevile și filtrul.",
+  "gap": 0.45,
+  "id": "i10b2"
+ },
+ {
+  "text": "Rezervorul și conductele se golesc și se spală, iar niciun buletin nu permite curățarea și refolosirea injectoarelor.",
+  "gap": 0.45,
+  "id": "i10b3"
+ },
+ {
+  "text": "Pe scurt: pompa schimbată singură înseamnă injectoare noi, distruse de pilitura rămasă.",
+  "gap": 0.45,
+  "id": "i10b4"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

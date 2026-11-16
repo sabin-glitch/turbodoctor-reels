@@ -1,0 +1,68 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {3|trei} din {13|treisprezece}: depunerile din interior.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i3h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "În interior, pe ac și pe pistonul de comandă, se depune în timp o peliculă subțire, ca un lac.",
+  "gap": 0.6,
+  "id": "i3b0"
+ },
+ {
+  "text": "Apare când urme de sodiu din motorină reacționează cu unii aditivi. În teste, au fost de ajuns câteva părți la un milion.",
+  "gap": 0.45,
+  "id": "i3b1"
+ },
+ {
+  "text": "Jocurile sunt de câțiva microni, iar forțele care mișcă piesele sunt mici, așa că pelicula le frânează.",
+  "gap": 0.45,
+  "id": "i3b2"
+ },
+ {
+  "text": "Acul răspunde mai târziu decât comanda, sau rămâne lipit.",
+  "gap": 0.45,
+  "id": "i3b3"
+ },
+ {
+  "text": "La mașină: pornire grea sau imposibilă la rece, mers neregulat și pierdere de putere.",
+  "gap": 0.45,
+  "id": "i3b4"
+ },
+ {
+  "text": "Un semn tipic: testele electrice ies bune, dar injectorul tot nu lucrează cum trebuie.",
+  "gap": 0.45,
+  "id": "i3b5"
+ },
+ {
+  "text": "Cum eviți? Motorină cu aditivi detergenți, de la benzinării serioase. Aditivii buni previn depunerile și le pot chiar curăța.",
+  "gap": 0.45,
+  "id": "i3b6"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

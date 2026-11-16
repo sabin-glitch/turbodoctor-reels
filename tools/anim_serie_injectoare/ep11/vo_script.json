@@ -1,0 +1,58 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {11|unsprezece} din {13|treisprezece}: injectorul fără cod și recondiționarea fără standard.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i11h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Fiecare injector are un cod de corecție, scris pe corp, care se introduce în calculator la montaj.",
+  "gap": 0.6,
+  "id": "i11b0"
+ },
+ {
+  "text": "Fără el, calculatorul nu știe cât dă acel injector, iar motorul merge prost.",
+  "gap": 0.45,
+  "id": "i11b1"
+ },
+ {
+  "text": "Al doilea risc e recondiționarea fără stand de testare și fără piese bune.",
+  "gap": 0.45,
+  "id": "i11b2"
+ },
+ {
+  "text": "Bosch a testat injectoare recondiționate în afara rețelei autorizate: în {2013|două mii treisprezece}, {70|șaptezeci} la sută au picat testele.",
+  "gap": 0.45,
+  "id": "i11b3"
+ },
+ {
+  "text": "Cum eviți? Injector testat pe stand, cu piese bune, și codat în calculator la montaj.",
+  "gap": 0.45,
+  "id": "i11b4"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

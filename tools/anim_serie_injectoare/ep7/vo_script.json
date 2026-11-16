@@ -1,0 +1,63 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {7|șapte} din {13|treisprezece}: benzina pusă din greșeală.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i7h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Benzina spală pelicula de ungere din pompa de înaltă presiune.",
+  "gap": 0.6,
+  "id": "i7b0"
+ },
+ {
+  "text": "Pompa ajunge să meargă metal pe metal și trimite pilitură în tot sistemul, până în injectoare.",
+  "gap": 0.45,
+  "id": "i7b1"
+ },
+ {
+  "text": "Dacă motorul a mers, reparația poate cuprinde pompa, injectoarele, rampa, țevile, filtrul și rezervorul.",
+  "gap": 0.45,
+  "id": "i7b2"
+ },
+ {
+  "text": "ADAC avertizează că pot face rău și cantitățile mici de benzină.",
+  "gap": 0.45,
+  "id": "i7b3"
+ },
+ {
+  "text": "Ce faci? Nu pui contactul și nu pornești motorul. Chemi tractarea, iar rezervorul se golește.",
+  "gap": 0.45,
+  "id": "i7b4"
+ },
+ {
+  "text": "Iar iarna, nu amesteca motorina cu benzină.",
+  "gap": 0.45,
+  "id": "i7b5"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

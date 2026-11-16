@@ -1,0 +1,58 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {12|douăsprezece} din {13|treisprezece}: defectele electrice.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i12h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "La injectorul electromagnetic, o bobină ridică ancora și deschide supapa de comandă.",
+  "gap": 0.6,
+  "id": "i12b0"
+ },
+ {
+  "text": "Bobina se poate întrerupe, poate face scurtcircuit sau își poate pierde izolația față de corp.",
+  "gap": 0.45,
+  "id": "i12b1"
+ },
+ {
+  "text": "La injectorul piezo, teancul de sute de straturi ceramice poate face scurtcircuit sau își pierde capacitatea. Și nu se schimbă separat.",
+  "gap": 0.45,
+  "id": "i12b2"
+ },
+ {
+  "text": "Defectele electrice sunt rare față de cele hidraulice, iar uneori vina e la mufă sau la cablaj.",
+  "gap": 0.45,
+  "id": "i12b3"
+ },
+ {
+  "text": "Cum eviți? Înainte să schimbi injectoare, verifică mufele și cablajul.",
+  "gap": 0.45,
+  "id": "i12b4"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

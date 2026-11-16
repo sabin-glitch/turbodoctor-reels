@@ -1,0 +1,68 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {4|patru} din {13|treisprezece}: calamina din găurile duzei.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i4h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Găurile duzei au în jur de o zecime de milimetru.",
+  "gap": 0.6,
+  "id": "i4b0"
+ },
+ {
+  "text": "Motorina rămasă în vârful fierbinte se descompune și lasă calamină în găuri și în jurul lor.",
+  "gap": 0.45,
+  "id": "i4b1"
+ },
+ {
+  "text": "Peste aproximativ {300|trei sute} de grade la vârful duzei, depunerile cresc mult mai repede.",
+  "gap": 0.45,
+  "id": "i4b2"
+ },
+ {
+  "text": "Iar după oprire, căldura rămasă coace motorina din injector.",
+  "gap": 0.45,
+  "id": "i4b3"
+ },
+ {
+  "text": "Puterea o fură depunerea din interiorul găurii, nu crusta de afară. Jetul se strică.",
+  "gap": 0.45,
+  "id": "i4b4"
+ },
+ {
+  "text": "La mașină: fum, putere mai mică, consum mai mare și probleme repetate cu filtrul de particule.",
+  "gap": 0.45,
+  "id": "i4b5"
+ },
+ {
+  "text": "Cum eviți? Motorină cu aditivi detergenți. În teste, detergenții au recuperat peste trei sferturi din puterea pierdută, cam într-un plin.",
+  "gap": 0.45,
+  "id": "i4b6"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

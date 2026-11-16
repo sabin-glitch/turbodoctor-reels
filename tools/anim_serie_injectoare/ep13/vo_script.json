@@ -1,0 +1,63 @@
+[
+ {
+  "text": "Seria „De ce se strică injectoarele”.",
+  "gap": 0.25,
+  "id": "intro"
+ },
+ {
+  "text": "Astăzi prezentăm cauza {13|treisprezece} din {13|treisprezece}: uzura normală.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "i13h"
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1"
+ },
+ {
+  "text": "Bosch proiectează sistemul de injecție pentru {300.000|trei sute de mii} de kilometri la autoturisme.",
+  "gap": 0.6,
+  "id": "i13b0"
+ },
+ {
+  "text": "Delphi dă o durată medie în service de {130|o sută treizeci} până la {160.000|o sută șaizeci de mii} de kilometri.",
+  "gap": 0.45,
+  "id": "i13b1"
+ },
+ {
+  "text": "Cu timpul apare cavitația la scaunul supapei și la duză, iar arcurile slăbesc.",
+  "gap": 0.45,
+  "id": "i13b2"
+ },
+ {
+  "text": "Returul crește, iar preinjecțiile se pierd.",
+  "gap": 0.45,
+  "id": "i13b3"
+ },
+ {
+  "text": "La mașină: pornire grea, ralanti neregulat și fum. Iar o duză care curge poate topi pistonul.",
+  "gap": 0.45,
+  "id": "i13b4"
+ },
+ {
+  "text": "Cum eviți? La kilometraj mare, test de retur și verificare pe stand, înainte să cedeze un injector.",
+  "gap": 0.45,
+  "id": "i13b5"
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]
