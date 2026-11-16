@@ -1,0 +1,116 @@
+[
+ {
+  "text": "Motorul turează singur la maximum, scoate fum și nu se oprește nici dacă iei cheia din contact.",
+  "gap": 0.3,
+  "tags": "[serious] [matter of fact] [conversational tone]"
+ },
+ {
+  "text": "Asta e ambalarea dieselului. Hai să vedem ce se întâmplă.",
+  "gap": 0.5,
+  "tags": "[serious] [matter of fact] [conversational tone]"
+ },
+ {
+  "text": "Dieselul nu are scânteie: pistonul comprimă aerul și îl încălzește la {700–900|șapte sute până la nouă sute} de grade, iar motorina injectată se aprinde singură.",
+  "gap": 0.35
+ },
+ {
+  "text": "Iar puterea nu se reglează din aer, ca la benzină, ci doar din motorina injectată.",
+  "gap": 0.35
+ },
+ {
+  "text": "Dar și uleiul de motor arde, la temperaturi mult mai mici. Dacă ajunge în admisie, motorul îl arde ca pe motorină.",
+  "gap": 0.6
+ },
+ {
+  "text": "Iar cel mai des, uleiul vine din turbină.",
+  "gap": 0.35
+ },
+ {
+  "text": "Turbina e unsă cu ulei sub presiune, câțiva litri pe minut, iar la capete are segmenți metalici, nu simeringuri.",
+  "gap": 0.35
+ },
+ {
+  "text": "Ei nu țin uleiul sub presiune. Etanșarea se face prin presiune.",
+  "gap": 0.3
+ },
+ {
+  "text": "În compresor și în turbină presiunea e mai mare decât în corpul central, așa că gazele împing spre interior, iar uleiul se scurge în baie.",
+  "gap": 0.5
+ },
+ {
+  "text": "Echilibrul ăsta se strică în patru situații.",
+  "gap": 0.35
+ },
+ {
+  "text": "Unu: bucșele sunt uzate, axul joacă și roade segmenții.",
+  "gap": 0.35
+ },
+ {
+  "text": "Doi: returul e înfundat sau presiunea din carter e prea mare, iar uleiul nu se mai scurge.",
+  "gap": 0.35
+ },
+ {
+  "text": "Trei: filtrul de aer îmbâcsit face depresiune și trage uleiul afară, chiar și printr-o etanșare bună.",
+  "gap": 0.35
+ },
+ {
+  "text": "Patru: prea mult ulei în baie, inclusiv motorina ajunsă în ulei la regenerările de DPF.",
+  "gap": 0.5
+ },
+ {
+  "text": "Uleiul scăpat pe partea compresorului ajunge în intercooler, apoi direct în cilindri.",
+  "gap": 0.6
+ },
+ {
+  "text": "Și aici începe bucla. Uleiul arde, iar turația crește.",
+  "gap": 0.35
+ },
+ {
+  "text": "Pompa de ulei, antrenată de motor, împinge și mai mult ulei prin turbina stricată.",
+  "gap": 0.3
+ },
+ {
+  "text": "Crește presiunea din carter, iar aerul trage și uleiul adunat în intercooler.",
+  "gap": 0.3
+ },
+ {
+  "text": "Mai mult ulei, turație și mai mare.",
+  "gap": 0.35
+ },
+ {
+  "text": "Calculatorul taie motorina, dar degeaba: motorul merge acum pe propriul ulei.",
+  "gap": 0.6
+ },
+ {
+  "text": "De ce nu se oprește de la cheie? Pentru că, la diesel, cheia doar oprește injectoarele. Iar uleiul nu trece prin ele.",
+  "gap": 0.35
+ },
+ {
+  "text": "Multe dieseluri moderne au o clapetă de admisie care se închide la oprire și uneori îl salvează.",
+  "gap": 0.3
+ },
+ {
+  "text": "Dar nu e gândită pentru urgențe: de obicei stă închisă doar câteva secunde, iar uleiul ajuns în galerie arde mai departe.",
+  "gap": 0.6
+ },
+ {
+  "text": "Așa că motorul urcă până cedează: supapele lovesc pistoanele, se rupe o bielă, sau rămâne fără ulei și se gripează.",
+  "gap": 0.6
+ },
+ {
+  "text": "Dacă ți se întâmplă, nu apăsa ambreiajul și nu pune în neutru: fără sarcină, urcă și mai repede.",
+  "gap": 0.35
+ },
+ {
+  "text": "La manuală, bagi treapta cea mai mare, frânezi tare și eliberezi brusc ambreiajul.",
+  "gap": 0.3
+ },
+ {
+  "text": "Altfel, îi tai aerul: o placă rigidă sau un stingător cu {CO2|ce-o-doi} pe admisie, niciodată mâna.",
+  "gap": 0.6
+ },
+ {
+  "text": "Ca să nu ajungi aici: urmărește nivelul uleiului, schimbă filtrul de aer la timp, iar când schimbi turbina, curăță intercoolerul.",
+  "gap": 0.45
+ }
+]
