@@ -365,6 +365,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf2_kling_b",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_091524_992cf1ad-53e5-4ffa-af5a-37fa99ae05c7.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3_sin_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/UaTWCUGnlpMjV11g6LYx/RLB4IXdjaQktph1NQpYa/content.mp3",
   "downloader": "curl"
@@ -507,6 +512,11 @@
  {
   "id": "sdt2_e3b5_a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/rMY0C92adzswmlqAEVHX/7BDnRUtpaR52gYRkVYe9/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf2_kling_a",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_091524_3a3b7093-3808-48e5-847a-08d50ee33f04.mp4",
   "downloader": "curl"
  },
  {
@@ -2300,6 +2310,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf2_veo_a",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_091521_e3477cb7-63c4-4f55-a809-e92f09310885.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "amz_X13k1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/XMO6Pmkc2yMAXoRCAsXI/iPz7KdW2b01Xtq2iHgnh/content.mp3",
   "downloader": "curl"
@@ -3517,6 +3532,11 @@
  {
   "id": "webq_oga",
   "source_url": "https://opengameart.org/art-search",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf2_veo_b",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_091521_a80e929f-2b34-46f2-85a2-a77393666c51.mp4",
   "downloader": "curl"
  },
  {
