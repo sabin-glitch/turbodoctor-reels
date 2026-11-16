@@ -175,6 +175,11 @@
   "downloader": "curl"
  },
  {
+  "id": "hf3_k0",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_110557_f60a348d-513d-4490-85bd-1c5feff60ee7.mp4",
+  "downloader": "curl"
+ },
+ {
   "id": "cm_aud_surge",
   "source_url": "https://commons.wikimedia.org/w/api.php",
   "downloader": "curl"
@@ -932,6 +937,11 @@
  {
   "id": "pov01_vo_client",
   "source_url": "https://assets.vidiq.com/voiceovers/8dc1cfaf-f1ac-4189-9824-b3922ba9c063/0cca20f0-7734-4599-b93c-1c005d46aeeb.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf3_k1",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_110558_0690bf17-a6f9-475f-a5d9-350c1e5e96ed.mp4",
   "downloader": "curl"
  },
  {
@@ -3232,6 +3242,16 @@
  {
   "id": "webq_cbov",
   "source_url": "https://commons.wikimedia.org/w/api.php",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf3_k3",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_110557_e4caa5ab-0e4a-43aa-ac76-6ddda1b059f6.mp4",
+  "downloader": "curl"
+ },
+ {
+  "id": "hf3_k2",
+  "source_url": "https://d8j0ntlcm91z4.cloudfront.net/user_3M7QQwDpSpyOPDtO7FIxTjrHT4E/hf_20261116_110557_a384edf9-c0ed-4e9d-ae58-a85f3fc7f397.mp4",
   "downloader": "curl"
  },
  {
