@@ -1780,6 +1780,11 @@
   "downloader": "curl"
  },
  {
+  "id": "tdvtestpack",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/l5GTgu7Cw9HEvVvdK2Qq/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "wmo_b9",
   "source_url": "https://upload.wikimedia.org/wikipedia/commons/e/ec/%2706-%2708_BMW_3-Series_Sedan_%28Loaner%29.JPG",
   "downloader": "curl"
@@ -4242,6 +4247,11 @@
  {
   "id": "ov1_bovword",
   "source_url": "https://api.openverse.org/v1/audio/",
+  "downloader": "curl"
+ },
+ {
+  "id": "tdvtestL00a",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/dpKRFe4pXRjqXuWHAErC/bjGclZVNVe5hpAYOrOq4/content.mp3",
   "downloader": "curl"
  },
  {
