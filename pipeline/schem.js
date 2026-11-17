@@ -2181,5 +2181,169 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { vagEgrDpf, waterCooler, photoId, popsBangs, madeInRo, commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
+  // ---------- DPF reconditioning: the whole ceramic monolith is replaced inside the original canister (17.11.2026) ----------
+  // 914 x 360. states: 'swap' the canister is opened, the old monolith comes out, a new one goes in, the canister is welded back ·
+  // 'upgrade' the new monolith is also an upgrade. P (absolute reel seconds, all optional): open, out, in, close, weld, up (the UPGRADE badge).
+  // P.labels overrides the bottom tag per phase (out / in / done / upgrade); P.shell = the tag above the canister.
+  const HCP = (id, base, dark, n = 15) => `<pattern id="${id}" width="${n}" height="${n}" patternUnits="userSpaceOnUse"><rect width="${n}" height="${n}" fill="${base}"/><rect x="${f(n * .22)}" y="${f(n * .22)}" width="${f(n * .56)}" height="${f(n * .56)}" rx="2" fill="${dark}"/></pattern>`;  // filter face: a grid of channel openings
+  function dpfRecon(tl, ph, pt, P, t) {
+    const st = typeof ph === 'string' ? ph : (P.states || ['swap', 'upgrade'])[ph] || 'swap';
+    const up = st === 'upgrade', T0 = t - tl, tm = (k, d) => P[k] != null ? P[k] : T0 + d;
+    const kOpen = up ? 1 : eio((t - tm('open', .15)) / .36), kOut = up ? 1 : eio((t - tm('out', .55)) / .8), kIn = up ? 1 : eio((t - tm('in', 1.5)) / .7),
+      kClose = up ? 1 : eio((t - tm('close', 2.25)) / .36), kW = up ? 1 : cl((t - tm('weld', 2.65)) / .5);
+    const X0 = 150, X1 = 560, Y0 = 96, Y1 = 250, YM = (Y0 + Y1) / 2, CX = X0 + 18, CW = X1 - X0 - 36, CY0 = Y0 + 12, CH = Y1 - Y0 - 24, pulse = .5 + .5 * Math.sin(tl * 8);
+    const open = kOpen * (1 - kClose); let s = '';
+    // inlet pipe + cone (fixed) and the shell walls
+    s += `<path d="M 14 ${YM - 23} L 96 ${YM - 23} L ${X0} ${Y0} L ${X0} ${Y1} L 96 ${YM + 23} L 14 ${YM + 23}" fill="${C.body}" stroke="${C.cy}" stroke-width="5" stroke-linejoin="round"/>`;
+    s += `<rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" fill="${C.bg}" opacity=".9"/>`;
+    s += `<path d="M ${X0} ${Y0} L ${X1} ${Y0} M ${X0} ${Y1} L ${X1} ${Y1}" stroke="${C.cy}" stroke-width="7" stroke-linecap="round"/>`;
+    // the monolith, side section: 'old' = cracked + melted, 'new' = clean
+    const core = (dx, op, kind) => { if (op <= .01) return ''; const x = CX + dx, old = kind === 'old'; let g = `<g opacity="${f(op)}">`;
+      g += `<rect x="${f(x)}" y="${CY0}" width="${CW}" height="${CH}" rx="9" fill="${old ? '#B4574F' : '#D5DEE8'}" stroke="${old ? C.red : C.grn}" stroke-width="5"/>`;
+      for (let i = 1; i < 9; i++) g += `<line x1="${f(x + 6)}" y1="${f(CY0 + i * CH / 9)}" x2="${f(x + CW - 6)}" y2="${f(CY0 + i * CH / 9)}" stroke="${old ? '#6E2C27' : '#8FA2B5'}" stroke-width="2.5"/>`;
+      if (old) { g += `<path d="M ${f(x + CW * .28)} ${CY0 + 3} l 14 20 l -16 20 l 20 22 l -12 22 l 16 22 l -9 18" fill="none" stroke="#12080A" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>`;
+        g += `<path d="M ${f(x + CW * .60)} ${f(CY0 + CH * .30)} c 22 -16 54 -10 62 12 c 10 24 -8 48 -36 48 c -30 2 -48 -36 -26 -60 Z" fill="#160A08" stroke="${C.org}" stroke-width="4"/>`; }
+      else g += `<rect x="${f(x + 3)}" y="${CY0 + 3}" width="${CW - 6}" height="${CH - 6}" rx="7" fill="${C.grn}" opacity="${f(.08 + .08 * pulse)}"/>`;
+      return g + '</g>'; };
+    const dxO = 470 * kOut, opO = 1 - cl((kOut - .4) / .5), dxN = 470 * (1 - kIn), opN = kOut >= 1 || kIn > 0 ? cl(kIn / .25) : 0;
+    s += core(dxO, opO, 'old') + core(dxN, opN, 'new');
+    if (opO > .01) s += tag(CX + CW / 2 + dxO, Y1 + 34, P.oldName || 'MONOLIT VECHI', C.red, 'middle', 16, opO) + (kOut > .25 ? `<g opacity="${f(opO)}">` + xmark(CX + CW * .5 + dxO, YM, 26, C.red, 9) + '</g>' : '');
+    if (opN > .01) s += tag(CX + CW / 2 + dxN, Y1 + 34, P.newName || 'MONOLIT NOU', C.grn, 'middle', 16, opN);
+    // outlet cap: comes off, then goes back on and is welded
+    s += `<g transform="translate(${f(250 * open)} 0)" opacity="${f(1 - .92 * open)}"><path d="M ${X1} ${Y0} L ${X1 + 54} ${YM - 23} L ${X1 + 140} ${YM - 23} L ${X1 + 140} ${YM + 23} L ${X1 + 54} ${YM + 23} L ${X1} ${Y1} Z" fill="${C.body}" stroke="${C.cy}" stroke-width="5" stroke-linejoin="round"/></g>`;
+    if (kW > 0) { const yw = lerp(Y0, Y1, kW);
+      s += `<line x1="${X1}" y1="${Y0}" x2="${X1}" y2="${f(yw)}" stroke="#F4F8FC" stroke-width="8" stroke-dasharray="6 5"/>`;
+      if (kW < 1) s += glowC(X1, yw, 26, C.yel, .35) + spark(X1, yw, tl * 11, C.yel, 7, 26) + spark(X1, yw, -tl * 7, '#fff', 5, 14); }
+    // gas through the filter while it is closed
+    if (open < .03 && (kOpen < .03 || kW >= 1)) for (let j = 0; j < 8; j++) { const k = (tl * .45 + j / 8) % 1, x = lerp(18, X1 + 136, k); if (x > X0 - 30 && x < X1 + 40) continue;
+      s += `<circle cx="${f(x)}" cy="${f(YM + 9 * Math.sin(j * 2.1))}" r="5" fill="${C.cy}" opacity=".85"/>`; }
+    s += tag((X0 + X1) / 2, 50, P.shell || 'FILTRU ORIGINAL', C.cy, 'middle', 17);
+    // right side: done / upgrade
+    const BX = 794;
+    if (!up && kW >= 1) { const k = eo((t - tm('weld', 2.65) - .5) / .3); s += `<g transform="translate(${BX} ${YM}) scale(${f(.5 + .5 * k)})" opacity="${f(k)}"><circle r="40" fill="rgba(7,20,37,.94)" stroke="${C.grn}" stroke-width="5"/>` + check(0, 2, 20, C.grn, 9) + '</g>'; }
+    if (up) { const ku = eo((t - (P.up != null ? P.up : t - pt + .2)) / .32);
+      if (ku > 0) { s += `<g transform="translate(${BX} ${YM}) scale(${f(.55 + .45 * ku)})" opacity="${f(ku)}"><rect x="-104" y="-34" width="208" height="68" rx="14" fill="rgba(7,20,37,.94)" stroke="${C.grn}" stroke-width="5"/>` + T(0, 13, P.badge || 'UPGRADE', { s: 36, a: 'middle', c: C.grn, ls: 3 }) + '</g>';
+        for (let i = 0; i < 3; i++) { const k = (tl * .9 + i / 3) % 1; s += `<path d="M ${BX - 22} ${f(YM - 50 - k * 36)} l 22 -18 l 22 18" fill="none" stroke="${C.grn}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" opacity="${f(ku * (1 - k))}"/>`; } }
+      else s += `<g transform="translate(${BX} ${YM})"><circle r="40" fill="rgba(7,20,37,.94)" stroke="${C.grn}" stroke-width="5"/>` + check(0, 2, 20, C.grn, 9) + '</g>'; }
+    const phs = up ? 'upgrade' : t < tm('in', 1.5) ? 'out' : kW < 1 ? 'in' : 'done';
+    const L = Object.assign({ out: ['SE SCOATE MONOLITUL VECHI', C.red], in: ['INTRĂ MONOLITUL CERAMIC NOU', C.grn], done: ['RECONDIȚIONAT COMPLET', C.grn], upgrade: ['PE LÂNGĂ ASTA: UN UPGRADE', C.grn] }, P.labels || {})[phs];
+    s += tag(457, 336, L[0], L[1], 'middle', 17);
+    return s;
+  }
+
+  // ---------- DPF core material: the old core (cordierite) vs the new core (silicon carbide) (17.11.2026) ----------
+  // 914 x 360. states: 'old' the old core · 'new' the new core appears next to it · 'retro' "the way it used to be made" ·
+  // 'melt' both are heated: the old material melts, the new one holds · 'crack' the old material cracks, the new one holds.
+  // P.names = [[tag, material], [tag, material]] · P.retro = the small tag of the 'retro' state · P.melt / P.crack = absolute reel seconds of the two damages ·
+  // P.labels = { melt: [old, new], crack: [old, new] } overrides the result tags under the cores.
+  function coreMaterial(tl, ph, pt, P, t) {
+    const st = typeof ph === 'string' ? ph : (P.states || ['old', 'new', 'retro', 'melt', 'crack'])[ph] || 'old';
+    const hasNew = st !== 'old', heat = st === 'melt' || st === 'crack', crk = st === 'crack';
+    const kOld = st === 'old' ? eo(pt / .4) : 1, kNew = st === 'new' ? eo(pt / .4) : hasNew ? 1 : 0;
+    const tM = P.melt != null ? t - P.melt : pt - .3, tC = P.crack != null ? t - P.crack : pt - .15;  // P.melt / P.crack: absolute reel seconds at which the old core starts to melt / to crack
+    const kHeat = st === 'melt' ? cl(pt / .7) : crk ? 1 : 0, kMelt = st === 'melt' ? cl(tM / 1.3) : crk ? 1 : 0, kCr = crk ? cl(tC / 1.3) : 0;
+    const LX = 208, RX = 706, CY = 180, R = 100, pulse = .5 + .5 * Math.sin(tl * 8); let s = '';
+    const N = P.names || [['MIEZ VECHI', 'CORDIERITĂ'], ['MIEZ NOU', 'CARBURĂ DE SILICIU']];
+    s += `<defs>${HCP('cmA', '#C96F64', '#7E342F')}${HCP('cmB', '#E6EDF4', '#8C9FB3')}<clipPath id="cmCA"><circle cx="${LX}" cy="${CY}" r="${R - 3}"/></clipPath><clipPath id="cmCB"><circle cx="${RX}" cy="${CY}" r="${R - 3}"/></clipPath></defs>`;
+    const pop = (cx, k) => `<g transform="translate(${cx} ${CY}) scale(${f(.4 + .6 * k)}) translate(${-cx} ${-CY})" opacity="${f(cl(k * 2.5))}">`;
+    const badge = (cx, good, k) => k <= 0 ? '' : `<g transform="translate(${cx + 74} ${CY - 74}) scale(${f(.4 + .6 * eo(k))})" opacity="${f(cl(k * 3))}"><circle r="25" fill="${good ? '#16A34A' : '#E11D2E'}" stroke="#fff" stroke-width="3"/>` + (good ? check(0, 1, 12, '#fff', 6) : xmark(0, 0, 10, '#fff', 6)) + '</g>';
+    // ---- old core (left)
+    s += pop(LX, kOld) + `<circle cx="${LX}" cy="${CY}" r="${R}" fill="url(#cmA)" stroke="${heat ? C.red : '#E79A90'}" stroke-width="${heat ? f(6 + 3 * pulse) : 7}"/><g clip-path="url(#cmCA)">`;
+    if (kHeat > 0) s += `<circle cx="${LX}" cy="${CY}" r="${R}" fill="${C.org}" opacity="${f(.42 * kHeat * (.8 + .2 * pulse))}"/>`;
+    if (kMelt > 0) { const mx = LX - 34, my = CY + 34, mr = 38 * eo(kMelt);
+      s += `<path d="M ${f(mx - mr)} ${f(my)} C ${f(mx - mr)} ${f(my - mr * .9)} ${f(mx + mr * .7)} ${f(my - mr * 1.1)} ${f(mx + mr)} ${f(my - mr * .1)} C ${f(mx + mr * 1.2)} ${f(my + mr * .8)} ${f(mx - mr * .3)} ${f(my + mr * 1.1)} ${f(mx - mr)} ${f(my)} Z" fill="#170A07" stroke="${C.yel}" stroke-width="${f(3 + 2 * pulse)}"/>`;
+      s += `<circle cx="${f(mx + 62)}" cy="${f(my + 18)}" r="${f(13 * eo(kMelt))}" fill="#170A07" stroke="${C.org}" stroke-width="3"/>`;
+      for (let i = 0; i < 3; i++) { const k = (tl * .8 + i / 3) % 1; s += drop(mx - 20 + i * 20, my + mr * .9 + k * 40, 6, C.org, kMelt * (1 - k)); } }
+    if (kCr > 0) { const D = 260;
+      const CRK = 'fill="none" stroke-linejoin="round" stroke-linecap="round"', c1 = `M ${LX - 62} ${CY - 80} l 30 18 l 6 -22 l 34 30 l 18 -16 l 26 36 l 22 -8 l 28 34`, c2 = `M ${LX + 22} ${CY - 44} l -4 30 l 22 16 l -10 26`;
+      [[c1, D, 0], [c2, 110, .55]].forEach(([d, len, dl]) => { const kk = cl((kCr - dl) / (1 - dl));
+        s += `<path d="${d}" ${CRK} stroke="#FFE7D6" stroke-width="11" opacity=".5" stroke-dasharray="${len}" stroke-dashoffset="${f(len * (1 - kk))}"/><path d="${d}" ${CRK} stroke="#0B0506" stroke-width="6.5" stroke-dasharray="${len}" stroke-dashoffset="${f(len * (1 - kk))}"/>`; }); }
+    s += '</g></g>';
+    // ---- new core (right)
+    if (!hasNew) s += `<circle cx="${RX}" cy="${CY}" r="${R}" fill="none" stroke="${C.cyD}" stroke-width="4" stroke-dasharray="12 9"/>` + T(RX, CY + 20, '?', { s: 60, a: 'middle', c: C.cyD });
+    else { s += pop(RX, kNew) + `<circle cx="${RX}" cy="${CY}" r="${R}" fill="url(#cmB)" stroke="${C.grn}" stroke-width="7"/>`;
+      if (kHeat > 0) s += `<circle cx="${RX}" cy="${CY}" r="${R - 3}" fill="${C.org}" opacity="${f(.16 * kHeat * (.8 + .2 * pulse))}"/>`;
+      if (heat) s += `<circle cx="${RX}" cy="${CY}" r="${f(R + 9 + 3 * pulse)}" fill="none" stroke="${C.grn}" stroke-width="4" opacity="${f(.55 * kHeat)}"/>`;
+      s += '</g>'; }
+    // ---- heat: flames under both cores + a thermometer between them
+    if (kHeat > 0) { [LX, RX].forEach((cx, q) => { for (let i = 0; i < 9; i++) { const x = cx - 92 + i * 23, h = (30 + 30 * Math.abs(Math.sin(tl * 7 + i * 1.7 + q))) * kHeat, w = 13;
+          s += `<path d="M ${f(x - w)} 312 Q ${f(x - w)} ${f(312 - h * .5)} ${f(x)} ${f(312 - h)} Q ${f(x + w)} ${f(312 - h * .5)} ${f(x + w)} 312 Z" fill="${i % 2 ? C.org : C.yel}" opacity="${f(.92 * kHeat)}"/>`; } });
+      const TX = 457, TY0 = 92, TY1 = 250, lv = kHeat * (.86 + .04 * pulse);
+      s += `<rect x="${TX - 13}" y="${TY0}" width="26" height="${TY1 - TY0 + 14}" rx="13" fill="${C.bg}" stroke="${C.w}" stroke-width="4" opacity="${f(kHeat)}"/><circle cx="${TX}" cy="${TY1 + 22}" r="24" fill="${C.red}" stroke="${C.w}" stroke-width="4" opacity="${f(kHeat)}"/>`;
+      s += `<rect x="${TX - 6}" y="${f(TY1 - (TY1 - TY0 - 10) * lv)}" width="12" height="${f((TY1 - TY0 - 10) * lv + 14)}" rx="6" fill="${C.red}"/>`;
+      for (let i = 0; i < 5; i++) s += `<line x1="${TX + 18}" y1="${TY0 + 14 + i * 34}" x2="${TX + 30}" y2="${TY0 + 14 + i * 34}" stroke="${C.dim}" stroke-width="3" opacity="${f(kHeat)}"/>`;
+      s += T(TX, 74, P.heat || 'CĂLDURĂ', { s: 16, a: 'middle', c: C.org, op: f(kHeat) });
+      s += badge(LX, false, st === 'melt' ? (tM - .55) / .3 : 1) + badge(RX, true, st === 'melt' ? (tM - .95) / .3 : 1); }
+    else if (hasNew) { const k = st === 'new' ? eo((pt - .25) / .35) : 1;
+      s += `<g opacity="${f(k)}">` + ARW(336, CY, lerp(336, 578, k), CY, C.grn, 7, 20) + '</g>' + tag(457, CY - 34, P.arrow || 'UPGRADE', C.grn, 'middle', 19, k);
+      if (st === 'retro') s += tag(457, CY + 40, P.retro || 'CA PE VREMURI', C.yel, 'middle', 17, cl(pt / .25)); }
+    // ---- names + bottom tag
+    s += tag(LX, 38, N[0][0] + ' · ' + N[0][1], heat ? C.red : C.yel, 'middle', 18, cl(kOld * 2));
+    if (hasNew) s += tag(RX, 38, N[1][0] + ' · ' + N[1][1], C.grn, 'middle', 18, cl(kNew * 2));
+    const L = Object.assign({ melt: ['SE TOPEȘTE MAI UȘOR', 'SE TOPEȘTE MULT MAI GREU'], crack: ['SE CRAPĂ MAI UȘOR', 'SE CRAPĂ MULT MAI GREU'] }, P.labels || {})[st];
+    if (L) { const k1 = st === 'melt' ? cl((tM - .55) / .25) : cl((tC - .5) / .25), k2 = st === 'melt' ? cl((tM - .95) / .25) : cl((tC - .9) / .25);
+      s += tag(LX, 340, L[0], C.red, 'middle', 17, k1) + tag(RX, 340, L[1], C.grn, 'middle', 17, k2); }
+    return s;
+  }
+
+  // ---------- aftermarket DPF with no precious-metal loading -> efficiency fault (17.11.2026) ----------
+  // 914 x 360. states: 'virgin' a blank ("virgin") aftermarket filter · 'metals' no rhodium / palladium / platinum loading
+  // (P.rh, P.pd, P.pt = absolute reel seconds at which each tile is crossed out) · 'error' efficiency fault · 'ok' good aftermarket filters do exist (loaded) ·
+  // 'price' ...but their price gets close to the price of reconditioning. P.name = the tag above the canister · P.labels overrides the bottom tag per state.
+  function dpfCoating(tl, ph, pt, P, t) {
+    const st = typeof ph === 'string' ? ph : (P.states || ['virgin', 'metals', 'error', 'ok', 'price'])[ph] || 'virgin';
+    const ok = st === 'ok' || st === 'price', err = st === 'error', price = st === 'price', T0 = t - tl, pulse = .5 + .5 * Math.sin(tl * 8); let s = '';
+    // ---- the aftermarket filter (left)
+    const X0 = 64, X1 = 268, Y0 = 118, Y1 = 232, YM = (Y0 + Y1) / 2, col = ok ? C.grn : err ? C.red : C.yel;
+    s += `<path d="M 6 ${YM - 17} L 28 ${YM - 17} L ${X0} ${Y0 + 12} L ${X0} ${Y1 - 12} L 28 ${YM + 17} L 6 ${YM + 17} Z" fill="${C.body}" stroke="${C.steel}" stroke-width="4" stroke-linejoin="round"/>`;
+    s += `<path d="M ${X1 + 58} ${YM - 17} L ${X1 + 36} ${YM - 17} L ${X1} ${Y0 + 12} L ${X1} ${Y1 - 12} L ${X1 + 36} ${YM + 17} L ${X1 + 58} ${YM + 17} Z" fill="${C.body}" stroke="${C.steel}" stroke-width="4" stroke-linejoin="round"/>`;
+    s += `<rect x="${X0}" y="${Y0}" width="${X1 - X0}" height="${Y1 - Y0}" rx="18" fill="${ok ? '#0F2A1B' : C.body2}" stroke="${col}" stroke-width="${err ? f(5 + 3 * pulse) : 5}"/>`;
+    for (let i = 1; i < 5; i++) { const y = Y0 + i * (Y1 - Y0) / 5; s += `<line x1="${X0 + 14}" y1="${f(y)}" x2="${X1 - 14}" y2="${f(y)}" stroke="${ok ? 'rgba(74,222,128,.4)' : '#34404F'}" stroke-width="3" stroke-dasharray="14 8"/>`; }
+    s += T((X0 + X1) / 2, YM + 12, 'DPF', { s: 34, a: 'middle', c: ok ? C.grn : C.w, ls: 4 });
+    s += tag((X0 + X1) / 2, 74, P.name || 'AFTERMARKET', C.yel, 'middle', 18);
+    { const bx = X1 - 4, by = Y0 + 2, sc = err ? 1.1 + .16 * pulse : 1; s += `<g transform="translate(${bx} ${by}) scale(${f(sc)})"><circle r="23" fill="${ok ? '#16A34A' : err ? C.red : C.yel}"/>`
+        + (ok ? check(0, 1, 11, '#fff', 6) : T(0, 11, err ? '!' : '?', { s: 32, a: 'middle', c: err ? '#fff' : '#000', ls: 0 })) + '</g>'; }
+    if (err) s += tag((X0 + X1) / 2, Y1 + 36, P.fault || 'EROARE: EFICIENȚĂ DPF', C.red, 'middle', 15, cl(pt / .25));
+    if (ok) s += tag((X0 + X1) / 2, Y1 + 36, P.good || 'AFTERMARKET OK', C.grn, 'middle', 15, st === 'ok' ? cl(pt / .25) : 1);
+    // ---- price: the good aftermarket filter gets close to the price of reconditioning
+    const kp = price ? eo(pt / .35) : 0;
+    if (price) { const kb = eio((pt - .3) / 1.2), BXp = 372, BW = 500, tip = BXp + BW * .9 * kb;
+      s += `<g opacity="${f(kp)}">` + T(BXp, 104, P.priceA || 'PREȚ RECONDIȚIONARE', { s: 19, c: C.grn }) + `<rect x="${BXp}" y="116" width="${BW}" height="34" rx="17" fill="${C.grn}"/>`;
+      s += T(BXp, 200, P.priceB || 'PREȚ AFTERMARKET OK', { s: 19, c: C.yel }) + `<rect x="${BXp}" y="212" width="${BW}" height="34" rx="17" fill="rgba(255,255,255,.12)"/><rect x="${BXp}" y="212" width="${f(Math.max(34, BW * .9 * kb))}" height="34" rx="17" fill="${C.yel}"/>`;
+      s += `<line x1="${BXp + BW}" y1="108" x2="${BXp + BW}" y2="256" stroke="${C.w}" stroke-width="3" stroke-dasharray="7 6" opacity=".75"/>`;
+      if (kb > .05 && kb < 1) s += ARW(tip + 8, 229, tip + 38, 229, C.yel, 5, 13);
+      s += '</g>'; }
+    // ---- magnifier on the channel wall + the three precious metals
+    const ko = 1 - kp; if (ko > .01) { s += `<g opacity="${f(ko)}">`;
+      const MX = 466, MY = 172, MR = 90;
+      s += `<path d="M ${X1 - 46} ${YM - 26} L ${MX - MR + 12} ${MY - 44} M ${X1 - 46} ${YM + 26} L ${MX - MR + 12} ${MY + 44}" stroke="${C.cyD}" stroke-width="3" stroke-dasharray="6 6"/>`;
+      s += `<line x1="${MX + 64}" y1="${MY + 64}" x2="${MX + 104}" y2="${MY + 104}" stroke="${C.steel}" stroke-width="13" stroke-linecap="round"/>`;
+      s += `<defs><clipPath id="dcM"><circle cx="${MX}" cy="${MY}" r="${MR - 3}"/></clipPath></defs><circle cx="${MX}" cy="${MY}" r="${MR}" fill="${C.bg}" stroke="${C.cy}" stroke-width="6"/><g clip-path="url(#dcM)">`;
+      [-66, 0, 66].forEach((dy, q) => { const y = MY + dy; s += `<rect x="${MX - MR}" y="${y - 13}" width="${2 * MR}" height="26" fill="#56657A"/>`;
+        for (let i = 0; i < 12; i++) s += `<circle cx="${f(MX - MR + 8 + i * 16 + 6 * rnd(i + q * 20))}" cy="${f(y - 6 + 12 * rnd(i + 50 + q * 20))}" r="${f(2.2 + 2 * rnd(i + 90 + q * 9))}" fill="${C.bg}"/>`;
+        if (ok) for (let i = 0; i < 16; i++) { const up2 = i % 2 ? -1 : 1, tw = .55 + .45 * Math.sin(tl * 5 + i * 1.3 + q), k = st === 'ok' ? cl((pt - i * .03) / .3) : 1;
+          s += `<circle cx="${f(MX - MR + 10 + i * 11.5)}" cy="${f(y + up2 * 15)}" r="${f(4.6 * k)}" fill="${['#7FD4FF', C.yel, '#F4F8FC'][i % 3]}" opacity="${f(tw)}"/>`; } });
+      s += '</g>' + tag(MX, MY + MR + 2, ok ? (P.loaded || 'CU ÎNCĂRCĂTURĂ') : (P.blank || 'VIRGIN'), ok ? C.grn : C.yel, 'middle', 16, st === 'virgin' || st === 'ok' ? cl((pt - .2) / .25) : 1);
+      s += T(MX, MY - MR - 12, P.wall || 'PERETELE FILTRULUI', { s: 14, a: 'middle', c: C.dim });
+      const EL = [['45', 'Rh', 'RODIU', P.rh], ['46', 'Pd', 'PALADIU', P.pd], ['78', 'Pt', 'PLATINĂ', P.pt]];
+      s += T(746, 96, P.load || 'ÎNCĂRCĂTURĂ', { s: 15, a: 'middle', c: C.dim });
+      EL.forEach(([z, sym, name, at], i) => { const x = 598 + i * 102, y = 110, w = 92, h = 108; let k = 1, kx = 0;
+        if (st === 'virgin') k = .32;
+        else if (st === 'metals') { const a = at != null ? at : T0 + .3 + i * .45; k = .32 + .68 * eo((t - a + .12) / .2); kx = cl((t - a) / .22); }
+        else if (err) kx = 1;
+        const cc = ok ? C.grn : kx > 0 ? C.red : C.w;
+        s += `<g opacity="${f(k)}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="12" fill="${ok ? '#0F2A1B' : kx > 0 ? '#2A0F14' : C.body}" stroke="${cc}" stroke-width="4"/>`;
+        if (kx > 0) s += `<line x1="${x + 10}" y1="${y + h - 10}" x2="${f(x + 10 + (w - 20) * cl(kx * 1.6))}" y2="${f(y + h - 10 - (h - 20) * cl(kx * 1.6))}" stroke="${C.red}" stroke-width="7" stroke-linecap="round" opacity=".7"/>`;
+        s += T(x + 9, y + 23, z, { s: 15, c: C.dim, ls: 0 }) + T(x + w / 2, y + 70, sym, { s: 44, a: 'middle', c: kx > 0 ? '#FFB4B4' : cc, ls: 0 }) + T(x + w / 2, y + 96, name, { s: 13, a: 'middle', c: C.dim, ls: .5 }) + '</g>';
+        if (kx > .35) { const kb = eo((kx - .35) / .65); s += `<g transform="translate(${x + w - 6} ${y + 6}) scale(${f(.4 + .6 * kb)})" opacity="${f(cl(kb * 3))}"><circle r="17" fill="#E11D2E" stroke="#fff" stroke-width="2.5"/>` + xmark(0, 0, 7, '#fff', 5) + '</g>'; }
+        if (ok) { const kk = st === 'ok' ? eo((pt - .15 - i * .12) / .3) : 1; s += `<g transform="translate(${x + w - 6} ${y + 6}) scale(${f(kk)})"><circle r="17" fill="#16A34A" stroke="#fff" stroke-width="2.5"/>` + check(0, 1, 8, '#fff', 5) + '</g>'; } });
+      if (st === 'metals' || err) s += tag(746, 246, P.none || 'LIPSEȘTE', C.red, 'middle', 15, st === 'metals' ? cl((t - (P.pt != null ? P.pt : T0 + 1.2) - .25) / .25) : 1);
+      s += '</g>'; }
+    const L = Object.assign({ virgin: ['UNELE SUNT VIRGINE', C.yel], metals: ['FĂRĂ ÎNCĂRCĂTURĂ DE RODIU, PALADIU, PLATINĂ', C.red], error: ['PE MAJORITATEA CELOR AFTERMARKET', C.red],
+      ok: ['EXISTĂ ȘI FILTRE AFTERMARKET OK', C.grn], price: ['SE APROPIE DE PREȚUL RECONDIȚIONĂRII', C.yel] }, P.labels || {})[st];
+    s += tag(457, 340, L[0], L[1], 'middle', 17, cl(pt / .25));
+    return s;
+  }
+
+  return { dpfRecon, coreMaterial, dpfCoating, vagEgrDpf, waterCooler, photoId, popsBangs, madeInRo, commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
 })();
