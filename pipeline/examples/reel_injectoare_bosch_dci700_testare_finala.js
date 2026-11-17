@@ -2,10 +2,12 @@
 // Cerut de Sabin pe 17.11.2026: editare „fain”, cu hook puternic, a clipului în care prezintă testarea și codarea finală a unor injectoare Bosch
 // pe standul Bosch DCI 700. Textul hook-ului e cel dat de el: „Testare finală injectoare Bosch pe stand original Bosch DCI700”.
 // Filmare fără față: standul (eticheta BOSCH DCI 700), injectoarele montate, prim-plan pe codul gravat pe un injector, apoi monitorul standului.
-// Standul merge în tot clipul: sunetul trece întâi prin denoise_bench.py (zgomotul standului coboară sub voce), iar cuvintele au timpii puși de mână (fix_words.py).
+// Standul merge în tot clipul: sunetul trece întâi prin denoise_bench.py (zgomotul standului coboară sub voce), cu "duck_ref": -23, "duck_range": 8 în out/v2.json,
+// apoi prin loud2.py; cuvintele au timpii puși de mână (examples/set_words_injectoare_bosch_dci700.py, între build_timeline.py și retime.py). Coperta: out/cover_t.json {"t": 3.1}.
 // Ce spune el: „Proces de testare și codare injectoare Bosch. Injectoarele au fost recondiționate capital și acum sunt în procesul final de codare.”
 // De pe imagine: codul piesei gravat pe injector (0445110 374, același cu cel de pe monitor: „0445110374 | CRI 2-16”) și pașii de verificare cu „Ok” de pe monitor.
-// Explicația mea, de confirmat cu el: cardul „CODARE (IMA)”. Fără CTA pe imagine (25.10). Fără accente roșu/verde pe tot cadrul (neconfirmate).
+// Explicația mea, nu vorbele lui: cardul „CODARE (IMA)” (i-am spus la livrare). Fără CTA pe imagine (25.10). Fără accente roșu/verde pe tot cadrul (neconfirmate).
+// Aprobat de Sabin pe 17.11.2026 („programează-l sâmbătă la 10 pe toate platformele”) și programat pe 21.11 la 10:00: Facebook, Instagram, TikTok, YouTube (brandul Turbo Doctor).
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND }) => {
   const A = {
     proces: aw(0, 'Proces'), testare: aw(0, 'testare'), codare: aw(0, 'codare'), injectoare: aw(0, 'injectoare'), bosch: aw(0, 'Bosch'), boschE: ew(0, 'Bosch'),

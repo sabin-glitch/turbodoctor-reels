@@ -1,4 +1,6 @@
-"""Word timings measured by hand for this reel (run after build_timeline.py, before retime.py).
+"""Word timings measured by hand for the reel „Testare finală injectoare Bosch pe stand original Bosch DCI 700” (17.11.2026).
+Copy it into the reel folder and run it after build_timeline.py, before retime.py, instead of fix_words.py: it sets the start AND the end of every word
+(fix_words.py only moves starts, which is not enough when the alignment puts a word seconds away from where it is spoken).
 The bench is running in the clip, so the automatic alignment misplaces several words. The times below come from the
 noise-subtracted voice envelope (syllable bursts), cross-checked with Parakeet token times and with Whisper on
 progressively longer cuts. No cuts and speed 1.0, so output time = source time.
