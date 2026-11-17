@@ -15,12 +15,12 @@ window.REEL_CFG = ({ aw, ew, S0, SEND, TEND }) => {
   };
   // HOOK: titlu boom în patru trepte cu textul cerut de Sabin. Momentele sunt începuturile de cuvânt din anvelopa vocii
   // („filtru” 1.22 · „ajunge” 1.92 · „târziu” 2.60); primul rând e pe ecran din primele cadre. Fără scântei pe titluri (cadru curat pentru copertă, 4.40 s).
-  const B1 = .12, B2 = 1.22, B3 = 1.92, B4 = 2.60, HB = 4.80, Y1 = 262, Y2 = 484, Y3 = 1172, Y4 = 1398;
+  const B1 = .12, B2 = 1.22, B3 = 1.92, B4 = 2.60, HB = 4.80, Y1 = 262, Y2 = 484, Y3 = 1142, Y4 = 1400;   // între „RECONDIȚIONARE” și „DPF!” rămâne loc pentru virgula lui Ț
   // momentele-cheie citite din anvelopa vocii (vocala cuvântului)
   const SPART = 6.40, TOPIT = 6.76, CRAPAT = 7.24, RECOND = 13.62, UPG = 25.50, P3040 = 51.00, ATT = 56.62, AFT = 58.92, RH = 63.14, PD = 63.48, PT = 63.88, ERR = 65.04;
   return {
     hook: { tag: 'ANALIZĂ TEHNICĂ · FILTRU DE PARTICULE', end: HB, y: -76 },
-    hideCap: [[0, HB - .05]],
+    hideCap: [[0, A.daca - .04]],   // subtitrările revin abia cu fraza următoare („Dacă filtrul…”), nu peste titlurile care se sting
     stages: [[HB + .3, 'PROBLEMA'], [A.asta - .1, 'SOLUȚIA'], [A.si1 - .1, 'UPGRADE'], [A.tineti - .1, 'COSTUL']],
     tags: {
       0: { filtru: 'c', filtrul: 'c', particule: 'c', tarziu: 'r', curatarea: '', nul: 'r', salveaza: 'r', spart: 'r', topit: 'r', crapat: 'r' },
