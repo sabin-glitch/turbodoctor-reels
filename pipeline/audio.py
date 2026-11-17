@@ -113,7 +113,10 @@ def music():
     # ducking under the voice
     mono = np.abs(vp[:, 0]); win = int(.03 * SR)
     rmsv = np.sqrt(np.convolve(mono ** 2, np.ones(win) / win, mode="same") + 1e-12)
-    act = np.clip((20 * np.log10(rmsv + 1e-9) + 42) / 14, 0, 1)
+    # duck_ref / duck_range (out/v2.json, 17.11.2026): level (dBFS) where ducking starts and the span to full ducking. Defaults -42 / 14 = any sound in
+    # the voice track ducks the music. A clip with a steady machine hum under the voice (test bench) sets duck_ref just above the hum, so the
+    # music comes back in the pauses instead of staying ducked for the whole reel.
+    act = np.clip((20 * np.log10(rmsv + 1e-9) - float(cfg.get("duck_ref", -42))) / float(cfg.get("duck_range", 14)), 0, 1)
     # attack 60 ms / release 450 ms smoothing
     out = np.zeros_like(act); a_att = np.exp(-1 / (.06 * SR)); a_rel = np.exp(-1 / (.45 * SR)); y = 0.0
     step = 48; idx = np.arange(0, N, step); ys = np.zeros(len(idx))
