@@ -1,6 +1,7 @@
 # Hook cu turometru care accelerează („Audi A7 biturbo, în reparație la Turbo Doctor”, 17.11.2026)
 
 Cerut de Sabin: „hook puternic, Audi A7 biturbo și cu un turometru care se accelerează puternic, în reparație la Turbo Doctor”.
+Aprobat pe 17.11.2026 și programat pe 18.11 pe cele patru rețele ale brandului Turbo Doctor (Facebook 09:00, Instagram 16:00, TikTok 17:00, YouTube 17:00).
 
 ## Ideea
 
@@ -41,7 +42,7 @@ Coperta: 4,1 s (toate rândurile, acul în zona roșie). Exemplu: `pipeline/exam
 
 ## Tot din acest reel
 
-- `pipeline/fixwords.py` (între `build_timeline.py` și `retime.py`): timpii Parakeet vin cu până la ~0,3 s mai devreme după o pauză;
+- `tools/words/snap_words.py <folder reel> [index=timp …]` (între `build_timeline.py` și `retime.py`): timpii Parakeet vin cu până la ~0,3 s mai devreme după o pauză;
   primul cuvânt al fiecărei rostiri e mutat pe începutul ei real din anvelopa vocii. Corecturi manuale: `index=timp`.
   Consoanele slabe (s, f, ș) se caută în banda 3,5–9 kHz.
 - `tags` pe apariție: `'noi#0': ''` colorează doar prima apariție a cuvântului din fereastră („la noi” față de „ansamble centrale noi”).

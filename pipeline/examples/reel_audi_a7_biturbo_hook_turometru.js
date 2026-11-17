@@ -5,8 +5,10 @@
 // (tools/tach/build_tach_bed.py -> audio/hook_bed.wav + out/track_tach.json). Prima turare e în cele 1,5 s de liniște de la început
 // („BITURBO” bubuie când acul intră în zona roșie), a doua în pauza dinaintea cuvântului lui „Biturbo” (titlul mai bubuie o dată pe cuvânt).
 // Filmare doar cu motorul (fără față, fără plăcuțe de înmatriculare) -> cardurile stau sus. Fără CTA pe imagine (25.10). Fără accente roșu/verde pe tot cadrul.
-// Livrat lui Sabin pe 17.11.2026, în așteptarea aprobării. out/v2.json: {"tip": {"dur": 3.4, "src": 39.45, "speed": 0.07}, "beds": [{"wav": "audio/hook_bed.wav", "t": 0, "gain": 1.0, "duck": 0}], "music_in": 4.6};
-// out/cover_t.json: {"t": 4.1}; fixwords.py 1=2.35 2=3.68 15=9.27 42=20.08 51=25.46 53=26.05 76=35.88; build_tach_bed.py <reel> 1.00 3.66 4.90 cu TACH_DUCK='[[1.50,2.98,-9],[3.62,5.0,-11]]'.
+// Aprobat de Sabin pe 17.11.2026 („programează… la cea mai bună oră, mâine, pe fiecare platformă, pe brandul Turbo Doctor”) și programat pe 18.11.2026
+// doar pe turbodoctoroficial: Facebook 09:00, Instagram 16:00, TikTok 17:00, YouTube 17:00 (cea mai bună oră rămasă liberă pe fiecare rețea; în ziua aceea mai erau 4 reel-uri).
+// out/v2.json: {"tip": {"dur": 3.4, "src": 39.45, "speed": 0.07}, "beds": [{"wav": "audio/hook_bed.wav", "t": 0, "gain": 1.0, "duck": 0}], "music_in": 4.6};
+// out/cover_t.json: {"t": 4.1}; tools/words/snap_words.py <reel> 1=2.35 2=3.68 15=9.27 42=20.08 51=25.46 53=26.05 76=35.88; build_tach_bed.py <reel> 1.00 3.66 4.90 cu TACH_DUCK='[[1.50,2.98,-9],[3.62,5.0,-11]]'.
 // Urmăriri (track_point.py): track_turbo 240 304 270 810 1110 · track_chra 396 440 408 385 965 · track_wheel 655 706 678 604 795. Pașii: tools/tach/README.md.
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND }) => {
   const A = {

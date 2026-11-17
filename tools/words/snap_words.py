@@ -1,9 +1,11 @@
-"""Snap phrase-initial words to the acoustic speech onsets (voice envelope) after build_timeline.py and before retime.py.
-Parakeet's token times come up to ~0.3 s early after a pause; cards and captions are anchored on words, so the first word of every
-speech run is moved to the run's real onset. Only valid for cuts:false / speed 1.0 (os == s).  python3 fixwords.py [word=time ...]"""
+"""Snap phrase-initial words to the acoustic speech onsets (voice envelope), in one pass: python3 snap_words.py <reel_dir> [index=time ...]
+Run after build_timeline.py and before retime.py. Parakeet's token times come up to ~0.3 s early after a pause; cards and captions are
+anchored on words, so the first word of every speech run is moved to the run's real onset. "index=time" = manual override for word #index
+of out/timeline.json. Only valid for cuts:false / speed 1.0, no cold open (os == s). Writes out/speech_runs.json.
+The automatic alternative to check_words.py + out/word_fix.json + pipeline/fix_words.py (which also works with a cold open)."""
 import json, sys, os, numpy as np, soundfile as sf
 from scipy.signal import butter, sosfilt
-ROOT = os.environ.get("REEL_ROOT") or os.getcwd()
+ARGS = sys.argv[1:]; ROOT = ARGS.pop(0) if ARGS and "=" not in ARGS[0] else (os.environ.get("REEL_ROOT") or os.getcwd())
 tl = json.load(open(f"{ROOT}/out/timeline.json")); assert not tl.get("speed"), "run before retime.py"
 assert len([s for s in tl["segments"] if s["kind"] == "story"]) == 1 and not tl["cold_words"], "cuts:false only"
 x, sr = sf.read(f"{ROOT}/audio/src48.wav", dtype="float32")
@@ -28,7 +30,7 @@ def run_of(t, pad=0.03):
     for k, (a, b) in enumerate(runs):
         if a - pad <= t < b: return k
     return None
-W = tl["words"]; manual = dict(a.split("=") for a in sys.argv[1:])   # "idx=time" overrides (word index in the timeline)
+W = tl["words"]; manual = dict(a.split("=") for a in ARGS)   # "idx=time" overrides (word index in the timeline)
 moved = []
 for i, w in enumerate(W):
     s0 = w["s"]; k = run_of(s0)
