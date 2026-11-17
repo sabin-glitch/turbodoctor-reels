@@ -1,6 +1,6 @@
 # Cold open fără repetare (hook-ul = o frază spusă mai târziu în clip)
 
-Folosit la reel-ul „O nouă viață la doar 30–40% din costul unei turbine noi” (17.11.2026): Sabin a cerut ca hook fraza pe care o spune la sfârșitul celui de-al doilea clip, „și după aia” ce spune despre recondiționare.
+Folosit la reel-ul „O nouă viață la doar 30–40% din costul unei turbine noi” (17.11.2026, aprobat și programat pe 18.11): Sabin a cerut ca hook fraza pe care o spune la sfârșitul celui de-al doilea clip, „și după aia” ce spune despre recondiționare.
 
 Ce face `build_src_noua_viata.py`:
 

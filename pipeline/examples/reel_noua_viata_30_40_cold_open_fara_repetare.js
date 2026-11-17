@@ -1,4 +1,5 @@
 // v2 – „O nouă viață la doar 30–40% din costul unei turbine noi” (17.11.2026) – turbină recondiționată capital, cu ansamblu central nou-nouț
+// Aprobat pe 17.11 („Vreau să-l programez… mâine la cea mai bună oră”) și programat pe 18.11: YouTube 10:00, Facebook 13:00, TikTok 16:00, Instagram 17:00 (masterul din finish.sh, 58 MB, urcat nerecomprimat).
 // clipuri (în reel): 0 finalul lui IMG_2564 (hook) · 7.167 IMG_2563 întreg · 26.700 IMG_2564 până la fraza mutată
 // Cerut de Sabin: reel captivant cu hook-ul „O nouă viață la doar 30–40% din costul unei turbine noi”, apoi ce spune el despre recondiționare.
 // Fraza e ultima din IMG_2564, așa că e pusă la început ca hook, cu imaginea și vocea ei (cold open făcut direct în sursă: tools/cold_open/build_src_noua_viata.py);
