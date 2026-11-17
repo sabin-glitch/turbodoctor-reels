@@ -1,5 +1,9 @@
 // v2 – Reel „Probleme de eficiență DPF? Recondiționare DPF!” (IMG_2562, un singur clip, fără tăieturi, ritm natural)
 // Cerut de Sabin pe 17.11.2026: „Hook-ul să fie unul puternic, recondiționare DPF, probleme de eficiență DPF.”
+// Aprobat pe 17.11.2026 („Te rog să îl programezi…”) și programat vineri 20.11 pe brandul Turbo Doctor: Facebook 11:00, YouTube 14:00, TikTok 18:00, Instagram 18:00.
+// out/v2.json: {"cuts": false, "speed": 1.0, "music_gain": 0.5, "tip": {"dur": 4.4, "src": 52.9, "speed": 0.7}} · out/cover_t.json: {"t": 4.40}
+// out/curated.json = pipeline/examples/curated_dpf_eficienta.json · out/word_fix.json = pipeline/examples/word_fix_dpf_eficienta.json (pipeline/fix_words.py)
+// out/track_crack.json: python3 track_point.py 203 248 219 450 740 out/track_crack.json, păstrate doar cadrele 208–239 (cât stă camera pe defect)
 // Filmare doar cu piesele (carcasa DPF recondiționată + miezul vechi scos din ea), fără față, fără plăcuțe de înmatriculare -> schemele și cardurile mari stau sus.
 // Hook `boom` în patru trepte cu textul dat de el: sus „PROBLEME DE / EFICIENȚĂ DPF?”, jos „RECONDIȚIONARE / DPF!”, piesa rămâne la vedere la mijloc.
 // Scheme noi: `dpfRecon` (se schimbă întregul monolit ceramic + upgrade), `coreMaterial` (cordierită vs carbură de siliciu: căldură, fisuri),
