@@ -250,6 +250,9 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#000}
 /* dashboard warning lamps (promo DPF, 28.10.2026): instrument cluster whose lamps light up when he names them */
 .dashC{filter:drop-shadow(0 18px 34px rgba(0,0,0,.6))}
 .dashC svg{display:block}
+/* tach (17.11.2026, „Audi A7 biturbo”): turometru de hook; acul urmează turația sunetului real de motor (out/track_tach.json, tools/tach) */
+.tachC{width:720px;height:720px;filter:drop-shadow(0 24px 38px rgba(0,0,0,.7))}
+.tachC svg{display:block;overflow:visible}
 /* ptag (14.11.2026, „Recondiționări perfecte la prețuri corecte”): bilet de preț deasupra capului – turbina desenată (rotorul se învârte), mașina pe două rânduri, prețul pe galben; biletele se întorc unul după altul */
 .ptag{width:1000px;height:200px;filter:drop-shadow(0 16px 26px rgba(0,0,0,.55))}
 .ptag .tk{position:absolute;inset:0;clip-path:path('M 30 0 H 548 A 18 18 0 0 0 584 0 H 970 A 30 30 0 0 1 1000 30 V 170 A 30 30 0 0 1 970 200 H 584 A 18 18 0 0 0 548 200 H 30 A 30 30 0 0 1 0 170 V 30 A 30 30 0 0 1 30 0 Z')}
@@ -464,13 +467,14 @@ const AUTO = {
 const AUTO_MAP = {}; Object.entries(AUTO).forEach(([c, ws]) => ws.forEach(w => AUTO_MAP[w] = c));
 function capClass(w) {
   if (w._brand) return 'y';
-  const n = norm(w.text); const o = (CFG.tags[w.win] || {})[n]; if (o !== undefined) return o;
+  const n = norm(w.text); const T = CFG.tags[w.win] || {}, o = T[n + '#' + w._occ] ?? T[n]; if (o !== undefined) return o;  // 'cuvânt#k' = doar apariția k (de la 0) din fereastră (17.11.2026)
   if (/[0-9]/.test(w.text)) return 'y'; return AUTO_MAP[n] || '';
 }
 const HIDE_CAP = [[0, HAS_COLD ? S0 + 0.05 : 0], [SEND, 1e9]].concat(CFG.hideCap || []);
 let CHUNKS = [];
 function buildChunks() {
   WORDS.forEach((w, i) => { const nx = WORDS[i + 1]; if (nx && norm(w.text) === 'turbo' && norm(nx.text).startsWith('doctor')) { w._brand = nx._brand = true; } });
+  const occ = {}; WORDS.forEach(w => { const k = w.win + '|' + norm(w.text); w._occ = occ[k] = (occ[k] ?? -1) + 1; });
   const cv = document.createElement('canvas').getContext('2d'); cv.font = '900 80px Mont';
   const width = s => cv.measureText(s.toUpperCase()).width + 36; const MAXW = 840; let cur = null;
   WORDS.forEach((w, i) => {
@@ -659,6 +663,74 @@ function dashSvg(o, t) {
   });
   return s + '</g></svg>';
 }
+// ---------- tach (17.11.2026, „Audi A7 biturbo în reparație la Turbo Doctor”): rev counter for a hook ----------
+// {k:'tach', t0, t1, x, y, s, max: 6000, warn: 4500, red: 5000, unit: 'ROT/MIN', turbos: 2, track: 'track_tach', kick: [t…], inD, outD, sh}
+// The needle is NOT keyframed. It reads out/track_tach.json (tools/tach/build_tach_bed.py): the rpm curve of the real engine recording in
+// audio/hook_bed.wav (displayed rpm = an affine function of the firing frequency that is heard), so the needle rises and falls with the sound.
+// Original generic dial (no car maker's cluster, no logos): 0–6 ×1000, red zone, digital readout, two small turbo pictograms that spin with the revs.
+const tachZone = (v, o) => v >= (o.warn ?? 4500) ? '#FF3B30' : v >= (o.mid ?? 3000) ? '#FFD21F' : '#62D8FF';
+function tachTurbo(cx, cy, m, rot, col, a, id) {  // small turbo pictogram: volute + outlet (mirrored with m = -1) + wheel that spins
+  const f1 = v => (+v).toFixed(1), R = d => d * Math.PI / 180; let b = '';
+  for (let k = 0; k < 6; k++) { const d = rot * m + k * 60;
+    b += `<path d="M ${f1(cx + 5 * Math.cos(R(d)))} ${f1(cy + 5 * Math.sin(R(d)))} Q ${f1(cx + 12 * Math.cos(R(d + 30 * m)))} ${f1(cy + 12 * Math.sin(R(d + 30 * m)))} ${f1(cx + 16.5 * Math.cos(R(d + 62 * m)))} ${f1(cy + 16.5 * Math.sin(R(d + 62 * m)))}" fill="none" stroke="${col}" stroke-width="3.4" stroke-linecap="round"/>`; }
+  const body = `<path d="M ${cx} ${cy - 24} H ${cx + 35 * m} V ${cy - 9} H ${cx + 22.5 * m}" fill="rgba(4,7,11,.92)" stroke="${col}" stroke-width="4.6" stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<circle cx="${cx}" cy="${cy}" r="24" fill="rgba(4,7,11,.92)" stroke="${col}" stroke-width="4.6"/>${b}<circle cx="${cx}" cy="${cy}" r="3.8" fill="${col}"/>`;
+  return (a > .02 ? `<g filter="url(#${id}g)" opacity="${a.toFixed(3)}">${body}</g>` : '') + body;
+}
+function tachSvg(o, t) {
+  const T = TL[o.track || 'track_tach'], MAX = o.max || 6000, WARN = o.warn ?? 4500, RED = o.red ?? 5000, C = 360, id = o.uid;
+  const N = T.rpm.length - 1, at = q => { const i = clamp(q, 0, N / T.fps) * T.fps, i0 = Math.floor(i), i1 = Math.min(N, i0 + 1); return lerp(T.rpm[i0], T.rpm[i1], i - i0); };
+  if (!o.cum) { o.cum = [0]; for (let i = 1; i <= N; i++) o.cum.push(o.cum[i - 1] + T.rpm[i] / T.fps * .12); }   // wheel angle of the turbo pictograms (deg): they spin with the revs
+  const f1 = v => (+v).toFixed(1), R = d => d * Math.PI / 180, A0 = 135, SW = 270;
+  const deg = v => A0 + SW * clamp(v / MAX), P = (r, d) => `${f1(C + r * Math.cos(R(d)))} ${f1(C + r * Math.sin(R(d)))}`;
+  const arc = (r, v0, v1) => { const d0 = deg(v0), d1 = deg(v1); return `M ${P(r, d0)} A ${r} ${r} 0 ${d1 - d0 > 180 ? 1 : 0} 1 ${P(r, d1)}`; };
+  const raw = at(t), over = clamp((raw - WARN) / Math.max(1, (T.top || 5300) - WARN)); o._over = over;
+  const rpm = raw + over * 40 * Math.sin(t * 173) + (raw < 1150 ? 12 * Math.sin(t * 29) : 0);   // the needle trembles on the limiter (and very slightly at idle)
+  const zc = tachZone(rpm, o), BR = 296, pulse = .75 + .25 * Math.sin(t * 38);
+  let s = `<svg width="720" height="720" viewBox="0 0 720 720"><defs>` +
+    `<linearGradient id="${id}bz" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D5DEE8"/><stop offset=".16" stop-color="#4A5462"/><stop offset=".55" stop-color="#0B0E13"/><stop offset="1" stop-color="#5D6876"/></linearGradient>` +
+    `<radialGradient id="${id}fc" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#1D2632"/><stop offset=".62" stop-color="#0B1017"/><stop offset="1" stop-color="#04060A"/></radialGradient>` +
+    `<radialGradient id="${id}hb" cx=".4" cy=".34" r=".8"><stop offset="0" stop-color="#5A6675"/><stop offset=".55" stop-color="#171D25"/><stop offset="1" stop-color="#06080B"/></radialGradient>` +
+    `<linearGradient id="${id}nd" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B3121F"/><stop offset=".25" stop-color="#FF3B30"/><stop offset="1" stop-color="#FF7A45"/></linearGradient>` +
+    `<filter id="${id}g" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="9"/></filter>` +
+    `<filter id="${id}G" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="20"/></filter>` +
+    `<clipPath id="${id}c"><circle cx="${C}" cy="${C}" r="318"/></clipPath></defs>`;
+  if (over > .01) s += `<circle cx="${C}" cy="${C}" r="338" fill="none" stroke="#FF2B2B" stroke-width="34" filter="url(#${id}G)" opacity="${(over * .9 * pulse).toFixed(3)}"/>`;   // over-rev: the whole dial glows red
+  s += `<circle cx="${C}" cy="${C}" r="342" fill="url(#${id}bz)"/><circle cx="${C}" cy="${C}" r="341" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2"/>` +
+    `<circle cx="${C}" cy="${C}" r="320" fill="url(#${id}fc)" stroke="#000" stroke-width="4"/>`;
+  if (over > .01) s += `<circle cx="${C}" cy="${C}" r="318" fill="#FF2B2B" opacity="${(over * .13 * pulse).toFixed(3)}"/>`;
+  // scale band: track, red zone (hatched from `warn`, solid from `red`), then the lit part up to the current revs
+  s += `<path d="${arc(BR, 0, MAX)}" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="22"/>` +
+    `<path d="${arc(BR, WARN, RED)}" fill="none" stroke="rgba(225,29,46,.75)" stroke-width="22" stroke-dasharray="5 7"/>` +
+    `<path d="${arc(BR, RED, MAX)}" fill="none" stroke="rgba(225,29,46,.62)" stroke-width="22"/>`;
+  const MID = o.mid ?? 3000, segs = [[0, Math.min(rpm, MID), '#62D8FF'], [MID, Math.min(rpm, WARN), '#FFD21F'], [WARN, rpm, '#FF3B30']].filter(g => g[1] - g[0] > 8);
+  segs.forEach(([a, b, c]) => { s += `<path d="${arc(BR, a, b)}" fill="none" stroke="${c}" stroke-width="30" filter="url(#${id}g)" opacity=".6"/>`; });
+  segs.forEach(([a, b, c]) => { s += `<path d="${arc(BR, a, b)}" fill="none" stroke="${c}" stroke-width="17"/>`; });
+  for (let v = 0; v <= MAX; v += 250) { const big = v % 1000 === 0, mid = v % 500 === 0, d = deg(v);
+    s += `<line x1="${P(278, d).replace(' ', '" y1="')}" x2="${P(big ? 240 : mid ? 256 : 264, d).replace(' ', '" y2="')}" stroke="${v >= RED ? '#FF5A5A' : '#F2F6FA'}" stroke-width="${big ? 7 : mid ? 4 : 2.6}" stroke-linecap="round" opacity="${big ? 1 : .78}"/>`; }
+  for (let i = 0; i * 1000 <= MAX; i++) { const [x, y] = P(196, deg(i * 1000)).split(' ');
+    s += `<text x="${x}" y="${y}" dy=".37em" text-anchor="middle" font-family="Anton" font-size="68" fill="${i * 1000 >= RED ? '#FF4B4B' : '#FFFFFF'}">${i}</text>`; }
+  s += `<text x="${C}" y="${C - 92}" text-anchor="middle" font-family="JB" font-weight="800" font-size="23" letter-spacing="3" fill="#93A4B8">×1000</text>`;
+  // two turbo pictograms („biturbo”): dim at idle, they light up and spin with the revs
+  const NT = o.turbos ?? 2, rot = o.cum[Math.min(N, Math.round(clamp(t, 0, N / T.fps) * T.fps))];
+  const tc = rpm < 1500 ? mixC('#5A6675', '#62D8FF', (rpm - 950) / 550) : zc, ta = clamp((rpm - 1800) / 2500) * .85;
+  for (let k = 0; k < NT; k++) { const dx = NT === 1 ? 0 : (k ? 46 : -46); s += tachTurbo(C + dx, C + 104, NT === 1 ? 1 : (k ? 1 : -1), rot, tc, ta, id); }
+  // digital readout
+  const num = (Math.round(rpm / 10) * 10).toLocaleString('ro-RO'), nc = rpm >= WARN ? '#FF4B4B' : rpm >= MID ? '#FFD21F' : '#EAF6FF';
+  s += `<rect x="${C - 106}" y="${C + 164}" width="212" height="82" rx="16" fill="#020407" stroke="${rpm >= WARN ? 'rgba(255,75,75,.85)' : 'rgba(98,216,255,.5)'}" stroke-width="3"/>` +
+    `<text x="${C}" y="${C + 225}" text-anchor="middle" font-family="JB" font-weight="800" font-size="58" letter-spacing="1" fill="${nc}">${num}</text>` +
+    `<text x="${C}" y="${C + 274}" text-anchor="middle" font-family="JB" font-weight="800" font-size="19" letter-spacing="4" fill="#93A4B8">${o.unit || 'ROT/MIN'}</text>`;
+  s += `<g clip-path="url(#${id}c)"><ellipse cx="${C}" cy="${C - 232}" rx="250" ry="104" fill="#fff" opacity=".055"/></g>`;   // glass reflection
+  // needle: a smear between the previous frame's angle and this one (real motion blur while it sweeps), glow, body, hub
+  const a = deg(rpm), ap = deg(at(t - 1 / FPS));
+  if (Math.abs(a - ap) > 1.2) s += `<path d="M ${C} ${C} L ${P(266, ap)} A 266 266 0 0 ${a > ap ? 1 : 0} ${P(266, a)} Z" fill="#FF4B2B" opacity=".24"/>`;
+  const nd = `M ${C - 54} ${C - 8} L ${C + 28} ${C - 12.5} L ${C + 272} ${C - 3.4} L ${C + 276} ${C} L ${C + 272} ${C + 3.4} L ${C + 28} ${C + 12.5} L ${C - 54} ${C + 8} Z`;
+  s += `<g transform="rotate(${a.toFixed(2)} ${C} ${C})"><path d="${nd}" fill="#FF3B30" filter="url(#${id}g)" opacity=".8"/><path d="${nd}" fill="url(#${id}nd)" stroke="rgba(0,0,0,.45)" stroke-width="1.5"/>` +
+    `<line x1="${C + 34}" y1="${C}" x2="${C + 264}" y2="${C}" stroke="rgba(255,255,255,.7)" stroke-width="2.2"/></g>`;
+  s += `<circle cx="${C}" cy="${C}" r="52" fill="url(#${id}hb)" stroke="#04060A" stroke-width="3"/><circle cx="${C}" cy="${C}" r="51" fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2"/>` +
+    `<circle cx="${C}" cy="${C}" r="28" fill="#0C1015" stroke="rgba(255,255,255,.14)" stroke-width="2"/><circle cx="${C}" cy="${C}" r="9" fill="#E11D2E"/>`;
+  return s + '</svg>';
+}
 function buildItems() {
   const its = (CFG.items || []).map(o => Object.assign({}, o));
   const sl = its.filter(o => SLOT.includes(o.k)).sort((a, b) => a.t0 - b.t0);
@@ -727,6 +799,7 @@ function buildItems() {
       o.g.innerHTML = `<path class="cr" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect class="sl" height="6" rx="3"/><path class="xh" fill="none" stroke-width="3"/>`; }
     if (o.k === 'ring') { o.g = document.createElementNS(SVGNS, 'g'); $('ovl').appendChild(o.g); o.g.innerHTML = `<circle class="a" fill="none" stroke="#000" stroke-opacity=".45" stroke-width="20"/><circle class="b" fill="none" stroke="${o.col || '#62D8FF'}" stroke-width="10"/>`; }
     if (o.k === 'dash') { o.el = mk('abs dashC', '', 'overlays'); o.uid = 'dsh' + ITEMS.length; }
+    if (o.k === 'tach') { if (!TL[o.track || 'track_tach']) throw new Error('tach: no rpm track (tools/tach/build_tach_bed.py)'); o.el = mk('abs tachC', '', 'overlays'); o.uid = 'tch' + ITEMS.length; }
     if (o.k === 'opis') {  // {k:'opis', t0, t1, top, title, sub, subIco, kicker, head, ico, rows:[[t, ico, text]], phone, phoneLab, phoneAt, site, cities:[...], citiesAt}
       const OK = '<svg class="ok" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#16A34A"/><path d="M 11 21 L 17.5 27.5 L 29.5 13.5" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
       o.el = mk('abs opis', `<div class="oT">${o.title || 'TURBO <span class="y">DOCTOR</span>'}</div>` + (o.sub ? `<div class="oS">${img(o.subIco || 'stethoscope')}${o.sub}</div>` : '') +
@@ -908,6 +981,10 @@ function rItem(o, t) {
   if (o.k === 'opis') { const L = life(t, o.t0, o.t1, .4, .25, 1.4); if (!L) { hide(el); return; }
     setTop(el, 540, o.top || 150, L.s, L.o); el.querySelectorAll('.oR').forEach((r, i) => rowIn(r, t, o.rows[i][0]));
     popIn(el.querySelector('.oP'), t, o.phoneAt, 2.0); rowIn(el.querySelector('.oW'), t, o.phoneAt + .2); popIn(el.querySelector('.oL'), t, o.citiesAt, 1.6); return; }
+  if (o.k === 'tach') { const L = life(t, o.t0, o.t1, o.inD ?? .3, o.outD ?? .22, 1.5); if (!L) { hide(el); return; }
+    el.innerHTML = tachSvg(o, t); const sh = (o.sh ?? 6) * o._over; let kk = 1;
+    for (const q of (o.kick || [])) { const d = t - q; if (d >= 0 && d < .6) kk += .07 * Math.exp(-d * 7) * Math.cos(d * 30); }   // the dial jumps with each title impact
+    setT(el, (o.x || 540) + sh * Math.sin(t * 131), (o.y || 990) + sh * Math.cos(t * 113), L.s * (o.s || .82) * kk, 0, L.o); return; }
   if (o.k === 'dash') { const L = life(t, o.t0, o.t1, .34, .22, 1.7); if (!L) { hide(el); return; }
     const sp = o.shrink ? eInOut(clamp((t - o.shrink[0]) / .5)) : 0; el.innerHTML = dashSvg(o, t);
     setT(el, o.x || 540, (o.y || 336) + (o.shrink ? o.shrink[2] || 0 : 0) * sp + bob(L.k, 2, 2), L.s * lerp(o.s || 1, o.shrink ? o.shrink[1] : (o.s || 1), sp), 0, L.o); return; }
