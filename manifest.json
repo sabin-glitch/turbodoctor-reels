@@ -1390,6 +1390,11 @@
   "downloader": "curl"
  },
  {
+  "id": "tdvdpfA",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/HBlhlEiwCM8FdTOZpon0/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "dr_L03b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/sDaNpuYeNpueJswMifDM/jL9UqfCuXHohpxMfEsnJ/content.mp3",
   "downloader": "curl"
