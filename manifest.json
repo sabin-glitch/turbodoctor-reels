@@ -1550,6 +1550,11 @@
   "downloader": "curl"
  },
  {
+  "id": "tdvccvpack",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/FPs6aQ27RbnKw2HIDHb5/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "fsr_386801",
   "source_url": "https://cdn.freesound.org/previews/386/386801_7236624-hq.mp3",
   "downloader": "curl"
