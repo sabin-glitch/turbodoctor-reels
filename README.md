@@ -9,7 +9,7 @@ Fluxul complet pentru reel-urile Turbo Doctor (TikTok, Facebook, Instagram, YouT
 
 > Atenție: repo-ul este **public**. Tot ce e aici, inclusiv videoclipurile de pe branch-ul `media`, poate fi văzut de oricine are linkul.
 
-Regulile lui Sabin și preferințele lui de editare sunt ținute în skill-ul `turbodoctor-reels` și au prioritate față de acest README.
+Regulile lui Sabin și preferințele lui de editare sunt în [`skill/PREFERINTE.md`](skill/PREFERINTE.md) și au prioritate față de acest README. Pașii pe care îi urmează Claude sunt în [`skill/INSTRUCTIUNI.md`](skill/INSTRUCTIUNI.md). Skill-ul `turbodoctor-reels` din contul Claude doar le citește de aici, ca să fie la fel în orice cont, iar feedback-ul nou se salvează tot aici.
 
 ## Stilul v2 (aprobat)
 
