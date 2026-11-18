@@ -2345,5 +2345,77 @@ window.SCHEM = (() => {
     return s;
   }
 
-  return { dpfRecon, coreMaterial, dpfCoating, vagEgrDpf, waterCooler, photoId, popsBangs, madeInRo, commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
+  // ---------- „Ne puneți la investiții în cât mai multe rafturi” (mulțumirea către clienți, Iași, 18.11.2026) ----------
+  // Rafturile atelierului (montanți albaștri, grinzi portocalii, lăzi albastre numerotate) care se umplu pe ce enumeră Sabin.
+  // P: { racks: [t1, t2, t3] = momentele în care intră rafturile (absolut), items: [[t, kind, n, eticheta]], pil: t (pilitura pe sistemele de injecție),
+  //      clean: t (curățare profesională: DPF / catalizator / admisie se aprind verde) }. kind: turbo | injector | pump | rail | dpf | cat | intake.
+  function shelfFill(tl, ph, pt, P, t) {
+    let s = ''; const RW = 270, RX = [22, 322, 622], TOP = 16, FLOOR = 296, BEAM = [102, 194, 286], BW = 74, BH = 58;
+    const BLUE = '#2F7BFF', ORG = '#FF6A2A', CRATE = '#1D4C9E', CRATE2 = '#163A7A';
+    const eb = p => { const c1 = 1.9, c3 = c1 + 1; p = cl(p); return 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2); };
+    const racks = P.racks || [0]; const vis = racks.map(rt => t - rt);
+    const nVis = vis.filter(k => k >= 0).length;
+    const COL = { turbo: C.cy, injector: C.yel, pump: C.org, rail: '#FF9F5A', dpf: '#C9D6E4', cat: C.oil, intake: C.grn };
+    const icon = (kind, x, y, c) => {
+      const st = `stroke="${c}" stroke-width="3.6" fill="${C.body2}" stroke-linejoin="round"`;
+      if (kind === 'turbo') { let g = `<path d="M ${x} ${y - 17} H ${x + 22} V ${y - 7} H ${x + 13}" ${st}/><circle cx="${x}" cy="${y}" r="17" ${st}/><circle cx="${x}" cy="${y}" r="9" fill="none" stroke="${c}" stroke-width="2.6"/>`;
+        for (let i = 0; i < 6; i++) { const a = rad(i * 60 + tl * 220); g += `<line x1="${f(x + Math.cos(a) * 3)}" y1="${f(y + Math.sin(a) * 3)}" x2="${f(x + Math.cos(a) * 8.5)}" y2="${f(y + Math.sin(a) * 8.5)}" stroke="${c}" stroke-width="2.4" stroke-linecap="round"/>`; }
+        return g; }
+      if (kind === 'injector') return `<rect x="${x - 6}" y="${y - 24}" width="12" height="9" rx="2" ${st}/><rect x="${x - 8}" y="${y - 15}" width="16" height="22" rx="3" ${st}/><path d="M ${x - 8} ${y - 8} H ${x - 16}" stroke="${c}" stroke-width="3.4" stroke-linecap="round"/><path d="M ${x - 6} ${y + 7} L ${x - 3} ${y + 20} H ${x + 3} L ${x + 6} ${y + 7}" ${st}/>`;
+      if (kind === 'pump') return `<rect x="${x - 20}" y="${y - 9}" width="40" height="22" rx="6" ${st}/><rect x="${x - 12}" y="${y - 21}" width="11" height="12" rx="2" ${st}/><rect x="${x + 2}" y="${y - 21}" width="11" height="12" rx="2" ${st}/><path d="M ${x - 20} ${y + 2} H ${x - 27}" stroke="${c}" stroke-width="4" stroke-linecap="round"/><circle cx="${x + 9}" cy="${y + 2}" r="4" fill="${c}"/>`;
+      if (kind === 'rail') { let g = `<rect x="${x - 25}" y="${y - 16}" width="50" height="11" rx="5.5" ${st}/>`; for (let i = 0; i < 4; i++) { const xx = x - 18 + i * 12; g += `<path d="M ${xx} ${y - 5} V ${y + 10} L ${xx - 2.5} ${y + 17} H ${xx + 2.5} L ${xx} ${y + 10}" stroke="${c}" stroke-width="3.2" fill="none" stroke-linejoin="round"/>`; } return g; }
+      if (kind === 'dpf' || kind === 'cat') { const w = kind === 'dpf' ? 46 : 36, h = kind === 'dpf' ? 22 : 24; let g = `<path d="M ${x - w / 2 - 8} ${y - 4} L ${x - w / 2} ${y - h / 2} V ${y + h / 2} L ${x - w / 2 - 8} ${y + 4} Z M ${x + w / 2 + 8} ${y - 4} L ${x + w / 2} ${y - h / 2} V ${y + h / 2} L ${x + w / 2 + 8} ${y + 4} Z" ${st}/><rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="4" ${st}/>`;
+        for (let i = 0; i < (kind === 'dpf' ? 5 : 4); i++) for (let j = 0; j < 2; j++) g += kind === 'dpf' ? `<rect x="${f(x - w / 2 + 5 + i * 8)}" y="${f(y - 7 + j * 8)}" width="5" height="5" fill="${c}" opacity=".7"/>` : `<circle cx="${f(x - w / 2 + 7 + i * 7.5)}" cy="${f(y - 4 + j * 8)}" r="2.6" fill="${c}" opacity=".8"/>`;
+        return g; }
+      if (kind === 'intake') { let g = `<rect x="${x - 24}" y="${y - 18}" width="48" height="12" rx="5" ${st}/>`; for (let i = 0; i < 4; i++) g += `<path d="M ${x - 18 + i * 12} ${y - 6} V ${y + 14}" stroke="${c}" stroke-width="6" stroke-linecap="round"/>`; return g + `<circle cx="${x + 24}" cy="${y - 12}" r="6" ${st}/>`; }
+      return '';
+    };
+    // floor + racks
+    s += `<line x1="8" y1="${FLOOR + 6}" x2="906" y2="${FLOOR + 6}" stroke="${C.cyD}" stroke-width="2" stroke-dasharray="10 8"/>`;
+    const bins = []; // in fill order: rack -> level -> slot
+    RX.forEach((x0, r) => {
+      const k = vis[r] != null ? vis[r] : -1;
+      if (k < 0) { s += `<rect x="${x0}" y="${TOP}" width="${RW}" height="${FLOOR - TOP}" rx="10" fill="rgba(14,39,66,.35)" stroke="${C.cyD}" stroke-width="2" stroke-dasharray="8 7"/>` + T(x0 + RW / 2, (TOP + FLOOR) / 2 + 12, '?', { s: 40, c: 'rgba(98,216,255,.3)', a: 'middle' }); }
+      const dx = k < 0 ? 0 : (r === 0 && racks[0] <= t - tl ? 0 : (1 - eb(k / .5)) * 320); const op = k < 0 ? 0 : cl(k / .2);
+      let g = '';
+      [x0, x0 + RW - 10].forEach(ux => { g += `<rect x="${ux}" y="${TOP}" width="10" height="${FLOOR - TOP + 6}" fill="${BLUE}"/>`; for (let y = TOP + 10; y < FLOOR; y += 15) g += `<rect x="${ux + 3}" y="${y}" width="4" height="7" fill="#0B2A66"/>`; });
+      BEAM.forEach(by => { g += `<rect x="${x0}" y="${by}" width="${RW}" height="10" fill="${ORG}"/>`; });
+      for (let lv = 0; lv < 3; lv++) for (let j = 0; j < 3; j++) {
+        const bx = x0 + 16 + j * (BW + 11), by = BEAM[lv] - BH - 1;
+        g += `<path d="M ${bx} ${by + 10} L ${bx + 6} ${by + BH} H ${bx + BW - 6} L ${bx + BW} ${by + 10} Z" fill="${CRATE}" stroke="#0B2A66" stroke-width="2"/><rect x="${bx}" y="${by + 6}" width="${BW}" height="9" rx="2" fill="${CRATE2}"/>`;
+        g += T(bx + BW / 2, by + BH - 12, String((r * 31 + lv * 9 + j * 7) % 89 + 2), { s: 15, c: 'rgba(255,255,255,.75)', a: 'middle', fam: 'Mont', w: 700, ls: 0 });
+        bins.push({ bx, by, r, k, dx });
+      }
+      if (k >= 0) s += `<g transform="translate(${f(dx)} 0)" opacity="${f(op)}">${g}</g>`;
+      // „+1 RAFT” on a new rack, with the money that went into it
+      if (k >= 0 && r > 0 && k < 1.7) { const kk = eb(k / .35), fo = 1 - cl((k - 1.35) / .35);
+        s += `<g opacity="${f(fo)}">` + tag(x0 + RW / 2, TOP + 44, P.plus || '+1 RAFT', C.yel, 'middle', 22, cl(k / .15)) + `</g>`;
+        s += `<g opacity="${f(fo)}" transform="translate(${f(x0 + RW / 2)} ${f(TOP + 120 - 30 * kk)}) scale(${f(.5 + .5 * kk)})">${emoji(0, 0, 64, 'money_with_wings')}</g>`; }
+    });
+    // items: each kind fills the next free bins, one after another
+    let idx = 0, filled = 0; const kindAt = [];
+    (P.items || []).forEach(([ti, kind, n]) => { for (let i = 0; i < n; i++, idx++) { const b = bins[idx]; if (!b) continue; const k = t - ti - i * .11; kindAt[idx] = kind;
+      if (k < 0 || b.k < 0) continue; filled++;
+      const sc = eb(k / .3), x = b.bx + BW / 2 + b.dx, y = b.by + 8 - 22 * (1 - eo(k / .3));
+      let c = COL[kind] || C.cy; let extra = '';
+      if (kind === 'rail' && P.pil != null && t >= P.pil) { const q = t - P.pil; c = C.red; const pu = .5 + .5 * Math.sin(q * 9 + i);
+        for (let m = 0; m < 7; m++) { const a = rad(m * 51 + i * 20 + q * 40), rr = 14 + 16 * ((q * .8 + m * .17) % 1); extra += `<rect x="${f(x + Math.cos(a) * rr)}" y="${f(y - 4 + Math.sin(a) * rr * .6)}" width="4" height="4" fill="${m % 2 ? '#E8EEF4' : C.red}" opacity="${f(.85 * cl(q / .3))}" transform="rotate(${m * 37} ${f(x + Math.cos(a) * rr)} ${f(y - 4 + Math.sin(a) * rr * .6)})"/>`; }
+        extra += `<circle cx="${f(x)}" cy="${f(y - 2)}" r="${f(30 + 4 * pu)}" fill="none" stroke="${C.red}" stroke-width="3" opacity="${f(.55 * cl(q / .3))}"/>`; }
+      if ((kind === 'dpf' || kind === 'cat' || kind === 'intake') && P.clean != null && t >= P.clean) { const q = t - P.clean - (idx % 9) * .06; if (q > 0) { c = C.grn;
+        extra += `<g transform="translate(${f(x + 26)} ${f(y - 22)}) scale(${f(eb(q / .3))})"><circle r="11" fill="#16A34A" stroke="#fff" stroke-width="2"/>` + check(0, 1, 5.5, '#fff', 3.5) + '</g>';
+        if (q < .9) extra += spark(x, y - 4, q * 6, C.grn, 6, 14 + 18 * q); } }
+      s += `<g transform="translate(${f(x)} ${f(y)}) scale(${f(sc * 1.2)}) translate(${f(-x)} ${f(-y)})">${icon(kind, x, y, c)}</g>` + extra;
+    } });
+    // fill meter
+    const cap = 9 * Math.max(1, nVis), pc = cl(filled / cap), full = pc >= .999 && filled > 0;
+    const mc = full ? C.red : pc > .66 ? C.yel : C.grn, BX0 = 196, BX1 = 640, MY = 330;
+    s += T(22, MY + 7, P.meter || 'OCUPARE RAFTURI', { s: 17, c: C.dim, ls: 1 });
+    s += `<rect x="${BX0}" y="${MY - 9}" width="${BX1 - BX0}" height="18" rx="9" fill="rgba(14,39,66,.9)" stroke="${C.cyD}" stroke-width="2"/>`;
+    if (pc > 0) s += `<rect x="${BX0 + 2}" y="${MY - 7}" width="${f((BX1 - BX0 - 4) * pc)}" height="14" rx="7" fill="${mc}"/>`;
+    s += T(BX1 + 14, MY + 8, Math.round(pc * 100) + '%', { s: 22, c: mc, ls: 0 });
+    if (full) { const pu = .5 + .5 * Math.sin(tl * 9); s += tag(812, MY, P.fullTxt || 'PLIN!', C.red, 'middle', 22, .75 + .25 * pu); }
+    return s;
+  }
+
+  return { shelfFill, dpfRecon, coreMaterial, dpfCoating, vagEgrDpf, waterCooler, photoId, popsBangs, madeInRo, commonRail, injectorParts, combustionTest, timingKit, intakeFlow, vacuumCapsule, causeEffect, _gauge, dpfBackpressure, euro7Kit, euro7Line, valueVsLabor, injectorSet, turboBlowby, turboPlay, turboOil, injectorSpray, chainSkip, wastegate, pistonSeize, systemMap, oilPaths, railPressure, engineSwap, camTiming, coolingHybrid, oilFilter, camWear, route, sensorFeedback, fuelFilterFlow, pressureLag, tankCondens, liveData, injectorReturn, supplyChain, controlLoop, scopeTrace, wearCurve, dpfFlow, regenModes, postInject, egrLoop, filingsSpread, pumpLube, decanterFilter };
 })();
