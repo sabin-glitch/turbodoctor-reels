@@ -305,6 +305,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdpkguNwKijkrSVQV4XvZoKY",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/guNwKijkrSVQV4XvZoKY/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "fsq_r2_tdi",
   "source_url": "https://freesound.org/search/",
   "downloader": "curl"
@@ -2997,6 +3002,11 @@
  {
   "id": "aerL08a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/0qIWQFBqYYgNewgWvAyH/nCMb42fDgelvRXiQ1S04/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "sdpkcGrZtBFhpWUku1YSfBqw",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/cGrZtBFhpWUku1YSfBqw/asset_preview.mp3",
   "downloader": "curl"
  },
  {
