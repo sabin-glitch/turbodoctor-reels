@@ -4985,6 +4985,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdpkjBvYOK05GXQcsRtMZmj3",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/jBvYOK05GXQcsRtMZmj3/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "tdvdpfA",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/HBlhlEiwCM8FdTOZpon0/asset_preview.mp3",
   "downloader": "curl"
@@ -6227,6 +6232,11 @@
  {
   "id": "su5L00a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/6CYzaxlozgjYCKzToEYR/7ZzPKJYbJ15BYOnWG8My/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "sdpk46lQIyMPdWCrBbP5bXl2",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/46lQIyMPdWCrBbP5bXl2/asset_preview.mp3",
   "downloader": "curl"
  },
  {
