@@ -685,6 +685,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sppk1YWUnohGBl82OZ1r94vl",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/1YWUnohGBl82OZ1r94vl/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "bov_L08b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/MD9KZeJZW5xiyv9SDr1j/Cz5ddHdPNrmNwRJLTwWF/content.mp3",
   "downloader": "curl"
