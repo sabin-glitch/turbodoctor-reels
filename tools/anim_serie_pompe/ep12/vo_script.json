@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {12|doisprezece} din {17|șaptesprezece}: regulatorul de debit blocat.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p12h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: ralanti neregulat, putere care vine și pleacă, motor care se oprește când ridici piciorul de pe accelerație și erori de presiune în rampă.",
+  "gap": 0.6,
+  "id": "p12b0",
+  "doc": 2
+ },
+ {
+  "text": "Pompa de înaltă presiune nu comprimă tot ce primește. La intrarea ei stă regulatorul de debit, o supapă electrică prin care trece doar atâta motorină câtă cere calculatorul.",
+  "gap": 0.42,
+  "id": "p12b1",
+  "doc": 3
+ },
+ {
+  "text": "Înăuntrul lui, un pistonaș cu joc foarte mic se mișcă tot timpul cât merge motorul.",
+  "gap": 0.42,
+  "id": "p12b2",
+  "doc": 4
+ },
+ {
+  "text": "Aici se oprește prima murdărie din motorină: o particulă trecută de filtru, puțină rugină sau un strat de lac de câțiva microni. Pistonașul se agață.",
+  "gap": 0.42,
+  "id": "p12b3",
+  "doc": 5
+ },
+ {
+  "text": "Rămas prea deschis, lasă presiunea din rampă să urce peste cea cerută. Rămas prea închis, lasă pompa fără motorină, iar motorul trage slab sau nu mai pornește.",
+  "gap": 0.42,
+  "id": "p12b4",
+  "doc": 6
+ },
+ {
+  "text": "Regulatorul e și martorul pompei. Dacă pe sita lui se găsește pilitură, pompa a început să se roadă pe dinăuntru.",
+  "gap": 0.42,
+  "id": "p12b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți: filtru schimbat la timp și motorină curată. Iar un regulator nou, montat pe o pompă care face pilitură, nu rezolvă nimic.",
+  "gap": 0.5,
+  "id": "p12b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: nu schimbăm regulatorul pe ghicite. Desfacem pompa, căutăm pilitura la microscop și testăm totul pe banc, la debit și presiune.",
+  "gap": 0.6,
+  "id": "p12b7",
+  "doc": 9
+ },
+ {
+  "text": "Dacă pompa e sănătoasă, ajunge un regulator nou. Dacă nu, o recondiționăm întreagă.",
+  "gap": 0.42,
+  "id": "p12b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

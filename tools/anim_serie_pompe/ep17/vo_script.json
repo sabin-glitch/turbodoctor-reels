@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {17|șaptesprezece} din {17|șaptesprezece}: pompa la mâna a doua.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p17h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: după montarea unei pompe folosite, mașina merge o vreme, apoi vin pornirea grea, pierderea de putere și erorile de presiune. Uneori urmează injectoarele.",
+  "gap": 0.6,
+  "id": "p17b0",
+  "doc": 2
+ },
+ {
+  "text": "O pompă nu se poate judeca din ochi. Uzura ei e înăuntru, pe camă, pe pistoane și pe supape. Pe dinafară, una bună și una roasă arată la fel.",
+  "gap": 0.42,
+  "id": "p17b1",
+  "doc": 3
+ },
+ {
+  "text": "O pompă de la dezmembrări vine fără poveste. Nu știi câți kilometri are, cu ce motorină a mers și de ce a ajuns mașina la dezmembrat.",
+  "gap": 0.42,
+  "id": "p17b2",
+  "doc": 4
+ },
+ {
+  "text": "Poate a stat luni de zile pe un raft, cu racordurile deschise: înăuntru intră praf și umezeală, iar motorina rămasă se învechește și lasă depuneri.",
+  "gap": 0.42,
+  "id": "p17b3",
+  "doc": 5
+ },
+ {
+  "text": "Dacă e deja roasă, face pilitură în mașina ta. Iar pilitura ajunge în injectoare, în rampă și în rezervor.",
+  "gap": 0.42,
+  "id": "p17b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: dacă tot cumperi o pompă folosită, nu o monta netestată. Un test pe banc costă mult mai puțin decât o instalație plină de pilitură.",
+  "gap": 0.5,
+  "id": "p17b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: testăm pe banc și pompa adusă de tine. Sau o recondiționăm pe cea de pe mașina ta.",
+  "gap": 0.6,
+  "id": "p17b6",
+  "doc": 8
+ },
+ {
+  "text": "O desfacem, o curățăm cu ultrasunete, înlocuim piesele uzate cu piese noi și o testăm. O primești înapoi cu fișa de test și cu garanție de douăsprezece luni.",
+  "gap": 0.42,
+  "id": "p17b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

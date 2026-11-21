@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {13|treisprezece} din {17|șaptesprezece}: tachetul pompei {CP4|ce pe patru}.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p13h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: martorul de motor, pornire grea, pierdere de putere, zgomot de bătaie mai tare ca de obicei, apoi avarie sau motor oprit în mers.",
+  "gap": 0.6,
+  "id": "p13b0",
+  "doc": 2
+ },
+ {
+  "text": "Pompa {CP4|ce pe patru} e pe foarte multe diesele moderne. Pe arborele ei e o camă, iar pe camă calcă o rolă ținută într-un tachet, care împinge pistonul.",
+  "gap": 0.42,
+  "id": "p13b1",
+  "doc": 3
+ },
+ {
+  "text": "Cât timp rola stă dreaptă, se rostogolește pe camă, pe o peliculă de motorină. Numai că tachetul e rotund și se poate răsuci în locașul lui.",
+  "gap": 0.42,
+  "id": "p13b2",
+  "doc": 4
+ },
+ {
+  "text": "Când ungerea slăbește, din cauza aerului, a benzinei sau a unei motorine care nu unge, rola se poate întoarce cu un sfert de tură.",
+  "gap": 0.42,
+  "id": "p13b3",
+  "doc": 5
+ },
+ {
+  "text": "Din clipa aceea nu se mai rostogolește. Alunecă de-a latul pe camă și taie un șanț în mijlocul ei.",
+  "gap": 0.42,
+  "id": "p13b4",
+  "doc": 6
+ },
+ {
+  "text": "Metalul ros pleacă sub formă de fulgi fini în toată instalația, până în injectoare și în rezervor.",
+  "gap": 0.42,
+  "id": "p13b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți: tot ce ține pelicula întreagă. Filtru schimbat și aerisit corect, rezervor care nu ajunge la fund și niciodată benzină.",
+  "gap": 0.5,
+  "id": "p13b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: recondiționăm pompele {CP4|ce pe patru}. Căutăm pilitura la microscop și verificăm cama, rola și tachetul.",
+  "gap": 0.6,
+  "id": "p13b7",
+  "doc": 9
+ },
+ {
+  "text": "Piesele roase se înlocuiesc cu piese noi, iar pompa e testată pe banc. Verificăm pe stand și injectoarele, la care au ajuns fulgii.",
+  "gap": 0.42,
+  "id": "p13b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

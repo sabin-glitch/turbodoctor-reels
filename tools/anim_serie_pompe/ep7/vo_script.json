@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {7|șapte} din {17|șaptesprezece}: AdBlue pus în rezervorul de motorină.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p7h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele, dacă motorul a fost pornit: mers neregulat, opriri și, până la urmă, un motor care nu mai pornește.",
+  "gap": 0.6,
+  "id": "p7b0",
+  "doc": 2
+ },
+ {
+  "text": "AdBlue este uree dizolvată în apă. Locul lui e în rezervorul separat, cu bușon albastru, de unde ajunge în evacuare, nu în motor.",
+  "gap": 0.42,
+  "id": "p7b1",
+  "doc": 3
+ },
+ {
+  "text": "Turnat din greșeală în motorină, nu se amestecă cu ea. E mai greu și coboară la fundul rezervorului, exact de unde trage pompa electrică.",
+  "gap": 0.42,
+  "id": "p7b2",
+  "doc": 4
+ },
+ {
+  "text": "Odată pus contactul, pompa electrică îl trimite spre filtru și spre pompa de înaltă presiune, unde ar trebui să ajungă doar motorină.",
+  "gap": 0.42,
+  "id": "p7b3",
+  "doc": 5
+ },
+ {
+  "text": "AdBlue este coroziv pentru oțel și aluminiu, iar când se usucă lasă cristale albe, ca sarea. Depunerile rămân pe piesele instalației, iar pompa și injectoarele au de suferit.",
+  "gap": 0.42,
+  "id": "p7b4",
+  "doc": 6
+ },
+ {
+  "text": "Dacă motorul a mers, producătorii cer de obicei înlocuirea instalației, de la rezervor până la injectoare.",
+  "gap": 0.42,
+  "id": "p7b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți paguba: dacă ai greșit rezervorul, nu pune contactul. Mașina se tractează, iar rezervorul se golește și se curăță.",
+  "gap": 0.5,
+  "id": "p7b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: desfacem pompa și injectoarele și vedem, la microscop, cât a înaintat coroziunea.",
+  "gap": 0.6,
+  "id": "p7b7",
+  "doc": 9
+ },
+ {
+  "text": "Îți spunem ce se mai poate recondiționa și ce trebuie înlocuit, iar hotărârea o luăm împreună. Ce se poate salva curățăm cu ultrasunete și testăm pe banc.",
+  "gap": 0.42,
+  "id": "p7b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

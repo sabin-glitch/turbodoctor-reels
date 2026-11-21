@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {9|nouă} din {17|șaptesprezece}: filtrul înfundat și motorina înghețată.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p9h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: motorul nu mai trage la depășire sau în rampă, intră în avarie ori se oprește. Iarna, la ger, se oprește la scurt timp după pornire.",
+  "gap": 0.6,
+  "id": "p9b0",
+  "doc": 2
+ },
+ {
+  "text": "Pompa de înaltă presiune nu poate comprima decât motorina pe care o primește. Iar tot ce primește trece întâi prin filtru.",
+  "gap": 0.42,
+  "id": "p9b1",
+  "doc": 3
+ },
+ {
+  "text": "Un filtru încărcat lasă să treacă destulă motorină la ralanti. La accelerare, când motorul cere mult, debitul e strangulat și presiunea din rampă cade.",
+  "gap": 0.42,
+  "id": "p9b2",
+  "doc": 4
+ },
+ {
+  "text": "Iarna, același lucru îl face frigul. De pe la minus șapte grade, în motorină apar primele cristale de parafină, iar la ger puternic ele astupă filtrul.",
+  "gap": 0.42,
+  "id": "p9b3",
+  "doc": 5
+ },
+ {
+  "text": "O pompă înfometată nu doar că pierde presiune. Motorina o unge și o răcește, așa că, la debit mic, piesele ei lucrează mai cald și cu o peliculă mai subțire.",
+  "gap": 0.42,
+  "id": "p9b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: schimbă filtrul la interval, de preferat înainte de iarnă. Pe ger, alimentează cu motorină de iarnă și nu turna benzină în ea.",
+  "gap": 0.5,
+  "id": "p9b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: o pompă acuzată pe nedrept se vede pe banc. O testăm cu alimentare corectă.",
+  "gap": 0.6,
+  "id": "p9b6",
+  "doc": 8
+ },
+ {
+  "text": "Dacă dă debitul și presiunea din fișă, pompa e bună, iar problema e la filtru sau la alimentare. Dacă nu le dă, o desfacem și o recondiționăm.",
+  "gap": 0.42,
+  "id": "p9b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

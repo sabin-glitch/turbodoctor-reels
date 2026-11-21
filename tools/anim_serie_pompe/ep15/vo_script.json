@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {15|cincisprezece} din {17|șaptesprezece}: greșelile de montaj.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p15h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele apar imediat după montarea pompei: motorul pornește greu sau deloc, pierde motorină pe la racorduri ori erorile de presiune revin în câteva zile.",
+  "gap": 0.6,
+  "id": "p15b0",
+  "doc": 2
+ },
+ {
+  "text": "Prima greșeală e pompa pornită goală. Producătorii scriu că pompa nu are voie să meargă fără motorină: instalația se umple și se aerisește înainte de prima pornire.",
+  "gap": 0.42,
+  "id": "p15b1",
+  "doc": 3
+ },
+ {
+  "text": "A doua e murdăria. Ajunge o pompă lăsată cu racordurile deschise pe un banc prăfuit: particule mai mici de o zecime de milimetru pot da defecte.",
+  "gap": 0.42,
+  "id": "p15b2",
+  "doc": 4
+ },
+ {
+  "text": "A treia sunt conductele de înaltă presiune refolosite. Capătul lor s-a deformat la prima strângere și etanșează mai greu, iar din filet se pot desprinde așchii fine.",
+  "gap": 0.42,
+  "id": "p15b3",
+  "doc": 5
+ },
+ {
+  "text": "A patra ține de calculator: după o pompă sau un regulator nou, multe mașini cer adaptare cu testerul.",
+  "gap": 0.42,
+  "id": "p15b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: pompa se montează curat, cu dopuri pe racorduri până în ultima clipă și după procedura de umplere a mașinii.",
+  "gap": 0.5,
+  "id": "p15b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: fiecare pompă recondiționată pleacă de la noi testată pe banc, cu fișa de test, cu piesele înlocuite și cu garanție de douăsprezece luni.",
+  "gap": 0.6,
+  "id": "p15b6",
+  "doc": 8
+ },
+ {
+  "text": "Iar dacă o pompă montată în altă parte nu face presiune, o verificăm pe banc și afli dacă problema e la pompă sau în altă parte.",
+  "gap": 0.42,
+  "id": "p15b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

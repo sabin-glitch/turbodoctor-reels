@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {4|patru} din {17|șaptesprezece}: motorina care nu unge.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p4h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele apar târziu: pompa se uzează în tăcere, apoi motorul pornește greu, pierde putere și apare eroarea de presiune mică în rampă.",
+  "gap": 0.6,
+  "id": "p4b0",
+  "doc": 2
+ },
+ {
+  "text": "Motorina trebuie să și ungă, nu doar să ardă. Standardul european verifică asta printr-o probă de uzură.",
+  "gap": 0.42,
+  "id": "p4b1",
+  "doc": 3
+ },
+ {
+  "text": "Urma lăsată pe o bilă de oțel nu are voie să treacă de patru sute șaizeci de microni. Peste această limită, spun producătorii de pompe, viața oricărei piese mecanice scade.",
+  "gap": 0.42,
+  "id": "p4b2",
+  "doc": 4
+ },
+ {
+  "text": "Motorina vândută la pompă trebuie să respecte limita. Problema e ce se pune în loc sau peste ea: benzină, petrol lampant, combustibil de încălzire, motorină din surse nesigure.",
+  "gap": 0.42,
+  "id": "p4b3",
+  "doc": 5
+ },
+ {
+  "text": "Primele trei sunt mai subțiri decât motorina și ung mai slab. Pelicula dintre camă și rolă se rupe, iar suprafețele încep să se roadă.",
+  "gap": 0.42,
+  "id": "p4b4",
+  "doc": 6
+ },
+ {
+  "text": "Sfatul vechi cu benzina turnată iarna în motorină era pentru motoarele de dinainte de common rail. La o pompă modernă înseamnă uzură.",
+  "gap": 0.42,
+  "id": "p4b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți: alimentează de la benzinării cunoscute și nu turna nimic în rezervor fără acordul producătorului mașinii.",
+  "gap": 0.5,
+  "id": "p4b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: testăm pompa pe banc și vedem cât debit mai dă la presiune mare.",
+  "gap": 0.6,
+  "id": "p4b7",
+  "doc": 9
+ },
+ {
+  "text": "Dacă e uzată, o desfacem, înlocuim piesele roase cu piese noi și o testăm din nou. Primești și fișa de test.",
+  "gap": 0.42,
+  "id": "p4b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

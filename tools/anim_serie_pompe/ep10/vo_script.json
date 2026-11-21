@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {10|zece} din {17|șaptesprezece}: pompa de alimentare din rezervor, slăbită.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p10h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: pornire grea, lipsă de putere la accelerare și, uneori, un bâzâit mai puternic din zona rezervorului.",
+  "gap": 0.6,
+  "id": "p10b0",
+  "doc": 2
+ },
+ {
+  "text": "La multe diesele moderne, pompa de înaltă presiune nu trage singură motorina. O primește, sub presiune, de la o pompă electrică scufundată în rezervor.",
+  "gap": 0.42,
+  "id": "p10b1",
+  "doc": 3
+ },
+ {
+  "text": "Pompa electrică se uzează și ea. I se înfundă sita cu murdăria din rezervor ori i se încing contactele, și nu mai dă presiunea și debitul de la început.",
+  "gap": 0.42,
+  "id": "p10b2",
+  "doc": 4
+ },
+ {
+  "text": "Pompa de înaltă presiune rămâne cu prea puțină motorină. Nu mai ține presiunea în rampă, iar piesele ei, unse și răcite tot de motorină, se uzează mai repede.",
+  "gap": 0.42,
+  "id": "p10b3",
+  "doc": 5
+ },
+ {
+  "text": "De aici vine o greșeală scumpă: se schimbă pompa de înaltă presiune, iar defectul rămâne, pentru că vinovata era cea din rezervor.",
+  "gap": 0.42,
+  "id": "p10b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: nu merge cu rezervorul aproape gol, pentru că pompa electrică e răcită de motorina din jurul ei, și schimbă filtrul la timp.",
+  "gap": 0.5,
+  "id": "p10b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: testul pe banc desparte cele două pompe. Dacă pompa de înaltă presiune dă debitul și presiunea din fișă, nu o schimbi degeaba.",
+  "gap": 0.6,
+  "id": "p10b6",
+  "doc": 8
+ },
+ {
+  "text": "Dacă a lucrat mult timp flămândă și s-a uzat, o recondiționăm, cu garanție de douăsprezece luni.",
+  "gap": 0.42,
+  "id": "p10b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

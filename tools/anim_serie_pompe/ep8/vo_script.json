@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {8|opt} din {17|șaptesprezece}: motorina îmbătrânită și bacteriile din rezervor.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p8h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele apar la mașinile care stau: după luni de pauză, motorul nu pornește sau pornește și se oprește, iar filtrul e plin de nămol închis la culoare.",
+  "gap": 0.6,
+  "id": "p8b0",
+  "doc": 2
+ },
+ {
+  "text": "Motorina de azi conține până la șapte la sută {biodiesel|biodizel}. {Biodieselul|Biodizelul} unge bine, dar îmbătrânește: cu aerul și cu căldura, se oxidează.",
+  "gap": 0.42,
+  "id": "p8b1",
+  "doc": 3
+ },
+ {
+  "text": "Din oxidare rezultă acizi, care atacă metalul, și rășini lipicioase, care se depun ca un lac pe piesele calde.",
+  "gap": 0.42,
+  "id": "p8b2",
+  "doc": 4
+ },
+ {
+  "text": "Lacul umple jocurile de câțiva microni. Pistoanele pompei și regulatorul de debit se mișcă tot mai greu și pot rămâne înțepenite.",
+  "gap": 0.42,
+  "id": "p8b3",
+  "doc": 5
+ },
+ {
+  "text": "Dacă în rezervor s-a adunat și apă, la limita dintre apă și motorină cresc bacterii și ciuperci. Ele fac un nămol care înfundă filtrul și lasă pompa fără motorină.",
+  "gap": 0.42,
+  "id": "p8b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: o mașină care stă mult se lasă cu rezervorul plin, cu motorină proaspătă, iar la repunerea în mers i se schimbă filtrul.",
+  "gap": 0.5,
+  "id": "p8b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: o pompă înțepenită de depuneri nu e neapărat pierdută. O desfacem, curățăm piesele cu ultrasunete și schimbăm garniturile și piesele corodate.",
+  "gap": 0.6,
+  "id": "p8b6",
+  "doc": 8
+ },
+ {
+  "text": "Apoi o testăm pe banc. La fel procedăm cu injectoarele, care suferă de aceleași depuneri.",
+  "gap": 0.42,
+  "id": "p8b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

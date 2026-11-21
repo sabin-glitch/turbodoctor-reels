@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {1|unu} din {17|șaptesprezece}: aerul rămas după schimbul de filtru.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p1h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele apar după un schimb de filtru de motorină: demarorul învârte mult, motorul pornește greu sau se oprește după câteva secunde.",
+  "gap": 0.6,
+  "id": "p1b0",
+  "doc": 2
+ },
+ {
+  "text": "Pompa de înaltă presiune nu are ulei. Piesele ei sunt unse și răcite chiar de motorina pe care o pompează.",
+  "gap": 0.42,
+  "id": "p1b1",
+  "doc": 3
+ },
+ {
+  "text": "Un filtru nou, montat gol, e plin de aer. Dacă motorul e pornit așa, în pompă ajunge întâi aerul, nu motorina.",
+  "gap": 0.42,
+  "id": "p1b2",
+  "doc": 4
+ },
+ {
+  "text": "Fără pelicula de motorină, cama, rola și pistonul lucrează metal pe metal, iar suprafețele lor se zgârie.",
+  "gap": 0.42,
+  "id": "p1b3",
+  "doc": 5
+ },
+ {
+  "text": "Din zgârieturi se desprinde pilitură fină. Motorul pornește până la urmă, dar uzura a început și merge mai departe la fiecare drum.",
+  "gap": 0.42,
+  "id": "p1b4",
+  "doc": 6
+ },
+ {
+  "text": "Pilitura pleacă odată cu motorina: la regulatorul de debit, în rampă și în injectoare. Prin retur ajunge în rezervor, iar de acolo, din nou spre pompă.",
+  "gap": 0.42,
+  "id": "p1b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți: după schimbul filtrului, instalația se umple și se aerisește înainte de pornire, după procedura mașinii. Motorul nu se pornește ca să tragă singur motorina.",
+  "gap": 0.5,
+  "id": "p1b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: desfacem pompa și o verificăm la microscop. Dacă găsim pilitură, o recondiționăm cu piese noi.",
+  "gap": 0.6,
+  "id": "p1b7",
+  "doc": 9
+ },
+ {
+  "text": "Apoi o testăm pe banc, la debit, presiune și etanșeitate. Iar injectoarele, la care a ajuns aceeași pilitură, le verificăm pe stand.",
+  "gap": 0.42,
+  "id": "p1b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

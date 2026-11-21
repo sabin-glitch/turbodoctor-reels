@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {11|unsprezece} din {17|șaptesprezece}: aerul tras pe la racorduri.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p11h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: motorul pornește greu după o noapte de stat și ezită la accelerare. În conducta transparentă de lângă filtru, acolo unde există, se văd bule.",
+  "gap": 0.6,
+  "id": "p11b0",
+  "doc": 2
+ },
+ {
+  "text": "Între rezervor și pompa de înaltă presiune, motorina trece prin conducte, cuple rapide, carcasa filtrului și, la unele mașini, printr-o pară de amorsare.",
+  "gap": 0.42,
+  "id": "p11b1",
+  "doc": 3
+ },
+ {
+  "text": "La multe motoare, partea asta lucrează în depresiune: pompa trage motorina spre ea. O garnitură îmbătrânită sau o cuplă crăpată nu lasă motorina să iasă. Lasă aerul să intre.",
+  "gap": 0.42,
+  "id": "p11b2",
+  "doc": 4
+ },
+ {
+  "text": "Bulele ajung în pompă odată cu motorina. Unde e o bulă nu e peliculă, iar aerul împiedică ungerea corectă a pieselor.",
+  "gap": 0.42,
+  "id": "p11b3",
+  "doc": 5
+ },
+ {
+  "text": "Nu e o pană bruscă, ca la un filtru montat gol. E o uzură măruntă, la fiecare pornire, care se adună în luni de zile.",
+  "gap": 0.42,
+  "id": "p11b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: la schimbul de filtru se pun garnituri noi, iar cuplele și furtunurile crăpate se înlocuiesc, nu se cârpesc cu coliere.",
+  "gap": 0.5,
+  "id": "p11b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: dacă pompa a lucrat mult timp cu aer, o desfacem și o verificăm la microscop. Schimbăm piesele zgâriate și garniturile.",
+  "gap": 0.6,
+  "id": "p11b6",
+  "doc": 8
+ },
+ {
+  "text": "Apoi o testăm pe banc, la presiune și la etanșeitate. Pleacă de la noi cu fișa de test, ca să știi sigur că nu pompa trage aer.",
+  "gap": 0.42,
+  "id": "p11b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

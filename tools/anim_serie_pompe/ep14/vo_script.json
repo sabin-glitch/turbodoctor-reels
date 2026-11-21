@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {14|paisprezece} din {17|șaptesprezece}: uzura normală și garniturile îmbătrânite.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p14h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele vin încet: pornire tot mai grea, mai ales cu motorul cald, putere mai mică la turații mari și, uneori, urme umede de motorină pe pompă.",
+  "gap": 0.6,
+  "id": "p14b0",
+  "doc": 2
+ },
+ {
+  "text": "Pistoanele pompei fac milioane de curse la fiecare mie de kilometri, la presiuni de peste două mii de bari.",
+  "gap": 0.42,
+  "id": "p14b1",
+  "doc": 3
+ },
+ {
+  "text": "Cu timpul, jocul dintre piston și cilindru crește. O parte din motorină scapă înapoi pe lângă piston, în loc să ajungă în rampă.",
+  "gap": 0.42,
+  "id": "p14b2",
+  "doc": 4
+ },
+ {
+  "text": "La cald, motorina e mai subțire și scapă și mai ușor. De aceea, la demaror, o pompă uzată nu mai strânge presiunea de pornire.",
+  "gap": 0.42,
+  "id": "p14b3",
+  "doc": 5
+ },
+ {
+  "text": "Îmbătrânesc și garniturile. Se întăresc, crapă și lasă motorina să iasă pe la ax sau pe la capace.",
+  "gap": 0.42,
+  "id": "p14b4",
+  "doc": 6
+ },
+ {
+  "text": "Uzura normală nu vine peste noapte și, de obicei, nu umple instalația de pilitură.",
+  "gap": 0.42,
+  "id": "p14b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți surprizele: filtre schimbate la timp, motorină curată și o verificare la primele semne.",
+  "gap": 0.5,
+  "id": "p14b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: măsurăm pe banc cât debit mai dă pompa la presiune mare și îi verificăm etanșeitatea. Uneori ajung garnituri noi.",
+  "gap": 0.6,
+  "id": "p14b7",
+  "doc": 9
+ },
+ {
+  "text": "Dacă pistoanele sau supapele sunt uzate, le înlocuim cu piese noi și testăm pompa din nou. Primești fișa de test și garanție de douăsprezece luni, fără limită de kilometri.",
+  "gap": 0.42,
+  "id": "p14b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

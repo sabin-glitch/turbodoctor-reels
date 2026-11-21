@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {3|trei} din {17|șaptesprezece}: benzina pusă din greșeală.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p3h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele vin imediat după alimentare: motorul sună altfel, merge neregulat, pierde putere și se poate opri.",
+  "gap": 0.6,
+  "id": "p3b0",
+  "doc": 2
+ },
+ {
+  "text": "Motorina e uleioasă și lasă pe piese o peliculă care le ține despărțite. Pompa de înaltă presiune se bazează pe ea, pentru că nu are alt lubrifiant.",
+  "gap": 0.42,
+  "id": "p3b1",
+  "doc": 3
+ },
+ {
+  "text": "Benzina e un solvent. Amestecată cu motorina, o subțiază și spală pelicula de pe camă, de pe rolă și de pe pistoane.",
+  "gap": 0.42,
+  "id": "p3b2",
+  "doc": 4
+ },
+ {
+  "text": "Piesele ajung să lucreze metal pe metal. Din ele se desprinde pilitură, iar pompa o trimite în toată instalația.",
+  "gap": 0.42,
+  "id": "p3b3",
+  "doc": 5
+ },
+ {
+  "text": "Aici contează un singur lucru: dacă motorul a fost pornit. La multe mașini, pompa electrică pornește de la contact, uneori chiar de la deschiderea portierei.",
+  "gap": 0.42,
+  "id": "p3b4",
+  "doc": 6
+ },
+ {
+  "text": "Dacă nu ai pornit, de obicei ajunge golirea rezervorului. Dacă motorul a mers, se pot strica pompa, injectoarele, rampa și conductele.",
+  "gap": 0.42,
+  "id": "p3b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți paguba: dacă ai pus benzină, nu pune contactul și nu porni. Mașina se tractează, iar rezervorul se golește.",
+  "gap": 0.5,
+  "id": "p3b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: dacă motorul a mers cu benzină, desfacem pompa și căutăm pilitura la microscop. O pompă curată trece doar prin testul de pe banc.",
+  "gap": 0.6,
+  "id": "p3b7",
+  "doc": 9
+ },
+ {
+  "text": "Una zgâriată o recondiționăm cu piese noi, iar injectoarele le verificăm pe stand, până la două mii patru sute de bari.",
+  "gap": 0.42,
+  "id": "p3b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {6|șase} din {17|șaptesprezece}: apa din motorină.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p6h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: martorul de apă în motorină, acolo unde există, pornire grea și mers neregulat, mai ales după o alimentare sau după ce mașina a stat mult.",
+  "gap": 0.6,
+  "id": "p6b0",
+  "doc": 2
+ },
+ {
+  "text": "Apa ajunge în rezervor odată cu motorina, din rezervoarele benzinăriei, sau se adună din condens. E mai grea decât motorina și se așază la fund.",
+  "gap": 0.42,
+  "id": "p6b1",
+  "doc": 3
+ },
+ {
+  "text": "Filtrul de motorină are un separator care o oprește. Dacă separatorul nu e golit sau filtrul e depășit, apa trece mai departe, spre pompă.",
+  "gap": 0.42,
+  "id": "p6b2",
+  "doc": 4
+ },
+ {
+  "text": "Apa nu unge. Unde ajunge ea în locul motorinei, pelicula dintre piese se rupe, iar uzura se accelerează.",
+  "gap": 0.42,
+  "id": "p6b3",
+  "doc": 5
+ },
+ {
+  "text": "Apoi vine rugina. Apa se combină cu acizii din motorină și atacă metalul: carcasa pompei, arborele, supapele.",
+  "gap": 0.42,
+  "id": "p6b4",
+  "doc": 6
+ },
+ {
+  "text": "Rugina desprinsă devine la rândul ei praf abraziv, care merge mai departe spre regulator și spre injectoare.",
+  "gap": 0.42,
+  "id": "p6b5",
+  "doc": 7
+ },
+ {
+  "text": "Cum eviți: schimbă filtrul la timp, golește separatorul de apă când cere mașina și alimentează de la benzinării cunoscute.",
+  "gap": 0.5,
+  "id": "p6b6",
+  "doc": 8
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: desfacem pompa și căutăm urmele de rugină la microscop. Curățăm piesele cu ultrasunete și le înlocuim pe cele corodate cu piese noi.",
+  "gap": 0.6,
+  "id": "p6b7",
+  "doc": 9
+ },
+ {
+  "text": "Testăm pompa pe banc, inclusiv la etanșeitate. Iar dacă apa a ajuns și la injectoare, le verificăm și pe ele.",
+  "gap": 0.42,
+  "id": "p6b8",
+  "doc": 10
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

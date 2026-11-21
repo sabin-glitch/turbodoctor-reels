@@ -1,0 +1,84 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {5|cinci} din {17|șaptesprezece}: particulele și filtrul neschimbat.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p5h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele vin treptat: motorul trage tot mai slab, pornește tot mai greu, iar la un moment dat apare eroarea de presiune în rampă.",
+  "gap": 0.6,
+  "id": "p5b0",
+  "doc": 2
+ },
+ {
+  "text": "Ca să ridice presiunea la peste două mii de bari, pistoanele pompei lucrează în cilindri cu jocuri de câțiva microni. Un fir de păr e de zeci de ori mai gros.",
+  "gap": 0.42,
+  "id": "p5b1",
+  "doc": 3
+ },
+ {
+  "text": "Filtrul de motorină oprește particulele care ar intra în aceste jocuri. Un filtru vechi, ieftin sau nepotrivit lasă să treacă praf, rugină și nisip fin.",
+  "gap": 0.42,
+  "id": "p5b2",
+  "doc": 4
+ },
+ {
+  "text": "Particulele ajung între piston și cilindru și între camă și rolă. Zgârie suprafețele ca un șmirghel, iar pompa începe să piardă presiune pe lângă piston.",
+  "gap": 0.42,
+  "id": "p5b3",
+  "doc": 5
+ },
+ {
+  "text": "Din zgârieturi se desprinde metal, adică și mai multe particule. Uzura se hrănește singură și merge mai departe, spre injectoare.",
+  "gap": 0.42,
+  "id": "p5b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: schimbă filtrul de motorină la intervalul din cartea mașinii, cu unul de calitate, potrivit motorului. Iar la montaj, nu-l lăsa desfăcut în praf.",
+  "gap": 0.5,
+  "id": "p5b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: la demontare, verificăm pompa la microscop, de pilitură, mizerie și fisuri.",
+  "gap": 0.6,
+  "id": "p5b6",
+  "doc": 8
+ },
+ {
+  "text": "Curățăm piesele cu ultrasunete și le înlocuim pe cele zgâriate cu piese noi.",
+  "gap": 0.34,
+  "id": "p5b7",
+  "doc": 8
+ },
+ {
+  "text": "Apoi testăm pompa pe banc. Iar pentru că aceleași particule ajung și la injectoare, le verificăm și pe ele pe stand.",
+  "gap": 0.42,
+  "id": "p5b8",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]

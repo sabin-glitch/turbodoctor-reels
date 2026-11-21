@@ -1,0 +1,78 @@
+[
+ {
+  "text": "Seria „De ce se strică pompele de înaltă presiune”. Astăzi prezentăm cauza {16|șaisprezece} din {17|șaptesprezece}: pompa schimbată fără curățarea instalației.",
+  "gap": 3.0,
+  "tags": "[serious] [matter of fact] [conversational tone]",
+  "id": "p16h",
+  "doc": 1
+ },
+ {
+  "text": "Vezi toate cauzele pe TikTok, Facebook și YouTube-ul nostru.",
+  "gap": 0.35,
+  "id": "s1",
+  "doc": 1
+ },
+ {
+  "text": "Semnele: după o pompă schimbată, mașina merge bine o vreme, apoi erorile de presiune se întorc, iar injectoarele încep să cedeze unul câte unul.",
+  "gap": 0.6,
+  "id": "p16b0",
+  "doc": 2
+ },
+ {
+  "text": "O pompă care s-a ros pe dinăuntru nu-și ține pilitura pentru ea. O trimite, odată cu motorina, în rampă și în injectoare, iar prin retur, în rezervor.",
+  "gap": 0.42,
+  "id": "p16b1",
+  "doc": 3
+ },
+ {
+  "text": "Fulgii de metal au de la câțiva microni până la câteva sute. Cei mai mici ajung în injectoare și se așază pe supapa de comandă.",
+  "gap": 0.42,
+  "id": "p16b2",
+  "doc": 4
+ },
+ {
+  "text": "Dacă se schimbă doar pompa, pilitura rămasă în conducte, în rampă și în rezervor pornește din nou la drum, spre injectoare și spre pompa nouă.",
+  "gap": 0.42,
+  "id": "p16b3",
+  "doc": 5
+ },
+ {
+  "text": "De aceea, producătorii de mașini cer mult mai mult decât o pompă nouă: și rampă, conducte, injectoare și filtru noi, și rezervor golit și curățat.",
+  "gap": 0.42,
+  "id": "p16b4",
+  "doc": 6
+ },
+ {
+  "text": "Cum eviți: înainte de pompa nouă, cere să vezi regulatorul de debit și filtrul vechi. Dacă pe ele e pilitură, trebuie curățată toată instalația, nu doar schimbată pompa.",
+  "gap": 0.5,
+  "id": "p16b5",
+  "doc": 7
+ },
+ {
+  "text": "Ce facem noi la Turbo Doctor: odată cu pompa, curățăm injectoarele, rampa și conductele de injecție, iar injectoarele le testăm pe stand, până la două mii patru sute de bari.",
+  "gap": 0.6,
+  "id": "p16b6",
+  "doc": 8
+ },
+ {
+  "text": "Recomandăm și curățarea rezervorului și a întregului traseu. Așa, pompa recondiționată ajunge într-o instalație curată.",
+  "gap": 0.42,
+  "id": "p16b7",
+  "doc": 9
+ },
+ {
+  "text": "La Turbo Doctor suntem experți în aceste probleme.",
+  "gap": 0.8,
+  "id": "o1"
+ },
+ {
+  "text": "Acum că știi cum poți evita această problemă, ar trebui să ajungi cât mai târziu la noi.",
+  "gap": 0.4,
+  "id": "o2"
+ },
+ {
+  "text": "Iar dacă ai nevoie de noi, la noi diagnoza este gratuită.",
+  "gap": 0.4,
+  "id": "o3"
+ }
+]
