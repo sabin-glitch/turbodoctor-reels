@@ -248,6 +248,20 @@ def film(out=None, f0=0, f1=None):
     print('film ->', out)
 
 
+def cover(out, shot='A_motor', k=2):
+    """1080x1920 cover: clean frame of the shot + big title (no labels)"""
+    surf = skia.Surface(W, H); c = surf.getCanvas()
+    background(c, 0.0, moving=False)
+    draw_frame(c, shot, k)
+    vignette(c)
+    c.drawRect(skia.Rect.MakeLTRB(0, 1380, W, H), P(shader=lin(0, 1380, 0, 1560, [skia.Color4f(0.02, 0.04, 0.07, 0.0).toColor(), skia.Color4f(0.02, 0.04, 0.07, 0.72).toColor()])))
+    txt(c, 'MODEL 3D RECONSTRUIT', 1020, 62, 19, 'm8', WHT, 0.45, 'r')
+    txt(c, 'MOTORUL DIESEL', 64, 1588, 128, 'anton', WHT, 1.0, shadow=12)
+    txt(c, 'ÎN SECȚIUNE', 64, 1756, 128, 'anton', Y, 1.0, shadow=12)
+    txt(c, 'injector · bujie · supape · pompa de înaltă presiune · pompa de ulei', 66, 1836, 26, 'm7', WHT, 0.88, shadow=8)
+    surf.makeImageSnapshot().save(out, skia.kJPEG if out.endswith('.jpg') else skia.kPNG)
+
+
 if __name__ == '__main__':
     a = sys.argv[1:]
     if a[0] == 'loops':
@@ -258,6 +272,9 @@ if __name__ == '__main__':
         os.makedirs(os.path.join(OUT, 'proof'), exist_ok=True)
         for ts in a[1].split(','):
             film_frame(float(ts)).save(os.path.join(OUT, 'proof', f'film_{float(ts):05.1f}.png'), skia.kPNG)
+    elif a[0] == 'cover':
+        # cover <out.jpg> [shot] [k]
+        cover(a[1], *(a[2:3] or []), *([int(a[3])] if len(a) > 3 else []))
     elif a[0] == 'still':
         # clean still of one shot frame on the background (no UI)
         s, k = a[1], int(a[2])
