@@ -19,7 +19,7 @@ Ce se vede (toate piesele se mișcă sincron, după unghiul arborelui cotit):
 - Bosch (CP4): unul sau două elemente de pompare, fiecare cu arborele lui cu came, antrenat de curea, lanț sau roți dințate.
 
 ## Ce e reconstruit (nu din desene VW)
-Cotele chiulasei, porturile, poziția bujiei (pe partea de admisie, înclinată 25°), rampa deasupra capacului cu conducte drepte (traseu simplificat), interiorul pompei CP4.1 (după descrierile Bosch), antrenarea pompei de ulei cu lanț (la EA288 e o curea în baie de ulei), fazele distribuției (valori tipice diesel: admisia 5° înainte de PMS → 35° după PMI, evacuarea 40° înainte de PMI → 5° după PMS, cursa supapelor 9 / 8,6 mm), culorile gazelor (explicative). Mișcarea este încetinită (40–60 rot/min în loc de 800+).
+Cotele chiulasei, porturile, poziția bujiei (pe partea de admisie, înclinată 25°), rampa deasupra capacului cu conducte drepte (traseu simplificat), interiorul pompei CP4.1 (după descrierile Bosch), antrenarea pompei de ulei cu lanț (la EA288 e o curea în baie de ulei), sorbul (gât scurt și clopot plat cu sită, sub pompă), fazele distribuției (valori tipice diesel: admisia 5° înainte de PMS → 35° după PMI, evacuarea 40° înainte de PMI → 5° după PMS, cursa supapelor 9 / 8,6 mm), culorile gazelor (explicative). Mișcarea este încetinită (40–60 rot/min în loc de 800+).
 
 ## Fișiere
 - `dims.py` cotele, ordinea de aprindere 1-3-4-2, fazele, legile de mișcare (piston, supape).
@@ -47,11 +47,19 @@ vbpy/bin/python render.py still D_cilindru 57 50 8 x.png    # un cadru de probă
 uv venv -p python3.12 vsk && uv pip install --python vsk/bin/python skia-python numpy pillow
 vsk/bin/python comp/comp.py loops                           # buclele: MP4 cu fundal + WebM cu transparență
 vsk/bin/python comp/comp.py film                            # filmul de prezentare cu etichete
+vsk/bin/python comp/comp.py cover coperta.jpg A_motor 2     # coperta 1080×1920 (cadrul 2 al planului general)
+vsk/bin/python comp/proof.py C_pompa_ulei 6 proba.png       # etichetele unui plan peste un cadru randat (verificare)
 ```
-Timpi pe 2 nuclee, 1080×1920: ~23 s/cadru planul general, ~60 s/cadru camera de ardere.
+Timpi pe 2 nuclee, 1080×1920, 8 eșantioane: planul general ~25 s/cadru (30 min), camera de ardere ~65 s/cadru (1 h 40), supapele ~27 s/cadru (32 min), pompa de înaltă presiune ~39 s/cadru (47 min), pompa de ulei ~30 s/cadru (30 min). Montajul: ~1,5 min pe buclă, ~10 min filmul.
 
 ## Randare pe laptopul cu placă video (RTX)
 Deschide `motor4.blend` în Blender 5.3 sau mai nou. Edit → Preferences → System → Cycles Render Devices → OptiX. În Render Properties: Device = GPU Compute, mărește Samples (ex. 64). Alege view layer-ul planului (sus-dreapta) și camera `CAM_<plan>` (Scene → Camera). Timeline: cadrul = unghiul arborelui cotit; pentru o buclă de 720° randează cadrele 0–719 cu pasul dorit (Output → Frame Step, ex. 6 → 120 de cadre). Lumea și luminile se reglează pentru fiecare cameră din `render.py` (`setup_shot`).
+
+## Ce e în `media/`
+- `TurboDoctor_Motor4_<plan>_bucla.mp4`: bucla planului de 3 ori, pe fundalul Turbo Doctor cu marcajul, fără texte (pentru montaje cu voce);
+- `TurboDoctor_Motor4_<plan>_alfa.webm`: un ciclu cu transparență (VP9 + alfa), pentru alt fundal sau suprapuneri;
+- `TurboDoctor_Motor_4_cilindri_3D.mp4`: filmul de prezentare (~36 s): cele 5 planuri cu etichete, titlu și explicație, apoi cartonul Turbo Doctor (diagnoză gratuită, orașele; fără telefon, ca pe reel-urile organice);
+- `TurboDoctor_Motor_4_cilindri_3D_coperta.jpg`: coperta.
 
 ## Refolosire
 - Cadrele cu transparență se scot din WebM: `ffmpeg -c:v libvpx-vp9 -i TurboDoctor_Motor4_A_motor_alfa.webm -pix_fmt rgba f%04d.png`.

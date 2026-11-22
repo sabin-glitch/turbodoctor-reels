@@ -98,7 +98,7 @@ def legend(c, items, a, y=1872):
 def header(c, a=1.0):
     txt(c, 'MOTOR DIESEL 4 CILINDRI', 60, 108, 54, 'anton', WHT, a, shadow=8)
     txt(c, 'common rail · secțiune 3D', 62, 152, 28, 'm7', WHT, a * 0.82)
-    txt(c, 'MODEL 3D RECONSTRUIT · MIȘCARE ÎNCETINITĂ', 1020, 62, 19, 'm8', WHT, 0.45, 'r')
+    txt(c, 'MODEL 3D RECONSTRUIT · MIȘCARE ÎNCETINITĂ', 1020, 60, 17, 'm8', WHT, 0.5, 'r')
 
 
 def vignette(c):
@@ -131,7 +131,7 @@ WA = {
     'B_cam': (-183.0, -112.0, 214.0), 'B_rol': (-183.0, -112.0, 232.0), 'B_pl': (-183.0, -112.0, 280.0), 'B_out': (-183.0, -96.0, 294.0),
     'B_in': (-183.0, -112.0, 305.0), 'B_mu': (-183.0, -150.0, 256.0), 'B_spr': (-183.0, -103.0, 262.0),
     # oil pump (section x = -183, shaft at z=-92)
-    'C_rot': (-183.0, 0.0, -92.0), 'C_van': (-183.0, 20.0, -86.0), 'C_out': (-183.0, -60.0, -50.0), 'C_sorb': (-183.0, 20.0, -140.0),
+    'C_rot': (-183.0, 0.0, -92.0), 'C_van': (-183.0, 20.0, -86.0), 'C_out': (-183.0, -60.0, -50.0), 'C_sorb': (-183.0, 15.0, -138.3),
 }
 
 LABELS = {
@@ -183,7 +183,7 @@ def endcard(c, a):
     c.drawRect(skia.Rect.MakeWH(W, H), P('#060b14', a * 0.94))
     txt(c, 'TURBO', 540, 820, 170, 'anton', WHT, a, 'c')
     txt(c, 'DOCTOR', 540, 995, 170, 'anton', Y, a, 'c')
-    txt(c, 'Diagnoză · Turbo · Injectoare · Pompe', 540, 1090, 36, 'm7', WHT, a * 0.9, 'c')
+    txt(c, 'Diagnoză gratuită', 540, 1095, 44, 'm8', WHT, a * 0.95, 'c')
     txt(c, 'GALAȚI · BUCUREȘTI · IAȘI · PIATRA NEAMȚ', 540, 1180, 30, 'm8', WHT, a * 0.85, 'c')
 
 
@@ -262,6 +262,19 @@ def cover(out, shot='A_motor', k=2):
     surf.makeImageSnapshot().save(out, skia.kJPEG if out.endswith('.jpg') else skia.kPNG)
 
 
+
+# ------------------------------------------------------------------ projection of world points (mm) with the stored shot cameras
+def project(shot, p):
+    I = INFO[shot]
+    Mw = np.array(I['matrix'])
+    R = Mw[:3, :3]; tvec = Mw[:3, 3]
+    pc = R.T @ (np.array(p, float) - tvec)
+    f = I['lens'] / 24.0 * 1920.0
+    u = 540.0 + f * pc[0] / (-pc[2]) - I['shift'][0] * 1920.0
+    v = 960.0 - f * pc[1] / (-pc[2]) + I['shift'][1] * 1920.0
+    return float(u), float(v)
+
+
 if __name__ == '__main__':
     a = sys.argv[1:]
     if a[0] == 'loops':
@@ -281,14 +294,3 @@ if __name__ == '__main__':
         surf = skia.Surface(W, H); cc = surf.getCanvas(); background(cc, 0.0, moving=False); draw_frame(cc, s, k)
         surf.makeImageSnapshot().save(a[3], skia.kJPEG if a[3].endswith('.jpg') else skia.kPNG)
 
-
-# ------------------------------------------------------------------ projection of world points (mm) with the stored shot cameras
-def project(shot, p):
-    I = INFO[shot]
-    Mw = np.array(I['matrix'])
-    R = Mw[:3, :3]; tvec = Mw[:3, 3]
-    pc = R.T @ (np.array(p, float) - tvec)
-    f = I['lens'] / 24.0 * 1920.0
-    u = 540.0 + f * pc[0] / (-pc[2]) - I['shift'][0] * 1920.0
-    v = 960.0 - f * pc[1] / (-pc[2]) + I['shift'][1] * 1920.0
-    return float(u), float(v)

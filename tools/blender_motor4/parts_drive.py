@@ -420,6 +420,23 @@ def vane_tip(psi):
     return b + math.sqrt(OP_RING ** 2 - (ey * ey + ez * ez - b * b))
 
 
+def pickup_profile(z_in, Zp, ro=9.0, rb=30.0, th=1.6):
+    """(r, z) profiles of the oil pick-up: wall (neck + bell), screen, oil inside. Neck top at the boss underside z_in."""
+    zt, zn = z_in, z_in - 2.0            # neck top / neck bottom (outer)
+    zs, zr = Zp + 10.0, Zp + 6.0         # bell shoulder (outer) / rim bottom
+    dr, dz = rb - ro, zs - zn
+    L = math.hypot(dr, dz)
+    nr, nz = -dz / L, dr / L             # outward normal of the bell top
+    pr, pz = ro - th * nr, zn - th * nz  # a point of the inner top surface
+    zi = lambda r: pz + (r - pr) * dz / dr
+    wall = [(ro - th, zt), (ro, zt), (ro, zn), (rb, zs), (rb, zr), (rb - th, zr), (rb - th, zi(rb - th)), (ro - th, zi(ro - th))]
+    screen = [(0.0, zr + 0.2), (rb - th + 0.2, zr + 0.2), (rb - th + 0.2, zr + 1.0), (0.0, zr + 1.0)]
+    g = 0.2
+    oil = [(0.0, zt - 0.2), (ro - th - g, zt - 0.2), (ro - th - g, zi(ro - th - g) - 0.3), (rb - th - g, zi(rb - th - g) - 0.3),
+           (rb - th - g, zr + 1.2), (0.0, zr + 1.2)]
+    return dict(wall=wall, screen=screen, oil=oil)
+
+
 def build_oil_pump():
     M = mats.M
     O = {}
@@ -466,15 +483,15 @@ def build_oil_pump():
     set_mats(hous, M['alu'])
     hous.data.transform(T)
     O['housing'] = hous
-    # pick-up pipe + strainer (world coordinates)
-    z_in = Z_OP - OP_HR - 6.0
+    # pick-up (sorb): short neck under the inlet boss, flat bell, mesh screen (world coordinates).
+    # The profile must not cross itself (the old one did, which broke the section cut).
+    z_in = Z_OP - OP_HR - 6.0            # underside of the inlet boss
     Zp = Z_PANB
-    prof = [(7.4, z_in + 2.0), (9.0, z_in + 2.0), (9.0, Zp + 23.0), (17.0, Zp + 20.0), (30.0, Zp + 13.0), (30.0, Zp + 5.0), (28.4, Zp + 5.0),
-            (28.4, Zp + 11.8), (16.4, Zp + 18.4), (7.4, Zp + 21.4)]
-    pin = revolve('op_pickup', prof, segs=64)
-    scr = revolve('op_screen', [(0.0, Zp + 5.2), (28.6, Zp + 5.2), (28.6, Zp + 6.0), (0.0, Zp + 6.0)], segs=64)
+    PK = pickup_profile(z_in, Zp)
+    pin = revolve('op_pickup', PK['wall'], segs=64)
+    scr = revolve('op_screen', PK['screen'], segs=64)
     pin = union([pin, scr], 'op_pickup')
-    pin.data.transform(Matrix.Translation((xr, -6.0, 0)))
+    pin.data.transform(Matrix.Translation((xr + 0.02, -6.0, 0)))      # axis 0.02 mm off the section plane
     set_mats(pin, M['pan'])
     O['pickup'] = pin
     # outlet pipe: from the housing up the crankcase side wall to the main gallery
@@ -494,7 +511,8 @@ def build_oil_pump():
     suc = union([cres, cyl('ins', (xr, -6.0, -12.0), (xr, -6.0, -OP_HR - 7.8), 7.0, segs=40)], 'op_oil_s')
     ous = union([top, cyl('ous', (xr, -8.0, 12.0), (xr, -35.5, 30.7), 5.8, segs=40)], 'op_oil_p')
     suc.data.transform(T); ous.data.transform(T)
-    pick = tube('op_oil_pick', [(xr, -6.0, z_in + 2.5), (xr, -6.0, Z_PANB + 7.5)], 7.2, segs=24)
+    pick = revolve('op_oil_pick', PK['oil'], segs=64)                  # the bell is under the oil level: full of oil
+    pick.data.transform(Matrix.Translation((xr + 0.02, -6.0, 0)))
     suc = union([suc, pick], 'op_oil_s')
     pipe_oil = tube('op_oil_pipe', po, 6.2, segs=24)
     ous = union([ous, pipe_oil], 'op_oil_p')
