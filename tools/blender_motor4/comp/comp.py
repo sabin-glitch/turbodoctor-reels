@@ -78,7 +78,7 @@ def wrap_lines(text, size, name, maxw):
     return out + [cur]
 
 
-def caption(c, title, body, a, y0=1640):
+def caption(c, title, body, a, y0=1630):
     if a <= 0.01: return
     dy = 16 * (1 - a)
     txt(c, title, 64, y0 + dy, 54, 'anton', Y, a, shadow=10)
@@ -123,7 +123,7 @@ WA = {
     'injector': (44.0, 0.0, 345.0), 'piston': (44.0, -28.0, 175.0), 'arbore': (14.0, -20.0, -26.0), 'pompa_ulei': (-183.0, -30.0, -92.0),
     'volanta': (225.0, -70.0, -60.0), 'baie': (40.0, -60.0, -128.0),
     # cylinder close-up
-    'D_inj': (-44.0, 0.0, 330.0), 'D_gp': (-44.0, -28.0, 278.0), 'D_vi': (-60.5, -18.0, 262.0), 'D_bol': (-44.0, -22.0, 232.0), 'D_duza': (-44.0, 0.0, 238.6),
+    'D_inj': (-44.0, -6.0, 282.0), 'D_gp': (-44.0, -28.0, 278.0), 'D_vi': (-60.5, -18.0, 262.0), 'D_bol': (-44.0, -24.0, 228.0), 'D_duza': (-44.0, 0.0, 238.6),
     # valves (transverse section through x = -60.5)
     'E_cam': (-60.5, -38.0, 366.5), 'E_fol': (-60.5, -52.0, 340.0), 'E_hla': (-60.5, -64.0, 322.0), 'E_spr': (-60.5, -28.0, 300.0),
     'E_vi': (-60.5, -18.0, 262.0), 'E_ve': (-60.5, 18.0, 262.0), 'E_pi': (-60.5, -55.0, 275.0), 'E_pe': (-60.5, 55.0, 275.0),
@@ -140,21 +140,21 @@ LABELS = {
                 ('Ax cu came', 'ax_came', (590, 250), 'r', 1.6), ('Rampa comună', 'rampa', (590, 330), 'r', 2.0),
                 ('Injector', 'injector', (840, 420), 'r', 2.4), ('Pompa de ulei', 'pompa_ulei', (64, 1430), 'r', 2.8),
                 ('Arbore cotit', 'arbore', (420, 1430), 'r', 3.2), ('Volantă', 'volanta', (790, 1430), 'r', 3.6)],
-    'D_cilindru': [('Injector', 'D_inj', (760, 330), 'r', 0.4), ('Bujie incandescentă', 'D_gp', (64, 420), 'r', 0.8),
-                   ('Supapă de admisie', 'D_vi', (64, 1380), 'r', 1.2), ('Bolul pistonului', 'D_bol', (650, 1460), 'r', 1.6)],
+    'D_cilindru': [('Injector', 'D_inj', (760, 820), 'r', 0.4), ('Bujie incandescentă', 'D_gp', (64, 760), 'r', 0.8),
+                   ('Supapă de admisie', 'D_vi', (64, 1380), 'r', 1.2), ('Camera de ardere', 'D_bol', (650, 1440), 'r', 1.6)],
     'E_supape': [('Ax cu came', 'E_cam', (720, 300), 'r', 0.4), ('Culbutor cu rolă', 'E_fol', (720, 380), 'r', 0.8),
                  ('Element hidraulic', 'E_hla', (720, 460), 'r', 1.2), ('Arcul supapei', 'E_spr', (720, 540), 'r', 1.6),
                  ('Supapă de admisie', 'E_vi', (720, 900), 'r', 2.0), ('Supapă de evacuare', 'E_ve', (64, 900), 'r', 2.0)],
     'B_pompa_inalta': [('Spre rampă', 'B_out', (64, 380), 'r', 0.4), ('Pistonaș', 'B_pl', (760, 560), 'r', 0.8),
                        ('Dozator', 'B_mu', (760, 900), 'r', 1.2), ('Tachet cu rolă', 'B_rol', (64, 1250), 'r', 1.6), ('Camă dublă', 'B_cam', (64, 1340), 'r', 2.0)],
-    'C_pompa_ulei': [('Rotor cu palete', 'C_rot', (700, 560), 'r', 0.4), ('Spre galeria de ulei', 'C_out', (64, 460), 'r', 0.8),
-                     ('Sorb', 'C_sorb', (760, 1380), 'r', 1.2)],
+    'C_pompa_ulei': [('Rotor cu palete', 'C_rot', (690, 1270), 'r', 0.4), ('Spre galeria de ulei', 'C_out', (64, 460), 'r', 0.8),
+                     ('Sorb', 'C_sorb', (690, 1370), 'r', 1.2)],
 }
 CAPS = {
     'A_motor': ('MOTORUL ÎN SECȚIUNE', 'Ordinea de aprindere 1-3-4-2: la fiecare jumătate de tură a arborelui cotit, alt cilindru e în timpul motor.'),
-    'D_cilindru': ('INJECȚIA ȘI ARDEREA', 'Injecție pilot, apoi injecția principală în bolul pistonului; motorina se aprinde singură în aerul comprimat. Bujia incandescentă încălzește camera la pornirea la rece.'),
+    'D_cilindru': ('INJECȚIA ȘI ARDEREA', 'Pilot, apoi injecția principală în bolul pistonului; motorina se aprinde în aerul comprimat. Bujia ajută pornirea la rece.'),
     'E_supape': ('SUPAPELE', 'Cama apasă culbutorul cu rolă, supapa se deschide; arcul o închide la loc. Elementul hidraulic preia jocul.'),
-    'B_pompa_inalta': ('POMPA DE ÎNALTĂ PRESIUNE', 'Antrenată de cureaua de distribuție, la turația motorului. Cama dublă împinge pistonașul de două ori pe tură: motorina pleacă spre rampă la presiune mare.'),
+    'B_pompa_inalta': ('POMPA DE ÎNALTĂ PRESIUNE', 'Antrenată de curea, la turația motorului. Cama dublă împinge pistonașul de două ori pe tură; motorina pleacă spre rampă.'),
     'C_pompa_ulei': ('POMPA DE ULEI', 'Paletele aspiră uleiul din baie prin sorb și îl împing sub presiune spre galeria de ungere a motorului.'),
 }
 LEG = {

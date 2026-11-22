@@ -330,10 +330,9 @@ def cut_copy(ob, axis, value, keep, coll_name, suffix):
     i = 'xyz'.index(axis)
     if keep > 0: hi[i] = value
     else: lo[i] = value
-    c = box('cutter', lo[0], hi[0], lo[1], hi[1], lo[2], hi[2])
+    c = box('cutter', lo[0], hi[0], lo[1], hi[1], lo[2], hi[2])     # world space: the boolean modifier applies the relative transform
     bpy.context.view_layer.update()
     Mw = ob.matrix_world.copy()
-    c.data.transform(Mw.inverted())
     apply_bool(o2, c); remove(c)
     if len(o2.data.polygons) == 0:
         bpy.data.objects.remove(o2, do_unlink=True); return None
@@ -395,7 +394,7 @@ def make_variants():
         for n, k in list(REG.items()):
             if k == 'fx' and n.startswith('spray'):
                 i = int(n[5:])
-                if CX[i] - 32.0 >= xv: out.append(n)
+                if CX[i] - 32.0 >= xv or abs(CX[i] - xv) < 20.0: out.append(n)
                 continue
             if k == 'fx' and n.startswith('pgas_') and on_L: continue
             src = n
