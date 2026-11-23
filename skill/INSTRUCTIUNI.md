@@ -85,6 +85,14 @@ Codul e în repo-ul public `sabin-glitch/turbodoctor-reels`: branch-ul `main` ar
 6. **Codul aprobat ajunge mereu în repo.** Orice schimbare de compozitor, `schem.js`, audio sau scripturi o urc pe un branch separat în timpul lucrului și pe `main` (cu README actualizat) imediat ce Sabin aprobă reel-ul. Alte chat-uri pot împinge pe `main` în paralel: înainte de merge fac `git fetch origin main`, iar la conflict în `schem.js` păstrez funcțiile din ambele părți și unesc listele din `return`.
 7. Îi spun lui Sabin într-un rând ce am salvat, cu linkul commit-ului.
 
+## 7. Videoclipuri explicative direct în Biblioteca aplicației consilierilor (din 23.11)
+Se aplică videoclipurilor explicative pentru clienți (nu reel-urilor de social media), când Sabin cere să ajungă în Biblioteca aplicației https://videoclipuri-turbodoctor.vercel.app. Nu public în bibliotecă fără cererea lui.
+1. Urc MP4-ul final cu `publish_media.sh` (secțiunea 5.1) și iau linkul raw fixat pe SHA.
+2. Pornesc workflow-ul `publica-biblioteca`, câte o rulare pe videoclip (pot porni mai multe deodată). Titlul îl vede clientul; subiectul e textul după care caută consilierii, așa că pun în el piesele (turbină, DPF, injector, pompă). Opțional adaug `-f "inputs[concluzie]=…"`.
+   `gh api repos/sabin-glitch/turbodoctor-reels/actions/workflows/publica-biblioteca.yml/dispatches -f ref=main -f "inputs[video_url]=<linkul raw>" -f "inputs[titlu]=<titlul pentru client>" -f "inputs[subiect]=<1–2 propoziții: fenomenul și piesele>"`
+3. Iau linkul pentru clienți din logul rulării: `gh api "repos/sabin-glitch/turbodoctor-reels/actions/runs?event=workflow_dispatch&per_page=5" --jq '.workflow_runs[]|{id,status,conclusion}'`, apoi `gh api repos/sabin-glitch/turbodoctor-reels/actions/runs/<id>/jobs --jq '.jobs[0].id'` și `gh api repos/sabin-glitch/turbodoctor-reels/actions/jobs/<job_id>/logs | grep -E "PUBLICAT|EROARE"`. Îi dau lui Sabin linkul `…/v/<slug>`.
+4. Videoclipul apare imediat în Bibliotecă cu statusul Publicat, pe numele adminului. Peste 48 MB workflow-ul îl re-encodează singur (limita Supabase e 50 MB pe fișier). Dacă rularea spune că lipsește secretul, Sabin pune cheia service_role din Supabase (Settings → API) în secretul `SUPABASE_SERVICE_ROLE_KEY` al repo-ului: https://github.com/sabin-glitch/turbodoctor-reels/settings/secrets/actions. Cheia nu se cere și nu se scrie niciodată în chat.
+
 ## Variante de rezervă
 - Push refuzat (403, aplicația Claude nu are acces): Sabin instalează aplicația Claude pe repo de la https://github.com/apps/claude/installations/select_target.
 - GitHub indisponibil: Sabin urcă MP4-ul în Google Drive, într-un folder setat „Oricine are linkul – Cititor”. Dau linkul de Drive la Metricool; dacă e privat, Metricool răspunde „Failed to normalize media”.

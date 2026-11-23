@@ -1,0 +1,44 @@
+name: publica-biblioteca
+# Publică un videoclip explicativ direct în Biblioteca aplicației consilierilor (videoclipuri-turbodoctor.vercel.app).
+# Videoclipul vine de pe branch-ul `media` (linkul dat de publish_media.sh). Cheia Supabase stă doar în secretul
+# SUPABASE_SERVICE_ROLE_KEY al repo-ului; Claude nu o vede. Pornire: vezi skill/INSTRUCTIUNI.md, secțiunea 7.
+on:
+  workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'Linkul MP4 de la publish_media.sh (raw.githubusercontent.com/sabin-glitch/turbodoctor-reels/...)'
+        required: true
+      titlu:
+        description: 'Titlul din bibliotecă (îl vede și clientul)'
+        required: true
+      subiect:
+        description: 'Descrierea scurtă din bibliotecă: fenomenul și piesele (după ea caută consilierii)'
+        required: true
+      concluzie:
+        description: 'Concluzia pentru client (opțional)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Doar verifică videoclipul, fără să publice'
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  publica:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: ffmpeg (pentru videoclipurile peste 48 MB)
+        run: which ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg)
+      - name: Publică în bibliotecă
+        env:
+          SUPABASE_URL: https://zxgaaahqcvbfcqogpjqm.supabase.co
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VIDEO_URL: ${{ inputs.video_url }}
+          TITLU: ${{ inputs.titlu }}
+          SUBIECT: ${{ inputs.subiect }}
+          CONCLUZIE: ${{ inputs.concluzie }}
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+        run: python3 tools/publica_biblioteca.py
