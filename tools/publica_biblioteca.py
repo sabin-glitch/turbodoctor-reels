@@ -66,13 +66,13 @@ def main():
         if size > MAX_BYTES: die(f"tot are {size / 1e6:.1f} MB după re-encodare")
     slug = slugify(titlu); path = f"biblioteca/{slug}.mp4"
     print(f"Videoclip: {size / 1e6:.1f} MB · titlu: {titlu} · slug: {slug}")
-    if dry:
-        print("DRY_RUN: nu urc nimic."); return
-
     sb, key = env.get("SUPABASE_URL", "").rstrip("/"), env.get("SUPABASE_SERVICE_ROLE_KEY", "")
     if not sb or not key: die("lipsește secretul SUPABASE_SERVICE_ROLE_KEY în GitHub (Settings → Secrets → Actions)")
     admin = req("GET", f"{sb}/rest/v1/profiles?rol=eq.admin&activ=eq.true&select=id&order=created_at.asc&limit=1", key)
     if not admin: die("nu găsesc niciun cont de admin activ în aplicație")
+    print("Cheia Supabase funcționează (contul de admin găsit).")
+    if dry:
+        print("DRY_RUN: nu urc nimic."); return
     req("POST", f"{sb}/storage/v1/object/videos/{path}", key, raw=open(tmp, "rb").read(),
         headers={"Content-Type": "video/mp4", "cache-control": "max-age=31536000"})
     row = req("POST", f"{sb}/rest/v1/video_requests", key, body={
