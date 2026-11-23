@@ -362,7 +362,7 @@ def build_chra(var):
         apply_bool(body, a, 'UNION'); bpy.data.objects.remove(a, do_unlink=True)
     cut = [cyl('gal', (-26.3, 0, GAL_Z), (FEED_X + 1.6, 0, GAL_Z), 2.0, segs=40),
            cyl('in_bore', (0, 0, 29.3), (0, 0, GAL_Z - 0.5), 3.0, segs=48),
-           cyl('in_cb', (0, 0, 29.3), (0, 0, 27.6), 5.2, segs=48),
+           cyl('in_cb', (0, 0, 29.3), (0, 0, 19.0), 5.2, segs=48),          # threaded hole for the banjo bolt (oil feed)
            box('drain_cav', -23.5, 24.0, -15.5, 15.5, -29.0, -11.0),
            extrude('drain_out', rrect(0, 0, 12.0, 8.0, 3.0), 'z', -36.3, -28.0),
            cyl('dbolt1', (16.5, 0, -36.3), (16.5, 0, -30.0), 3.3, segs=32), cyl('dbolt2', (-16.5, 0, -36.3), (-16.5, 0, -30.0), 3.3, segs=32),
@@ -448,94 +448,220 @@ def build_backplate():
     return bp
 
 
-def comp_volute(r_of, segs_c=56):
-    """centre-line of the compressor volute; returns (pts, rads) from phi0..phi1 (deg)."""
-    def P(phi):
-        r = r_of(phi); a = math.radians(phi)
-        Rc = 37.5 + 0.6 * r; xv = -40.0 - r
-        return (xv, Rc * math.cos(a), Rc * math.sin(a)), r
-    return P
+# ============================================================================ real Garrett 753420 exterior (v2)
+# Clocking taken from photos of a genuine 753420-5006S: with the oil inlet up, the compressor outlet duct leaves the
+# scroll at the top and both the compressor outlet flange and the turbine inlet flange face the same side (-Y, the
+# camera side); the pneumatic VNT actuator sits on the opposite side, low (+Y / -Z), its rod pointing at the VNT crank.
+# Both housings are built in a "build frame" (scroll end / inlet at +Y) and then turned about X.
+C_ROT = math.radians(90.0)       # compressor: scroll end +Y -> top (+Z), outlet duct -> -Y
+T_ROT = math.radians(-90.0)      # turbine: inlet +Y -> bottom (-Z), inlet duct comes from -Y
+
+
+def bezier(P0, P1, P2, P3, n):
+    pts = []
+    for i in range(n + 1):
+        t = i / n; u = 1.0 - t
+        pts.append(tuple(P0[k] * u ** 3 + 3 * P1[k] * u * u * t + 3 * P2[k] * u * t * t + P3[k] * t ** 3 for k in range(3)))
+    return pts
+
+
+def smoothstep(t):
+    t = min(1.0, max(0.0, t)); return t * t * (3 - 2 * t)
+
+
+def rotx_pt(p, ang):
+    c, s = math.cos(ang), math.sin(ang)
+    return (p[0], p[1] * c - p[2] * s, p[1] * s + p[2] * c)
+
+
+def rotx_vec(v, ang):
+    return rotx_pt(v, ang)
+
+
+# ---- compressor volute (A/R 0.33 cast on the real cover); scroll grows towards the inlet side and outwards
+def cvol(phi):
+    r = 4.0 + 9.5 * (min(max(phi, 0.0), 360.0) / 360.0) ** 0.9; a = math.radians(phi)
+    Rc = 40.0 + 0.8 * r; xv = -40.0 - r
+    return (xv, Rc * math.cos(a), Rc * math.sin(a)), r
+
+
+C_DUCT_L, C_DUCT_IN, C_FL_T = 78.0, 18.0, 9.5       # outlet duct length (build +Z), inward shift, flange thickness
+C_FL_E, C_FL_RE, C_FL_R0, C_FL_BORE = 33.0, 8.0, 25.0, 18.5   # 2-ear flange: ear offset, ear radius, body radius, bore
+
+
+def comp_duct(n=24):
+    p0, r0 = cvol(360.0); P0 = Vector(p0); P3 = P0 + Vector((0.0, -C_DUCT_IN, C_DUCT_L))
+    pts = bezier(P0, P0 + Vector((0, 0, 28.0)), P3 - Vector((0, 0, 26.0)), P3, n)
+    rads = [r0 + (C_FL_BORE - r0) * smoothstep(i / n) for i in range(n + 1)]
+    return pts, rads, P3
+
+
+def c_scroll_R(a):
+    _, r = cvol(a); return 40.0 + 1.8 * r + 4.0
+
+
+def c_rim_R(a):
+    """rim (clamping flange) outer radius vs build-frame angle: follows the scroll + 3 mm, blended across the tongue."""
+    lo, hi = 14.0, 346.0
+    a = a % 360.0
+    if lo <= a <= hi: return max(56.0, c_scroll_R(a) + 3.0)
+    t = ((a - hi) % 360.0) / (360.0 - hi + lo)
+    return max(56.0, c_scroll_R(hi) + 3.0 + (c_scroll_R(lo) - c_scroll_R(hi)) * smoothstep(t))
+
+
+def spiral_band(name, R_of, x0, x1, ch0=1.6, ch1=1.0, rin=40.0, n=240):
+    """closed band around X between x0 and x1 whose outer radius follows R_of(a_deg); chamfered edges."""
+    verts, faces = [], []
+    def prof(R): return [(x0, rin), (x0, R - ch0), (x0 + ch0, R), (x1 - ch1, R), (x1, R - ch1), (x1, rin)]
+    m = 6
+    for k in range(n):
+        a = 360.0 * (k + 0.5) / n; ar = math.radians(a)
+        for (x, rr) in prof(R_of(a)):
+            verts.append((x, rr * math.cos(ar), rr * math.sin(ar)))
+    for k in range(n):
+        k2 = (k + 1) % n
+        for j in range(m):
+            j2 = (j + 1) % m
+            faces.append([k * m + j, k2 * m + j, k2 * m + j2, k * m + j2])
+    return mesh_obj(name, verts, faces)
+
+
+C_LUGS_F = (60.0, 140.0, 210.0, 262.0, 330.0)      # clamp lugs on the rim, final-frame angles (deg from +Y towards +Z)
+C_RIBS_F = tuple(15.0 + 60.0 * k for k in range(6))  # six small webs between the inlet spigot and the cover
+
+
+def c_lug_pos(af):
+    ab = af - math.degrees(C_ROT); R = c_rim_R(ab) + 1.5
+    return R, ab
 
 
 def build_comp_housing():
-    core = revolve_x('comp_housing', [(-99.0, 0.0), (-99.0, 23.2), (-98.2, 24.2), (-74.0, 24.2), (-68.0, 27.0), (-60.0, 33.5), (-50.0, 37.5),
-                                      (-42.0, 40.0), (-40.0, 49.5), (-29.0, 49.5), (-29.0, 0.0)], segs=160)
-    rv = lambda phi: 2.6 + 10.2 * (phi / 360.0) ** 0.9
-    VP = comp_volute(rv)
+    # axisymmetric core: plain machined inlet spigot, small platform at its base, shallow cover, back towards the rim
+    core = revolve_x('comp_housing', [(-104.0, 0.0), (-104.0, 25.8), (-103.1, 27.0), (-72.6, 27.0), (-72.0, 28.9), (-70.8, 30.4),
+                                      (-69.4, 31.2), (-67.8, 34.0), (-65.8, 38.0), (-63.0, 41.8), (-58.5, 45.0), (-52.0, 47.3),
+                                      (-46.0, 48.4), (-44.0, 48.9), (-29.0, 49.6), (-29.0, 0.0)], segs=160)
     def path(phi0, phi1, n, extra=0.0):
         pts, rs = [], []
         for i in range(n + 1):
-            ph = phi0 + (phi1 - phi0) * i / n; p, r = VP(ph); pts.append(p); rs.append(r + extra)
+            ph = phi0 + (phi1 - phi0) * i / n; p, r = cvol(ph); pts.append(p); rs.append(r + extra)
         return pts, rs
-    # outlet duct (tangential at phi = 360, the +Y side, going up)
-    p_end, r_end = VP(360.0)
-    p_b, _ = VP(359.0); tg = (Vector(p_end) - Vector(p_b)).normalized()
-    duct = [tuple(Vector(p_end) + tg * d) for d in (0.0, 8.0, 16.0, 24.0, 32.0, 40.0, 48.0)]
-    dr = [r_end + 0.5 * i / 6 for i in range(7)]
-    shells = []
-    pts, rs = path(10.0, 300.0, 70, 3.6); shells.append(sweep('cv_sh1', pts, rs))
-    pts, rs = path(290.0, 360.0, 20, 3.6); pts += duct[1:]; rs += [r + 3.4 for r in dr[1:]]; shells.append(sweep('cv_sh2', pts, rs))
-    for s in shells:
+    dpts, drads, P3 = comp_duct()
+    adds = []
+    pts, rs = path(10.0, 300.0, 72, 4.0); adds.append(sweep('cv_sh1', pts, rs))
+    pts, rs = path(290.0, 360.0, 20, 4.0); adds.append(sweep('cv_sh2', pts + dpts[1:], rs + [r + 3.5 for r in drads[1:]]))
+    adds.append(spiral_band('cv_rim', c_rim_R, -44.0, -29.0))
+    # 2-ear outlet flange (ears along the shaft axis), face towards build +Z
+    zf = P3.z
+    adds.append(cyl('cfl_body', (P3.x, P3.y, zf - C_FL_T), (P3.x, P3.y, zf), C_FL_R0, segs=96))
+    adds.append(extrude('cfl_ears', stadium(P3.x, P3.y, C_FL_E + C_FL_RE, C_FL_RE), 'z', zf - C_FL_T, zf))
+    # clamp lugs on the rim
+    for i, af in enumerate(C_LUGS_F):
+        R, ab = c_lug_pos(af); a = math.radians(ab)
+        adds.append(cyl(f'clug{i}', (-44.0, R * math.cos(a), R * math.sin(a)), (-29.0, R * math.cos(a), R * math.sin(a)), 6.5, segs=40))
+    # webs between spigot and cover
+    for i, af in enumerate(C_RIBS_F):
+        a = math.radians(af - math.degrees(C_ROT)); ca, sa = math.cos(a), math.sin(a)
+        tri = [(-80.0, 26.4), (-70.6, 26.4), (-67.2, 35.0)]
+        v = []
+        for t in (-1.3, 1.3):
+            for (x, rr) in tri: v.append((x, rr * ca - t * sa, rr * sa + t * ca))
+        adds.append(mesh_obj(f'crib{i}', v, [[0, 1, 2], [3, 5, 4], [0, 3, 4, 1], [1, 4, 5, 2], [2, 5, 3, 0]]))
+    for s in adds:
         apply_bool(core, s, 'UNION'); bpy.data.objects.remove(s, do_unlink=True)
-    bead = sweep('cv_bead', [tuple(Vector(duct[-1]) - tg * 7.5), tuple(Vector(duct[-1]) - tg * 5.0)], [r_end + 0.5 + 4.9] * 2)
-    apply_bool(core, bead, 'UNION'); bpy.data.objects.remove(bead, do_unlink=True)
-    inbead = torus_x('in_bead', -93.5, 24.2, 1.5)
-    apply_bool(core, inbead, 'UNION'); bpy.data.objects.remove(inbead, do_unlink=True)
-    # cavities
-    cav = [(-100.0, 0.0), (-100.0, 21.4), (-80.0, 20.6), (-72.0, 19.0), (-66.6, 18.45)]
+    # ---- cavities (same passages as before near the wheel; bigger volute; inlet bore through the spigot)
+    cav = [(-105.0, 0.0), (-105.0, 23.6), (-103.8, 23.6), (-92.0, 21.8), (-80.0, 20.6), (-72.0, 19.0), (-66.6, 18.45)]
     for k in range(0, 21):
         s = k / 20; cav.append((-66.0 + 21.5 * math.sin(s * PI / 2), 25.0 - 7.0 * math.cos(s * PI / 2) + 0.4))
-    cav += [(-44.8, 26.3), (-44.8, 38.5), (-39.05, 38.5), (-39.05, 40.35), (-36.65, 40.35), (-36.65, 46.05), (-28.9, 46.05), (-28.9, 0.0)]
+    cav += [(-44.8, 26.3), (-44.8, 41.0), (-39.05, 41.0), (-39.05, 40.35), (-36.65, 40.35), (-36.65, 46.05), (-28.9, 46.05), (-28.9, 0.0)]
     cuts = [revolve_x('cv_cav', cav, segs=160)]
-    pts, rs = path(8.0, 300.0, 70); cuts.append(sweep('cv_p1', pts, rs))
-    pts, rs = path(290.0, 360.0, 20); pts += [tuple(Vector(duct[-1]) + tg * 2.0)]; rs += [dr[-1]]
-    pts = pts[:-1] + duct[1:] + [tuple(Vector(duct[-1]) + tg * 2.0)]; rs = rs[:-1] + dr[1:] + [dr[-1]]
-    cuts.append(sweep('cv_p2', pts, rs))
-    # bolt bosses for the backplate clamp (6) at r = 47.5
+    pts, rs = path(8.0, 300.0, 72); cuts.append(sweep('cv_p1', pts, rs))
+    pts, rs = path(290.0, 360.0, 20)
+    ext = tuple(Vector(dpts[-1]) + Vector((0, 0, 2.0)))
+    cuts.append(sweep('cv_p2', pts[:-1] + dpts + [ext], rs[:-1] + drads + [drads[-1]]))
+    for sx in (-1, 1):
+        cuts.append(cyl(f'cfl_h{sx}', (P3.x + sx * C_FL_E, P3.y, zf - C_FL_T - 1.0), (P3.x + sx * C_FL_E, P3.y, zf + 1.0), 4.2, segs=32))
+    for i, af in enumerate(C_LUGS_F):
+        R, ab = c_lug_pos(af); a = math.radians(ab)
+        cuts.append(cyl(f'clug_h{i}', (-45.0, R * math.cos(a), R * math.sin(a)), (-28.8, R * math.cos(a), R * math.sin(a)), 3.4, segs=24))
     bool_many(core, cuts)
-    return core, {'outlet_end': tuple(duct[-1]), 'outlet_dir': tuple(tg), 'VP': VP}
+    rot_x(core, C_ROT)
+    face_c = rotx_pt(tuple(P3), C_ROT); face_n = rotx_vec((0.0, 0.0, 1.0), C_ROT)
+    return core, {'outlet_end': face_c, 'outlet_dir': face_n, 'flange_c': face_c, 'flange_n': face_n}
+
+
+# ---- turbine volute (unchanged passage) inside a heavier cast-iron body
+def tvol(phi):
+    r = 13.0 - 10.0 * (max(phi, 0.0) / 340.0) ** 0.85; a = math.radians(phi)
+    Rc = 36.0 + 0.9 * r; xv = 43.0 + 0.6 * r
+    return (xv, Rc * math.cos(a), Rc * math.sin(a)), r
+
+
+T_BACK = 23.5                     # turbine housing back face (the CHRA flange sits in its bore)
+T_FL = (52.0, 72.0, -54.0)        # inlet flange face centre, build frame (face towards build -Z)
+T_FL_T, T_FL_HX, T_FL_HY = 11.5, 27.0, 37.0
+T_BOLTS_F = (30.0, 120.0, 210.0, 345.0)   # clamp bolts on the back face (final angles)
+T_LUG_F = 190.0                   # small lug near the outlet, on the flange side
+T_BRK_F = 320.0                   # actuator bracket pad
+CRANK_F, CRANK_R = 295.0, 44.0    # VNT crank shaft (final angle, radius)
+
+
+def turb_inlet(n=20):
+    p0, r0 = tvol(0.0); P0 = Vector(p0); P3 = Vector(T_FL)
+    pts = bezier(P0, P0 + Vector((0, 0, -18.0)), P3 + Vector((0, 0, 16.0)), P3, n)
+    rads = [r0 + (15.5 - r0) * smoothstep(i / n) for i in range(n + 1)]
+    return pts, rads
 
 
 def build_turbine_housing():
-    core = revolve_x('turbine_housing', [(31.0, 0.0), (31.0, 41.5), (36.0, 41.5), (38.5, 38.5), (45.0, 33.0), (52.0, 29.0), (60.0, 27.4),
-                                         (72.0, 26.4), (79.0, 26.4), (79.0, 42.0), (86.0, 42.0), (86.0, 0.0)], segs=160)
-    rv = lambda phi: 13.0 - 10.0 * (max(phi, 0.0) / 340.0) ** 0.85
-    def VP(phi):
-        r = rv(phi); a = math.radians(phi)
-        Rc = 33.0 + 0.85 * r; xv = 43.0 + 0.6 * r
-        return (xv, Rc * math.cos(a), Rc * math.sin(a)), r
+    core = revolve_x('turbine_housing', [(T_BACK, 0.0), (T_BACK, 58.5), (24.6, 60.0), (27.5, 61.0), (34.0, 61.5), (42.0, 61.0), (50.0, 58.5),
+                                         (57.0, 54.5), (63.0, 49.5), (68.5, 44.5), (73.5, 40.0), (78.5, 36.5), (83.0, 34.5), (85.0, 31.2),
+                                         (87.4, 31.2), (87.7, 33.6), (90.6, 33.6), (90.9, 31.2), (100.2, 31.2), (101.2, 30.0), (101.2, 0.0)], segs=160)
     def path(phi0, phi1, n, extra=0.0):
         pts, rs = [], []
         for i in range(n + 1):
-            ph = phi0 + (phi1 - phi0) * i / n; p, r = VP(ph); pts.append(p); rs.append(r + extra)
+            ph = phi0 + (phi1 - phi0) * i / n; p, r = tvol(ph); pts.append(p); rs.append(r + extra)
         return pts, rs
-    p0, r0 = VP(0.0); p1, _ = VP(1.0); tg = (Vector(p1) - Vector(p0)).normalized()     # flow direction at the inlet (+Z)
-    inlet = [tuple(Vector(p0) - tg * d) for d in (46.0, 38.0, 30.0, 22.0, 14.0, 6.0)]
-    ir = [r0 + 1.0 - 1.0 * i / 5 for i in range(6)]
-    shells = []
-    pts, rs = path(0.0, 70.0, 20, 4.5); shells.append(sweep('tv_sh1', inlet + pts, [r + 4.5 for r in ir] + rs))
-    pts, rs = path(60.0, 345.0, 70, 4.5); shells.append(sweep('tv_sh2', pts, rs))
-    fl = extrude('t_in_flange', rrect(Vector(p0).x, Vector(p0).y, 31.0, 27.0, 6.0), 'z', -56.0, -47.0)
-    shells.append(fl)
-    for s in shells:
+    ipts, irads = turb_inlet()
+    rev_p = list(reversed(ipts)); rev_r = list(reversed(irads))
+    adds = []
+    pts, rs = path(0.0, 70.0, 20, 6.0); adds.append(sweep('tv_sh1', rev_p[:-1] + pts, [r + 5.5 for r in rev_r[:-1]] + rs))
+    pts, rs = path(60.0, 345.0, 72, 6.0); adds.append(sweep('tv_sh2', pts, rs))
+    fx, fy, fz = T_FL
+    adds.append(extrude('t_in_flange', rrect(fx, fy - 4.0, T_FL_HX, T_FL_HY, 9.0), 'z', fz, fz + T_FL_T))   # plate a bit off the bore, towards the axis
+    # small lug near the outlet (hole along X), actuator bracket pad on the back face
+    a = math.radians(T_LUG_F - math.degrees(T_ROT))
+    lug = extrude('t_lug', stadium(54.0, 0.0, 9.0, 7.0), 'x', 55.5, 63.0); rot_x(lug, a); adds.append(lug)
+    a = math.radians(T_BRK_F - math.degrees(T_ROT))
+    pad = extrude('t_brkpad', rrect(61.0, 0.0, 9.5, 10.0, 3.0), 'x', T_BACK, 34.0); rot_x(pad, a); adds.append(pad)
+    for s in adds:
         apply_bool(core, s, 'UNION'); bpy.data.objects.remove(s, do_unlink=True)
-    cav = [(30.9, 0.0), (30.9, 36.0), (36.8, 36.0), (36.8, 33.3), (45.5, 33.3), (45.5, 21.85)]
+    cav = [(T_BACK - 0.1, 0.0), (T_BACK - 0.1, 34.9), (30.9, 34.9), (30.9, 36.0), (45.5, 36.0), (45.5, 21.85)]
     for k in range(1, 21):
         s = k / 20; cav.append((66.0 - 20.5 * math.cos(s * PI / 2), 21.5 - 3.0 * math.sin(s * PI / 2) + 0.35))
-    cav += [(70.0, 19.0), (79.0, 23.0), (86.1, 23.5), (86.1, 0.0)]
+    cav += [(70.0, 19.0), (79.0, 23.0), (86.1, 23.8), (101.3, 26.2), (101.3, 0.0)]
     cuts = [revolve_x('tv_cav', cav, segs=160)]
-    pts, rs = path(-2.0, 70.0, 22); cuts.append(sweep('tv_p1', [tuple(Vector(p0) - tg * d) for d in (60.0, 46.0, 38.0, 30.0, 22.0, 14.0, 6.0)] + pts,
-                                                     [ir[0]] + ir + rs))
-    pts, rs = path(60.0, 345.0, 70); cuts.append(sweep('tv_p2', pts, rs))
-    fx, fy = Vector(p0).x, Vector(p0).y
+    pts, rs = path(-2.0, 70.0, 22)
+    pre = tuple(Vector(T_FL) + Vector((0, 0, -2.0)))
+    cuts.append(sweep('tv_p1', [pre] + rev_p[:-1] + pts, [irads[-1]] + rev_r[:-1] + rs))
+    pts, rs = path(60.0, 345.0, 72); cuts.append(sweep('tv_p2', pts, rs))
     for sx in (-1, 1):
         for sy in (-1, 1):
-            cuts.append(cyl(f'tib{sx}{sy}', (fx + sx * 23.0, fy + sy * 19.0, -57.0), (fx + sx * 23.0, fy + sy * 19.0, -46.0), 3.6, segs=32))
-    for k in range(3):
-        a = PI / 2 + 2 * PI * k / 3 + PI / 3
-        cuts.append(cyl(f'tob{k}', (78.0, 35.5 * math.cos(a), 35.5 * math.sin(a)), (86.5, 35.5 * math.cos(a), 35.5 * math.sin(a)), 3.6, segs=32))
+            cuts.append(cyl(f'tib{sx}{sy}', (fx + sx * 17.0, fy - 4.0 + sy * 28.0, fz - 1.0), (fx + sx * 17.0, fy - 4.0 + sy * 28.0, fz + T_FL_T + 1.0), 4.4, segs=32))
+    a = math.radians(T_LUG_F - math.degrees(T_ROT))
+    cuts.append(cyl('t_lug_h', (54.5, 56.0 * math.cos(a), 56.0 * math.sin(a)), (64.0, 56.0 * math.cos(a), 56.0 * math.sin(a)), 4.0, segs=32))
+    a0 = T_BRK_F - math.degrees(T_ROT)
+    for da in (-5.5, 5.5):
+        a = math.radians(a0 + da)
+        cuts.append(cyl(f't_brk_h{da}', (T_BACK - 0.2, 61.0 * math.cos(a), 61.0 * math.sin(a)), (31.0, 61.0 * math.cos(a), 61.0 * math.sin(a)), 2.6, segs=24))
+    for i, af in enumerate(T_BOLTS_F):
+        a = math.radians(af - math.degrees(T_ROT))
+        cuts.append(cyl(f't_cb_h{i}', (T_BACK - 0.2, 39.6 * math.cos(a), 39.6 * math.sin(a)), (31.5, 39.6 * math.cos(a), 39.6 * math.sin(a)), 3.0, segs=24))
     bool_many(core, cuts)
-    return core, {'inlet_start': tuple(Vector(p0) - tg * 52.0), 'inlet_dir': tuple(tg), 'VP': VP}
+    rot_x(core, T_ROT)
+    fc = rotx_pt(T_FL, T_ROT); fn = rotx_vec((0.0, 0.0, -1.0), T_ROT)
+    p0, _ = tvol(0.0)
+    return core, {'inlet_start': fc, 'inlet_dir': rotx_vec((0, 0, 1.0), T_ROT), 'flange_c': fc, 'flange_n': fn,
+                  'volute_in': rotx_pt(p0, T_ROT)}
 
 
 def build_vnt():
@@ -582,35 +708,84 @@ def bolt_head(name, p, axis_dir, af=10.0, h=6.0, washer=True):
     return obs
 
 
+def rot_from_x(axis):
+    """4x4 rotation taking +X to the unit vector `axis`."""
+    return Vector((1.0, 0.0, 0.0)).rotation_difference(Vector(axis).normalized()).to_matrix().to_4x4()
+
+
+def revolve_z(name, prof, segs=96):
+    """prof: (r, z) polygon revolved around the Z axis."""
+    ob = revolve_x(name, [(z, r) for (r, z) in prof], segs=segs)
+    ob.data.transform(Matrix.Rotation(-PI / 2, 4, 'Y'))
+    return ob
+
+
+def hexbolt(name, base, axis, af=10.0, h=6.0, shank=None):
+    """bolt head (+washer) standing on `base`, head pointing along `axis`; optional shank (length, radius) the other way."""
+    parts = bolt_head(name, (0.0, 0.0, 0.0), +1, af=af, h=h)
+    if shank:
+        L, r = shank
+        s = cyl(name + '_s', (-L, 0.0, 0.0), (0.5, 0.0, 0.0), r, segs=32)
+        apply_bool(parts[0], s, 'UNION'); bpy.data.objects.remove(s, do_unlink=True)
+    M = Matrix.Translation(Vector(base)) @ rot_from_x(axis)
+    for o in parts: o.data.transform(M)
+    return parts
+
+
+def stadium2(A, B, rr, n=16):
+    """2D stadium between points A and B (tuples), radius rr."""
+    A = Vector(A); B = Vector(B); d = (B - A).normalized(); nr = Vector((-d.y, d.x)); pts = []
+    for k in range(n + 1):
+        a = -PI / 2 + PI * k / n; pts.append(tuple(B + (d * math.cos(a) + nr * math.sin(a)) * rr))
+    for k in range(n + 1):
+        a = PI / 2 + PI * k / n; pts.append(tuple(A + (d * math.cos(a) + nr * math.sin(a)) * rr))
+    return pts
+
+
+# ---- oil feed: banjo bolt into the CHRA top boss (PSA/Ford 1.6 HDi), pipe leaves the banjo towards the compressor
+BJ_Z = 36.9            # banjo cross-hole / pipe height
+PIPE_X, PIPE_TOP = -22.0, 74.0
+
+
+def banjo_pipe_path(n_bend=10):
+    pts = [(-10.9, 0.0, BJ_Z), (-16.0, 0.0, BJ_Z)]
+    for k in range(1, n_bend + 1):
+        th = (PI / 2) * k / n_bend
+        pts.append((-16.0 - 6.0 * math.sin(th), 0.0, BJ_Z + 6.0 * (1 - math.cos(th))))
+    pts += [(PIPE_X, 0.0, 52.0), (PIPE_X, 0.0, PIPE_TOP)]
+    return pts
+
+
 def build_hardware():
     H = []
-    # turbine-side clamp: 6 bolts with plates over the CHRA flange (heads towards -X)
-    for k in range(6):
-        a = 2 * PI * (k + 0.25) / 6
-        y, z = 38.6 * math.cos(a), 38.6 * math.sin(a)
-        pl = extrude(f'cplate{k}', rrect(0, 0, 4.2, 6.5, 1.5), 'x', 21.0, 24.0)
-        pl.data.transform(Matrix.Rotation(a - PI / 2, 4, 'X') @ Matrix.Translation((0, 0, 35.5)))
-        H.append(pl)
-        H += bolt_head(f'tb{k}', (21.0, y, z), -1, af=10.0, h=5.5)
-    # compressor housing clamp: 6 bolts on the back rim (heads towards +X)
-    for k in range(6):
-        a = 2 * PI * (k + 0.25) / 6
-        H += bolt_head(f'cb{k}', (-29.0, 47.0 * math.cos(a), 47.0 * math.sin(a)), +1, af=8.0, h=4.5)
-    # oil inlet + drain flange bolts
-    # oil feed: banjo-style fitting (hex) + steel pipe from the engine
-    hexz = [(7.0 / math.cos(PI / 6) * math.cos(PI / 6 + k * PI / 3), 7.0 / math.cos(PI / 6) * math.sin(PI / 6 + k * PI / 3)) for k in range(6)]
-    fit = extrude('oil_fitting', hexz, 'z', 29.0, 37.0)
-    ch = cyl('fit_ch', (0, 0, 28.9), (0, 0, 37.1), 7.9, segs=64)
-    apply_bool(fit, ch, 'INTERSECT'); bpy.data.objects.remove(ch, do_unlink=True)
-    bool_many(fit, [cyl('fit_bore', (0, 0, 28.0), (0, 0, 38.0), 3.0, segs=48)])
-    H.append(fit)
-    pipe = cyl('oil_pipe', (0, 0, 36.5), (0, 0, 72.0), 4.2, segs=64)
-    bool_many(pipe, [cyl('pipe_bore', (0, 0, 35.0), (0, 0, 73.0), 3.0, segs=48)])
-    H.append(pipe)
-    nutp = extrude('pipe_nut', [(6.0 / math.cos(PI / 6) * math.cos(k * PI / 3), 6.0 / math.cos(PI / 6) * math.sin(k * PI / 3)) for k in range(6)], 'z', 37.0, 43.0)
-    bool_many(nutp, [cyl('pn_bore', (0, 0, 36.0), (0, 0, 44.0), 4.25, segs=48)])
-    H.append(nutp)
-    # oil drain: gasket + tube
+    # compressor cover clamp bolts: heads on the back of the rim lugs, towards the turbine
+    for i, af in enumerate(C_LUGS_F):
+        R, _ = c_lug_pos(af); a = math.radians(af)
+        H += bolt_head(f'cb{i}', (-29.0, R * math.cos(a), R * math.sin(a)), +1, af=8.0, h=4.6)
+    # turbine housing clamp bolts on the machined back face; the washers hold the CHRA flange
+    for i, af in enumerate(T_BOLTS_F):
+        a = math.radians(af)
+        H += bolt_head(f'tb{i}', (T_BACK, 39.6 * math.cos(a), 39.6 * math.sin(a)), -1, af=10.0, h=5.5)
+    # banjo bolt (hollow, cross-drilled), copper washers, banjo eye with the feed pipe
+    head = extrude('bj_bolt', [(8.08 * math.cos(PI / 6 + k * PI / 3), 8.08 * math.sin(PI / 6 + k * PI / 3)) for k in range(6)], 'z', 44.6, 52.0)
+    ch = revolve_z('bj_ch', [(0.0, 44.5), (7.6, 44.5), (8.3, 45.3), (8.3, 51.2), (6.9, 52.1), (0.0, 52.1)])
+    apply_bool(head, ch, 'INTERSECT'); bpy.data.objects.remove(ch, do_unlink=True)
+    sh = revolve_z('bj_sh', [(0.0, 19.5), (4.6, 19.5), (5.0, 19.9), (5.0, 45.0), (0.0, 45.0)])
+    apply_bool(head, sh, 'UNION'); bpy.data.objects.remove(sh, do_unlink=True)
+    bool_many(head, [cyl('bj_ax', (0, 0, 19.2), (0, 0, BJ_Z + 1.45), 2.2, segs=32),
+                     cyl('bj_x', (-5.3, 0, BJ_Z), (5.3, 0, BJ_Z), 1.45, segs=24), cyl('bj_y', (0, -5.3, BJ_Z), (0, 5.3, BJ_Z), 1.45, segs=24)])
+    H.append(head)
+    H.append(revolve_z('bj_w0', [(5.1, 29.0), (9.4, 29.0), (9.4, 30.6), (5.1, 30.6)]))
+    H.append(revolve_z('bj_w1', [(5.1, 43.0), (9.4, 43.0), (9.4, 44.6), (5.1, 44.6)]))
+    eye = revolve_z('bj_eye', [(5.15, 30.6), (10.4, 30.6), (10.4, 43.0), (5.15, 43.0), (5.15, 40.2), (7.3, 40.2), (7.3, 33.6), (5.15, 33.6)])
+    pp = banjo_pipe_path()
+    adds = [cyl('bj_boss', (-9.8, 0, BJ_Z), (-13.6, 0, BJ_Z), 4.7, segs=40), sweep('bj_pipe', pp, [3.6] * len(pp), segs=40)]
+    for a_ in adds:
+        apply_bool(eye, a_, 'UNION'); bpy.data.objects.remove(a_, do_unlink=True)
+    bore = sweep('bj_pbore', [(-6.8, 0.0, BJ_Z)] + pp[1:-1] + [(PIPE_X, 0.0, PIPE_TOP + 1.0)], [2.5] * (len(pp)), segs=40)
+    bool_many(eye, [bore])
+    H.append(eye)
+    # oil drain: gasket + tube + two bolts
     dt = cyl('drain_tube', (0, 0, -36.0), (0, 0, -66.0), 9.2, segs=72)
     bool_many(dt, [cyl('dt_bore', (0, 0, -35.0), (0, 0, -67.0), 7.7, segs=72)])
     H.append(dt)
@@ -618,33 +793,77 @@ def build_hardware():
     bool_many(dfl, [cyl('dfl_b', (0, 0, -41.0), (0, 0, -35.0), 7.7, segs=72),
                     cyl('dfl_h1', (16.5, 0, -41.0), (16.5, 0, -35.0), 3.3, segs=32), cyl('dfl_h2', (-16.5, 0, -41.0), (-16.5, 0, -35.0), 3.3, segs=32)])
     H.append(dfl)
+    for sx in (-1, 1):
+        H += hexbolt(f'db{sx}', (sx * 16.5, 0.0, -40.0), (0, 0, -1), af=10.0, h=5.0, shank=(8.5, 3.0))
     return H
 
 
 def build_actuator():
-    """pneumatic VNT actuator on a bracket, rod to the vane lever (all in front of the section plane)."""
+    """pneumatic VNT actuator behind / under the turbo (real 753420 position): can on a bracket bolted to the turbine
+    housing back face, heat shield on the turbine side, rod with lock nuts and rod end on the VNT crank."""
     A = []
-    cx, cy, cz = -18.0, -44.0, -58.0
-    can = revolve_x('act_can', [(cx - 16.0, 0.0), (cx - 16.0, 21.0), (cx - 13.0, 25.0), (cx + 7.0, 25.5), (cx + 9.5, 27.5), (cx + 11.0, 27.5),
-                                (cx + 11.0, 25.0), (cx + 14.0, 23.0), (cx + 16.0, 12.0), (cx + 16.0, 0.0)], segs=96)
-    can.data.transform(Matrix.Translation((0, cy, cz)))
-    nip = cyl('act_nip', (cx - 4.0, cy - 20.0, cz + 10.0), (cx - 4.0, cy - 33.0, cz + 18.0), 2.6, segs=24)
-    A += [can, nip]
-    rod_p0 = Vector((cx + 16.0, cy, cz)); lever_p = Vector((34.0, -33.0, -40.0))
-    A.append(cyl('act_rod', rod_p0, lever_p + Vector((-1.5, 0, 0)), 2.0, segs=24))
-    A.append(cyl('act_rod_end', lever_p + Vector((-4.0, 0, 0)), lever_p + Vector((1.5, 0, 0)), 3.4, segs=24))
-    lev = box('act_lever', 32.5, 35.5, -36.0, -30.0, -41.0, -24.0); A.append(lev)
-    A.append(cyl('act_pivot', (31.0, -33.0, -26.5), (37.5, -33.0, -26.5), 3.2, segs=32))
-    br = box('act_bracket', -14.0, -2.0, -2.0, 2.0, 0.0, 31.0)
-    br.data.transform(Matrix.Translation((0, -16.0, -16.0)) @ Matrix.Rotation(math.radians(135.0), 4, 'X'))
-    A.append(br)
+    ua = Vector((0.0, math.cos(math.radians(-45.0)), math.sin(math.radians(-45.0))))      # can axis (cap outwards)
+    ta = Vector((0.0, math.cos(math.radians(45.0)), math.sin(math.radians(45.0))))        # crank arm direction
+    S = Vector((0.0, CRANK_R * math.cos(math.radians(CRANK_F)), CRANK_R * math.sin(math.radians(CRANK_F))))
+    T = S + ta * 16.0
+    C = T + ua * 62.0
+    XR = 13.5                    # plane of the rod / can axis
+    def P(v, x=XR): return (x, v.y, v.z)
+    # VNT crank: shaft out of the turbine housing back face, arm, pin + rod-end eye
+    A.append(cyl('vnt_shaft', (12.5, S.y, S.z), (T_BACK + 4.0, S.y, S.z), 3.4, segs=32))
+    A.append(extrude('vnt_crank', stadium2((S.y, S.z), (T.y, T.z), 4.6), 'x', 16.0, 19.0))
+    A.append(cyl('act_pin', (10.6, T.y, T.z), (20.2, T.y, T.z), 2.0, segs=24))
+    A.append(cyl('act_end_eye', (11.5, T.y, T.z), (15.5, T.y, T.z), 4.3, segs=32))
+    A.append(cyl('act_end', P(T + ua * 3.4), P(T + ua * 12.0), 3.4, segs=24))
+    A.append(cyl('act_rod', P(T + ua * 11.0), P(C - ua * 26.0), 2.3, segs=24))
+    for i, w in enumerate((16.0, 20.2)):
+        nut = prism_x(f'act_nut{i}', 6, 4.0, -1.9, 1.9, rot=0.2)
+        nut.data.transform(Matrix.Translation(Vector(P(T + ua * w))) @ rot_from_x(ua)); A.append(nut)
+    A.append(cyl('act_boot', P(C - ua * 27.5), P(C - ua * 20.5), 3.4, r1=6.6, segs=32))
+    # the can: two pressed shells with a crimped rim, domed cap outwards
+    can = revolve_x('act_can', [(-21.0, 0.0), (-21.0, 21.0), (-20.0, 24.5), (-17.0, 26.6), (-3.2, 27.6), (-1.6, 30.6), (1.6, 30.6), (2.6, 28.0),
+                                (8.0, 27.6), (14.0, 25.5), (18.5, 21.0), (21.0, 13.0), (21.5, 0.0)], segs=96)
+    can.data.transform(Matrix.Translation(Vector(P(C))) @ rot_from_x(ua)); A.append(can)
+    nb = Vector(P(C + ua * 18.6)) + Vector((-17.0, 0.0, 0.0))
+    A.append(cyl('act_nip', tuple(nb + Vector((3.0, 0, 0))), tuple(nb + Vector((-13.0, 0, 0))), 2.3, segs=24))
+    A.append(cyl('act_nipb', tuple(nb + Vector((3.0, 0, 0))), tuple(nb + Vector((-2.5, 0, 0))), 3.9, segs=24))
+    for sx in (-1, 1):   # mounting studs + nuts on the bracket tab
+        A.append(cyl(f'act_stud{sx}', P(C - ua * 20.0, XR + sx * 12.0), P(C - ua * 29.0, XR + sx * 12.0), 2.6, segs=20))
+        nut = prism_x(f'act_nutb{sx}', 6, 4.0, -1.9, 1.9, rot=0.3)
+        nut.data.transform(Matrix.Translation(Vector(P(C - ua * 26.3, XR + sx * 12.0))) @ rot_from_x(ua)); A.append(nut)
+    # heat shield: stainless scoop on the turbine side and over the cap
+    hs = revolve_x('act_shield', [(-22.0, 33.4), (25.0, 33.4), (25.0, 0.0), (26.1, 0.0), (26.1, 34.5), (-22.0, 34.5)], segs=96)
+    hs.data.transform(Matrix.Translation(Vector(P(C))) @ rot_from_x(ua))
+    bool_many(hs, [box('hs_cut', -200.0, XR - 9.0, -300.0, 300.0, -300.0, 300.0)])
+    A.append(hs)
+    # bracket: tab under the can (perpendicular to the can axis) + base plate on the turbine housing pad
+    tab_c = C - ua * 22.5
+    tab = [tuple(Vector((tab_c.y, tab_c.z)) + Vector((ta.y, ta.z)) * s * 17.0 + Vector((ua.y, ua.z)) * t * 1.5) for (s, t) in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
+    brk = extrude('act_brk', tab, 'x', -1.0, T_BACK)
+    bh = cyl('brk_h', P(C - ua * 26.0), P(C - ua * 19.0), 4.2, segs=32)
+    pad = Vector((0.0, 61.0 * math.cos(math.radians(T_BRK_F)), 61.0 * math.sin(math.radians(T_BRK_F))))
+    base = extrude('act_brk_b', stadium2((pad.y, pad.z), (tab_c.y - ua.y * 1.5, tab_c.z - ua.z * 1.5), 9.0), 'x', T_BACK - 3.0, T_BACK)
+    apply_bool(brk, base, 'UNION'); bpy.data.objects.remove(base, do_unlink=True)
+    for sx in (-1, 1):
+        bool_many(brk, [cyl(f'brk_s{sx}', P(C - ua * 27.0, XR + sx * 12.0), P(C - ua * 18.0, XR + sx * 12.0), 2.8, segs=20)])
+    bool_many(brk, [bh])
+    A.append(brk)
+    for da in (-5.5, 5.5):
+        a = math.radians(T_BRK_F + da)
+        A += bolt_head(f'ab{int(da > 0)}', (T_BACK - 3.0, 61.0 * math.cos(a), 61.0 * math.sin(a)), -1, af=8.0, h=4.2)
     return A
 
 
 # --------------------------------------------------------------------------- oil volumes (white emission, tinted in the compositor)
 def build_oil(var):
     O = {'feed': [], 'outer': [], 'inner': [], 'thrust': [], 'holes': []}
-    O['feed'] += [cyl('o_in', (0, 0, 72.0), (0, 0, GAL_Z), 2.94, segs=40), cyl('o_gal', (-26.0, 0, GAL_Z), (FEED_X + 1.5, 0, GAL_Z), 1.94, segs=40),
+    pp = list(reversed(banjo_pipe_path()))[:-1] + [(-10.9, 0.0, BJ_Z), (-7.25, 0.0, BJ_Z)]
+    O['feed'] += [sweep('o_pipe', pp, [2.44] * len(pp), segs=32),
+                  revolve_z('o_groove', [(5.03, 33.63), (7.27, 33.63), (7.27, 40.17), (5.03, 40.17)], segs=64),
+                  cyl('o_xh', (-5.03, 0, BJ_Z), (5.03, 0, BJ_Z), 1.42, segs=24), cyl('o_yh', (0, -5.03, BJ_Z), (0, 5.03, BJ_Z), 1.42, segs=24),
+                  cyl('o_bolt', (0, 0, BJ_Z + 1.42), (0, 0, 19.55), 2.15, segs=32), cyl('o_tip', (0, 0, 19.48), (0, 0, 19.05), 5.12, segs=48),
+                  cyl('o_in', (0, 0, 19.1), (0, 0, GAL_Z), 2.94, segs=40)]
+    O['feed'] += [cyl('o_gal', (-26.0, 0, GAL_Z), (FEED_X + 1.5, 0, GAL_Z), 1.94, segs=40),
                   cyl('o_tp1', (-26.0, 0, GAL_Z), (-27.4, 0, GAL_Z), 1.34, segs=24), cyl('o_tp2', (-27.4, 0, GAL_Z), (-27.4, 0, 4.7), 0.8, segs=24)]
     zb = 6.4 if var == 'A' else 6.1
     for sx in (-1, 1):
@@ -745,10 +964,14 @@ def mat_emit_white(name='oil_white', col=(1, 1, 1)):
 
 MATS = {}
 SURF = {   # key: (surface colour, rough, kwargs) ; section: (colour, line, angle, period)
-    'alu_cast': ((0.62, 0.63, 0.64), 0.46, dict(noise=0.25, nscale=0.9), ((0.27, 0.28, 0.29), (0.12, 0.13, 0.14), 45, 2.8)),
+    'alu_cast': ((0.56, 0.57, 0.58), 0.50, dict(noise=0.45, nscale=2.4, tint2=(0.50, 0.505, 0.50)), ((0.27, 0.28, 0.29), (0.12, 0.13, 0.14), 45, 2.8)),
     'alu_mach': ((0.80, 0.81, 0.83), 0.30, dict(noise=0.05), ((0.32, 0.33, 0.35), (0.14, 0.15, 0.16), -45, 2.2)),
     'iron':     ((0.30, 0.30, 0.31), 0.55, dict(noise=0.35, nscale=1.1, tint2=(0.33, 0.29, 0.25)), ((0.22, 0.22, 0.23), (0.09, 0.09, 0.10), 45, 2.0)),
-    'th_steel': ((0.17, 0.16, 0.155), 0.55, dict(noise=0.5, nscale=1.0, tint2=(0.24, 0.17, 0.12)), ((0.21, 0.19, 0.18), (0.08, 0.07, 0.07), -45, 2.6)),
+    'th_steel': ((0.15, 0.15, 0.155), 0.56, dict(noise=0.75, nscale=2.2, tint2=(0.17, 0.16, 0.15)), ((0.21, 0.19, 0.18), (0.08, 0.07, 0.07), -45, 2.6)),
+    'iron_ext': ((0.075, 0.075, 0.08), 0.50, dict(noise=0.55, nscale=2.0), None),
+    'iron_mach': ((0.34, 0.34, 0.35), 0.30, dict(noise=0.03), None),
+    'copper':   ((0.80, 0.47, 0.30), 0.27, dict(noise=0.02), ((0.45, 0.26, 0.15), (0.20, 0.11, 0.06), 45, 0.6)),
+    'shield':   ((0.64, 0.64, 0.62), 0.30, dict(noise=0.05), None),
     'bronze':   ((0.80, 0.52, 0.27), 0.30, dict(noise=0.04), ((0.46, 0.29, 0.14), (0.20, 0.12, 0.05), -45, 0.9)),
     'steel':    ((0.68, 0.69, 0.72), 0.26, dict(), ((0.30, 0.31, 0.33), (0.13, 0.13, 0.15), 45, 1.1)),
     'steel_dk': ((0.30, 0.31, 0.33), 0.38, dict(), ((0.20, 0.20, 0.22), (0.08, 0.08, 0.09), -45, 0.7)),
@@ -776,17 +999,46 @@ def mats():
     return MATS
 
 
-def set_mats(ob, key, cut='y', side=-1, at=0.0):
-    """slot 0 surface, slot 1 section (faces lying on the cut plane, facing the camera side)."""
+def set_mats(ob, key, cut='y', side=-1, at=0.0, extra=None):
+    """slot 0 surface, slot 1 section (faces lying on the cut plane, facing the camera side), slot 2 extra surface (extra=(key, pred))."""
     surf, sec_y, sec_x = mats()[key]
     sec = sec_y if cut == 'y' else sec_x
-    ob.data.materials.clear(); ob.data.materials.append(surf)
+    me = ob.data
+    me.materials.clear(); me.materials.append(surf)
+    me.materials.append(sec if (sec is not None and cut) else surf)
+    if extra: me.materials.append(mats()[extra[0]][0])
+    for p in me.polygons:
+        p.material_index = 2 if (extra and extra[1](p.center, p.normal)) else 0
     if sec is not None and cut:
-        ob.data.materials.append(sec)
-        for p in ob.data.polygons:
+        for p in me.polygons:
             if cut == 'y' and abs(p.center.y - at) < 2e-3 and p.normal.y * side > 0.98: p.material_index = 1
             if cut == 'x' and abs(p.center.x - at) < 2e-3 and p.normal.x * side > 0.98: p.material_index = 1
     smooth(ob)
+
+
+def pred_comp(c, n, info):
+    r = math.hypot(c.y, c.z)
+    if c.x < -72.3 and r > 24.5: return True                       # machined inlet spigot + end face
+    fc, fn = Vector(info['flange_c']), Vector(info['flange_n'])
+    return abs((c - fc).dot(fn)) < 0.08 and n.dot(fn) > 0.95       # outlet flange face
+
+
+def pred_turb(c, n, info):
+    r = math.hypot(c.y, c.z)
+    if abs(c.x - T_BACK) < 0.05 and n.x < -0.95 and r > 34.0: return True     # machined back face
+    if c.x > 84.8 and r > 25.5: return True                                   # outlet spigot, lip, end face
+    fc, fn = Vector(info['flange_c']), Vector(info['flange_n'])
+    return abs((c - fc).dot(fn)) < 0.08 and n.dot(fn) > 0.95                 # inlet flange face
+
+
+def pred_chra(c, n):
+    """outer (dark, as-cast) surface of the bearing housing; bores and cavities keep the grey interior colour."""
+    r = math.hypot(c.y, c.z)
+    if r < 21.3: return False
+    if -23.6 <= c.x <= 24.1 and abs(c.y) <= 15.6 and -29.1 <= c.z <= -10.9: return False
+    if abs(c.x) <= 12.1 and abs(c.y) <= 8.1 and c.z <= -27.9: return False
+    if abs(c.x) <= 5.3 and abs(c.y) <= 5.3 and c.z > 12.0: return False
+    return True
 
 
 def cut_plane(ob, keep, at=0.0, eps=0.0):
@@ -820,11 +1072,16 @@ MAT_OF = {
 def mat_key(name):
     if name in MAT_OF: return MAT_OF[name]
     if name.startswith('clip'): return 'steel_dk'
-    if name.startswith('act_'): return 'black' if name in ('act_can', 'act_nip') else 'steel_dk'
-    if name.startswith(('tb', 'cb')): return 'zinc'
-    if name.startswith('cplate'): return 'steel_dk'
-    if name in ('oil_fitting', 'pipe_nut'): return 'zinc_cut'
-    if name in ('oil_pipe', 'drain_tube', 'drain_fl2'): return 'steel'
+    if name.startswith(('cb', 'tb', 'db', 'ab')): return 'zinc_cut'
+    if name.startswith('bj_w'): return 'copper'
+    if name.startswith('bj_bolt'): return 'zinc_cut'
+    if name.startswith('bj_eye') or name in ('drain_tube', 'drain_fl2'): return 'steel'
+    if name.startswith('act_can'): return 'zinc'
+    if name.startswith('act_shield'): return 'shield'
+    if name.startswith(('act_brk', 'act_nut', 'act_stud')): return 'zinc'
+    if name.startswith('act_boot'): return 'black'
+    if name == 'vnt_crank': return 'black'
+    if name.startswith('vnt_'): return 'steel_dk'
     return 'steel'
 
 
@@ -892,22 +1149,26 @@ def build():
         o = revolve_x(nm, [(XP + 0.02, r0), (2.0, r0), (2.0, r1), (XP + 0.02, r1)])
         o.data.materials.clear(); o.data.materials.append(oilm); move_to(o, cols['trP_oil_outer' if 'out' in nm else 'trP_oil_inner'])
     # ---- main section (y = 0)
-    def split(ob, key, back_coll, front=True):
+    def split(ob, key, back_coll, front=True, extra=None):
         if front:
             fr = dup(ob, ob.name + '_front')
             if cut_plane(fr, 'y-'):
-                set_mats(fr, key, cut=None); move_to(fr, cols['front'])
+                set_mats(fr, key, cut=None, extra=extra); move_to(fr, cols['front'])
             else: bpy.data.objects.remove(fr, do_unlink=True)
         if cut_plane(ob, 'y+'):
-            set_mats(ob, key, cut='y', side=-1); move_to(ob, cols[back_coll])
+            set_mats(ob, key, cut='y', side=-1, extra=extra); move_to(ob, cols[back_coll])
         else: bpy.data.objects.remove(ob, do_unlink=True)
+    EXTRA = {'comp_housing': ('alu_mach', lambda c, n: pred_comp(c, n, cinfo)),
+             'turbine_housing': ('iron_mach', lambda c, n: pred_turb(c, n, tinfo))}
     for ob, key in ((comp, 'alu_cast'), (turb, 'th_steel'), (bp, 'alu_mach'), (V['nozzle_ring'], 'vnt'), (V['unison'], 'vnt'),
                     (V['vanes'], 'vnt'), (V['heat_shield'], 'sheet')):
-        split(ob, key, 'shared')
-    for ob in HW + ACT:
+        split(ob, key, 'shared', extra=EXTRA.get(ob.name))
+    for ob in HW:
         split(ob, mat_key(ob.name), 'shared')
-    split(CH['A'], 'iron', 'chra_A', front=True)
-    split(CH['B'], 'iron', 'chra_B', front=False)
+    for ob in ACT:                      # actuator + VNT crank: exterior shot only (taken away with the front halves)
+        set_mats(ob, mat_key(ob.name), cut=None); move_to(ob, cols['front'])
+    split(CH['A'], 'iron', 'chra_A', front=True, extra=('iron_ext', pred_chra))
+    split(CH['B'], 'iron', 'chra_B', front=False, extra=('iron_ext', pred_chra))
     for v in 'AB':
         for nm, ob in IN[v].items():
             split(ob, mat_key(nm), 'int_' + v, front=False)
@@ -938,7 +1199,8 @@ def build():
     except Exception: pass
     r.image_settings.file_format = 'PNG'; r.image_settings.color_mode = 'RGBA'; r.image_settings.color_depth = '16'
     json.dump({'comp_outlet_end': cinfo['outlet_end'], 'comp_outlet_dir': cinfo['outlet_dir'],
-               'turb_inlet_start': tinfo['inlet_start'], 'turb_inlet_dir': tinfo['inlet_dir']}, open(os.path.join(OUT, 'geo.json'), 'w'), indent=1)
+               'turb_inlet_start': tinfo['inlet_start'], 'turb_inlet_dir': tinfo['inlet_dir'], 'turb_volute_in': tinfo['volute_in']},
+              open(os.path.join(OUT, 'geo.json'), 'w'), indent=1)
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, 'turbo.blend'))
     print('saved', len(bpy.data.objects), 'objects in %.0fs' % (time.time() - t0))
 
@@ -1060,7 +1322,7 @@ def crops():
 def job_list():
     C = crops(); J = []
     J.append(('T1_A', dict(cam='main', tier=1, vis=var_layers('A'))))
-    J.append(('T1_front', dict(cam='main', tier=1, vis=['front'], hold=var_layers('A'), samples=40)))
+    J.append(('T1_front', dict(cam='main', tier=1, vis=['front'], hold=var_layers('A'), samples=64)))
     for v in 'AB':
         if 'T2' in C: J.append((f'T2_{v}', dict(cam='main', tier=2, crop=C['T2'], vis=var_layers(v))))
         if 'T3' in C: J.append((f'T3_{v}', dict(cam='main', tier=4, crop=C['T3'], vis=var_layers(v))))
@@ -1184,9 +1446,9 @@ def info():
     json.dump(C, open(os.path.join(OUT, 'crops.json'), 'w'), indent=1)
     geo = json.load(open(os.path.join(OUT, 'geo.json')))
     A = {   # 3D anchors (mm)
-        'comp_wheel': (-55.0, 0.0, 14.0), 'comp_nut': (-70.0, 0.0, 0.0), 'comp_housing': (-62.0, 0.0, -30.0), 'comp_inlet': (-96.0, 0.0, 0.0),
+        'comp_wheel': (-55.0, 0.0, 14.0), 'comp_nut': (-70.0, 0.0, 0.0), 'comp_housing': (-62.0, 0.0, -30.0), 'comp_inlet': (-99.0, 0.0, 0.0),
         'comp_outlet': tuple(geo['comp_outlet_end']), 'diffuser': (-42.0, 0.0, 31.0), 'volute_c_top': (-44.0, 0.0, 41.5), 'volute_c_bot': (-50.0, 0.0, -45.0),
-        'backplate': (-36.0, 0.0, 22.0), 'chra': (0.0, 0.0, -20.5), 'chra_top': (0.0, 0.0, 21.5), 'oil_in': (0.0, 0.0, 31.0), 'oil_in_bore': (0.0, 0.0, 22.0),
+        'backplate': (-36.0, 0.0, 22.0), 'chra': (0.0, 0.0, -20.5), 'chra_top': (0.0, 0.0, 21.5), 'oil_in': (PIPE_X, 0.0, 58.0), 'oil_in_bore': (0.0, 0.0, 25.0),
         'gallery': (6.0, 0.0, GAL_Z), 'feed_t': (FEED_X, 0.0, 9.0), 'feed_c': (-FEED_X, 0.0, 9.0), 'drain': (0.0, 0.0, -34.0), 'drain_cav': (0.0, 0.0, -20.0),
         'bush_t': (FEED_X, 0.0, 5.3), 'bush_c': (-FEED_X, 0.0, 5.3), 'bush_t_bot': (FEED_X, 0.0, -5.3), 'bush_c_bot': (-FEED_X, 0.0, -5.3),
         'outer_t': (FEED_X, 0.0, 6.65), 'inner_t': (FEED_X, 0.0, 4.2), 'outer_c': (-FEED_X, 0.0, 6.65), 'inner_c': (-FEED_X, 0.0, 4.2),
@@ -1194,14 +1456,14 @@ def info():
         'shaft': (0.0, 0.0, 0.0), 'shaft_t': (FEED_X, 0.0, 0.0), 'shaft_c': (-FEED_X, 0.0, 0.0), 'shaft_top': (0.0, 0.0, 3.8),
         'thrust': (-27.4, 0.0, 9.5), 'thrust_low': (-27.4, 0.0, -9.5), 'collar': (-24.9, 0.0, 7.0), 'flinger': (-32.0, 0.0, 7.0), 'ring_c': (-36.5, 0.0, 5.0),
         'ring_t': (28.6, 0.0, 7.6), 'heat_shield': (34.0, 0.0, 15.0), 'turb_wheel': (52.0, 0.0, 12.0), 'turb_housing': (60.0, 0.0, 40.0),
-        'vanes': (42.0, 0.0, 27.5), 'vanes_bot': (42.0, 0.0, -27.5), 'turb_outlet': (86.0, 0.0, 0.0), 'turb_inlet': tuple(geo['turb_inlet_start']),
+        'vanes': (42.0, 0.0, 27.5), 'vanes_bot': (42.0, 0.0, -27.5), 'turb_outlet': (96.0, 0.0, 0.0), 'turb_inlet': tuple(geo['turb_inlet_start']),
         'volute_t_top': (48.0, 0.0, 44.0), 'volute_t_bot': (46.0, 0.0, -38.0), 'clip_t': (21.6, 0.0, 6.8), 'deflector': (-29.2, 0.0, 15.0),
     }
     res = {'crops': C, 'base': S1, 'anch': {k: project('main', [p], S1)[0] for k, p in A.items()}}
     # paths (3D polylines)
     P = {}
     P['air_in'] = [(-112.0, 0.0, z) for z in (0.0,)] + [(-90.0, 0.0, 0.0)]
-    P['oil_in'] = [(0.0, 0.0, 34.0), (0.0, 0.0, GAL_Z)]
+    P['oil_in'] = [tuple(p) for p in reversed(banjo_pipe_path())] + [(0.0, 0.0, BJ_Z), (0.0, 0.0, GAL_Z)]
     P['gal_c'] = [(0.0, 0.0, GAL_Z), (-27.4, 0.0, GAL_Z), (-27.4, 0.0, 5.0)]
     P['gal_t'] = [(0.0, 0.0, GAL_Z), (FEED_X, 0.0, GAL_Z), (FEED_X, 0.0, 6.6)]
     P['gal_c2'] = [(-FEED_X, 0.0, GAL_Z), (-FEED_X, 0.0, 6.6)]
@@ -1218,6 +1480,29 @@ def info():
                    'up_per_mm': project(tn, [(CAM[tn]['trans'], 0, 10.0)], St)[0][1] - project(tn, [(CAM[tn]['trans'], 0, 0)], St)[0][1]}
     json.dump(res, open(os.path.join(OUT, 'info.json'), 'w'), indent=1)
     print('crops', C)
+
+
+def look(view, up, field, size, spp, out, vis='shared,chra_A,int_A,rotor,rotor_c,rotor_t,rotor_cut,front', tgt='-2,0,-6', dist='1400'):
+    """render from an arbitrary direction (view = direction the camera looks along, up = screen-up vector)."""
+    open_blend()
+    sc = bpy.context.scene
+    d = Vector([float(v) for v in view.split(',')]).normalized(); u = Vector([float(v) for v in up.split(',')]).normalized()
+    t = Vector([float(v) for v in tgt.split(',')]); D = float(dist)
+    cd = bpy.data.cameras.new('cam_look'); cd.sensor_fit = 'HORIZONTAL'; cd.sensor_width = 36.0; cd.clip_start = 1.0; cd.clip_end = 9000.0
+    co = bpy.data.objects.new('cam_look', cd); sc.collection.objects.link(co)
+    co.location = t - d * D
+    zc = -d; xc = u.cross(zc).normalized(); yc = zc.cross(xc)
+    co.rotation_euler = Matrix((xc, yc, zc)).transposed().to_euler()
+    cd.lens = 36.0 * D / float(field)
+    sc.camera = co
+    setup_layer(vis.split(','), (), 'AgX')
+    try: sc.view_settings.look = 'AgX - Medium High Contrast'
+    except Exception: pass
+    r = sc.render; r.resolution_x = int(size); r.resolution_y = int(size); r.use_border = False; r.resolution_percentage = 100
+    r.film_transparent = False
+    sc.cycles.samples = int(spp); sc.cycles.use_denoising = True
+    r.filepath = out
+    t0 = time.time(); bpy.ops.render.render(write_still=True); print('look done %.0fs' % (time.time() - t0))
 
 
 def prev(cam, tier, crop, vis, pct, spp, out, hold=''):
@@ -1238,3 +1523,4 @@ if __name__ == '__main__':
         queue(only=a[1:] or None)
     elif a[0] == 'info': info()
     elif a[0] == 'prev': prev(*a[1:])
+    elif a[0] == 'look': look(*a[1:])

@@ -104,25 +104,52 @@ def bearing_excl(shape, name):
 
 # ------------------------------------------------------------------ oil masks with reveal maps
 TIERS = {'T1': (1, [0, 0]), 'T2': (2, CROPS['T2'][:2]), 'T3': (4, CROPS['T3'][:2])}
-GZ = 12.5; FX = 16.0; PIPE_TOP = 72.0
+GZ = 12.5; FX = 16.0
+# oil feed route on the section plane (x, z): feed pipe from the engine -> banjo eye -> cross hole -> hollow banjo bolt -> CHRA bore
+PIPE_X, PIPE_TOP, BJ_Z = -22.0, 74.0, 36.9
+FEED_ROUTE = [(PIPE_X, PIPE_TOP), (PIPE_X, BJ_Z + 6.0)] + \
+             [(-16.0 - 6.0 * math.cos(math.radians(a)), BJ_Z + 6.0 - 6.0 * math.sin(math.radians(a))) for a in range(9, 91, 9)] + \
+             [(-5.0, BJ_Z), (0.0, BJ_Z), (0.0, 19.3), (0.0, GZ)]
+
+
+def _route_s(route):
+    s = [0.0]
+    for (x0, z0), (x1, z1) in zip(route, route[1:]): s.append(s[-1] + math.hypot(x1 - x0, z1 - z0))
+    return s
+
+
+_RS = _route_s(FEED_ROUTE)
+S_GAL = _RS[-1]                                   # path length to the gallery
+S_C = _RS[FEED_ROUTE.index((0.0, BJ_Z))]          # ... to the middle of the banjo bolt
+
+
+def route_arrival(x, z, route, s0, k=0.6):
+    best = np.full(x.shape, 1e9, np.float32); s = _route_s(route)
+    for (x0, z0), (x1, z1), sa in zip(route, route[1:], s):
+        dx, dz = x1 - x0, z1 - z0; L2 = dx * dx + dz * dz
+        t = np.clip(((x - x0) * dx + (z - z0) * dz) / max(L2, 1e-9), 0, 1)
+        d = np.hypot(x - (x0 + t * dx), z - (z0 + t * dz))
+        best = np.minimum(best, s0 + sa + t * math.sqrt(L2) + k * d)
+    return best
 
 
 def arrival(x, z, zone):
-    """path length (mm) the oil travels from the pipe top to the point (x, z) on the section plane."""
+    """path length (mm) the oil travels from the feed pipe to the point (x, z) on the section plane."""
     a = np.full(x.shape, 1e9, np.float32)
     if zone in ('feed', 'thrust', 'holes'):
-        pipe = (np.abs(x) < 4.5) & (z > GZ - 2.5)
-        a = np.where(pipe, PIPE_TOP - z, a)
-        gal = (np.abs(z - GZ) <= 2.6) & ~pipe
-        a = np.where(gal, (PIPE_TOP - GZ) + np.abs(x), a)
-        rest = ~(pipe | gal)
+        up = z > GZ + 2.6
+        r = np.minimum(route_arrival(x, z, FEED_ROUTE, 0.0), route_arrival(x, z, [(0.0, BJ_Z), (5.0, BJ_Z), (7.4, BJ_Z)], S_C))
+        a = np.where(up, r, a)
+        gal = (np.abs(z - GZ) <= 2.6)
+        a = np.where(gal, S_GAL + np.abs(x), a)
+        rest = ~(up | gal)
         drop = np.where(x < -22, 27.4, FX)
-        a = np.where(rest, (PIPE_TOP - GZ) + drop + np.maximum(0, GZ - z), a)
+        a = np.where(rest, S_GAL + drop + np.maximum(0, GZ - z), a)
         if zone == 'holes': a = a + 2.0
     elif zone == 'outer':
-        a = (PIPE_TOP - GZ) + FX + (GZ - 6.5) + np.abs(np.abs(x) - FX) * 1.4 + np.where(z < 0, 14.0, 0.0)
+        a = S_GAL + FX + (GZ - 6.5) + np.abs(np.abs(x) - FX) * 1.4 + np.where(z < 0, 14.0, 0.0)
     elif zone == 'inner':
-        a = (PIPE_TOP - GZ) + FX + (GZ - 6.5) + 8.0 + np.abs(np.abs(x) - FX) * 1.4 + np.where(z < 0, 10.0, 0.0)
+        a = S_GAL + FX + (GZ - 6.5) + 8.0 + np.abs(np.abs(x) - FX) * 1.4 + np.where(z < 0, 10.0, 0.0)
     return a
 
 
@@ -174,13 +201,13 @@ TL = {
     'B': dict(open0=3.2, open1=5.0, wide1=11.6, chra0=13.4, chra1=21.0, brg0=22.8, brg1=30.8, tr0=32.2, trp0=36.6, trp1=37.4, tr1=41.0, back1=42.6, end0=47.6),
 }[VAR]
 OIL_T0 = TL['chra0'] + 0.3          # oil starts to arrive
-OIL_SPEED = 42.0                    # mm of path per second while filling
+OIL_SPEED = 48.0                    # mm of path per second while filling
 
 
 def oil_front(t):
     if t < OIL_T0: return -10.0
     d = (t - OIL_T0) * OIL_SPEED
-    return 9999.0 if d > 160 else d
+    return 9999.0 if d > 175 else d
 
 
 def omega(t):
@@ -210,16 +237,38 @@ def box3(x0, x1, z0, z1, y0=0.0, y1=0.0):
     return [(x, y, z) for x in (x0, x1) for y in (y0, y1) for z in (z0, z1)]
 
 
-TURBO_BOX = box3(-100, 87, -66, 72, -30, 45)
+def alpha_bbox(names, thr=8):
+    box = None
+    for nm in names:
+        a = _read(nm)
+        if a is None: continue
+        ys, xs = np.nonzero(a[..., 3] > thr)
+        b = [xs.min(), ys.min(), xs.max(), ys.max()]
+        box = b if box is None else [min(box[0], b[0]), min(box[1], b[1]), max(box[2], b[2]), max(box[3], b[3])]
+    return box
+
+
+def fit_px(b, rect):
+    x0, y0, x1, y1 = b; sx0, sy0, sx1, sy1 = rect
+    z = min((sx1 - sx0) / (x1 - x0), (sy1 - sy0) / (y1 - y0))
+    return z, (x0 + x1) / 2 - ((sx0 + sx1) / 2 - W / 2) / z, (y0 + y1) / 2 - ((sy0 + sy1) / 2 - H / 2) / z
+
+
+_BB = os.path.join(OUTD, 'bbox.json')
+if os.path.exists(_BB): BBX = json.load(open(_BB))
+else:
+    BBX = {'sec': [int(v) for v in alpha_bbox(['T1_A'])], 'ext': [int(v) for v in alpha_bbox(['T1_A', 'T1_front'])]}
+    json.dump(BBX, open(_BB, 'w'))
 if FMT == 'V':
-    V_WIDE = fit_view(TURBO_BOX, (30, 520, 1050, 1400))
+    V_WIDE = fit_px(BBX['sec'], (40, 500, 1040, 1420))
+    V_EXT = fit_px(BBX['ext'], (60, 470, 1020, 1430))
     V_CHRA = fit_view(box3(-42, 40, -44, 46, 0, 12), (40, 330, 1040, 1470))
     V_BRG = fit_view(box3(-3.5, 25.5, -10, 12) if VAR == 'A' else box3(-3.5, 24.5, -12, 11), (20, 420, 1060, 1440))
 else:
-    V_WIDE = fit_view(TURBO_BOX, (110, 215, 1230, 985))
+    V_WIDE = fit_px(BBX['sec'], (120, 220, 1150, 990))
+    V_EXT = fit_px(BBX['ext'], (150, 200, 1210, 1010))
     V_CHRA = fit_view(box3(-42, 40, -44, 46, 0, 12), (60, 80, 1270, 1010))
     V_BRG = fit_view(box3(-31.5, 25.5, -11, 12), (50, 150, 1280, 960))
-V_EXT = (V_WIDE[0] * 0.93, V_WIDE[1], V_WIDE[2] + 20)
 
 
 def interp_view(a, b, f):
@@ -334,15 +383,15 @@ def t_mid(s, t):
 PI = math.pi
 
 
-def comp_volute_pt(phi):
-    r = 2.6 + 10.2 * (phi / 360.0) ** 0.9; a = math.radians(phi)
-    Rc = 37.5 + 0.6 * r; xv = -40.0 - r
+def comp_volute_pt(phi):          # same as turbo.py cvol(), turned by C_ROT = +90 deg (scroll end at the top)
+    r = 4.0 + 9.5 * (min(max(phi, 0), 360.0) / 360.0) ** 0.9; a = math.radians(phi + 90.0)
+    Rc = 40.0 + 0.8 * r; xv = -40.0 - r
     return (xv, Rc * math.cos(a), Rc * math.sin(a))
 
 
-def turb_volute_pt(phi):
-    r = 13.0 - 10.0 * (max(phi, 0) / 340.0) ** 0.85; a = math.radians(phi)
-    Rc = 33.0 + 0.85 * r; xv = 43.0 + 0.6 * r
+def turb_volute_pt(phi):          # same as turbo.py tvol(), turned by T_ROT = -90 deg (inlet at the bottom)
+    r = 13.0 - 10.0 * (max(phi, 0) / 340.0) ** 0.85; a = math.radians(phi - 90.0)
+    Rc = 36.0 + 0.9 * r; xv = 43.0 + 0.6 * r
     return (xv, Rc * math.cos(a), Rc * math.sin(a))
 
 
@@ -353,23 +402,23 @@ def build_paths():
             pts = [(-118.0, 0.0, sg * (6 + 12 * s * 0.9)), (-80.0, 0.0, sg * (6 + 12 * s * 0.9))]
             for k in range(13):
                 tt = k / 12; x, r = c_mid(s, tt); pts.append((x, 0.0, sg * r))
-            pts += [(-42.0 - 1.4 * s, 0.0, sg * 31.0), (-42.5 - 2 * s, 0.0, sg * 36.5)]
+            pts += [(-42.0 - 1.4 * s, 0.0, sg * 31.0), (-42.5 - 2 * s, 0.0, sg * 38.0)]
             if sg < 0:
-                pts += [comp_volute_pt(phi) for phi in range(270, 361, 6)]
+                pts += [comp_volute_pt(phi) for phi in range(180, 271, 6)]
             else:
-                pts += [(-44.0, -4.0, 40.0)]
+                pts += [(-48.0 - 2.0 * s, 0.0, 45.5), (-53.0, -3.0, 50.5), (-53.5, -9.0, 52.0)]
             P[f'air{i}{"t" if sg > 0 else "b"}'] = pts
     for i, s in enumerate((0.25, 0.55, 0.85)):
         for sg in (1, -1):
-            if sg > 0: pts = [turb_volute_pt(phi) for phi in range(0, 91, 6)]
-            else: pts = [turb_volute_pt(phi) for phi in range(270, 271, 6)]
-            pts += [(42.0 + 3 * s, 0.0, sg * 30.0), (41.5 + 4 * s, 0.0, sg * 23.0)]
+            if sg > 0: pts = [turb_volute_pt(phi) for phi in range(90, 181, 6)]
+            else: pts = [(51.5, -34.0, -64.0), (51.0, -16.0, -52.0), turb_volute_pt(0)]
+            pts += [(42.5 + 3 * s, 0.0, sg * 31.0), (41.5 + 4 * s, 0.0, sg * 23.0)]
             for k in range(13):
                 tt = k / 12; x, r = t_mid(s, tt); pts.append((x, 0.0, sg * r))
-            pts += [(80.0, 0.0, sg * (6.5 + 11 * s)), (100.0, 0.0, sg * (6.5 + 12 * s))]
+            pts += [(80.0, 0.0, sg * (6.5 + 11 * s)), (100.0, 0.0, sg * (6.5 + 12.5 * s)), (112.0, 0.0, sg * (6.5 + 13 * s))]
             P[f'gas{i}{"t" if sg > 0 else "b"}'] = pts
     # oil
-    P['o_pipe'] = [(0.0, 0.0, 74.0), (0.0, 0.0, GZ)]
+    P['o_pipe'] = [(x, 0.0, z) for (x, z) in FEED_ROUTE]
     P['o_gal_t'] = [(0.0, 0.0, GZ), (FX, 0.0, GZ), (FX, 0.0, 6.9 if VAR == 'A' else 6.4)]
     P['o_gal_c'] = [(0.0, 0.0, GZ), (-FX, 0.0, GZ), (-FX, 0.0, 6.9 if VAR == 'A' else 6.4)]
     P['o_gal_th'] = [(-FX, 0.0, GZ), (-27.4, 0.0, GZ), (-27.4, 0.0, 5.0)]
@@ -705,29 +754,29 @@ def LBL():
     else:
         over = [('Roata compresorului', 'comp_wheel', (90, 196), 'r'), ('Axul', (-14.0, 0.0, 3.6), (560, 196), 'r'),
                 ('Roata turbinei', 'turb_wheel', (1250, 250), 'r'), ('Palete geometrie variabilă', 'vanes_bot', (1250, 560), 'r'),
-                ('Carcasa lagărelor', 'chra', (790, 1000), 'r')]
+                ('Carcasa lagărelor', 'chra', (800, 1036), 'r')]
     if VAR == 'A':
         if V:
-            chra = [('Ulei de la pompa motorului', (0.0, 0.0, 44.0), (640, 250), 'r'),
+            chra = [('Ulei de la pompa motorului', (-13.0, 0.0, BJ_Z), (640, 250), 'r'),
                     ('Lagăr flotant (bucșă)', 'bush_c', (70, 640), 'r'), ('Lagăr flotant (bucșă)', 'bush_t', (1010, 640), 'l'),
                     ('Lagăr axial', 'thrust_low', (70, 1250), 'r'), ('Retur ulei, liber, spre baie', 'drain', (1010, 1400), 'l')]
             brg = [('Bucșa (se rotește)', (FX, 0.0, 5.3), (70, 430), 'r'), ('Film exterior: carcasă – bucșă', (FX + 2.5, 0.0, 6.65), (1010, 480), 'l'),
                    ('Film interior: bucșă – ax', (FX + 2.5, 0.0, -4.2), (1010, 1430), 'l'), ('Axul', (FX - 6.0, 0.0, -2.0), (70, 1430), 'r')]
         else:
-            chra = [('Ulei de la pompa motorului', (0.0, 0.0, 44.0), (770, 170), 'r'),
+            chra = [('Ulei de la pompa motorului', (-13.0, 0.0, BJ_Z), (770, 170), 'r'),
                     ('Lagăr flotant (bucșă)', 'bush_c', (330, 292), 'r'), ('Lagăr flotant (bucșă)', 'bush_t', (1250, 330), 'r'),
                     ('Lagăr axial', 'thrust_low', (330, 900), 'l'), ('Retur ulei, liber, spre baie', 'drain', (790, 1010), 'r')]
             brg = [('Bucșa (se rotește)', (FX, 0.0, 5.3), (1250, 250), 'r'), ('Film exterior: carcasă – bucșă', (FX + 2.5, 0.0, 6.65), (1250, 330), 'r'),
                    ('Film interior: bucșă – ax', (FX + 2.5, 0.0, -4.2), (1250, 560), 'r'), ('Axul', (-2.0, 0.0, -3.0), (330, 962), 'r')]
     else:
         if V:
-            chra = [('Ulei de la pompa motorului', (0.0, 0.0, 44.0), (640, 250), 'r'),
+            chra = [('Ulei de la pompa motorului', (-13.0, 0.0, BJ_Z), (640, 250), 'r'),
                     ('Lagăr dintr-o bucată (semi-flotant)', 'bush_t', (1010, 640), 'l'), ('Știft: nu-l lasă să se rotească', 'pin', (1010, 1300), 'l'),
                     ('Lagăr axial', 'thrust_low', (70, 1250), 'r'), ('Retur ulei, liber, spre baie', 'drain', (1010, 1400), 'l')]
             brg = [('Lagărul nu se rotește', (FX, 0.0, 5.3), (70, 430), 'r'), ('Film exterior: amortizează', (FX + 2.5, 0.0, 6.5), (1010, 480), 'l'),
                    ('Film interior: poartă axul', (FX + 2.5, 0.0, -4.2), (1010, 1430), 'l'), ('Știftul', (0.0, 0.0, -10.0), (70, 1430), 'r')]
         else:
-            chra = [('Ulei de la pompa motorului', (0.0, 0.0, 44.0), (770, 170), 'r'),
+            chra = [('Ulei de la pompa motorului', (-13.0, 0.0, BJ_Z), (770, 170), 'r'),
                     ('Lagăr dintr-o bucată (semi-flotant)', 'bush_t', (1250, 330), 'r'), ('Știft: nu-l lasă să se rotească', 'pin', (1250, 600), 'r'),
                     ('Lagăr axial', 'thrust_low', (330, 900), 'l'), ('Retur ulei, liber, spre baie', 'drain', (790, 1010), 'r')]
             brg = [('Lagărul nu se rotește', (FX, 0.0, 5.3), (1250, 250), 'r'), ('Film exterior: amortizează', (FX + 2.5, 0.0, 6.5), (1250, 330), 'r'),
