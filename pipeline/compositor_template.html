@@ -489,6 +489,8 @@ let capCur = -1;
 function renderCaptions(t) {
   // capTop (11.11.2026): selfie filmat de aproape, bărbia ajunge la rândul de subtitrări -> reel.js le coboară (implicit top 1290)
   const cap = $('cap'); if (CFG.capTop && !cap.dataset.top) { cap.style.top = CFG.capTop + 'px'; cap.dataset.top = 1; }
+  // capTopAt (24.11.2026, „Bosch Budapesta”): [[t0, t1, top], ...] = subtitrările mutate doar pe un interval (ex. deasupra siglei TURBO DOCTOR de pe spatele unui coleg)
+  if (CFG.capTopAt) { const r = CFG.capTopAt.find(([a, b]) => t >= a && t < b); const top = (r ? r[2] : (CFG.capTop || 1290)) + 'px'; if (cap.style.top !== top) cap.style.top = top; }
   const hidden = HIDE_CAP.some(([a, b]) => t >= a && t < b);
   const idx = CHUNKS.findIndex(c => t >= c.t0 && t < c.t1 && (c.win < 0 ? !(CFG.intro && CFG.intro.cap === false) : !hidden));
   if (idx !== capCur) { capCur = idx; if (idx < 0) { cap.innerHTML = ''; return; }
