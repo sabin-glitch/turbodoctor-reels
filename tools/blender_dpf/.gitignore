@@ -1,0 +1,9 @@
+venv/
+out/*.png
+out/*.blend1
+comp/proof/
+comp/chk/
+comp/final/
+comp/stills/
+comp/*.log
+__pycache__/
