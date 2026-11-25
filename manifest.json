@@ -7075,6 +7075,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdb00",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/h6ZNIYPkO4s5BQX3Mu02/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "sdt2_e13b4_a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/EYo3wcZ7841rPaMrYd1t/0cMQfbcCpbZzJ1Seblo3/content.mp3",
   "downloader": "curl"
