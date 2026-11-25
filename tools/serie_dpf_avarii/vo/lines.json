@@ -1,0 +1,2090 @@
+{
+ "lines": [
+  {
+   "id": 0,
+   "show": "Filtrul de particule nu are nicio piesă în mișcare. Atunci de ce ajunge în avarie?",
+   "v": "Filtrul de particule nu are nicio piesă în mișcare. Atunci de ce ajunge în avarie?",
+   "kind": "hook",
+   "prompt": "[serious] Filtrul de particule nu are nicio piesă în mișcare. Atunci de ce ajunge în avarie?"
+  },
+  {
+   "id": 1,
+   "show": "Seria „De ce intră filtrul de particule în avarie”.",
+   "v": "Seria De ce intră filtrul de particule în avarie.",
+   "kind": "intro",
+   "prompt": "[calm] Seria De ce intră filtrul de particule în avarie."
+  },
+  {
+   "id": 2,
+   "show": "Episodul 1 din 16: filtrul nu se strică singur.",
+   "v": "Episodul unu din șaisprezece: filtrul nu se strică singur.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul unu din șaisprezece: filtrul nu se strică singur."
+  },
+  {
+   "id": 3,
+   "show": "Înăuntru sunt două ceramici: catalizatorul de oxidare și filtrul propriu-zis.",
+   "v": "Înăuntru sunt două ceramici: catalizatorul de oxidare și filtrul propriu-zis.",
+   "kind": "row",
+   "prompt": "[calm] Înăuntru sunt două ceramici: catalizatorul de oxidare și filtrul propriu-zis."
+  },
+  {
+   "id": 4,
+   "show": "Canalele filtrului sunt închise alternativ. Gazele trec prin pereți, iar funinginea rămâne.",
+   "v": "Canalele filtrului sunt închise alternativ. Gazele trec prin pereți, iar funinginea rămâne.",
+   "kind": "row",
+   "prompt": "[calm] Canalele filtrului sunt închise alternativ. Gazele trec prin pereți, iar funinginea rămâne."
+  },
+  {
+   "id": 5,
+   "show": "Din când în când, calculatorul ridică temperatura gazelor și funinginea arde. Asta este regenerarea.",
+   "v": "Din când în când, calculatorul ridică temperatura gazelor și funinginea arde. Asta este regenerarea.",
+   "kind": "row",
+   "prompt": "[calm] Din când în când, calculatorul ridică temperatura gazelor și funinginea arde. Asta este regenerarea."
+  },
+  {
+   "id": 6,
+   "show": "Calculatorul nu vede filtrul. Vede presiunea dinainte și de după el și câteva temperaturi.",
+   "v": "Calculatorul nu vede filtrul. Vede presiunea dinainte și de după el și câteva temperaturi.",
+   "kind": "row",
+   "prompt": "[calm] Calculatorul nu vede filtrul. Vede presiunea dinainte și de după el și câteva temperaturi."
+  },
+  {
+   "id": 7,
+   "show": "Din ele socotește cât de plin e filtrul. Când socoteala iese din limite, aprinde martorul.",
+   "v": "Din ele socotește cât de plin e filtrul. Când socoteala iese din limite, aprinde martorul.",
+   "kind": "row",
+   "prompt": "[calm] Din ele socotește cât de plin e filtrul. Când socoteala iese din limite, aprinde martorul."
+  },
+  {
+   "id": 8,
+   "show": "Avariile sunt de patru feluri: de încărcare, de regenerare, de senzor și de eficiență.",
+   "v": "Avariile sunt de patru feluri: de încărcare, de regenerare, de senzor și de eficiență.",
+   "kind": "row",
+   "prompt": "[calm] Avariile sunt de patru feluri: de încărcare, de regenerare, de senzor și de eficiență."
+  },
+  {
+   "id": 9,
+   "show": "Dar codul de eroare spune doar ce a observat calculatorul. Nu spune ce piesă e stricată.",
+   "v": "Dar codul de eroare spune doar ce a observat calculatorul. Nu spune ce piesă e stricată.",
+   "kind": "row",
+   "prompt": "[calm] Dar codul de eroare spune doar ce a observat calculatorul. Nu spune ce piesă e stricată."
+  },
+  {
+   "id": 10,
+   "show": "Producătorii de filtre spun același lucru: de cele mai multe ori, cauza e în altă parte a mașinii.",
+   "v": "Producătorii de filtre spun același lucru: de cele mai multe ori, cauza e în altă parte a mașinii.",
+   "kind": "row",
+   "prompt": "[calm] Producătorii de filtre spun același lucru: de cele mai multe ori, cauza e în altă parte a mașinii."
+  },
+  {
+   "id": 11,
+   "show": "Am strâns 39 de cauze. Doar cinci țin de ceramica filtrului.",
+   "v": "Am strâns treizeci și nouă de cauze. Doar cinci țin de ceramica filtrului.",
+   "kind": "row",
+   "prompt": "[calm] Am strâns treizeci și nouă de cauze. Doar cinci țin de ceramica filtrului."
+  },
+  {
+   "id": 12,
+   "show": "În episoadele următoare le luăm pe rând.",
+   "v": "În episoadele următoare le luăm pe rând.",
+   "kind": "row",
+   "prompt": "[calm] În episoadele următoare le luăm pe rând."
+  },
+  {
+   "id": 13,
+   "show": "Filtrul de particule este o piesă statică: altceva îl face să intre în avarie.",
+   "v": "Filtrul de particule este o piesă statică: altceva îl face să intre în avarie.",
+   "kind": "row",
+   "prompt": "[calm] Filtrul de particule este o piesă statică: altceva îl face să intre în avarie."
+  },
+  {
+   "id": 14,
+   "show": "La Turbo Doctor curățăm sau recondiționăm filtrul și căutăm cauza care l-a înfundat. Doar așa nu mai intră în eroare.",
+   "v": "La Turbo Doctor curățăm sau recondiționăm filtrul și căutăm cauza care l-a înfundat. Doar așa nu mai intră în eroare.",
+   "kind": "row",
+   "prompt": "[calm] La Turbo Doctor curățăm sau recondiționăm filtrul și căutăm cauza care l-a înfundat. Doar așa nu mai intră în eroare."
+  },
+  {
+   "id": 15,
+   "show": "Pe bord scrie că filtrul de particule e plin. Plin cu ce? Și cine a măsurat?",
+   "v": "Pe bord scrie că filtrul de particule e plin. Plin cu ce? Și cine a măsurat?",
+   "kind": "hook",
+   "prompt": "[serious] Pe bord scrie că filtrul de particule e plin. Plin cu ce? Și cine a măsurat?"
+  },
+  {
+   "id": 16,
+   "show": "Episodul 2 din 16: avaria de încărcare.",
+   "v": "Episodul doi din șaisprezece: avaria de încărcare.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul doi din șaisprezece: avaria de încărcare."
+  },
+  {
+   "id": 17,
+   "show": "Calculatorul ține două socoteli. Prima pornește de la motor: câtă funingine a făcut.",
+   "v": "Calculatorul ține două socoteli. Prima pornește de la motor: câtă funingine a făcut.",
+   "kind": "row",
+   "prompt": "[calm] Calculatorul ține două socoteli. Prima pornește de la motor: câtă funingine a făcut."
+  },
+  {
+   "id": 18,
+   "show": "A doua vine din senzorul de presiune diferențială: cât de greu trec gazele prin filtru.",
+   "v": "A doua vine din senzorul de presiune diferențială: cât de greu trec gazele prin filtru.",
+   "kind": "row",
+   "prompt": "[calm] A doua vine din senzorul de presiune diferențială: cât de greu trec gazele prin filtru."
+  },
+  {
+   "id": 19,
+   "show": "Calculatorul lucrează după cea care ajunge prima la prag.",
+   "v": "Calculatorul lucrează după cea care ajunge prima la prag.",
+   "kind": "row",
+   "prompt": "[calm] Calculatorul lucrează după cea care ajunge prima la prag."
+  },
+  {
+   "id": 20,
+   "show": "La un 2.0 TDI, regenerarea în mers pornește pe la 19 grame de funingine.",
+   "v": "La un doi litri te-de-i, regenerarea în mers pornește pe la nouăsprezece grame de funingine.",
+   "kind": "row",
+   "prompt": "[calm] La un doi litri te-de-i, regenerarea în mers pornește pe la nouăsprezece grame de funingine."
+  },
+  {
+   "id": 21,
+   "show": "Dacă nu reușește, încărcarea urcă. Pe la 40 de grame mai merge doar regenerarea din service.",
+   "v": "Dacă nu reușește, încărcarea urcă. Pe la patruzeci de grame mai merge doar regenerarea din service.",
+   "kind": "row",
+   "prompt": "[calm] Dacă nu reușește, încărcarea urcă. Pe la patruzeci de grame mai merge doar regenerarea din service."
+  },
+  {
+   "id": 22,
+   "show": "Peste 45 de grame, constructorul cere înlocuirea filtrului.",
+   "v": "Peste patruzeci și cinci de grame, constructorul cere înlocuirea filtrului.",
+   "kind": "row",
+   "prompt": "[calm] Peste patruzeci și cinci de grame, constructorul cere înlocuirea filtrului."
+  },
+  {
+   "id": 23,
+   "show": "De ce? Atâta funingine, aprinsă dintr-odată, poate fisura sau topi ceramica.",
+   "v": "De ce? Atâta funingine, aprinsă dintr-odată, poate fisura sau topi ceramica.",
+   "kind": "row",
+   "prompt": "[calm] De ce? Atâta funingine, aprinsă dintr-odată, poate fisura sau topi ceramica."
+  },
+  {
+   "id": 24,
+   "show": "Deci „filtru plin” este un rezultat. Întrebarea e de ce nu s-a curățat la timp.",
+   "v": "Deci filtru plin este un rezultat. Întrebarea e de ce nu s-a curățat la timp.",
+   "kind": "row",
+   "prompt": "[calm] Deci filtru plin este un rezultat. Întrebarea e de ce nu s-a curățat la timp."
+  },
+  {
+   "id": 25,
+   "show": "Ori regenerarea n-a avut condiții, ori motorul face prea multă funingine, ori senzorul minte.",
+   "v": "Ori regenerarea n-a avut condiții, ori motorul face prea multă funingine, ori senzorul minte.",
+   "kind": "row",
+   "prompt": "[calm] Ori regenerarea n-a avut condiții, ori motorul face prea multă funingine, ori senzorul minte."
+  },
+  {
+   "id": 26,
+   "show": "Regenerarea forțată golește filtrul. Cauza rămâne pe mașină.",
+   "v": "Regenerarea forțată golește filtrul. Cauza rămâne pe mașină.",
+   "kind": "row",
+   "prompt": "[calm] Regenerarea forțată golește filtrul. Cauza rămâne pe mașină."
+  },
+  {
+   "id": 27,
+   "show": "Eroare de eficiență la filtrul de particule și ți s-a spus că trebuie filtru nou? S-ar putea să nu fie filtrul.",
+   "v": "Eroare de eficiență la filtrul de particule și ți s-a spus că trebuie filtru nou? S-ar putea să nu fie filtrul.",
+   "kind": "hook",
+   "prompt": "[serious] Eroare de eficiență la filtrul de particule și ți s-a spus că trebuie filtru nou? S-ar putea să nu fie filtrul."
+  },
+  {
+   "id": 28,
+   "show": "Episodul 3 din 16: avaria de eficiență.",
+   "v": "Episodul trei din șaisprezece: avaria de eficiență.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul trei din șaisprezece: avaria de eficiență."
+  },
+  {
+   "id": 29,
+   "show": "Eroarea spune că, după socoteala calculatorului, filtrul lasă funinginea să treacă.",
+   "v": "Eroarea spune că, după socoteala calculatorului, filtrul lasă funinginea să treacă.",
+   "kind": "row",
+   "prompt": "[calm] Eroarea spune că, după socoteala calculatorului, filtrul lasă funinginea să treacă."
+  },
+  {
+   "id": 30,
+   "show": "Un filtru bun oprește aproape toată funinginea. După el, țeava rămâne curată.",
+   "v": "Un filtru bun oprește aproape toată funinginea. După el, țeava rămâne curată.",
+   "kind": "row",
+   "prompt": "[calm] Un filtru bun oprește aproape toată funinginea. După el, țeava rămâne curată."
+  },
+  {
+   "id": 31,
+   "show": "Pe multe mașini Euro 6, după filtru stă un senzor de particule: funinginea care scapă face punți între electrozii lui.",
+   "v": "Pe multe mașini Euro șase, după filtru stă un senzor de particule: funinginea care scapă face punți între electrozii lui.",
+   "kind": "row",
+   "prompt": "[calm] Pe multe mașini Euro șase, după filtru stă un senzor de particule: funinginea care scapă face punți între electrozii lui."
+  },
+  {
+   "id": 32,
+   "show": "Pe mașinile mai vechi, semnul e altul: prea puțină presiune pe filtru pentru câte gaze trec.",
+   "v": "Pe mașinile mai vechi, semnul e altul: prea puțină presiune pe filtru pentru câte gaze trec.",
+   "kind": "row",
+   "prompt": "[calm] Pe mașinile mai vechi, semnul e altul: prea puțină presiune pe filtru pentru câte gaze trec."
+  },
+  {
+   "id": 33,
+   "show": "Cauza adevărată poate fi ceramica: fisurată sau topită.",
+   "v": "Cauza adevărată poate fi ceramica: fisurată sau topită.",
+   "kind": "row",
+   "prompt": "[calm] Cauza adevărată poate fi ceramica: fisurată sau topită."
+  },
+  {
+   "id": 34,
+   "show": "Semnul din atelier: funingine neagră după filtru. VW o caută cu o cârpă curată în țeavă.",
+   "v": "Semnul din atelier: funingine neagră după filtru. Volkswagen o caută cu o cârpă curată în țeavă.",
+   "kind": "row",
+   "prompt": "[calm] Semnul din atelier: funingine neagră după filtru. Volkswagen o caută cu o cârpă curată în țeavă."
+  },
+  {
+   "id": 35,
+   "show": "Dar eroarea o poate da și un filtru de schimb fără metale prețioase, sau unul golit.",
+   "v": "Dar eroarea o poate da și un filtru de schimb fără metale prețioase, sau unul golit.",
+   "kind": "row",
+   "prompt": "[calm] Dar eroarea o poate da și un filtru de schimb fără metale prețioase, sau unul golit."
+  },
+  {
+   "id": 36,
+   "show": "Sau senzorul de presiune: la VW, un buletin trimite la el pentru această eroare.",
+   "v": "Sau senzorul de presiune: la Volkswagen, un buletin trimite la el pentru această eroare.",
+   "kind": "row",
+   "prompt": "[calm] Sau senzorul de presiune: la Volkswagen, un buletin trimite la el pentru această eroare."
+  },
+  {
+   "id": 37,
+   "show": "Iar la 2.0 TDI Euro 6, de cele mai multe ori în spate stau EGR-ul și răcitorul lui.",
+   "v": "Iar la doi litri te-de-i Euro șase, de cele mai multe ori în spate stau e-ge-re-ul și răcitorul lui.",
+   "kind": "row",
+   "prompt": "[calm] Iar la doi litri te-de-i Euro șase, de cele mai multe ori în spate stau e-ge-re-ul și răcitorul lui."
+  },
+  {
+   "id": 38,
+   "show": "De aceea nu schimbăm filtrul după cod. Întâi aflăm cine are dreptate: filtrul sau măsurătoarea.",
+   "v": "De aceea nu schimbăm filtrul după cod. Întâi aflăm cine are dreptate: filtrul sau măsurătoarea.",
+   "kind": "row",
+   "prompt": "[calm] De aceea nu schimbăm filtrul după cod. Întâi aflăm cine are dreptate: filtrul sau măsurătoarea."
+  },
+  {
+   "id": 39,
+   "show": "Mergi doar pe drumuri scurte, prin oraș? Filtrul tău nu apucă niciodată să se curețe.",
+   "v": "Mergi doar pe drumuri scurte, prin oraș? Filtrul tău nu apucă niciodată să se curețe.",
+   "kind": "hook",
+   "prompt": "[serious] Mergi doar pe drumuri scurte, prin oraș? Filtrul tău nu apucă niciodată să se curețe."
+  },
+  {
+   "id": 40,
+   "show": "Episodul 4 din 16: regenerarea întreruptă.",
+   "v": "Episodul patru din șaisprezece: regenerarea întreruptă.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul patru din șaisprezece: regenerarea întreruptă."
+  },
+  {
+   "id": 41,
+   "show": "Regenerarea are nevoie de 10 până la 20 de minute de mers susținut.",
+   "v": "Regenerarea are nevoie de zece până la douăzeci de minute de mers susținut.",
+   "kind": "row",
+   "prompt": "[calm] Regenerarea are nevoie de zece până la douăzeci de minute de mers susținut."
+  },
+  {
+   "id": 42,
+   "show": "În oraș, motorul e oprit înainte ca funinginea să ardă. Regenerarea rămâne la jumătate.",
+   "v": "În oraș, motorul e oprit înainte ca funinginea să ardă. Regenerarea rămâne la jumătate.",
+   "kind": "row",
+   "prompt": "[calm] În oraș, motorul e oprit înainte ca funinginea să ardă. Regenerarea rămâne la jumătate."
+  },
+  {
+   "id": 43,
+   "show": "La fel pe autostradă, la turație prea mică: gazele rămân prea reci.",
+   "v": "La fel pe autostradă, la turație prea mică: gazele rămân prea reci.",
+   "kind": "row",
+   "prompt": "[calm] La fel pe autostradă, la turație prea mică: gazele rămân prea reci."
+  },
+  {
+   "id": 44,
+   "show": "Și cu rezerva aprinsă: la unele mașini, regenerarea nici nu pornește.",
+   "v": "Și cu rezerva aprinsă: la unele mașini, regenerarea nici nu pornește.",
+   "kind": "row",
+   "prompt": "[calm] Și cu rezerva aprinsă: la unele mașini, regenerarea nici nu pornește."
+  },
+  {
+   "id": 45,
+   "show": "La fiecare regenerare întreruptă, puțină motorină ajunge în baia de ulei.",
+   "v": "La fiecare regenerare întreruptă, puțină motorină ajunge în baia de ulei.",
+   "kind": "row",
+   "prompt": "[calm] La fiecare regenerare întreruptă, puțină motorină ajunge în baia de ulei."
+  },
+  {
+   "id": 46,
+   "show": "Nivelul urcă, uleiul se subțiază, iar motorul și turbina sunt unse mai prost.",
+   "v": "Nivelul urcă, uleiul se subțiază, iar motorul și turbina sunt unse mai prost.",
+   "kind": "row",
+   "prompt": "[calm] Nivelul urcă, uleiul se subțiază, iar motorul și turbina sunt unse mai prost."
+  },
+  {
+   "id": 47,
+   "show": "Între timp, filtrul se încarcă: întâi martorul, apoi avaria.",
+   "v": "Între timp, filtrul se încarcă: întâi martorul, apoi avaria.",
+   "kind": "row",
+   "prompt": "[calm] Între timp, filtrul se încarcă: întâi martorul, apoi avaria."
+  },
+  {
+   "id": 48,
+   "show": "Ce poți face: din când în când, un drum întins, la turație medie, până se stinge martorul.",
+   "v": "Ce poți face: din când în când, un drum întins, la turație medie, până se stinge martorul.",
+   "kind": "row",
+   "prompt": "[calm] Ce poți face: din când în când, un drum întins, la turație medie, până se stinge martorul."
+  },
+  {
+   "id": 49,
+   "show": "Dacă martorul rămâne aprins sau clipește, nu mai insista. Vino la diagnoză.",
+   "v": "Dacă martorul rămâne aprins sau clipește, nu mai insista. Vino la diagnoză.",
+   "kind": "row",
+   "prompt": "[calm] Dacă martorul rămâne aprins sau clipește, nu mai insista. Vino la diagnoză."
+  },
+  {
+   "id": 50,
+   "show": "Verificăm încărcarea, starea uleiului și dacă regenerarea mai poate porni.",
+   "v": "Verificăm încărcarea, starea uleiului și dacă regenerarea mai poate porni.",
+   "kind": "row",
+   "prompt": "[calm] Verificăm încărcarea, starea uleiului și dacă regenerarea mai poate porni."
+  },
+  {
+   "id": 51,
+   "show": "Un termostat defect, o piesă mică din sistemul de răcire, poate înfunda filtrul de particule.",
+   "v": "Un termostat defect, o piesă mică din sistemul de răcire, poate înfunda filtrul de particule.",
+   "kind": "hook",
+   "prompt": "[serious] Un termostat defect, o piesă mică din sistemul de răcire, poate înfunda filtrul de particule."
+  },
+  {
+   "id": 52,
+   "show": "Episodul 5 din 16: motorul rece.",
+   "v": "Episodul cinci din șaisprezece: motorul rece.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul cinci din șaisprezece: motorul rece."
+  },
+  {
+   "id": 53,
+   "show": "Calculatorul pornește regenerarea doar cu motorul cald.",
+   "v": "Calculatorul pornește regenerarea doar cu motorul cald.",
+   "kind": "row",
+   "prompt": "[calm] Calculatorul pornește regenerarea doar cu motorul cald."
+  },
+  {
+   "id": 54,
+   "show": "La unele BMW-uri, pragul este de 75 de grade. Sub el, nimic.",
+   "v": "La unele be-em-ve-uri, pragul este de șaptezeci și cinci de grade. Sub el, nimic.",
+   "kind": "row",
+   "prompt": "[calm] La unele be-em-ve-uri, pragul este de șaptezeci și cinci de grade. Sub el, nimic."
+  },
+  {
+   "id": 55,
+   "show": "Termostatul blocat pe deschis trimite lichidul prin radiator tot timpul.",
+   "v": "Termostatul blocat pe deschis trimite lichidul prin radiator tot timpul.",
+   "kind": "row",
+   "prompt": "[calm] Termostatul blocat pe deschis trimite lichidul prin radiator tot timpul."
+  },
+  {
+   "id": 56,
+   "show": "Într-un caz descris de un atelier, motorul nu trecea de 68 de grade, iar regenerarea nu mai pornea.",
+   "v": "Într-un caz descris de un atelier, motorul nu trecea de șaizeci și opt de grade, iar regenerarea nu mai pornea.",
+   "kind": "row",
+   "prompt": "[calm] Într-un caz descris de un atelier, motorul nu trecea de șaizeci și opt de grade, iar regenerarea nu mai pornea."
+  },
+  {
+   "id": 57,
+   "show": "Filtrul se umple, deși motorul pare să meargă bine.",
+   "v": "Filtrul se umple, deși motorul pare să meargă bine.",
+   "kind": "row",
+   "prompt": "[calm] Filtrul se umple, deși motorul pare să meargă bine."
+  },
+  {
+   "id": 58,
+   "show": "A doua piesă: bujiile incandescente. Nu sunt doar pentru pornirea la rece.",
+   "v": "A doua piesă: bujiile incandescente. Nu sunt doar pentru pornirea la rece.",
+   "kind": "row",
+   "prompt": "[calm] A doua piesă: bujiile incandescente. Nu sunt doar pentru pornirea la rece."
+  },
+  {
+   "id": 59,
+   "show": "La multe motoare se aprind și în timpul regenerării, ca să ridice temperatura gazelor.",
+   "v": "La multe motoare se aprind și în timpul regenerării, ca să ridice temperatura gazelor.",
+   "kind": "row",
+   "prompt": "[calm] La multe motoare se aprind și în timpul regenerării, ca să ridice temperatura gazelor."
+  },
+  {
+   "id": 60,
+   "show": "NGK o spune direct: cu bujii defecte, regenerarea nu funcționează.",
+   "v": "En-ge-ca o spune direct: cu bujii defecte, regenerarea nu funcționează.",
+   "kind": "row",
+   "prompt": "[calm] En-ge-ca o spune direct: cu bujii defecte, regenerarea nu funcționează."
+  },
+  {
+   "id": 61,
+   "show": "De aceea, la un filtru plin, măsurăm temperatura reală a motorului și verificăm bujiile și modulul lor.",
+   "v": "De aceea, la un filtru plin, măsurăm temperatura reală a motorului și verificăm bujiile și modulul lor.",
+   "kind": "row",
+   "prompt": "[calm] De aceea, la un filtru plin, măsurăm temperatura reală a motorului și verificăm bujiile și modulul lor."
+  },
+  {
+   "id": 62,
+   "show": "Altfel, filtrul curățat azi se umple repede la loc.",
+   "v": "Altfel, filtrul curățat azi se umple repede la loc.",
+   "kind": "row",
+   "prompt": "[calm] Altfel, filtrul curățat azi se umple repede la loc."
+  },
+  {
+   "id": 63,
+   "show": "Ai o eroare la EGR și o lași pe mai târziu? S-ar putea ca filtrul de particule să nu se mai curețe deloc.",
+   "v": "Ai o eroare la e-ge-re și o lași pe mai târziu? S-ar putea ca filtrul de particule să nu se mai curețe deloc.",
+   "kind": "hook",
+   "prompt": "[serious] Ai o eroare la e-ge-re și o lași pe mai târziu? S-ar putea ca filtrul de particule să nu se mai curețe deloc."
+  },
+  {
+   "id": 64,
+   "show": "Episodul 6 din 16: erorile care blochează regenerarea.",
+   "v": "Episodul șase din șaisprezece: erorile care blochează regenerarea.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul șase din șaisprezece: erorile care blochează regenerarea."
+  },
+  {
+   "id": 65,
+   "show": "Regenerarea înseamnă gaze la peste 600 de grade, lângă motor.",
+   "v": "Regenerarea înseamnă gaze la peste șase sute de grade, lângă motor.",
+   "kind": "row",
+   "prompt": "[calm] Regenerarea înseamnă gaze la peste șase sute de grade, lângă motor."
+  },
+  {
+   "id": 66,
+   "show": "De aceea calculatorul o pornește doar când toate piesele implicate răspund corect.",
+   "v": "De aceea calculatorul o pornește doar când toate piesele implicate răspund corect.",
+   "kind": "row",
+   "prompt": "[calm] De aceea calculatorul o pornește doar când toate piesele implicate răspund corect."
+  },
+  {
+   "id": 67,
+   "show": "La GM, de pildă: nicio eroare activă la EGR, la clapeta de admisie sau la injectorul de pe evacuare.",
+   "v": "La General Motors, de pildă: nicio eroare activă la e-ge-re, la clapeta de admisie sau la injectorul de pe evacuare.",
+   "kind": "row",
+   "prompt": "[calm] La General Motors, de pildă: nicio eroare activă la e-ge-re, la clapeta de admisie sau la injectorul de pe evacuare."
+  },
+  {
+   "id": 68,
+   "show": "La VW, o eroare la un senzor de temperatură, la debitmetru sau la presiunea diferențială oprește regenerarea.",
+   "v": "La Volkswagen, o eroare la un senzor de temperatură, la debitmetru sau la presiunea diferențială oprește regenerarea.",
+   "kind": "row",
+   "prompt": "[calm] La Volkswagen, o eroare la un senzor de temperatură, la debitmetru sau la presiunea diferențială oprește regenerarea."
+  },
+  {
+   "id": 69,
+   "show": "La fel, senzorul presiunii de supraalimentare sau comanda turbinei.",
+   "v": "La fel, senzorul presiunii de supraalimentare sau comanda turbinei.",
+   "kind": "row",
+   "prompt": "[calm] La fel, senzorul presiunii de supraalimentare sau comanda turbinei."
+  },
+  {
+   "id": 70,
+   "show": "Mașina merge mai departe. Dar funinginea se strânge și nimic n-o mai arde.",
+   "v": "Mașina merge mai departe. Dar funinginea se strânge și nimic n-o mai arde.",
+   "kind": "row",
+   "prompt": "[calm] Mașina merge mai departe. Dar funinginea se strânge și nimic n-o mai arde."
+  },
+  {
+   "id": 71,
+   "show": "După un timp apare și eroarea de filtru. Ea este a doua, nu prima.",
+   "v": "După un timp apare și eroarea de filtru. Ea este a doua, nu prima.",
+   "kind": "row",
+   "prompt": "[calm] După un timp apare și eroarea de filtru. Ea este a doua, nu prima."
+  },
+  {
+   "id": 72,
+   "show": "Uneori vinovat este softul: la unele modele, VW a cerut întâi actualizarea, apoi diagnoza.",
+   "v": "Uneori vinovat este softul: la unele modele, Volkswagen a cerut întâi actualizarea, apoi diagnoza.",
+   "kind": "row",
+   "prompt": "[calm] Uneori vinovat este softul: la unele modele, Volkswagen a cerut întâi actualizarea, apoi diagnoza."
+  },
+  {
+   "id": 73,
+   "show": "De aceea citim toate erorile, nu doar pe cea de filtru.",
+   "v": "De aceea citim toate erorile, nu doar pe cea de filtru.",
+   "kind": "row",
+   "prompt": "[calm] De aceea citim toate erorile, nu doar pe cea de filtru."
+  },
+  {
+   "id": 74,
+   "show": "Reparăm prima cauză. Abia apoi are rost curățarea.",
+   "v": "Reparăm prima cauză. Abia apoi are rost curățarea.",
+   "kind": "row",
+   "prompt": "[calm] Reparăm prima cauză. Abia apoi are rost curățarea."
+  },
+  {
+   "id": 75,
+   "show": "Calculatorul trimite motorină pentru regenerare, dar filtrul rămâne rece. Unde s-a pierdut căldura?",
+   "v": "Calculatorul trimite motorină pentru regenerare, dar filtrul rămâne rece. Unde s-a pierdut căldura?",
+   "kind": "hook",
+   "prompt": "[serious] Calculatorul trimite motorină pentru regenerare, dar filtrul rămâne rece. Unde s-a pierdut căldura?"
+  },
+  {
+   "id": 76,
+   "show": "Episodul 7 din 16: regenerarea rece.",
+   "v": "Episodul șapte din șaisprezece: regenerarea rece.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul șapte din șaisprezece: regenerarea rece."
+  },
+  {
+   "id": 77,
+   "show": "Căldura regenerării se face în catalizatorul de oxidare, chiar în fața filtrului.",
+   "v": "Căldura regenerării se face în catalizatorul de oxidare, chiar în fața filtrului.",
+   "kind": "row",
+   "prompt": "[calm] Căldura regenerării se face în catalizatorul de oxidare, chiar în fața filtrului."
+  },
+  {
+   "id": 78,
+   "show": "Motorina trimisă târziu arde pe metalele lui prețioase și încinge gazele.",
+   "v": "Motorina trimisă târziu arde pe metalele lui prețioase și încinge gazele.",
+   "kind": "row",
+   "prompt": "[calm] Motorina trimisă târziu arde pe metalele lui prețioase și încinge gazele."
+  },
+  {
+   "id": 79,
+   "show": "Dacă fața catalizatorului e astupată de funingine, motorina nu mai are unde să ardă.",
+   "v": "Dacă fața catalizatorului e astupată de funingine, motorina nu mai are unde să ardă.",
+   "kind": "row",
+   "prompt": "[calm] Dacă fața catalizatorului e astupată de funingine, motorina nu mai are unde să ardă."
+  },
+  {
+   "id": 80,
+   "show": "La fel dacă e otrăvit cu ulei sau cu lichid de răcire.",
+   "v": "La fel dacă e otrăvit cu ulei sau cu lichid de răcire.",
+   "kind": "row",
+   "prompt": "[calm] La fel dacă e otrăvit cu ulei sau cu lichid de răcire."
+  },
+  {
+   "id": 81,
+   "show": "Dinex numește asta regenerare rece: temperatura nu urcă, iar funinginea rămâne.",
+   "v": "Dinex numește asta regenerare rece: temperatura nu urcă, iar funinginea rămâne.",
+   "kind": "row",
+   "prompt": "[calm] Dinex numește asta regenerare rece: temperatura nu urcă, iar funinginea rămâne."
+  },
+  {
+   "id": 82,
+   "show": "La unele mașini, motorina vine printr-un vaporizator montat pe evacuare.",
+   "v": "La unele mașini, motorina vine printr-un vaporizator montat pe evacuare.",
+   "kind": "row",
+   "prompt": "[calm] La unele mașini, motorina vine printr-un vaporizator montat pe evacuare."
+  },
+  {
+   "id": 83,
+   "show": "Se înfundă cu funingine, iar regenerarea rămâne fără motorină.",
+   "v": "Se înfundă cu funingine, iar regenerarea rămâne fără motorină.",
+   "kind": "row",
+   "prompt": "[calm] Se înfundă cu funingine, iar regenerarea rămâne fără motorină."
+  },
+  {
+   "id": 84,
+   "show": "Iar la sistemele cu aditiv, un rezervor gol sau un contor neresetat dă același rezultat.",
+   "v": "Iar la sistemele cu aditiv, un rezervor gol sau un contor neresetat dă același rezultat.",
+   "kind": "row",
+   "prompt": "[calm] Iar la sistemele cu aditiv, un rezervor gol sau un contor neresetat dă același rezultat."
+  },
+  {
+   "id": 85,
+   "show": "În atelier comparăm temperaturile dinainte și de după catalizator, în timpul regenerării.",
+   "v": "În atelier comparăm temperaturile dinainte și de după catalizator, în timpul regenerării.",
+   "kind": "row",
+   "prompt": "[calm] În atelier comparăm temperaturile dinainte și de după catalizator, în timpul regenerării."
+  },
+  {
+   "id": 86,
+   "show": "Dacă nu urcă, problema e în fața filtrului, nu în filtru.",
+   "v": "Dacă nu urcă, problema e în fața filtrului, nu în filtru.",
+   "kind": "row",
+   "prompt": "[calm] Dacă nu urcă, problema e în fața filtrului, nu în filtru."
+  },
+  {
+   "id": 87,
+   "show": "Un furtun crăpat la intercooler. Atât îi trebuie unui filtru de particule ca să se umple.",
+   "v": "Un furtun crăpat la intercooler. Atât îi trebuie unui filtru de particule ca să se umple.",
+   "kind": "hook",
+   "prompt": "[serious] Un furtun crăpat la intercooler. Atât îi trebuie unui filtru de particule ca să se umple."
+  },
+  {
+   "id": 88,
+   "show": "Episodul 8 din 16: lipsa de aer.",
+   "v": "Episodul opt din șaisprezece: lipsa de aer.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul opt din șaisprezece: lipsa de aer."
+  },
+  {
+   "id": 89,
+   "show": "Dieselul are nevoie de mult aer ca să ardă motorina până la capăt.",
+   "v": "Dieselul are nevoie de mult aer ca să ardă motorina până la capăt.",
+   "kind": "row",
+   "prompt": "[calm] Dieselul are nevoie de mult aer ca să ardă motorina până la capăt."
+  },
+  {
+   "id": 90,
+   "show": "Cu aer puțin, o parte din motorină iese pe evacuare ca funingine.",
+   "v": "Cu aer puțin, o parte din motorină iese pe evacuare ca funingine.",
+   "kind": "row",
+   "prompt": "[calm] Cu aer puțin, o parte din motorină iese pe evacuare ca funingine."
+  },
+  {
+   "id": 91,
+   "show": "VW o scrie în nota pentru tehnicieni: o scăpare de aer de supraalimentare umple filtrul repede.",
+   "v": "Volkswagen o scrie în nota pentru tehnicieni: o scăpare de aer de supraalimentare umple filtrul repede.",
+   "kind": "row",
+   "prompt": "[calm] Volkswagen o scrie în nota pentru tehnicieni: o scăpare de aer de supraalimentare umple filtrul repede."
+  },
+  {
+   "id": 92,
+   "show": "Aerul se poate pierde pe drum, printr-un furtun sau un intercooler fisurat.",
+   "v": "Aerul se poate pierde pe drum, printr-un furtun sau un intercooler fisurat.",
+   "kind": "row",
+   "prompt": "[calm] Aerul se poate pierde pe drum, printr-un furtun sau un intercooler fisurat."
+  },
+  {
+   "id": 93,
+   "show": "Poate să nu intre: filtru de aer înfundat.",
+   "v": "Poate să nu intre: filtru de aer înfundat.",
+   "kind": "row",
+   "prompt": "[calm] Poate să nu intre: filtru de aer înfundat."
+  },
+  {
+   "id": 94,
+   "show": "Poate fi măsurat greșit: un debitmetru murdar îi dă calculatorului o cifră falsă.",
+   "v": "Poate fi măsurat greșit: un debitmetru murdar îi dă calculatorului o cifră falsă.",
+   "kind": "row",
+   "prompt": "[calm] Poate fi măsurat greșit: un debitmetru murdar îi dă calculatorului o cifră falsă."
+  },
+  {
+   "id": 95,
+   "show": "Poate să nu fie împins: turbina cu geometria blocată nu mai dă presiune.",
+   "v": "Poate să nu fie împins: turbina cu geometria blocată nu mai dă presiune.",
+   "kind": "row",
+   "prompt": "[calm] Poate să nu fie împins: turbina cu geometria blocată nu mai dă presiune."
+  },
+  {
+   "id": 96,
+   "show": "Sau poate fi înlocuit cu gaze arse, de un EGR rămas deschis.",
+   "v": "Sau poate fi înlocuit cu gaze arse, de un e-ge-re rămas deschis.",
+   "kind": "row",
+   "prompt": "[calm] Sau poate fi înlocuit cu gaze arse, de un e-ge-re rămas deschis."
+  },
+  {
+   "id": 97,
+   "show": "Semnul comun: regenerări tot mai dese.",
+   "v": "Semnul comun: regenerări tot mai dese.",
+   "kind": "row",
+   "prompt": "[calm] Semnul comun: regenerări tot mai dese."
+  },
+  {
+   "id": 98,
+   "show": "La filtrul plin verificăm tot traseul de aer, cu fum sub presiune, și valorile debitmetrului.",
+   "v": "La filtrul plin verificăm tot traseul de aer, cu fum sub presiune, și valorile debitmetrului.",
+   "kind": "row",
+   "prompt": "[calm] La filtrul plin verificăm tot traseul de aer, cu fum sub presiune, și valorile debitmetrului."
+  },
+  {
+   "id": 99,
+   "show": "Un singur injector cu vârful fisurat poate topi un filtru de particule.",
+   "v": "Un singur injector cu vârful fisurat poate topi un filtru de particule.",
+   "kind": "hook",
+   "prompt": "[serious] Un singur injector cu vârful fisurat poate topi un filtru de particule."
+  },
+  {
+   "id": 100,
+   "show": "Episodul 9 din 16: motorina arsă prost.",
+   "v": "Episodul nouă din șaisprezece: motorina arsă prost.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul nouă din șaisprezece: motorina arsă prost."
+  },
+  {
+   "id": 101,
+   "show": "Funinginea este motorină care n-a ars până la capăt.",
+   "v": "Funinginea este motorină care n-a ars până la capăt.",
+   "kind": "row",
+   "prompt": "[calm] Funinginea este motorină care n-a ars până la capăt."
+  },
+  {
+   "id": 102,
+   "show": "Un injector uzat dă prea multă motorină sau o pulverizează prost.",
+   "v": "Un injector uzat dă prea multă motorină sau o pulverizează prost.",
+   "kind": "row",
+   "prompt": "[calm] Un injector uzat dă prea multă motorină sau o pulverizează prost."
+  },
+  {
+   "id": 103,
+   "show": "Rezultatul: mai multă funingine la fiecare ardere și un filtru care se umple prea repede.",
+   "v": "Rezultatul: mai multă funingine la fiecare ardere și un filtru care se umple prea repede.",
+   "kind": "row",
+   "prompt": "[calm] Rezultatul: mai multă funingine la fiecare ardere și un filtru care se umple prea repede."
+  },
+  {
+   "id": 104,
+   "show": "Dacă injectorul curge, motorina ajunge nearsă pe evacuare.",
+   "v": "Dacă injectorul curge, motorina ajunge nearsă pe evacuare.",
+   "kind": "row",
+   "prompt": "[calm] Dacă injectorul curge, motorina ajunge nearsă pe evacuare."
+  },
+  {
+   "id": 105,
+   "show": "Acolo se aprinde în catalizator și în filtru. Navistar are cazuri de filtre topite așa.",
+   "v": "Acolo se aprinde în catalizator și în filtru. Navistar are cazuri de filtre topite așa.",
+   "kind": "row",
+   "prompt": "[calm] Acolo se aprinde în catalizator și în filtru. Navistar are cazuri de filtre topite așa."
+  },
+  {
+   "id": 106,
+   "show": "Aceeași funingine vine și dintr-un motor obosit: compresie mică, supape nereglate.",
+   "v": "Aceeași funingine vine și dintr-un motor obosit: compresie mică, supape nereglate.",
+   "kind": "row",
+   "prompt": "[calm] Aceeași funingine vine și dintr-un motor obosit: compresie mică, supape nereglate."
+  },
+  {
+   "id": 107,
+   "show": "Sau din motorină cu apă ori murdară.",
+   "v": "Sau din motorină cu apă ori murdară.",
+   "kind": "row",
+   "prompt": "[calm] Sau din motorină cu apă ori murdară."
+  },
+  {
+   "id": 108,
+   "show": "Și din modificări: GM le trece printre cauzele de funingine.",
+   "v": "Și din modificări: General Motors le trece printre cauzele de funingine.",
+   "kind": "row",
+   "prompt": "[calm] Și din modificări: General Motors le trece printre cauzele de funingine."
+  },
+  {
+   "id": 109,
+   "show": "De aceea, la un filtru care se umple repede, injectoarele merg pe stand.",
+   "v": "De aceea, la un filtru care se umple repede, injectoarele merg pe stand.",
+   "kind": "row",
+   "prompt": "[calm] De aceea, la un filtru care se umple repede, injectoarele merg pe stand."
+  },
+  {
+   "id": 110,
+   "show": "Iar motorul primește o probă de compresie înainte să dăm vina pe filtru.",
+   "v": "Iar motorul primește o probă de compresie înainte să dăm vina pe filtru.",
+   "kind": "row",
+   "prompt": "[calm] Iar motorul primește o probă de compresie înainte să dăm vina pe filtru."
+  },
+  {
+   "id": 111,
+   "show": "Filtrul e curat, dar calculatorul îl vede plin. Vinovat poate fi un furtunaș de cauciuc.",
+   "v": "Filtrul e curat, dar calculatorul îl vede plin. Vinovat poate fi un furtunaș de cauciuc.",
+   "kind": "hook",
+   "prompt": "[serious] Filtrul e curat, dar calculatorul îl vede plin. Vinovat poate fi un furtunaș de cauciuc."
+  },
+  {
+   "id": 112,
+   "show": "Episodul 10 din 16: senzorul de presiune diferențială.",
+   "v": "Episodul zece din șaisprezece: senzorul de presiune diferențială.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul zece din șaisprezece: senzorul de presiune diferențială."
+  },
+  {
+   "id": 113,
+   "show": "Senzorul de presiune diferențială compară presiunea dinainte de filtru cu cea de după.",
+   "v": "Senzorul de presiune diferențială compară presiunea dinainte de filtru cu cea de după.",
+   "kind": "row",
+   "prompt": "[calm] Senzorul de presiune diferențială compară presiunea dinainte de filtru cu cea de după."
+  },
+  {
+   "id": 114,
+   "show": "Din diferență, calculatorul află cât de încărcat e filtrul și când să-l regenereze.",
+   "v": "Din diferență, calculatorul află cât de încărcat e filtrul și când să-l regenereze.",
+   "kind": "row",
+   "prompt": "[calm] Din diferență, calculatorul află cât de încărcat e filtrul și când să-l regenereze."
+  },
+  {
+   "id": 115,
+   "show": "Presiunea ajunge la senzor prin două țevi subțiri și două furtunașe.",
+   "v": "Presiunea ajunge la senzor prin două țevi subțiri și două furtunașe.",
+   "kind": "row",
+   "prompt": "[calm] Presiunea ajunge la senzor prin două țevi subțiri și două furtunașe."
+  },
+  {
+   "id": 116,
+   "show": "Țevile se înfundă cu funingine. Iarna, condensul din ele poate îngheța.",
+   "v": "Țevile se înfundă cu funingine. Iarna, condensul din ele poate îngheța.",
+   "kind": "row",
+   "prompt": "[calm] Țevile se înfundă cu funingine. Iarna, condensul din ele poate îngheța."
+  },
+  {
+   "id": 117,
+   "show": "Furtunașele se crapă și pierd presiune.",
+   "v": "Furtunașele se crapă și pierd presiune.",
+   "kind": "row",
+   "prompt": "[calm] Furtunașele se crapă și pierd presiune."
+  },
+  {
+   "id": 118,
+   "show": "Atunci filtrul pare plin când e curat, sau curat când e plin.",
+   "v": "Atunci filtrul pare plin când e curat, sau curat când e plin.",
+   "kind": "row",
+   "prompt": "[calm] Atunci filtrul pare plin când e curat, sau curat când e plin."
+  },
+  {
+   "id": 119,
+   "show": "Al doilea caz e mai grav: regenerarea nu mai pornește, iar filtrul se înfundă de-adevăratelea.",
+   "v": "Al doilea caz e mai grav: regenerarea nu mai pornește, iar filtrul se înfundă de-adevăratelea.",
+   "kind": "row",
+   "prompt": "[calm] Al doilea caz e mai grav: regenerarea nu mai pornește, iar filtrul se înfundă de-adevăratelea."
+  },
+  {
+   "id": 120,
+   "show": "La fel păcălește o scăpare pe evacuare, înainte de filtru, sau un fir rupt de vibrații.",
+   "v": "La fel păcălește o scăpare pe evacuare, înainte de filtru, sau un fir rupt de vibrații.",
+   "kind": "row",
+   "prompt": "[calm] La fel păcălește o scăpare pe evacuare, înainte de filtru, sau un fir rupt de vibrații."
+  },
+  {
+   "id": 121,
+   "show": "Se strică și senzorul însuși: VW i-a îmbunătățit etanșarea internă din 2012.",
+   "v": "Se strică și senzorul însuși: Volkswagen i-a îmbunătățit etanșarea internă din două mii doisprezece.",
+   "kind": "row",
+   "prompt": "[calm] Se strică și senzorul însuși: Volkswagen i-a îmbunătățit etanșarea internă din două mii doisprezece."
+  },
+  {
+   "id": 122,
+   "show": "Verificăm senzorul, suflăm țevile și căutăm scăpările înainte să spunem că filtrul e plin.",
+   "v": "Verificăm senzorul, suflăm țevile și căutăm scăpările înainte să spunem că filtrul e plin.",
+   "kind": "row",
+   "prompt": "[calm] Verificăm senzorul, suflăm țevile și căutăm scăpările înainte să spunem că filtrul e plin."
+  },
+  {
+   "id": 123,
+   "show": "Minus 40 de grade pe evacuarea unui motor cald. Așa arată în tester un senzor cu firul rupt.",
+   "v": "Minus patruzeci de grade pe evacuarea unui motor cald. Așa arată în tester un senzor cu firul rupt.",
+   "kind": "hook",
+   "prompt": "[serious] Minus patruzeci de grade pe evacuarea unui motor cald. Așa arată în tester un senzor cu firul rupt."
+  },
+  {
+   "id": 124,
+   "show": "Episodul 11 din 16: senzorii de temperatură și de particule.",
+   "v": "Episodul unsprezece din șaisprezece: senzorii de temperatură și de particule.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul unsprezece din șaisprezece: senzorii de temperatură și de particule."
+  },
+  {
+   "id": 125,
+   "show": "Pe evacuare pot fi până la patru senzori de temperatură.",
+   "v": "Pe evacuare pot fi până la patru senzori de temperatură.",
+   "kind": "row",
+   "prompt": "[calm] Pe evacuare pot fi până la patru senzori de temperatură."
+  },
+  {
+   "id": 126,
+   "show": "După ei, calculatorul conduce regenerarea: când o pornește și cât o ține.",
+   "v": "După ei, calculatorul conduce regenerarea: când o pornește și cât o ține.",
+   "kind": "row",
+   "prompt": "[calm] După ei, calculatorul conduce regenerarea: când o pornește și cât o ține."
+  },
+  {
+   "id": 127,
+   "show": "Un senzor care citește greșit dă regenerări prea scurte sau prea lungi.",
+   "v": "Un senzor care citește greșit dă regenerări prea scurte sau prea lungi.",
+   "kind": "row",
+   "prompt": "[calm] Un senzor care citește greșit dă regenerări prea scurte sau prea lungi."
+  },
+  {
+   "id": 128,
+   "show": "Sau îl face pe calculator să socotească greșit cât de plin e filtrul.",
+   "v": "Sau îl face pe calculator să socotească greșit cât de plin e filtrul.",
+   "kind": "row",
+   "prompt": "[calm] Sau îl face pe calculator să socotească greșit cât de plin e filtrul."
+  },
+  {
+   "id": 129,
+   "show": "Iar cu eroare pe senzor, la VW regenerarea nu se mai face deloc.",
+   "v": "Iar cu eroare pe senzor, la Volkswagen regenerarea nu se mai face deloc.",
+   "kind": "row",
+   "prompt": "[calm] Iar cu eroare pe senzor, la Volkswagen regenerarea nu se mai face deloc."
+  },
+  {
+   "id": 130,
+   "show": "Firele lor se rup în interior, de la vibrațiile evacuării.",
+   "v": "Firele lor se rup în interior, de la vibrațiile evacuării.",
+   "kind": "row",
+   "prompt": "[calm] Firele lor se rup în interior, de la vibrațiile evacuării."
+  },
+  {
+   "id": 131,
+   "show": "Pe multe mașini Euro 6 mai e un senzor: cel de particule, după filtru.",
+   "v": "Pe multe mașini Euro șase mai e un senzor: cel de particule, după filtru.",
+   "kind": "row",
+   "prompt": "[calm] Pe multe mașini Euro șase mai e un senzor: cel de particule, după filtru."
+  },
+  {
+   "id": 132,
+   "show": "Defect sau ud, dă erori de emisii și cere regenerări inutile.",
+   "v": "Defect sau ud, dă erori de emisii și cere regenerări inutile.",
+   "kind": "row",
+   "prompt": "[calm] Defect sau ud, dă erori de emisii și cere regenerări inutile."
+  },
+  {
+   "id": 133,
+   "show": "De aceea comparăm senzorii între ei, cu motorul rece: trebuie să arate aproape la fel.",
+   "v": "De aceea comparăm senzorii între ei, cu motorul rece: trebuie să arate aproape la fel.",
+   "kind": "row",
+   "prompt": "[calm] De aceea comparăm senzorii între ei, cu motorul rece: trebuie să arate aproape la fel."
+  },
+  {
+   "id": 134,
+   "show": "Un senzor nu se schimbă pe ghicite. Și nici filtrul.",
+   "v": "Un senzor nu se schimbă pe ghicite. Și nici filtrul.",
+   "kind": "row",
+   "prompt": "[calm] Un senzor nu se schimbă pe ghicite. Și nici filtrul."
+  },
+  {
+   "id": 135,
+   "show": "Toate regenerările au reușit și filtrul tot s-a înfundat. Cu ceva ce nu arde niciodată.",
+   "v": "Toate regenerările au reușit și filtrul tot s-a înfundat. Cu ceva ce nu arde niciodată.",
+   "kind": "hook",
+   "prompt": "[serious] Toate regenerările au reușit și filtrul tot s-a înfundat. Cu ceva ce nu arde niciodată."
+  },
+  {
+   "id": 136,
+   "show": "Episodul 12 din 16: cenușa și uleiul nepotrivit.",
+   "v": "Episodul doisprezece din șaisprezece: cenușa și uleiul nepotrivit.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul doisprezece din șaisprezece: cenușa și uleiul nepotrivit."
+  },
+  {
+   "id": 137,
+   "show": "Funinginea arde la regenerare. Cenușa, nu.",
+   "v": "Funinginea arde la regenerare. Cenușa, nu.",
+   "kind": "row",
+   "prompt": "[calm] Funinginea arde la regenerare. Cenușa, nu."
+  },
+  {
+   "id": 138,
+   "show": "Cenușa vine mai ales din uleiul de motor: din aditivii lui, care ajung în ardere.",
+   "v": "Cenușa vine mai ales din uleiul de motor: din aditivii lui, care ajung în ardere.",
+   "kind": "row",
+   "prompt": "[calm] Cenușa vine mai ales din uleiul de motor: din aditivii lui, care ajung în ardere."
+  },
+  {
+   "id": 139,
+   "show": "Se strânge la capătul canalelor și le scurtează puțin câte puțin.",
+   "v": "Se strânge la capătul canalelor și le scurtează puțin câte puțin.",
+   "kind": "row",
+   "prompt": "[calm] Se strânge la capătul canalelor și le scurtează puțin câte puțin."
+  },
+  {
+   "id": 140,
+   "show": "Până la un punct e normal: orice filtru adună cenușă cu kilometrii.",
+   "v": "Până la un punct e normal: orice filtru adună cenușă cu kilometrii.",
+   "kind": "row",
+   "prompt": "[calm] Până la un punct e normal: orice filtru adună cenușă cu kilometrii."
+  },
+  {
+   "id": 141,
+   "show": "Dar cu ulei nepotrivit, drumul e mult mai scurt.",
+   "v": "Dar cu ulei nepotrivit, drumul e mult mai scurt.",
+   "kind": "row",
+   "prompt": "[calm] Dar cu ulei nepotrivit, drumul e mult mai scurt."
+  },
+  {
+   "id": 142,
+   "show": "Motoarele cu filtru cer ulei cu cenușă puțină. Celălalt, spune Castrol, îl poate înfunda definitiv.",
+   "v": "Motoarele cu filtru cer ulei cu cenușă puțină. Celălalt, spune Castrol, îl poate înfunda definitiv.",
+   "kind": "row",
+   "prompt": "[calm] Motoarele cu filtru cer ulei cu cenușă puțină. Celălalt, spune Castrol, îl poate înfunda definitiv."
+  },
+  {
+   "id": 143,
+   "show": "Semnul: după regenerare, presiunea nu mai scade cât trebuie, iar regenerările se îndesesc.",
+   "v": "Semnul: după regenerare, presiunea nu mai scade cât trebuie, iar regenerările se îndesesc.",
+   "kind": "row",
+   "prompt": "[calm] Semnul: după regenerare, presiunea nu mai scade cât trebuie, iar regenerările se îndesesc."
+  },
+  {
+   "id": 144,
+   "show": "Cenușa nu iese cu nicio regenerare, nici în mers, nici forțată.",
+   "v": "Cenușa nu iese cu nicio regenerare, nici în mers, nici forțată.",
+   "kind": "row",
+   "prompt": "[calm] Cenușa nu iese cu nicio regenerare, nici în mers, nici forțată."
+  },
+  {
+   "id": 145,
+   "show": "Iese doar cu filtrul demontat. Asta e curățarea pe care o facem noi.",
+   "v": "Iese doar cu filtrul demontat. Asta e curățarea pe care o facem noi.",
+   "kind": "row",
+   "prompt": "[calm] Iese doar cu filtrul demontat. Asta e curățarea pe care o facem noi."
+  },
+  {
+   "id": 146,
+   "show": "Apoi verificăm ce ulei e în motor și cât ulei consumă.",
+   "v": "Apoi verificăm ce ulei e în motor și cât ulei consumă.",
+   "kind": "row",
+   "prompt": "[calm] Apoi verificăm ce ulei e în motor și cât ulei consumă."
+  },
+  {
+   "id": 147,
+   "show": "Motorul tău consumă ulei? Tot uleiul acela trece prin filtrul de particule.",
+   "v": "Motorul tău consumă ulei? Tot uleiul acela trece prin filtrul de particule.",
+   "kind": "hook",
+   "prompt": "[serious] Motorul tău consumă ulei? Tot uleiul acela trece prin filtrul de particule."
+  },
+  {
+   "id": 148,
+   "show": "Episodul 13 din 16: uleiul și lichidul de răcire.",
+   "v": "Episodul treisprezece din șaisprezece: uleiul și lichidul de răcire.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul treisprezece din șaisprezece: uleiul și lichidul de răcire."
+  },
+  {
+   "id": 149,
+   "show": "Uleiul ajunge în ardere pe la semeringurile de supape, pe la segmenți sau prin aerisirea carterului.",
+   "v": "Uleiul ajunge în ardere pe la semeringurile de supape, pe la segmenți sau prin aerisirea carterului.",
+   "kind": "row",
+   "prompt": "[calm] Uleiul ajunge în ardere pe la semeringurile de supape, pe la segmenți sau prin aerisirea carterului."
+  },
+  {
+   "id": 150,
+   "show": "Arde, iar aditivii lui rămân în filtru, sub formă de cenușă.",
+   "v": "Arde, iar aditivii lui rămân în filtru, sub formă de cenușă.",
+   "kind": "row",
+   "prompt": "[calm] Arde, iar aditivii lui rămân în filtru, sub formă de cenușă."
+  },
+  {
+   "id": 151,
+   "show": "Al doilea drum: turbina. Când etanșarea ei cedează, uleiul curge direct pe evacuare.",
+   "v": "Al doilea drum: turbina. Când etanșarea ei cedează, uleiul curge direct pe evacuare.",
+   "kind": "row",
+   "prompt": "[calm] Al doilea drum: turbina. Când etanșarea ei cedează, uleiul curge direct pe evacuare."
+  },
+  {
+   "id": 152,
+   "show": "Catalizatorul și filtrul se îmbibă cu ulei, iar regenerarea nu mai merge.",
+   "v": "Catalizatorul și filtrul se îmbibă cu ulei, iar regenerarea nu mai merge.",
+   "kind": "row",
+   "prompt": "[calm] Catalizatorul și filtrul se îmbibă cu ulei, iar regenerarea nu mai merge."
+  },
+  {
+   "id": 153,
+   "show": "Și invers: un filtru înfundat împinge gazele înapoi în turbină și o face să scape ulei.",
+   "v": "Și invers: un filtru înfundat împinge gazele înapoi în turbină și o face să scape ulei.",
+   "kind": "row",
+   "prompt": "[calm] Și invers: un filtru înfundat împinge gazele înapoi în turbină și o face să scape ulei."
+  },
+  {
+   "id": 154,
+   "show": "Al treilea musafir: lichidul de răcire, de la un răcitor EGR fisurat sau de la garnitura de chiulasă.",
+   "v": "Al treilea musafir: lichidul de răcire, de la un răcitor e-ge-re fisurat sau de la garnitura de chiulasă.",
+   "kind": "row",
+   "prompt": "[calm] Al treilea musafir: lichidul de răcire, de la un răcitor e-ge-re fisurat sau de la garnitura de chiulasă."
+  },
+  {
+   "id": 155,
+   "show": "El otrăvește metalele prețioase și lasă depuneri care nu ard.",
+   "v": "El otrăvește metalele prețioase și lasă depuneri care nu ard.",
+   "kind": "row",
+   "prompt": "[calm] El otrăvește metalele prețioase și lasă depuneri care nu ard."
+  },
+  {
+   "id": 156,
+   "show": "Mai mult, cenușa lui slăbește ceramica: se topește la temperaturi mai mici.",
+   "v": "Mai mult, cenușa lui slăbește ceramica: se topește la temperaturi mai mici.",
+   "kind": "row",
+   "prompt": "[calm] Mai mult, cenușa lui slăbește ceramica: se topește la temperaturi mai mici."
+  },
+  {
+   "id": 157,
+   "show": "De aceea întrebăm mereu: consumă ulei? Scade lichidul de răcire?",
+   "v": "De aceea întrebăm mereu: consumă ulei? Scade lichidul de răcire?",
+   "kind": "row",
+   "prompt": "[calm] De aceea întrebăm mereu: consumă ulei? Scade lichidul de răcire?"
+  },
+  {
+   "id": 158,
+   "show": "Și verificăm turbina, epuratorul și răcitorul EGR înainte să montăm filtrul curat.",
+   "v": "Și verificăm turbina, epuratorul și răcitorul e-ge-re înainte să montăm filtrul curat.",
+   "kind": "row",
+   "prompt": "[calm] Și verificăm turbina, epuratorul și răcitorul e-ge-re înainte să montăm filtrul curat."
+  },
+  {
+   "id": 159,
+   "show": "Peste 1.200 de grade într-un filtru de particule. Ceramica nu rezistă. Cum se ajunge aici?",
+   "v": "Peste o mie două sute de grade într-un filtru de particule. Ceramica nu rezistă. Cum se ajunge aici?",
+   "kind": "hook",
+   "prompt": "[serious] Peste o mie două sute de grade într-un filtru de particule. Ceramica nu rezistă. Cum se ajunge aici?"
+  },
+  {
+   "id": 160,
+   "show": "Episodul 14 din 16: regenerarea necontrolată.",
+   "v": "Episodul paisprezece din șaisprezece: regenerarea necontrolată.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul paisprezece din șaisprezece: regenerarea necontrolată."
+  },
+  {
+   "id": 161,
+   "show": "O regenerare normală arde funinginea treptat, la circa 600 de grade.",
+   "v": "O regenerare normală arde funinginea treptat, la circa șase sute de grade.",
+   "kind": "row",
+   "prompt": "[calm] O regenerare normală arde funinginea treptat, la circa șase sute de grade."
+  },
+  {
+   "id": 162,
+   "show": "Necazul apare când filtrul e prea plin și funinginea se aprinde toată odată.",
+   "v": "Necazul apare când filtrul e prea plin și funinginea se aprinde toată odată.",
+   "kind": "row",
+   "prompt": "[calm] Necazul apare când filtrul e prea plin și funinginea se aprinde toată odată."
+  },
+  {
+   "id": 163,
+   "show": "Arderea se întreține singură și nu mai poate fi oprită.",
+   "v": "Arderea se întreține singură și nu mai poate fi oprită.",
+   "kind": "row",
+   "prompt": "[calm] Arderea se întreține singură și nu mai poate fi oprită."
+  },
+  {
+   "id": 164,
+   "show": "E și mai rău dacă motorul cade la ralanti chiar atunci: gazele care răceau filtrul aproape dispar.",
+   "v": "E și mai rău dacă motorul cade la ralanti chiar atunci: gazele care răceau filtrul aproape dispar.",
+   "kind": "row",
+   "prompt": "[calm] E și mai rău dacă motorul cade la ralanti chiar atunci: gazele care răceau filtrul aproape dispar."
+  },
+  {
+   "id": 165,
+   "show": "Ceramica se fisurează sau se topește. Cordierita cedează mai devreme decât carbura de siliciu.",
+   "v": "Ceramica se fisurează sau se topește. Cordierita cedează mai devreme decât carbura de siliciu.",
+   "kind": "row",
+   "prompt": "[calm] Ceramica se fisurează sau se topește. Cordierita cedează mai devreme decât carbura de siliciu."
+  },
+  {
+   "id": 166,
+   "show": "De acum, funinginea trece prin crăpături și apare eroarea de eficiență.",
+   "v": "De acum, funinginea trece prin crăpături și apare eroarea de eficiență.",
+   "kind": "row",
+   "prompt": "[calm] De acum, funinginea trece prin crăpături și apare eroarea de eficiență."
+  },
+  {
+   "id": 167,
+   "show": "La fel sfârșește un filtru îmbibat cu ulei sau cu motorină.",
+   "v": "La fel sfârșește un filtru îmbibat cu ulei sau cu motorină.",
+   "kind": "row",
+   "prompt": "[calm] La fel sfârșește un filtru îmbibat cu ulei sau cu motorină."
+  },
+  {
+   "id": 168,
+   "show": "Un asemenea filtru nu mai poate fi salvat prin curățare.",
+   "v": "Un asemenea filtru nu mai poate fi salvat prin curățare.",
+   "kind": "row",
+   "prompt": "[calm] Un asemenea filtru nu mai poate fi salvat prin curățare."
+  },
+  {
+   "id": 169,
+   "show": "Îl recondiționăm: schimbăm tot monolitul, în carcasa originală, cu unul din carbură de siliciu.",
+   "v": "Îl recondiționăm: schimbăm tot monolitul, în carcasa originală, cu unul din carbură de siliciu.",
+   "kind": "row",
+   "prompt": "[calm] Îl recondiționăm: schimbăm tot monolitul, în carcasa originală, cu unul din carbură de siliciu."
+  },
+  {
+   "id": 170,
+   "show": "Și căutăm de ce s-a supraîncărcat. Altfel, monolitul nou are aceeași soartă.",
+   "v": "Și căutăm de ce s-a supraîncărcat. Altfel, monolitul nou are aceeași soartă.",
+   "kind": "row",
+   "prompt": "[calm] Și căutăm de ce s-a supraîncărcat. Altfel, monolitul nou are aceeași soartă."
+  },
+  {
+   "id": 171,
+   "show": "Filtru nou, eroare veche. După câteva sute de kilometri, martorul e din nou aprins.",
+   "v": "Filtru nou, eroare veche. După câteva sute de kilometri, martorul e din nou aprins.",
+   "kind": "hook",
+   "prompt": "[serious] Filtru nou, eroare veche. După câteva sute de kilometri, martorul e din nou aprins."
+  },
+  {
+   "id": 172,
+   "show": "Episodul 15 din 16: reparația făcută pe jumătate.",
+   "v": "Episodul cincisprezece din șaisprezece: reparația făcută pe jumătate.",
+   "kind": "ep",
+   "prompt": "[calm] Episodul cincisprezece din șaisprezece: reparația făcută pe jumătate."
+  },
+  {
+   "id": 173,
+   "show": "Primul motiv: cauza a rămas pe mașină. Un producător de filtre scrie că filtrul nou se poate înfunda în mai puțin de 100 de kilometri.",
+   "v": "Primul motiv: cauza a rămas pe mașină. Un producător de filtre scrie că filtrul nou se poate înfunda în mai puțin de o sută de kilometri.",
+   "kind": "row",
+   "prompt": "[calm] Primul motiv: cauza a rămas pe mașină. Un producător de filtre scrie că filtrul nou se poate înfunda în mai puțin de o sută de kilometri."
+  },
+  {
+   "id": 174,
+   "show": "Al doilea: filtrul de schimb. Unele filtre ieftine nu au destule metale prețioase.",
+   "v": "Al doilea: filtrul de schimb. Unele filtre ieftine nu au destule metale prețioase.",
+   "kind": "row",
+   "prompt": "[calm] Al doilea: filtrul de schimb. Unele filtre ieftine nu au destule metale prețioase."
+  },
+  {
+   "id": 175,
+   "show": "Fără ele, funinginea nu mai arde din mers, iar calculatorul vede un filtru care nu lucrează ca originalul.",
+   "v": "Fără ele, funinginea nu mai arde din mers, iar calculatorul vede un filtru care nu lucrează ca originalul.",
+   "kind": "row",
+   "prompt": "[calm] Fără ele, funinginea nu mai arde din mers, iar calculatorul vede un filtru care nu lucrează ca originalul."
+  },
+  {
+   "id": 176,
+   "show": "Al treilea: filtrul golit. Calculatorul observă că presiunea pe filtru a dispărut.",
+   "v": "Al treilea: filtrul golit. Calculatorul observă că presiunea pe filtru a dispărut.",
+   "kind": "row",
+   "prompt": "[calm] Al treilea: filtrul golit. Calculatorul observă că presiunea pe filtru a dispărut."
+  },
+  {
+   "id": 177,
+   "show": "Iar RAR spune limpede: scoaterea filtrului este lucrare neautorizată, iar mașina nu primește viza ITP.",
+   "v": "Iar RAR spune limpede: scoaterea filtrului este lucrare neautorizată, iar mașina nu primește viza i-te-pe.",
+   "kind": "row",
+   "prompt": "[calm] Iar RAR spune limpede: scoaterea filtrului este lucrare neautorizată, iar mașina nu primește viza i-te-pe."
+  },
+  {
+   "id": 178,
+   "show": "Al patrulea: adaptările. După un filtru sau un senzor nou, calculatorul trebuie anunțat.",
+   "v": "Al patrulea: adaptările. După un filtru sau un senzor nou, calculatorul trebuie anunțat.",
+   "kind": "row",
+   "prompt": "[calm] Al patrulea: adaptările. După un filtru sau un senzor nou, calculatorul trebuie anunțat."
+  },
+  {
+   "id": 179,
+   "show": "Al cincilea: regenerarea forțată pe un filtru prea plin. Poate fisura ceramica.",
+   "v": "Al cincilea: regenerarea forțată pe un filtru prea plin. Poate fisura ceramica.",
+   "kind": "row",
+   "prompt": "[calm] Al cincilea: regenerarea forțată pe un filtru prea plin. Poate fisura ceramica."
+  },
+  {
+   "id": 180,
+   "show": "Și aditivii turnați în exces: cei ieftini, cu fier, pot supraîncălzi miezul.",
+   "v": "Și aditivii turnați în exces: cei ieftini, cu fier, pot supraîncălzi miezul.",
+   "kind": "row",
+   "prompt": "[calm] Și aditivii turnați în exces: cei ieftini, cu fier, pot supraîncălzi miezul."
+  },
+  {
+   "id": 181,
+   "show": "Toate au același tipar: s-a lucrat pe filtru, nu pe cauză.",
+   "v": "Toate au același tipar: s-a lucrat pe filtru, nu pe cauză.",
+   "kind": "row",
+   "prompt": "[calm] Toate au același tipar: s-a lucrat pe filtru, nu pe cauză."
+  },
+  {
+   "id": 182,
+   "show": "Ordinea corectă: cauza, filtrul, apoi adaptările și proba de drum.",
+   "v": "Ordinea corectă: cauza, filtrul, apoi adaptările și proba de drum.",
+   "kind": "row",
+   "prompt": "[calm] Ordinea corectă: cauza, filtrul, apoi adaptările și proba de drum."
+  },
+  {
+   "id": 183,
+   "show": "39 de cauze pot duce un filtru de particule în avarie. Doar cinci sunt în filtru.",
+   "v": "Treizeci și nouă de cauze pot duce un filtru de particule în avarie. Doar cinci sunt în filtru.",
+   "kind": "hook",
+   "prompt": "[serious] Treizeci și nouă de cauze pot duce un filtru de particule în avarie. Doar cinci sunt în filtru."
+  },
+  {
+   "id": 184,
+   "show": "Seria „De ce intră filtrul de particule în avarie”. Episodul final: ce facem noi la Turbo Doctor.",
+   "v": "Seria De ce intră filtrul de particule în avarie. Episodul final: ce facem noi la Turbo Doctor.",
+   "kind": "row",
+   "prompt": "[calm] Seria De ce intră filtrul de particule în avarie. Episodul final: ce facem noi la Turbo Doctor."
+  },
+  {
+   "id": 185,
+   "show": "De aceea nu ne uităm doar la filtru. Ne uităm la toată mașina.",
+   "v": "De aceea nu ne uităm doar la filtru. Ne uităm la toată mașina.",
+   "kind": "row",
+   "prompt": "[calm] De aceea nu ne uităm doar la filtru. Ne uităm la toată mașina."
+  },
+  {
+   "id": 186,
+   "show": "Începem cu diagnoza: erorile, funinginea calculată și cea măsurată, cenușa, regenerările.",
+   "v": "Începem cu diagnoza: erorile, funinginea calculată și cea măsurată, cenușa, regenerările.",
+   "kind": "row",
+   "prompt": "[calm] Începem cu diagnoza: erorile, funinginea calculată și cea măsurată, cenușa, regenerările."
+  },
+  {
+   "id": 187,
+   "show": "Demontăm filtrul și îl verificăm cu camera endoscopică: fisuri, urme de topire.",
+   "v": "Demontăm filtrul și îl verificăm cu camera endoscopică: fisuri, urme de topire.",
+   "kind": "row",
+   "prompt": "[calm] Demontăm filtrul și îl verificăm cu camera endoscopică: fisuri, urme de topire."
+  },
+  {
+   "id": 188,
+   "show": "Dacă ceramica e întreagă, îl curățăm: funinginea și cenușa ies, canalele rămân libere.",
+   "v": "Dacă ceramica e întreagă, îl curățăm: funinginea și cenușa ies, canalele rămân libere.",
+   "kind": "row",
+   "prompt": "[calm] Dacă ceramica e întreagă, îl curățăm: funinginea și cenușa ies, canalele rămân libere."
+  },
+  {
+   "id": 189,
+   "show": "Dacă e spart, topit sau crăpat, îl recondiționăm: monolit nou, din carbură de siliciu, în carcasa originală.",
+   "v": "Dacă e spart, topit sau crăpat, îl recondiționăm: monolit nou, din carbură de siliciu, în carcasa originală.",
+   "kind": "row",
+   "prompt": "[calm] Dacă e spart, topit sau crăpat, îl recondiționăm: monolit nou, din carbură de siliciu, în carcasa originală."
+  },
+  {
+   "id": 190,
+   "show": "Costă 30 până la 40 la sută din prețul unui filtru original.",
+   "v": "Costă treizeci până la patruzeci la sută din prețul unui filtru original.",
+   "kind": "row",
+   "prompt": "[calm] Costă treizeci până la patruzeci la sută din prețul unui filtru original."
+  },
+  {
+   "id": 191,
+   "show": "Cât filtrul e la curățat, căutăm cauza pe mașină.",
+   "v": "Cât filtrul e la curățat, căutăm cauza pe mașină.",
+   "kind": "row",
+   "prompt": "[calm] Cât filtrul e la curățat, căutăm cauza pe mașină."
+  },
+  {
+   "id": 192,
+   "show": "Aerul, EGR-ul, injectoarele, turbina, uleiul, senzorii, termostatul, bujiile.",
+   "v": "Aerul, e-ge-re-ul, injectoarele, turbina, uleiul, senzorii, termostatul, bujiile.",
+   "kind": "row",
+   "prompt": "[calm] Aerul, e-ge-re-ul, injectoarele, turbina, uleiul, senzorii, termostatul, bujiile."
+  },
+  {
+   "id": 193,
+   "show": "La final primești o constatare: ce am găsit și ce trebuie reparat.",
+   "v": "La final primești o constatare: ce am găsit și ce trebuie reparat.",
+   "kind": "row",
+   "prompt": "[calm] La final primești o constatare: ce am găsit și ce trebuie reparat."
+  },
+  {
+   "id": 194,
+   "show": "Așa pleacă de la noi un filtru curat, pe o mașină reparată.",
+   "v": "Așa pleacă de la noi un filtru curat, pe o mașină reparată.",
+   "kind": "row",
+   "prompt": "[calm] Așa pleacă de la noi un filtru curat, pe o mașină reparată."
+  }
+ ],
+ "eps": {
+  "1": [
+   [
+    0
+   ],
+   [
+    1,
+    2
+   ],
+   [
+    3
+   ],
+   [
+    4
+   ],
+   [
+    5
+   ],
+   [
+    6
+   ],
+   [
+    7
+   ],
+   [
+    8
+   ],
+   [
+    9
+   ],
+   [
+    10
+   ],
+   [
+    11
+   ],
+   [
+    12
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "2": [
+   [
+    15
+   ],
+   [
+    1,
+    16
+   ],
+   [
+    17
+   ],
+   [
+    18
+   ],
+   [
+    19
+   ],
+   [
+    20
+   ],
+   [
+    21
+   ],
+   [
+    22
+   ],
+   [
+    23
+   ],
+   [
+    24
+   ],
+   [
+    25
+   ],
+   [
+    26
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "3": [
+   [
+    27
+   ],
+   [
+    1,
+    28
+   ],
+   [
+    29
+   ],
+   [
+    30
+   ],
+   [
+    31
+   ],
+   [
+    32
+   ],
+   [
+    33
+   ],
+   [
+    34
+   ],
+   [
+    35
+   ],
+   [
+    36
+   ],
+   [
+    37
+   ],
+   [
+    38
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "4": [
+   [
+    39
+   ],
+   [
+    1,
+    40
+   ],
+   [
+    41
+   ],
+   [
+    42
+   ],
+   [
+    43
+   ],
+   [
+    44
+   ],
+   [
+    45
+   ],
+   [
+    46
+   ],
+   [
+    47
+   ],
+   [
+    48
+   ],
+   [
+    49
+   ],
+   [
+    50
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "5": [
+   [
+    51
+   ],
+   [
+    1,
+    52
+   ],
+   [
+    53
+   ],
+   [
+    54
+   ],
+   [
+    55
+   ],
+   [
+    56
+   ],
+   [
+    57
+   ],
+   [
+    58
+   ],
+   [
+    59
+   ],
+   [
+    60
+   ],
+   [
+    61
+   ],
+   [
+    62
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "6": [
+   [
+    63
+   ],
+   [
+    1,
+    64
+   ],
+   [
+    65
+   ],
+   [
+    66
+   ],
+   [
+    67
+   ],
+   [
+    68
+   ],
+   [
+    69
+   ],
+   [
+    70
+   ],
+   [
+    71
+   ],
+   [
+    72
+   ],
+   [
+    73
+   ],
+   [
+    74
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "7": [
+   [
+    75
+   ],
+   [
+    1,
+    76
+   ],
+   [
+    77
+   ],
+   [
+    78
+   ],
+   [
+    79
+   ],
+   [
+    80
+   ],
+   [
+    81
+   ],
+   [
+    82
+   ],
+   [
+    83
+   ],
+   [
+    84
+   ],
+   [
+    85
+   ],
+   [
+    86
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "8": [
+   [
+    87
+   ],
+   [
+    1,
+    88
+   ],
+   [
+    89
+   ],
+   [
+    90
+   ],
+   [
+    91
+   ],
+   [
+    92
+   ],
+   [
+    93
+   ],
+   [
+    94
+   ],
+   [
+    95
+   ],
+   [
+    96
+   ],
+   [
+    97
+   ],
+   [
+    98
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "9": [
+   [
+    99
+   ],
+   [
+    1,
+    100
+   ],
+   [
+    101
+   ],
+   [
+    102
+   ],
+   [
+    103
+   ],
+   [
+    104
+   ],
+   [
+    105
+   ],
+   [
+    106
+   ],
+   [
+    107
+   ],
+   [
+    108
+   ],
+   [
+    109
+   ],
+   [
+    110
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "10": [
+   [
+    111
+   ],
+   [
+    1,
+    112
+   ],
+   [
+    113
+   ],
+   [
+    114
+   ],
+   [
+    115
+   ],
+   [
+    116
+   ],
+   [
+    117
+   ],
+   [
+    118
+   ],
+   [
+    119
+   ],
+   [
+    120
+   ],
+   [
+    121
+   ],
+   [
+    122
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "11": [
+   [
+    123
+   ],
+   [
+    1,
+    124
+   ],
+   [
+    125
+   ],
+   [
+    126
+   ],
+   [
+    127
+   ],
+   [
+    128
+   ],
+   [
+    129
+   ],
+   [
+    130
+   ],
+   [
+    131
+   ],
+   [
+    132
+   ],
+   [
+    133
+   ],
+   [
+    134
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "12": [
+   [
+    135
+   ],
+   [
+    1,
+    136
+   ],
+   [
+    137
+   ],
+   [
+    138
+   ],
+   [
+    139
+   ],
+   [
+    140
+   ],
+   [
+    141
+   ],
+   [
+    142
+   ],
+   [
+    143
+   ],
+   [
+    144
+   ],
+   [
+    145
+   ],
+   [
+    146
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "13": [
+   [
+    147
+   ],
+   [
+    1,
+    148
+   ],
+   [
+    149
+   ],
+   [
+    150
+   ],
+   [
+    151
+   ],
+   [
+    152
+   ],
+   [
+    153
+   ],
+   [
+    154
+   ],
+   [
+    155
+   ],
+   [
+    156
+   ],
+   [
+    157
+   ],
+   [
+    158
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "14": [
+   [
+    159
+   ],
+   [
+    1,
+    160
+   ],
+   [
+    161
+   ],
+   [
+    162
+   ],
+   [
+    163
+   ],
+   [
+    164
+   ],
+   [
+    165
+   ],
+   [
+    166
+   ],
+   [
+    167
+   ],
+   [
+    168
+   ],
+   [
+    169
+   ],
+   [
+    170
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "15": [
+   [
+    171
+   ],
+   [
+    1,
+    172
+   ],
+   [
+    173
+   ],
+   [
+    174
+   ],
+   [
+    175
+   ],
+   [
+    176
+   ],
+   [
+    177
+   ],
+   [
+    178
+   ],
+   [
+    179
+   ],
+   [
+    180
+   ],
+   [
+    181
+   ],
+   [
+    182
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ],
+  "16": [
+   [
+    183
+   ],
+   [
+    184
+   ],
+   [
+    185
+   ],
+   [
+    186
+   ],
+   [
+    187
+   ],
+   [
+    188
+   ],
+   [
+    189
+   ],
+   [
+    190
+   ],
+   [
+    191
+   ],
+   [
+    192
+   ],
+   [
+    193
+   ],
+   [
+    194
+   ],
+   [
+    13
+   ],
+   [
+    14
+   ]
+  ]
+ }
+}
