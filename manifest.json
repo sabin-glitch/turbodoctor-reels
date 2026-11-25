@@ -2960,6 +2960,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdb06",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/H3zU2Kd3BOGUYe9tHtRz/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "fsq_turbo3_cc0",
   "source_url": "https://freesound.org/search/",
   "downloader": "curl"
@@ -5085,6 +5090,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdb05",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/bw4v0PNOjCa1ckbFK4mN/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "su5L06a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/HQiqeXc0KvbaxxFIjUzA/9ZDepjhNKrvLGtLRldaw/content.mp3",
   "downloader": "curl"
@@ -6125,6 +6135,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdb07",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/LKamuAxSRs7iqHRLcUdF/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "dr_L03a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/wE8Mk6TwnT45qVeRgC18/OkzFO1LpFdi3Qkhs6mlx/content.mp3",
   "downloader": "curl"
@@ -6812,6 +6827,11 @@
  {
   "id": "tutL24b",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/xJ2VskZrotmfZZdrP1sG/xVqKglDV0OSEjBJMKQa4/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "sdb04",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/4SHUsNiZQPgZ7om7J2sG/asset_preview.mp3",
   "downloader": "curl"
  },
  {
