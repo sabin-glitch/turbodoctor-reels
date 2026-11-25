@@ -806,8 +806,8 @@ def pan_big(c, R, a, i, f, tl, p):
     x0, y0, x1, y1 = R; pbox(c, R, a); cx = (x0 + x1) / 2
     top = p.get('top'); t1 = LEAD + p.get('t1', 0.1) * sp(i)
     lines = p['text'].split('\n'); fs = min(fit_txt(max(lines, key=len), p.get('fs', 92), 'anton', x1 - x0 - 80, 36), p.get('fs', 92))
-    hh = len(lines) * fs * 1.08 + (40 if top else 0) + (50 if p.get('sub') else 0); yy = (y0 + y1) / 2 - hh / 2 + fs * 0.9 + (40 if top else 0)
-    if top: txt(c, top, cx, yy - fs * 0.9 - 6, 28, 'm8', WHT, a * 0.8 * ramp(tl, 0.2, 0.3), 'c')
+    hh = len(lines) * fs * 1.08 + (70 if top else 0) + (50 if p.get('sub') else 0); yy = (y0 + y1) / 2 - hh / 2 + fs * 0.9 + (70 if top else 0)
+    if top: txt(c, top, cx, yy - fs * 1.0 - 26, 28, 'm8', WHT, a * 0.8 * ramp(tl, 0.2, 0.3), 'c')
     for j, ln in enumerate(lines):
         aj = a * ramp(tl, t1 + 0.35 * j, 0.3); pop = 1.0 + 0.12 * (1 - ramp(tl, t1 + 0.35 * j, 0.3))
         c.save(); c.translate(cx, yy + j * fs * 1.08); c.scale(pop, pop); txt(c, ln, 0, 0, fs, 'anton', p.get('col', Y) if j == len(lines) - 1 or p.get('allcol') else WHT, aj, 'c', shadow=10); c.restore()
