@@ -63,3 +63,10 @@ Pe un calculator cu placă video, `out/dpf.blend` se deschide direct în Blender
 - Senzorul de presiune diferențială cu două racorduri (înainte și după filtru), ce face calculatorul cu semnalul, regenerarea pasivă 350–500 °C și activă 600–650 °C: VW SSP 336 (vezi `memorie/senzor-presiune-diferentiala.md` din proiect). Cenușa din ulei nu arde și rămâne în filtru: Castrol, Hella (vezi `memorie/film-semeringuri-supape.md`).
 
 Reconstruit, de confirmat cu poze din atelier sau cu un cod de piesă: forma exactă a carcasei (e un ansamblu generic, de tipul celor montate lângă turbină la 2.0 TDI common rail; cotele sunt alese de mine), poziția exactă a bosajelor, forma senzorului de presiune și a suportului, traseul țevilor, numărul și locul senzorilor de temperatură (diferă de la model la model: la 2.0 TDI Euro 5 primul senzor stă înainte de turbină, nu pe con; la unele modele, de la sfârșitul lui 2010, senzorul de presiune are o singură țeavă, cea dinainte de filtru). Culorile gazelor, grosimea stratului de funingine, înălțimea cenușii și barele de presiune sunt ilustrative.
+
+## Filmul de training „Filtrul de particule (DPF)” (24–25.11.2026)
+
+Pe același model s-a făcut filmul de training intern pentru colegi (59 de fraze, 10 capitole, 7 min 39 s, voce generată), în 9:16 și 16:9.
+Montajul lui e în `comp/` (`eng.py`, `film.py`, `script.py`, `vo/`), cu instrucțiunile în `comp/README_training.md`.
+Pentru el `dpf.py` are un strat în plus, `TC` (prim-plan pe catalizator, ×8); `layers.tar` îl conține (`TC_sec.png`, `TC_idA.png`).
+În `animatii/` sunt copiile comprimate pentru Biblioteca consilierilor (sub 48 MB); variantele la calitate plină (CRF 26, ~130 MB) nu încap în repo.

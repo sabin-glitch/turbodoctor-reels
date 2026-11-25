@@ -772,19 +772,20 @@ def crops():
     return json.load(open(p)) if os.path.exists(p) else {}
 
 
-TIERS = {'T1': 1, 'T2': 2, 'T8': 8, 'TA': 24, 'TB': 24}      # TA / TB: macro plates at the filter inlet / outlet end
+TIERS = {'T1': 1, 'T2': 2, 'T8': 8, 'TA': 24, 'TB': 24, 'TC': 8}      # TA / TB: macro plates at the filter inlet / outlet end; TC: the catalyst (training film)
 
 
 def job_list():
     C = crops(); J = []
     J.append(('T1_sec', dict(tier=1, vis=SEC, samples=72)))
     J.append(('T1_front', dict(tier=1, vis=['front'], hold=SEC, samples=64)))
-    for tn in ('T2', 'T8', 'TA', 'TB'):
-        if tn in C: J.append((f'{tn}_sec', dict(tier=TIERS[tn], crop=C[tn], vis=SEC, samples=64 if tn in ('T2', 'T8') else 80)))
-    for tn in ('T1', 'T2', 'T8', 'TA', 'TB'):
+    for tn in ('T2', 'T8', 'TA', 'TB', 'TC'):
+        if tn in C: J.append((f'{tn}_sec', dict(tier=TIERS[tn], crop=C[tn], vis=SEC, samples={'T2': 64, 'T8': 48, 'TC': 48}.get(tn, 60))))
+    for tn in ('T1', 'T2', 'T8', 'TA', 'TB', 'TC'):
         if tn != 'T1' and tn not in C: continue
         cr = C.get(tn) if tn != 'T1' else None
         for k in ('A', 'B') + (('C', 'D') if tn in ('T1', 'T2') else ()):
+            if tn == 'TC' and k == 'B': continue
             vis = {'A': ['dpf', 'doc', 'mats'], 'B': ['dpf'], 'C': ['acc'], 'D': ['acc']}[k]
             J.append((f'{tn}_id{k}', dict(tier=TIERS[tn], crop=cr, vis=vis, hold=[c for c in SEC if c not in vis], vt='Standard', samples=10, denoise=False, ids=k)))
     return J
@@ -859,6 +860,7 @@ def info():
     C['T8'] = bbox(boxpts(xm - 36.0, xm + 36.0, -52.0, 34.0, 0.0, 30.0), 8, 16)   # around the filter inlet face (zoom path to the macro)
     C['TA'] = bbox(boxpts(xm - 13.6, xm + 13.6, -24.0, 9.0, 0.0, 4.0), 24, 8)    # filter inlet end (wide enough for the 16:9 layout too)
     C['TB'] = bbox(boxpts(xm - 13.6, xm + 13.6, DPF_Z0 - 12.0, DPF_Z0 + 22.0, 0.0, 4.0), 24, 8)   # filter outlet end
+    C['TC'] = bbox(boxpts(xm - 36.0, xm + 36.0, 6.0, 122.0, 0.0, 30.0), 8, 16)   # the catalyst brick (training film: what the catalyst does)
     json.dump(C, open(os.path.join(OUT, 'crops.json'), 'w'), indent=1)
     A = {   # 3D anchors (mm)
         'inlet': (IN_X0 - 2.0, 0.0, IN_PZ), 'outlet': (OUT_X1 + 2.0, 0.0, OUT_PZ), 'vband': (IN_X0 + 2.0, 0.0, IN_PZ + 40.0),
