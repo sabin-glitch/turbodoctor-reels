@@ -1920,6 +1920,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdb01",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/Vyz2MOjdi8BIvI2S8dPU/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "sdt2_e3b5_a",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/rMY0C92adzswmlqAEVHX/7BDnRUtpaR52gYRkVYe9/content.mp3",
   "downloader": "curl"
@@ -3845,6 +3850,11 @@
   "downloader": "curl"
  },
  {
+  "id": "sdb02",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/AYh1Lj3eWkXwOm8xPNvn/asset_preview.mp3",
+  "downloader": "curl"
+ },
+ {
   "id": "ep3_sin_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/UaTWCUGnlpMjV11g6LYx/RLB4IXdjaQktph1NQpYa/content.mp3",
   "downloader": "curl"
@@ -4557,6 +4567,11 @@
  {
   "id": "vo_amorsare_t1",
   "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/bZFo9HsSklhIupfB1qW6/isge71GPazEX3SxsN7qG/content.mp3",
+  "downloader": "curl"
+ },
+ {
+  "id": "sdb03",
+  "source_url": "https://elevenlabsusercontent.com/database/workspace/b31dce87b5ba4a21a4f89afb57404666/content_generation/content_asset/L0OaEp2q517rP0JyPvAM/asset_preview.mp3",
   "downloader": "curl"
  },
  {
