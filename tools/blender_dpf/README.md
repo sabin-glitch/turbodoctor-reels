@@ -70,3 +70,6 @@ Pe același model s-a făcut filmul de training intern pentru colegi (59 de fraz
 Montajul lui e în `comp/` (`eng.py`, `film.py`, `script.py`, `vo/`), cu instrucțiunile în `comp/README_training.md`.
 Pentru el `dpf.py` are un strat în plus, `TC` (prim-plan pe catalizator, ×8); `layers.tar` îl conține (`TC_sec.png`, `TC_idA.png`).
 În `animatii/` sunt copiile comprimate pentru Biblioteca consilierilor (sub 48 MB); variantele la calitate plină (CRF 26, ~130 MB) nu încap în repo.
+Publicate în Biblioteca consilierilor pe 25.11.2026 (la cererea lui Sabin):
+- 9:16: https://videoclipuri-turbodoctor.vercel.app/v/training-intern-filtrul-de-particule-dpf-cum-funct-97hiee
+- 16:9: https://videoclipuri-turbodoctor.vercel.app/v/training-intern-filtrul-de-particule-dpf-cum-funct-a383zw
