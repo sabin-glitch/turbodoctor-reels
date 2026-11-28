@@ -8,6 +8,7 @@
 // „Am desfăcut pompa de înaltă presiune. Și uite ce am găsit. / Rugină. Pe fiecare piesă din interior. / O pompă care lucrează în motorină n-are cum să
 // ruginească. / Decât într-un singur caz: când în motorină ajunge apă. / Motorina unge pompa. Apa o distruge.”
 // Sunetul clipului rămâne doar pe fraza de hook (după ea se aude un radio în atelier). out/v2.json: {"narrator": true, "orig_gain": 1.0, "orig_duck": 0.0}. Coperta: out/cover_t.json {"t": 7.0}.
+// Aprobat cu „Te rog să le postezi pe toate astăzi, acum” și publicat pe 28.11.2026 (Facebook, Instagram, TikTok, YouTube; etichetă AI pe Instagram și TikTok).
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND }) => {
   const A = {
     pornit: aw(0, 'pornit'), pompa0: aw(0, 'pompa'), motorina0: aw(0, 'motorină'),

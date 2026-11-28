@@ -1,7 +1,7 @@
 # Voice-over cu vocea „Sabin” peste un clip real, fără voce (28.11.2026)
 
 Pentru clipuri filmate fără voce (sau cu o singură frază la început), când Sabin cere voice-over cu vocea lui („te poți folosi și de vocea mea”).
-Folosit la trei reel-uri trimise pe 28.11.2026 (în așteptarea aprobării): pompa cu rugină, injectorul Denso i-ART, kitul de injecție N47.
+Folosit la trei reel-uri din 28.11.2026, aprobate cu „postezi pe toate astăzi, acum” și publicate în aceeași zi: pompa cu rugină, injectorul Denso i-ART, kitul de injecție N47.
 
 ## Pași
 1. `new_reel.sh <slug> <clip>`; mă uit la cadre (`contact.py`) și la tăieturi (diferența dintre cadre) și scriu textul pe ce se vede, rând cu rând.

@@ -7,6 +7,7 @@
 // Sunetul clipului (muzică necunoscută) nu se folosește: out/v2.json {"narrator": true, "orig_gain": 0.0}. Card de final scurt: vo_script.json "end_card": 5.0.
 // Voice-over (tools/vo_clip/build_vo_clip.py), text al meu, de confirmat cu Sabin: „Ai BMW cu N47? / Uite kitul de injecție: patru injectoare și pompa de
 // înaltă presiune. / Gata de montaj.” („Kit sistem injecție N47” e titlul lui; „BMW” și „Gata de montaj” sunt adăugate de mine.)
+// Aprobat cu „Te rog să le postezi pe toate astăzi, acum” și publicat pe 28.11.2026 (Facebook, Instagram, TikTok, YouTube; etichetă AI pe Instagram și TikTok).
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND }) => {
   const A = {
     ai: aw(1, 'Ai'), n47: aw(1, 'N47'),

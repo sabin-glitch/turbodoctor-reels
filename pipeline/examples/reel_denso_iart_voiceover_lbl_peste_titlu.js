@@ -10,6 +10,7 @@
 // Fiecare piesă e curățată și verificată, apoi injectorul se asamblează la loc.” (i-ART = senzor de presiune în fiecare injector: verificat la Volvo și Denso.)
 // Cadre (fereastra repornește): 0,20 injectorul în dispozitiv · 3,90 mâini cu placa supapei (de la ~7,8 corpul văzut de sus) · 10,63 · 13,97 corpul, alte unghiuri ·
 // 19,10 piese mici în palmă · 23,87 și 27,43 piesele așezate pe hârtie. Coperta: out/cover_t.json.
+// Aprobat cu „Te rog să le postezi pe toate astăzi, acum” și publicat pe 28.11.2026 (Facebook, Instagram, TikTok, YouTube; etichetă AI pe Instagram și TikTok).
 window.REEL_CFG = ({ aw, ew, S0, SEND, TEND }) => {
   const A = {
     inj: aw(1, 'Injectorul'), volvo: aw(1, 'Volvo'), isi: aw(1, 'își'), pres: aw(1, 'presiunea'),
