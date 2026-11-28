@@ -1,0 +1,109 @@
+{
+ "f0": 168,
+ "orig": {
+  "until": 7.36,
+  "fade": 0.32,
+  "words": [
+   [
+    "Clientul",
+    1.14,
+    1.7
+   ],
+   [
+    "nostru",
+    1.8,
+    2.2
+   ],
+   [
+    "susține",
+    2.57,
+    3.3
+   ],
+   [
+    "că",
+    3.37,
+    3.6
+   ],
+   [
+    "mașina",
+    3.69,
+    4.22
+   ],
+   [
+    "nu",
+    4.25,
+    4.4
+   ],
+   [
+    "a",
+    4.41,
+    4.55
+   ],
+   [
+    "mai",
+    4.57,
+    4.72
+   ],
+   [
+    "pornit",
+    4.73,
+    5.15
+   ],
+   [
+    "și",
+    5.21,
+    5.35
+   ],
+   [
+    "pompa",
+    5.37,
+    5.68
+   ],
+   [
+    "nu",
+    5.69,
+    5.84
+   ],
+   [
+    "bagă",
+    5.85,
+    6.15
+   ],
+   [
+    "motorină.",
+    6.17,
+    6.95
+   ]
+  ]
+ },
+ "lines": [
+  {
+   "n": 1,
+   "t": 7.45,
+   "text": "Am desfăcut pompa de înaltă presiune. Și uite ce am găsit."
+  },
+  {
+   "n": 2,
+   "t": 11.65,
+   "text": "Rugină. Pe fiecare piesă din interior."
+  },
+  {
+   "n": 3,
+   "t": 15.3,
+   "text": "O pompă care lucrează în motorină n-are cum să ruginească."
+  },
+  {
+   "n": 4,
+   "t": 19.45,
+   "text": "Decât într-un singur caz: când în motorină ajunge apă.",
+   "fix": {
+    "apă.": 22.8
+   }
+  },
+  {
+   "n": 5,
+   "t": 25.4,
+   "text": "Motorina unge pompa. Apa o distruge."
+  }
+ ]
+}

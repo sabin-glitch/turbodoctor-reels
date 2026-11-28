@@ -1,0 +1,24 @@
+{
+ "f0": 168,
+ "end_card": 5.0,
+ "lines": [
+  {
+   "n": 3,
+   "t": 0.05,
+   "text": "Ai BMW cu N47?"
+  },
+  {
+   "n": 1,
+   "t": 2.95,
+   "text": "Uite kitul de injecție: patru injectoare și pompa de înaltă presiune.",
+   "fix": {
+    "kitul": 3.33
+   }
+  },
+  {
+   "n": 2,
+   "t": 7.45,
+   "text": "Gata de montaj."
+  }
+ ]
+}
